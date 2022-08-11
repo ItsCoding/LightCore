@@ -262,6 +262,9 @@ def changeEffekt():
     elements = [visualize_spectrum,visualize_energy,visualize_scroll]
     if(minute_passed()):
         print("Change Effekt \n")
+        print(time.time())
+        print(" - ")
+        print(lastTime)
         lastTime = time.time()
         visualization_effect = random.choice(elements) #.copy().remove(visualization_effect))
 
