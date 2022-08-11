@@ -14,7 +14,7 @@ _time_prev = time.time() * 1000.0
 
 _fps = dsp.ExpFilter(val=config.FPS, alpha_decay=0.2, alpha_rise=0.2)
 """The low-pass filter used to estimate frames-per-second"""
-lastTime = time.time()
+_lastTime = time.time()
 
 def frames_per_second():
     """Return the estimated frames per second
@@ -256,7 +256,7 @@ visualization_effect = visualize_energy
 """Visualization effect to display on the LED strip"""
 
 def minute_passed():
-    return time.time() - lastTime >= 5
+    return time.time() - _lastTime >= 5
 
 def changeEffekt():
     elements = [visualize_spectrum,visualize_energy,visualize_scroll]
@@ -264,8 +264,8 @@ def changeEffekt():
         print("Change Effekt \n")
         print(time.time())
         print(" - ")
-        print(lastTime)
-        lastTime = time.time()
+        print(_lastTime)
+        _lastTime = time.time()
         visualization_effect = random.choice(elements) #.copy().remove(visualization_effect))
 
 if __name__ == '__main__':
