@@ -259,7 +259,7 @@ def minute_passed():
     return time.time() - _lastTime >= 5
 
 def changeEffekt():
-    global _lastTime
+    global _lastTime, visualization_effect,visualize_spectrum,visualize_energy,visualize_scroll
     elements = [visualize_spectrum,visualize_energy,visualize_scroll]
     if(minute_passed()):
         print("Change Effekt \n")
