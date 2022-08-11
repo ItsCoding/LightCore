@@ -255,8 +255,7 @@ visualization_effect = visualize_energy
 """Visualization effect to display on the LED strip"""
 
 def changeEffekt():
-    print("Change effekt \n")
-    visualization_effect = visualize_scroll
+    visualization_effect = visualize_spectrum
 
 if __name__ == '__main__':
     if config.USE_GUI:
