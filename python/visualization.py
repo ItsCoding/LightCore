@@ -16,6 +16,8 @@ _fps = dsp.ExpFilter(val=config.FPS, alpha_decay=0.2, alpha_rise=0.2)
 """The low-pass filter used to estimate frames-per-second"""
 _lastTime = time.time()
 
+output = []
+
 def frames_per_second():
     """Return the estimated frames per second
 
@@ -191,7 +193,7 @@ prev_fps_update = time.time()
 
 
 def microphone_update(audio_samples):
-    global y_roll, prev_rms, prev_exp, prev_fps_update
+    global y_roll, prev_rms, prev_exp, prev_fps_update, output
     # Normalize samples between 0 and 1
     y = audio_samples / 2.0**15
     # Construct a rolling window of audio samples
@@ -256,16 +258,14 @@ visualization_effect = visualize_energy
 """Visualization effect to display on the LED strip"""
 
 def minute_passed():
-    return time.time() - _lastTime >= 5
+    return time.time() - _lastTime >= 60 * 2
 
 def changeEffekt():
     global _lastTime, visualization_effect,visualize_spectrum,visualize_energy,visualize_scroll
     elements = [visualize_spectrum,visualize_energy,visualize_scroll]
     if(minute_passed()):
         print("Change Effekt \n")
-        print(time.time())
-        print(" - ")
-        print(_lastTime)
+        print(output)
         _lastTime = time.time()
         copyArray = elements.copy()
         copyArray.remove(visualization_effect)
