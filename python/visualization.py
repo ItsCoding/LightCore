@@ -263,7 +263,7 @@ def changeEffekt():
     if(minute_passed()):
         print("Change Effekt \n")
         lastTime = time.time()
-        visualization_effect = random.choice(elements.copy().remove(visualization_effect))
+        visualization_effect = random.choice(elements) #.copy().remove(visualization_effect))
 
 if __name__ == '__main__':
     if config.USE_GUI:
