@@ -14,7 +14,7 @@ _time_prev = time.time() * 1000.0
 
 _fps = dsp.ExpFilter(val=config.FPS, alpha_decay=0.2, alpha_rise=0.2)
 """The low-pass filter used to estimate frames-per-second"""
-lastTime = milliseconds = int(round(time.time() * 1000))
+lastTime = time.time()
 
 def frames_per_second():
     """Return the estimated frames per second
