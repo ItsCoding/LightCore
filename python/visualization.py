@@ -7,13 +7,14 @@ import config
 import microphone
 import dsp
 import led
+import random
 
 _time_prev = time.time() * 1000.0
 """The previous time that the frames_per_second() function was called"""
 
 _fps = dsp.ExpFilter(val=config.FPS, alpha_decay=0.2, alpha_rise=0.2)
 """The low-pass filter used to estimate frames-per-second"""
-
+lastTime = milliseconds = int(round(time.time() * 1000))
 
 def frames_per_second():
     """Return the estimated frames per second
@@ -254,8 +255,15 @@ y_roll = np.random.rand(config.N_ROLLING_HISTORY, samples_per_frame) / 1e16
 visualization_effect = visualize_energy
 """Visualization effect to display on the LED strip"""
 
+def minute_passed():
+    return time.time() - lastTime >= 5
+
 def changeEffekt():
-    visualization_effect = visualize_spectrum
+    elements = [visualize_spectrum,visualize_energy,visualize_scroll]
+    if(minute_passed()):
+        print("Change Effekt \n")
+        lastTime = time.time()
+        visualization_effect = random.choice(elements.copy().remove(visualization_effect))
 
 if __name__ == '__main__':
     if config.USE_GUI:
