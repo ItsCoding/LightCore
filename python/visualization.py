@@ -33,6 +33,7 @@ def frames_per_second():
         to reduce noise.
     """
     global _time_prev, _fps
+    changeEffekt()
     time_now = time.time() * 1000.0
     dt = time_now - _time_prev
     _time_prev = time_now
@@ -253,6 +254,8 @@ y_roll = np.random.rand(config.N_ROLLING_HISTORY, samples_per_frame) / 1e16
 visualization_effect = visualize_energy
 """Visualization effect to display on the LED strip"""
 
+def changeEffekt():
+    visualization_effect = visualize_scroll
 
 if __name__ == '__main__':
     if config.USE_GUI:
