@@ -255,6 +255,7 @@ visualization_effect = visualize_energy
 """Visualization effect to display on the LED strip"""
 
 def changeEffekt():
+    print("Change effekt \n")
     visualization_effect = visualize_scroll
 
 if __name__ == '__main__':
