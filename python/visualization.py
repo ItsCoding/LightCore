@@ -267,7 +267,9 @@ def changeEffekt():
         print(" - ")
         print(_lastTime)
         _lastTime = time.time()
-        visualization_effect = random.choice(elements.copy().remove(visualization_effect))
+        copyArray = elements.copy()
+        copyArray.remove(visualization_effect)
+        visualization_effect = random.choice(copyArray)
 
 if __name__ == '__main__':
     if config.USE_GUI:
