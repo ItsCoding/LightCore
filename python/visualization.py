@@ -261,7 +261,7 @@ def checkIfDrop():
     rCheck = all(v == 0 for v in led.pixels[0])
     gCheck = all(v == 0 for v in led.pixels[1])
     bCheck = all(v == 0 for v in led.pixels[2])
-    return (rCheck && gCheck && bCheck && (time.time() - _lastTime >= 30))
+    return (rCheck and gCheck and bCheck and (time.time() - _lastTime >= 30))
 
 def minute_passed():
     return time.time() - _lastTime >= _randomWait
