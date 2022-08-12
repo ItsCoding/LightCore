@@ -246,6 +246,7 @@ def microphone_update(audio_samples):
         if time.time() - 0.5 > prev_fps_update:
             prev_fps_update = time.time()
             print('FPS {:.0f} / {:.0f}'.format(fps, config.FPS))
+    clear()
 
 
 # Number of audio samples to read every time frame
@@ -272,6 +273,9 @@ def changeEffekt():
     global _lastTime, visualization_effect,visualize_spectrum,visualize_energy,visualize_scroll,_randomWait
     elements = [visualize_spectrum,visualize_energy,visualize_scroll]
     timeToChange = minute_passed()
+    print(led.pixels[0])
+    print(led.pixels[1])
+    print(led.pixels[2])
     if(checkIfDrop()):
         print("DROOOOOOOP!!!")
         timeToChange = True
@@ -281,10 +285,6 @@ def changeEffekt():
         _lastTime = time.time()
         _randomWait = random.randrange(1, 120, 1)
         print(_randomWait)
-        print(led.pixels[0])
-        print(led.pixels[1])
-        print(led.pixels[2d])
-        clear()
         copyArray = elements.copy()
         copyArray.remove(visualization_effect)
         visualization_effect = random.choice(copyArray)
