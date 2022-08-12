@@ -267,7 +267,7 @@ def changeEffekt():
         print("Change Effekt \n")
         #print(output)
         _lastTime = time.time()
-        _randomWait = random.randrange(5, 5, 1)
+        _randomWait = random.randrange(2, 6, 1)
         print(_randomWait)
         print(led.pixels[0])
         copyArray = elements.copy()
