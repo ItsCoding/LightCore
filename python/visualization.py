@@ -8,6 +8,8 @@ import microphone
 import dsp
 import led
 import random
+import os
+clear = lambda: os.system('clear')
 
 _time_prev = time.time() * 1000.0
 """The previous time that the frames_per_second() function was called"""
@@ -280,6 +282,9 @@ def changeEffekt():
         _randomWait = random.randrange(1, 120, 1)
         print(_randomWait)
         print(led.pixels[0])
+        print(led.pixels[1])
+        print(led.pixels[2d])
+        clear()
         copyArray = elements.copy()
         copyArray.remove(visualization_effect)
         visualization_effect = random.choice(copyArray)
