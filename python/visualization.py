@@ -273,17 +273,22 @@ def changeEffekt():
     global _lastTime, visualization_effect,visualize_spectrum,visualize_energy,visualize_scroll,_randomWait
     elements = [visualize_spectrum,visualize_energy,visualize_scroll]
     timeToChange = minute_passed()
+    dropDetected = checkIfDrop()
     #print(led.pixels[0])
     #print(led.pixels[1])
     #print(led.pixels[2])
-    if(checkIfDrop()):
+
+    if(dropDetected):
         print("DROOOOOOOP!!!")
-        timeToChange = True
-    if(timeToChange):
+    if(timeToChange or dropDetected):
         print("Change Effekt \n")
         #print(output)
         _lastTime = time.time()
-        _randomWait = random.randrange(1, 120, 1)
+        _randomWait = 0
+        if(dropDetected):
+            _randomWait = random.randrange(60, 120, 1)
+        else:
+            _randomWait = random.randrange(1, 120, 1)
         print(_randomWait)
         copyArray = elements.copy()
         copyArray.remove(visualization_effect)
