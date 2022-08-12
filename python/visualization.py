@@ -257,17 +257,27 @@ y_roll = np.random.rand(config.N_ROLLING_HISTORY, samples_per_frame) / 1e16
 visualization_effect = visualize_energy
 """Visualization effect to display on the LED strip"""
 
+def checkIfDrop(): 
+    rCheck = all(v == 0 for v in led.pixels[0])
+    gCheck = all(v == 0 for v in led.pixels[1])
+    bCheck = all(v == 0 for v in led.pixels[2])
+    return (rCheck && gCheck && bCheck && (time.time() - _lastTime >= 30))
+
 def minute_passed():
     return time.time() - _lastTime >= _randomWait
 
 def changeEffekt():
     global _lastTime, visualization_effect,visualize_spectrum,visualize_energy,visualize_scroll,_randomWait
     elements = [visualize_spectrum,visualize_energy,visualize_scroll]
-    if(minute_passed()):
+    timeToChange = minute_passed()
+    if(checkIfDrop()):
+        print("DROOOOOOOP!!!")
+        timeToChange = True
+    if(timeToChange):
         print("Change Effekt \n")
         #print(output)
         _lastTime = time.time()
-        _randomWait = random.randrange(2, 6, 1)
+        _randomWait = random.randrange(1, 120, 1)
         print(_randomWait)
         print(led.pixels[0])
         copyArray = elements.copy()
