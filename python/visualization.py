@@ -264,7 +264,7 @@ def checkIfDrop():
     rCheck = all(v == 0 for v in led.pixels[0])
     gCheck = all(v == 0 for v in led.pixels[1])
     bCheck = all(v == 0 for v in led.pixels[2])
-    return (rCheck and gCheck and bCheck and (time.time() - _lastTime >= 30))
+    return (rCheck and gCheck and bCheck and (time.time() - _lastTime >= 10))
 
 def minute_passed():
     return time.time() - _lastTime >= _randomWait
@@ -273,9 +273,9 @@ def changeEffekt():
     global _lastTime, visualization_effect,visualize_spectrum,visualize_energy,visualize_scroll,_randomWait
     elements = [visualize_spectrum,visualize_energy,visualize_scroll]
     timeToChange = minute_passed()
-    print(led.pixels[0])
-    print(led.pixels[1])
-    print(led.pixels[2])
+    #print(led.pixels[0])
+    #print(led.pixels[1])
+    #print(led.pixels[2])
     if(checkIfDrop()):
         print("DROOOOOOOP!!!")
         timeToChange = True
