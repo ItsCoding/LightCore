@@ -38,7 +38,7 @@ def frames_per_second():
         to reduce noise.
     """
     global _time_prev, _fps
-    changeEffekt()
+    #changeEffekt()
     time_now = time.time() * 1000.0
     dt = time_now - _time_prev
     _time_prev = time_now
@@ -111,9 +111,11 @@ gain = dsp.ExpFilter(np.tile(0.01, config.N_FFT_BINS),
 def visualize_scroll(y):
     """Effect that originates in the center and scrolls outwards"""
     global p
-    y = y**2.0
+    # print(y)
+    y = y**3
     gain.update(y)
-    y /= gain.value
+    # print(gain.value)
+    y /= gain.value / 10
     y *= 255.0
     r = int(np.max(y[:len(y) // 3]))
     g = int(np.max(y[len(y) // 3: 2 * len(y) // 3]))
@@ -135,7 +137,7 @@ def visualize_energy(y):
     global p
     y = np.copy(y)
     gain.update(y)
-    y /= gain.value
+    y /= gain.value / 1.1
     # Scale by the width of the LED strip
     y *= float((config.N_PIXELS // 2) - 1)
     # Map color channels according to energy in the different freq bands
@@ -257,7 +259,7 @@ y_roll = np.random.rand(config.N_ROLLING_HISTORY, samples_per_frame) / 1e16
 
 #visualization_effect = visualize_spectrum
 #visualization_effect = visualize_scroll
-visualization_effect = visualize_energy
+visualization_effect = visualize_scroll
 """Visualization effect to display on the LED strip"""
 
 def checkIfDrop(): 
