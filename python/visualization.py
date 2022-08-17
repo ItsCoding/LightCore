@@ -8,6 +8,8 @@ import microphone
 import dsp
 import led
 import random
+import os
+clear = lambda: os.system('clear')
 
 _time_prev = time.time() * 1000.0
 """The previous time that the frames_per_second() function was called"""
@@ -36,7 +38,7 @@ def frames_per_second():
         to reduce noise.
     """
     global _time_prev, _fps
-    changeEffekt()
+    #changeEffekt()
     time_now = time.time() * 1000.0
     dt = time_now - _time_prev
     _time_prev = time_now
@@ -109,9 +111,11 @@ gain = dsp.ExpFilter(np.tile(0.01, config.N_FFT_BINS),
 def visualize_scroll(y):
     """Effect that originates in the center and scrolls outwards"""
     global p
-    y = y**2.0
+    # print(y)
+    y = y**3
     gain.update(y)
-    y /= gain.value
+    # print(gain.value)
+    y /= gain.value / 10
     y *= 255.0
     r = int(np.max(y[:len(y) // 3]))
     g = int(np.max(y[len(y) // 3: 2 * len(y) // 3]))
@@ -133,7 +137,7 @@ def visualize_energy(y):
     global p
     y = np.copy(y)
     gain.update(y)
-    y /= gain.value
+    y /= gain.value / 1.1
     # Scale by the width of the LED strip
     y *= float((config.N_PIXELS // 2) - 1)
     # Map color channels according to energy in the different freq bands
@@ -244,6 +248,7 @@ def microphone_update(audio_samples):
         if time.time() - 0.5 > prev_fps_update:
             prev_fps_update = time.time()
             print('FPS {:.0f} / {:.0f}'.format(fps, config.FPS))
+    
 
 
 # Number of audio samples to read every time frame
@@ -254,8 +259,14 @@ y_roll = np.random.rand(config.N_ROLLING_HISTORY, samples_per_frame) / 1e16
 
 #visualization_effect = visualize_spectrum
 #visualization_effect = visualize_scroll
-visualization_effect = visualize_energy
+visualization_effect = visualize_scroll
 """Visualization effect to display on the LED strip"""
+
+def checkIfDrop(): 
+    rCheck = all(v == 0 for v in led.pixels[0])
+    gCheck = all(v == 0 for v in led.pixels[1])
+    bCheck = all(v == 0 for v in led.pixels[2])
+    return (rCheck and gCheck and bCheck and (time.time() - _lastTime >= 10))
 
 def minute_passed():
     return time.time() - _lastTime >= _randomWait
@@ -263,13 +274,24 @@ def minute_passed():
 def changeEffekt():
     global _lastTime, visualization_effect,visualize_spectrum,visualize_energy,visualize_scroll,_randomWait
     elements = [visualize_spectrum,visualize_energy,visualize_scroll]
-    if(minute_passed()):
+    timeToChange = minute_passed()
+    dropDetected = checkIfDrop()
+    #print(led.pixels[0])
+    #print(led.pixels[1])
+    #print(led.pixels[2])
+
+    if(dropDetected):
+        print("DROOOOOOOP!!!")
+    if(timeToChange or dropDetected):
         print("Change Effekt \n")
         #print(output)
         _lastTime = time.time()
-        _randomWait = random.randrange(5, 5, 1)
+        _randomWait = 0
+        if(dropDetected):
+            _randomWait = random.randrange(60, 120, 1)
+        else:
+            _randomWait = random.randrange(1, 120, 1)
         print(_randomWait)
-        print(led.pixels[0])
         copyArray = elements.copy()
         copyArray.remove(visualization_effect)
         visualization_effect = random.choice(copyArray)

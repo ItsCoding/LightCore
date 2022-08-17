@@ -4,7 +4,7 @@ from __future__ import division
 import os
 
 #DEVICE = 'esp8266'
-DEVICE = 'pi'
+DEVICE = 'virtual'
 """Device used to control LED strip. Must be 'pi',  'esp8266' or 'blinkstick'
 
 'esp8266' means that you are using an ESP8266 module to control the LED strip
@@ -42,8 +42,11 @@ if DEVICE == 'pi':
 if DEVICE == 'blinkstick':
     SOFTWARE_GAMMA_CORRECTION = True
     """Set to True because blinkstick doesn't use hardware dithering"""
-
-USE_GUI = False
+if DEVICE == "virtual":
+    SOFTWARE_GAMMA_CORRECTION = True
+    
+BRIGHTNESS = 255
+USE_GUI = True
 """Whether or not to display a PyQtGraph GUI plot of visualization"""
 
 DISPLAY_FPS = True
@@ -77,13 +80,13 @@ depends on how long the LED strip is.
 _max_led_FPS = int(((N_PIXELS * 30e-6) + 50e-6)**-1.0)
 assert FPS <= _max_led_FPS, 'FPS must be <= {}'.format(_max_led_FPS)
 
-MIN_FREQUENCY = 50
+MIN_FREQUENCY = 0
 """Frequencies below this value will be removed during audio processing"""
 
 MAX_FREQUENCY = 12000
 """Frequencies above this value will be removed during audio processing"""
 
-N_FFT_BINS = 24
+N_FFT_BINS = 32
 """Number of frequency bins to use when transforming audio to frequency domain
 
 Fast Fourier transforms are used to transform time-domain audio data to the

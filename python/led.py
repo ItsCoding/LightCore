@@ -4,9 +4,16 @@ from __future__ import division
 import platform
 import numpy as np
 import config
+import json
 
 # ESP8266 uses WiFi communication
-if config.DEVICE == 'esp8266':
+if config.DEVICE == 'virtual':
+    import socket
+    _sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_address = ('127.0.0.1', 9000)
+    _sock.connect(server_address)
+
+elif config.DEVICE == 'esp8266':
     import socket
     _sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 # Raspberry Pi controls the LED strip directly
@@ -42,7 +49,7 @@ pixels = np.tile(1, (3, config.N_PIXELS))
 
 _is_python_2 = int(platform.python_version_tuple()[0]) == 2
 
-def _update_esp8266():
+def _update_virtual():
     """Sends UDP packets to ESP8266 to update LED strip values
 
     The ESP8266 will receive and decode the packets to determine what values
@@ -56,6 +63,20 @@ def _update_esp8266():
         r (0 to 255): Red value of LED
         g (0 to 255): Green value of LED
         b (0 to 255): Blue value of LED
+    """
+    global pixels, _prev_pixels
+    # Truncate values and cast to integer
+    pixels = np.clip(pixels, 0, 255).astype(int)
+    # Optional gamma correction
+    p = _gamma[pixels] if config.SOFTWARE_GAMMA_CORRECTION else np.copy(pixels)
+    _prev_pixels = np.copy(p)
+    # print(p)
+    # print("===========================")
+    _sock.send(json.dumps(p.tolist()).encode())
+    #strip.show()
+
+def _update_esp8266():
+    """Sends TCP packets to c# virtualizer
     """
     global pixels, _prev_pixels
     # Truncate values and cast to integer
@@ -138,7 +159,9 @@ def _update_blinkstick():
 
 def update():
     """Updates the LED strip values"""
-    if config.DEVICE == 'esp8266':
+    if config.DEVICE == 'virtual':
+        _update_virtual()
+    elif config.DEVICE == 'esp8266':
         _update_esp8266()
     elif config.DEVICE == 'pi':
         _update_pi()
