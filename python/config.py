@@ -61,7 +61,7 @@ GAMMA_TABLE_PATH = os.path.join(os.path.dirname(__file__), 'gamma_table.npy')
 MIC_RATE = 44100
 """Sampling frequency of the microphone in Hz"""
 
-FPS = 60
+FPS = 90
 """Desired refresh rate of the visualization (frames per second)
 
 FPS indicates the desired refresh rate, or frames-per-second, of the audio
@@ -106,3 +106,7 @@ N_ROLLING_HISTORY = 2
 
 MIN_VOLUME_THRESHOLD = 1e-7
 """No music visualization displayed if recorded audio volume below threshold"""
+
+
+STRIP_COUNT = 2
+STRIP_LED_COUNTS = [100,90]

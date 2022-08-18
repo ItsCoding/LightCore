@@ -1,10 +1,15 @@
+from asyncio.windows_events import NULL
+import datetime
+import multiprocessing
+import signal
 import time
 import numpy as np
 import pyaudio
 import config
 
-
-def start_stream(callback):
+threa = None
+def task(callback):
+    global killMe
     p = pyaudio.PyAudio()
     frames_per_buffer = int(config.MIC_RATE / config.FPS)
     stream = p.open(format=pyaudio.paInt16,
@@ -28,3 +33,25 @@ def start_stream(callback):
     stream.stop_stream()
     stream.close()
     p.terminate()
+
+def start_stream(callback):
+    global thread
+    if not config.USE_GUI:
+        print('Starting audio stream in separate thread...')
+        thread = multiprocessing.Process(target=task, args=(callback,))
+        thread.start()
+        while thread.is_alive():
+            time.sleep(0.2)
+    else:
+        print("Running on same threrad as GUI")
+        task(callback)
+
+def signal_handler(sig, frame):
+    global thread
+    if thread:
+        thread.terminate()
+    print('You pressed Ctrl+C!')
+    exit(1)
+
+signal.signal(signal.SIGINT, signal_handler)
+

@@ -1,5 +1,7 @@
 from __future__ import print_function
 from __future__ import division
+import signal
+import sys
 import time
 import numpy as np
 from scipy.ndimage.filters import gaussian_filter1d
@@ -12,11 +14,17 @@ import os
 import effekts.scroll as scrollEffekt
 import effekts.energy as energyEffekt
 import effekts.spectrum as spectrumEffekt
-
+import composer
+from customTypes.frequencyRange import FrequencyRange
 # Import our visualization effect functions
 visualize_scroll = scrollEffekt.visualize_scroll
 visualize_energy = energyEffekt.visualize_energy
 visualize_spectrum = spectrumEffekt.visualize_spectrum
+
+composer.addEffekt(visualize_scroll,FrequencyRange.ALL,0,75,100)
+composer.addEffekt(visualize_scroll,FrequencyRange.ALL,0,0,25)
+composer.addEffekt(visualize_energy,FrequencyRange.ALL,0,25,75)
+
 
 # Setting Global Vars
 clear = lambda: os.system('clear')
@@ -108,7 +116,14 @@ def microphone_update(audio_samples):
         mel /= mel_gain.value
         mel = mel_smoothing.update(mel)
         # Map filterbank output onto LED strip
-        output = visualization_effect(mel)
+        
+        # mel = np.concatenate((mel[:6],np.full(26,0)),axis=0)
+        composerOutput = composer.getComposition(mel)
+        output = composerOutput[0].getLEDS()
+        # print(output)
+        # output = visualization_effect(mel)
+        # output += visualize_energy(mel)
+
         led.pixels = output
         led.update()
         if config.USE_GUI:
@@ -124,13 +139,11 @@ def microphone_update(audio_samples):
     
     if config.DISPLAY_FPS:
         fps = frames_per_second()
-        if time.time() - 0.5 > prev_fps_update:
+        if time.time() - 1 > prev_fps_update:
             prev_fps_update = time.time()
             print('FPS {:.0f} / {:.0f}'.format(fps, config.FPS))
 
 
-=======
->>>>>>> 77ce743010a9cd904252cbd52c4a49ae3cf31228
 def checkIfDrop(): 
     rCheck = all(v == 0 for v in led.pixels[0])
     gCheck = all(v == 0 for v in led.pixels[1])
@@ -164,6 +177,8 @@ def changeEffekt():
         copyArray = elements.copy()
         copyArray.remove(visualization_effect)
         visualization_effect = random.choice(copyArray)
+
+
 
 if __name__ == '__main__':
     if config.USE_GUI:
