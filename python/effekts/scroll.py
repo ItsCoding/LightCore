@@ -6,11 +6,14 @@ from scipy.ndimage.filters import gaussian_filter1d
 
 gain = dsp.ExpFilter(np.tile(0.01, config.N_FFT_BINS),
                      alpha_decay=0.001, alpha_rise=0.99)
-p = np.tile(1.0, (3, config.N_PIXELS // 2))
 
-def visualize_scroll(y):
+p = None
+def visualize_scroll(y,stripSize):
     """Effect that originates in the center and scrolls outwards"""
     global p
+    if(p is None):
+        p = np.tile(1.0, (3, stripSize // 2))
+
     # p = np.tile(1.0, (3, config.N_PIXELS // 2))
     # print(y)
     y = y**3

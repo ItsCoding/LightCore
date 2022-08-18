@@ -1,5 +1,7 @@
 from __future__ import print_function
 from __future__ import division
+import signal
+import sys
 import time
 import numpy as np
 from scipy.ndimage.filters import gaussian_filter1d
@@ -12,17 +14,12 @@ import os
 import effekts.scroll as scrollEffekt
 import effekts.energy as energyEffekt
 import effekts.spectrum as spectrumEffekt
-import effekts.random as randomEffekt
-
+import composer
+from customTypes.frequencyRange import FrequencyRange
 # Import our visualization effect functions
 visualize_scroll = scrollEffekt.visualize_scroll
 visualize_energy = energyEffekt.visualize_energy
 visualize_spectrum = spectrumEffekt.visualize_spectrum
-visualize_random = randomEffekt.visualize_random
-
-# Set the visualization effect to be used
-visualization_effect = visualize_random
-
 
 # Setting Global Vars
 clear = lambda: os.system('clear')
@@ -92,8 +89,8 @@ def microphone_update(audio_samples):
     vol = np.max(np.abs(y_data))
     if vol < config.MIN_VOLUME_THRESHOLD:
         print('No audio input. Volume below threshold. Volume:', vol)
-        led.pixels = np.tile(0, (3, config.N_PIXELS))
-        led.update()
+        # led.pixels = np.tile(0, (3, config.N_PIXELS))
+        # led.update()
     else:
         # Transform audio input into the frequency domain
         N = len(y_data)
@@ -113,9 +110,16 @@ def microphone_update(audio_samples):
         mel /= mel_gain.value
         mel = mel_smoothing.update(mel)
         # Map filterbank output onto LED strip
-        output = visualization_effect(mel)
+        
+        # mel = np.concatenate((mel[:6],np.full(26,0)),axis=0)
+        composerOutput = composer.getComposition(mel)
+        output = composerOutput[0].getLEDS()
+        # print(output)
+        # output = visualization_effect(mel)
+        # output += visualize_energy(mel)
+
         led.pixels = output
-        led.update()
+        led.update(composerOutput)
         if config.USE_GUI:
             # Plot filterbank output
             x = np.linspace(config.MIN_FREQUENCY, config.MAX_FREQUENCY, len(mel))
@@ -129,7 +133,7 @@ def microphone_update(audio_samples):
     
     if config.DISPLAY_FPS:
         fps = frames_per_second()
-        if time.time() - 0.5 > prev_fps_update:
+        if time.time() - 1 > prev_fps_update:
             prev_fps_update = time.time()
             print('FPS {:.0f} / {:.0f}'.format(fps, config.FPS))
 
@@ -167,6 +171,8 @@ def changeEffekt():
         copyArray = elements.copy()
         copyArray.remove(visualization_effect)
         visualization_effect = random.choice(copyArray)
+
+
 
 if __name__ == '__main__':
     if config.USE_GUI:
@@ -284,10 +290,7 @@ if __name__ == '__main__':
         layout.addItem(energy_label)
         layout.addItem(scroll_label)
         layout.addItem(spectrum_label)
-        layout.addItem(random_label)
-
-
     # Initialize LEDs
-    led.update()
+    # led.update()
     # Start listening to live audio stream
     microphone.start_stream(microphone_update)
