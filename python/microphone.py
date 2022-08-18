@@ -8,7 +8,7 @@ import pyaudio
 import config
 
 threa = None
-def task(callback):
+def start_stream(callback):
     global killMe
     p = pyaudio.PyAudio()
     frames_per_buffer = int(config.MIC_RATE / config.FPS)
@@ -34,24 +34,24 @@ def task(callback):
     stream.close()
     p.terminate()
 
-def start_stream(callback):
-    global thread
-    if not config.USE_GUI:
-        print('Starting audio stream in separate thread...')
-        thread = multiprocessing.Process(target=task, args=(callback,))
-        thread.start()
-        while thread.is_alive():
-            time.sleep(0.2)
-    else:
-        print("Running on same threrad as GUI")
-        task(callback)
+# def start_stream(callback):
+#     global thread
+#     if not config.USE_GUI:
+#         print('Starting audio stream in separate thread...')
+#         thread = multiprocessing.Process(target=task, args=(callback,))
+#         thread.start()
+#         while thread.is_alive():
+#             time.sleep(0.2)
+#     else:
+#         print("Running on same threrad as GUI")
+#         task(callback)
 
-def signal_handler(sig, frame):
-    global thread
-    if thread:
-        thread.terminate()
-    print('You pressed Ctrl+C!')
-    exit(1)
+# def signal_handler(sig, frame):
+#     global thread
+#     if thread:
+#         thread.terminate()
+#     print('You pressed Ctrl+C!')
+#     exit(1)
 
-signal.signal(signal.SIGINT, signal_handler)
+# signal.signal(signal.SIGINT, signal_handler)
 
