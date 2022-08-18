@@ -108,6 +108,59 @@ gain = dsp.ExpFilter(np.tile(0.01, config.N_FFT_BINS),
                      alpha_decay=0.001, alpha_rise=0.99)
 
 
+# TODO: Create new effect 
+
+def visualize_random_effect(y):
+    global p
+    # random_array = np.random.rand(config.N_FFT_BINS,) # create a 32-bin array 
+    # y += random_array # take the input array y to the power of the random_array values
+    y = np.copy(y)
+
+    y = y**3
+    gain.update(y)
+    y /= gain.value / 10
+
+    y *= 25.0 # translate to RGB values
+
+    print('Y IS: ', y)
+    # set each color
+    r = int(np.max(y[:len(y) // 3]))
+    g = int(np.max(y[len(y) // 3: 2 * len(y) // 3]))
+    b = int(np.max(y[2 * len(y) // 3:]))
+
+    print("RGB is {} , {} , {}".format(r, g, b))
+    # assign each color to the p array
+    p[0, 0] = r
+    p[1, 0] = g
+    p[2, 0] = b
+
+    return np.concatenate((p[:, ::-1], p), axis=1)
+
+def visualize_energy_scroll(y):
+    """Effect that combines energy and scroll """
+    global p
+    print("Y of shape {} is: {}".format(y.shape,y))
+    print("p is: ",p)
+    y **= 3
+    gain.update(y)
+    # print(gain.value)
+    y /= gain.value / 10
+    y *= 255.0
+    r = int(np.max(y[:len(y) // 3]))
+    g = int(np.max(y[len(y) // 3: 2 * len(y) // 3]))
+    b = int(np.max(y[2 * len(y) // 3:]))
+    # Scrolling effect window
+    p[:, 1:] = p[:, :-1]
+    p *= 0.98
+    p = gaussian_filter1d(p, sigma=0.2)
+    # Create new color originating at the center
+    p[0, 0] = r
+    p[1, 0] = g
+    p[2, 0] = b
+    # Update the LED strip
+    return np.concatenate((p[:, ::-1], p), axis=1)
+
+
 def visualize_scroll(y):
     """Effect that originates in the center and scrolls outwards"""
     global p
@@ -258,8 +311,9 @@ samples_per_frame = int(config.MIC_RATE / config.FPS)
 y_roll = np.random.rand(config.N_ROLLING_HISTORY, samples_per_frame) / 1e16
 
 #visualization_effect = visualize_spectrum
-#visualization_effect = visualize_scroll
-visualization_effect = visualize_scroll
+# visualization_effect = visualize_scroll
+# visualization_effect = visualize_energy_scroll
+visualization_effect = visualize_random_effect
 """Visualization effect to display on the LED strip"""
 
 def checkIfDrop(): 
@@ -272,7 +326,7 @@ def minute_passed():
     return time.time() - _lastTime >= _randomWait
 
 def changeEffekt():
-    global _lastTime, visualization_effect,visualize_spectrum,visualize_energy,visualize_scroll,_randomWait
+    global _lastTime, visualization_effect,visualize_spectrum,visualize_energy,visualize_scroll, _randomWait
     elements = [visualize_spectrum,visualize_energy,visualize_scroll]
     timeToChange = minute_passed()
     dropDetected = checkIfDrop()
@@ -384,7 +438,7 @@ if __name__ == '__main__':
         energy_label.mousePressEvent = energy_click
         scroll_label.mousePressEvent = scroll_click
         spectrum_label.mousePressEvent = spectrum_click
-        energy_click(0)
+        # energy_click(0)
         # Layout
         layout.nextRow()
         layout.addItem(freq_label, colspan=3)
