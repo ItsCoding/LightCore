@@ -43,7 +43,7 @@ if DEVICE == 'blinkstick':
     SOFTWARE_GAMMA_CORRECTION = True
     """Set to True because blinkstick doesn't use hardware dithering"""
 if DEVICE == "virtual":
-    SOFTWARE_GAMMA_CORRECTION = True
+    SOFTWARE_GAMMA_CORRECTION = False
     
 BRIGHTNESS = 255
 USE_GUI = True
@@ -109,4 +109,4 @@ MIN_VOLUME_THRESHOLD = 1e-7
 
 
 STRIP_COUNT = 2
-STRIP_LED_COUNTS = [100,90]
+STRIP_LED_COUNTS = [100,180]

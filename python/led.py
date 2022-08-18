@@ -49,30 +49,25 @@ pixels = np.tile(1, (3, config.N_PIXELS))
 
 _is_python_2 = int(platform.python_version_tuple()[0]) == 2
 
-def _update_virtual():
-    """Sends UDP packets to ESP8266 to update LED strip values
+def _update_virtual(composing):
 
-    The ESP8266 will receive and decode the packets to determine what values
-    to display on the LED strip. The communication protocol supports LED strips
-    with a maximum of 256 LEDs.
-
-    The packet encoding scheme is:
-        |i|r|g|b|
-    where
-        i (0 to 255): Index of LED to change (zero-based)
-        r (0 to 255): Red value of LED
-        g (0 to 255): Green value of LED
-        b (0 to 255): Blue value of LED
-    """
     global pixels, _prev_pixels
+    frameDict = {}
+    # sumPixels = np.array([[],[],[]])
+    for key in composing:
+        frame = composing[key].getLEDS()
+        frame = np.clip(frame, 0, 255).astype(int)
+        frame = _gamma[frame] if config.SOFTWARE_GAMMA_CORRECTION else np.copy(frame)
+        # sumPixels += frame
+        frameDict[key] = frame.tolist()
+
     # Truncate values and cast to integer
-    pixels = np.clip(pixels, 0, 255).astype(int)
+    
     # Optional gamma correction
-    p = _gamma[pixels] if config.SOFTWARE_GAMMA_CORRECTION else np.copy(pixels)
-    _prev_pixels = np.copy(p)
+    # _prev_pixels = np.copy(sumPixels)
     # print(p)
     # print("===========================")
-    _sock.send(json.dumps(p.tolist()).encode())
+    _sock.send(json.dumps(frameDict).encode())
     #strip.show()
 
 def _update_esp8266():
@@ -157,16 +152,19 @@ def _update_blinkstick():
     stick.set_led_data(0, newstrip)
 
 
-def update():
+def update(composing):
     """Updates the LED strip values"""
     if config.DEVICE == 'virtual':
-        _update_virtual()
+        _update_virtual(composing)
     elif config.DEVICE == 'esp8266':
-        _update_esp8266()
+        # _update_esp8266()
+        raise Exception('Composition Output not implemented')
     elif config.DEVICE == 'pi':
-        _update_pi()
+         raise Exception('Composition Output not implemented')
+        # _update_pi()
     elif config.DEVICE == 'blinkstick':
-        _update_blinkstick()
+         raise Exception('Composition Output not implemented')
+        # _update_blinkstick()
     else:
         raise ValueError('Invalid device selected')
 

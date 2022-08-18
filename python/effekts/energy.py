@@ -7,18 +7,23 @@ gain = dsp.ExpFilter(np.tile(0.01, config.N_FFT_BINS),
                      alpha_decay=0.001, alpha_rise=0.99)
                      
 
-p_filt = dsp.ExpFilter(np.tile(1, (3, config.N_PIXELS // 2)),
-                       alpha_decay=0.1, alpha_rise=0.99)
-p = np.tile(1.0, (3, config.N_PIXELS // 2))
+p_filt = None
+p = None
 
-def visualize_energy(y):
+def visualize_energy(y,stripSize):
     """Effect that expands from the center with increasing sound energy"""
-    global p
+    global p, p_filt
+    
+    if(p is None):
+        p = np.tile(1.0, (3, stripSize // 2))
+        p_filt =  dsp.ExpFilter(np.tile(1, (3, stripSize // 2)),
+                       alpha_decay=0.1, alpha_rise=0.99)
+
     y = np.copy(y)
     gain.update(y)
     y /= gain.value / 1.1
     # Scale by the width of the LED strip
-    y *= float((config.N_PIXELS // 2) - 1)
+    y *= float((stripSize // 2) - 1)
     # Map color channels according to energy in the different freq bands
     scale = 0.9
     r = int(np.mean(y[:len(y) // 3]**scale))

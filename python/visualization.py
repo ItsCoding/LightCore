@@ -21,9 +21,9 @@ visualize_scroll = scrollEffekt.visualize_scroll
 visualize_energy = energyEffekt.visualize_energy
 visualize_spectrum = spectrumEffekt.visualize_spectrum
 
-composer.addEffekt(visualize_scroll,FrequencyRange.ALL,0,75,100)
-composer.addEffekt(visualize_scroll,FrequencyRange.ALL,0,0,25)
-composer.addEffekt(visualize_energy,FrequencyRange.ALL,0,25,75)
+# composer.addEffekt(visualize_scroll,FrequencyRange.ALL,0,75,100)
+composer.addEffekt(visualize_scroll,FrequencyRange.LOW,1,0,180)
+composer.addEffekt(visualize_energy,FrequencyRange.ALL,0,0,100)
 
 
 # Setting Global Vars
@@ -95,8 +95,8 @@ def microphone_update(audio_samples):
     vol = np.max(np.abs(y_data))
     if vol < config.MIN_VOLUME_THRESHOLD:
         print('No audio input. Volume below threshold. Volume:', vol)
-        led.pixels = np.tile(0, (3, config.N_PIXELS))
-        led.update()
+        # led.pixels = np.tile(0, (3, config.N_PIXELS))
+        # led.update()
     else:
         # Transform audio input into the frequency domain
         N = len(y_data)
@@ -125,7 +125,7 @@ def microphone_update(audio_samples):
         # output += visualize_energy(mel)
 
         led.pixels = output
-        led.update()
+        led.update(composerOutput)
         if config.USE_GUI:
             # Plot filterbank output
             x = np.linspace(config.MIN_FREQUENCY, config.MAX_FREQUENCY, len(mel))
@@ -279,6 +279,6 @@ if __name__ == '__main__':
         layout.addItem(scroll_label)
         layout.addItem(spectrum_label)
     # Initialize LEDs
-    led.update()
+    # led.update()
     # Start listening to live audio stream
     microphone.start_stream(microphone_update)

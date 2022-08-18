@@ -26,12 +26,15 @@ def getComposition(frequencyBins):
     frameDict = {}
     effekt: ActiveEffekt
     for effekt in runningEffekts:
+        stipLength = config.STRIP_LED_COUNTS[effekt.stripIndex]
         if not effekt.stripIndex in frameDict:
-            frameDict[effekt.stripIndex] = StripFrame(effekt.stripIndex, config.STRIP_LED_COUNTS[effekt.stripIndex])
+            frameDict[effekt.stripIndex] = StripFrame(effekt.stripIndex, stipLength)
 
         frequencyRange = getFrequencyRangeByEnum(effekt.frequencyRange)
-        tempBins = frequencyBins[frequencyRange[0]:frequencyRange[1]]
-        frameDict[effekt.stripIndex].addFrame(effekt.effekt(tempBins), effekt.ledStartIndex, effekt.ledEndIndex)
+        tempBins = np.tile(0.0, config.N_FFT_BINS)
+        np.put(tempBins, range(frequencyRange[0], frequencyRange[1]), frequencyBins)
+        # tempBins = frequencyBins[frequencyRange[0]:frequencyRange[1]]
+        frameDict[effekt.stripIndex].addFrame(effekt.effekt(tempBins,stipLength), effekt.ledStartIndex, effekt.ledEndIndex)
 
 
 
