@@ -7,15 +7,19 @@ gain = dsp.ExpFilter(np.tile(0.01, config.N_FFT_BINS),
                      alpha_decay=0.001, alpha_rise=0.99)
                      
 
-p_filt = dsp.ExpFilter(np.tile(1, (3, config.N_PIXELS // 2)),
-                       alpha_decay=0.1, alpha_rise=0.99)
-p = np.tile(1.0, (3, config.N_PIXELS // 2))
+p_filt = None
+p = None
 
 # create a combination of ENERGY and SCROLL
 
-def visualize_random(y):
+def visualize_random(y,stripSize):
+    global p, p_filt
+
+    if (p is None):
+        p = np.tile(1.0, (3, stripSize // 2))
+        p_filt = dsp.ExpFilter(np.tile(1, (3, stripSize // 2)),
+                       alpha_decay=0.1, alpha_rise=0.99)
     """Effect that expands from the center with increasing sound energy"""
-    global p
     y = np.copy(y)
 
     print('Y: ', y)
