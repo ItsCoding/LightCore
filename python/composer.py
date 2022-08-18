@@ -1,40 +1,40 @@
+from array import array
 import config
 from customTypes.activeEffekt import ActiveEffekt
 import numpy as np
+import dsp
+
 
 from customTypes.frequencyRange import FrequencyRange
 from customTypes.stripFrame import StripFrame
 runningEffekts: list = []
-
+gain = dsp.ExpFilter(np.tile(0.01, config.N_FFT_BINS),
+                         alpha_decay=0.001, alpha_rise=0.99)
 # Add a new effekt to the composition
-def addEffekt(effekt, frequencyRange: FrequencyRange, stripIndex: int, ledStartIndex: int, ledEndIndex: int):
+def addEffekt(effekt, frequencyRange: array, stripIndex: int, ledStartIndex: int, ledEndIndex: int):
     runningEffekts.append(ActiveEffekt(effekt, frequencyRange, stripIndex, ledStartIndex, ledEndIndex))
 
-def getFrequencyRangeByEnum(frequencyRange: FrequencyRange):
-    if frequencyRange == FrequencyRange.LOW:
-        return 0, config.N_FFT_BINS // 3
-    elif frequencyRange == FrequencyRange.MID:
-        return config.N_FFT_BINS // 3, 2 * config.N_FFT_BINS // 3
-    elif frequencyRange == FrequencyRange.HIGH:
-        return 2 * config.N_FFT_BINS // 3, config.N_FFT_BINS
-    else:
-        return 0, config.N_FFT_BINS
+# def getFrequencyRangeByEnum(frequencyRange: FrequencyRange):
+#    return FrequencyRange[frequencyRange]
 
 
 # Get the renderd composition output
 def getComposition(frequencyBins):
     frameDict = {}
     effekt: ActiveEffekt
+    gain.update(frequencyBins)
     for effekt in runningEffekts:
         stipLength = config.STRIP_LED_COUNTS[effekt.stripIndex]
         if not effekt.stripIndex in frameDict:
             frameDict[effekt.stripIndex] = StripFrame(effekt.stripIndex, stipLength)
 
-        frequencyRange = getFrequencyRangeByEnum(effekt.frequencyRange)
+        frequencyRange = effekt.frequencyRange
         tempBins = np.tile(0.0, config.N_FFT_BINS)
         np.put(tempBins, range(frequencyRange[0], frequencyRange[1]), frequencyBins)
         # tempBins = frequencyBins[frequencyRange[0]:frequencyRange[1]]
-        frameDict[effekt.stripIndex].addFrame(effekt.effekt(tempBins,stipLength), effekt.ledStartIndex, effekt.ledEndIndex)
+        effektResult = effekt.effekt.run(tempBins,stipLength,gain)
+
+        frameDict[effekt.stripIndex].addFrame(effektResult, effekt.ledStartIndex, effekt.ledEndIndex)
 
 
 
