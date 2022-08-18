@@ -12,11 +12,17 @@ import os
 import effekts.scroll as scrollEffekt
 import effekts.energy as energyEffekt
 import effekts.spectrum as spectrumEffekt
+import effekts.random as randomEffekt
 
 # Import our visualization effect functions
 visualize_scroll = scrollEffekt.visualize_scroll
 visualize_energy = energyEffekt.visualize_energy
 visualize_spectrum = spectrumEffekt.visualize_spectrum
+visualize_random = randomEffekt.visualize_random
+
+# Set the visualization effect to be used
+visualization_effect = visualize_random
+
 
 # Setting Global Vars
 clear = lambda: os.system('clear')
@@ -41,8 +47,7 @@ volume = dsp.ExpFilter(config.MIN_VOLUME_THRESHOLD,
 
 fft_window = np.hamming(int(config.MIC_RATE / config.FPS) * config.N_ROLLING_HISTORY)
 prev_fps_update = time.time()
-# Set the visualization effect to be used
-visualization_effect = visualize_scroll
+
 # Number of audio samples to read every time frame
 samples_per_frame = int(config.MIC_RATE / config.FPS)
 # Array containing the rolling audio sample window
@@ -129,8 +134,6 @@ def microphone_update(audio_samples):
             print('FPS {:.0f} / {:.0f}'.format(fps, config.FPS))
 
 
-=======
->>>>>>> 77ce743010a9cd904252cbd52c4a49ae3cf31228
 def checkIfDrop(): 
     rCheck = all(v == 0 for v in led.pixels[0])
     gCheck = all(v == 0 for v in led.pixels[1])
@@ -142,7 +145,7 @@ def minute_passed():
 
 def changeEffekt():
     global _lastTime, visualization_effect,visualize_spectrum,visualize_energy,visualize_scroll, _randomWait
-    elements = [visualize_spectrum,visualize_energy,visualize_scroll]
+    elements = [visualize_spectrum,visualize_energy,visualize_scroll, visualize_random]
     timeToChange = minute_passed()
     dropDetected = checkIfDrop()
     #print(led.pixels[0])
@@ -234,25 +237,43 @@ if __name__ == '__main__':
             energy_label.setText('Energy', color=active_color)
             scroll_label.setText('Scroll', color=inactive_color)
             spectrum_label.setText('Spectrum', color=inactive_color)
+            random_label.setText('Random', color=inactive_color)
+
         def scroll_click(x):
             global visualization_effect
             visualization_effect = visualize_scroll
             energy_label.setText('Energy', color=inactive_color)
             scroll_label.setText('Scroll', color=active_color)
             spectrum_label.setText('Spectrum', color=inactive_color)
+            random_label.setText('Random', color=inactive_color)
+
         def spectrum_click(x):
             global visualization_effect
             visualization_effect = visualize_spectrum
             energy_label.setText('Energy', color=inactive_color)
             scroll_label.setText('Scroll', color=inactive_color)
             spectrum_label.setText('Spectrum', color=active_color)
+            random_label.setText('Random', color=inactive_color)
+
+        def random_click(x):
+            global visualization_effect
+            visualization_effect = visualize_random
+            energy_label.setText('Energy', color=inactive_color)
+            scroll_label.setText('Scroll', color=inactive_color)
+            spectrum_label.setText('Spectrum', color=inactive_color)
+            random_label.setText('Random', color=active_color)
+
         # Create effect "buttons" (labels with click event)
         energy_label = pg.LabelItem('Energy')
         scroll_label = pg.LabelItem('Scroll')
         spectrum_label = pg.LabelItem('Spectrum')
+        random_label = pg.LabelItem('Random')
         energy_label.mousePressEvent = energy_click
         scroll_label.mousePressEvent = scroll_click
         spectrum_label.mousePressEvent = spectrum_click
+        random_label.mousePressEvent = random_click
+
+
         # energy_click(0)
         # Layout
         layout.nextRow()
@@ -263,6 +284,9 @@ if __name__ == '__main__':
         layout.addItem(energy_label)
         layout.addItem(scroll_label)
         layout.addItem(spectrum_label)
+        layout.addItem(random_label)
+
+
     # Initialize LEDs
     led.update()
     # Start listening to live audio stream
