@@ -97,7 +97,7 @@ class Visualization:
             Estimated frames-per-second. This value is low-pass filtered
             to reduce noise.
         """
-        # self.changeEffekt()
+        self.changeEffekt()
         time_now = time.time() * 1000.0
         dt = time_now - self._time_prev
         self._time_prev = time_now

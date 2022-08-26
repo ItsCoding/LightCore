@@ -3,4 +3,4 @@ def handleQueue(queue,vis):
             msg = queue.get()
             print("Got QueueTask: ", msg)
             if msg == "light.random.next":
-                vis.changeEffekt()
+                vis.makeRandomComposition()
