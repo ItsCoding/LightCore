@@ -23,8 +23,8 @@ visualize_spectrum = spectrumEffekt.visualize_spectrum
 visualize_random = randomEffekt.visualize_random
 
 # composer.addEffekt(visualize_scroll,FrequencyRange.ALL,0,75,100)
-composer.addEffekt(visualize_scroll(1),FrequencyRange.low,1,0,180)
-composer.addEffekt(visualize_energy(2),FrequencyRange.high,0,0,100)
+composer.addEffekt(visualize_random(1),FrequencyRange.low,1,0,180)
+composer.addEffekt(visualize_scroll(2),FrequencyRange.high,0,0,100)
 
 
 # Setting Global Vars
