@@ -21,8 +21,8 @@ class visualize_energy:
                         alpha_decay=0.1, alpha_rise=0.99)
 
         y = np.copy(y)
-        gain.update(y)
-        y /= gain.value / 1.1
+        # gain.update(y)
+        y /= gain.value
         # Scale by the width of the LED strip
         y *= float((stripSize // 2) - 1)
         # Map color channels according to energy in the different freq bands

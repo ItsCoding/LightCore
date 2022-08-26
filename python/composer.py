@@ -16,8 +16,13 @@ def addEffekt(effekt, frequencyRange: array, stripIndex: int, ledStartIndex: int
 
 # def getFrequencyRangeByEnum(frequencyRange: FrequencyRange):
 #    return FrequencyRange[frequencyRange]
+def clear():
+    runningEffekts.clear()
 
-
+#needs to be tested
+def removeElementById(id):
+    runningEffekts[:] = [effekt for effekt in runningEffekts if effekt.effekt.id != id]
+    
 # Get the renderd composition output
 def getComposition(frequencyBins):
     frameDict = {}

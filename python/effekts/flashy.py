@@ -5,7 +5,7 @@ from scipy.ndimage.filters import gaussian_filter1d
 
 from misc.interpolate import interpolate
 
-class visualize_spectrum:
+class visualize_flashy:
     def __init__(self,id):
             self.id = id
             # self.p = None
@@ -30,31 +30,45 @@ class visualize_spectrum:
 
         y = np.copy(interpolate(y, config.N_PIXELS // 2))
         self.common_mode.update(y)
-        y = y ** 0.9
+        y = y
         diff = y - self._prev_spectrum
         self._prev_spectrum = np.copy(y)
         # Color channel mappings
-        r = self.r_filt.update(y - self.common_mode.value)
-        g = np.abs(diff)
+        r = np.abs(diff)
+        g = self.r_filt.update(y - self.common_mode.value)
         b = self.b_filt.update(np.copy(y))
         # Mirror the color channels for symmetric output
         r = np.concatenate((r[::-1], r))
         g = np.concatenate((g[::-1], g))
         b = np.concatenate((b[::-1], b))
 
-        # r = [i for i in r if i > 1]
-        # g = [i for i in g if i > 1]
-        # b = [i for i in b if i > 1]
-        # if(len(r) < 1):
-        #     r = np.tile(0, config.N_PIXELS)
-        # if(len(g) < 1):
-        #     g = np.tile(0, config.N_PIXELS)
-        # if(len(b) < 1):
-        #     b = np.tile(0, config.N_PIXELS)
+        r = [i for i in r if i > 0.1]
+        g = [i for i in g if i > 0.1]
+        b = [i for i in b if i > 0.1]
+        if(len(r) < 1):
+            r = np.tile(0, config.N_PIXELS)
+        if(len(g) < 1):
+            g = np.tile(0, config.N_PIXELS)
+        if(len(b) < 1):
+            b = np.tile(0, config.N_PIXELS)
 
-        # r = interpolate(r, stripSize)
-        # g = interpolate(g, stripSize)
-        # b = interpolate(b, stripSize)
+        r = interpolate(r, stripSize)
+        g = interpolate(g, stripSize)
+        b = interpolate(b, stripSize)
+        # print(r)
+        # rT= np.tile(0.0, stripSize) 
+        # gT= np.tile(0.0, stripSize)
+        # bT= np.tile(0.0, stripSize)
+
+        # stripSegments = stripSize // 5
+        # r = np.put(rT, range(stripSegments,stripSegments * 4), r)
+        # g = np.put(gT, range(stripSegments,stripSegments * 4), g)
+        # b = np.put(bT, range(stripSegments,stripSegments * 4), b)
+        # print(r,range(stripSegments,stripSegments * 4))
+
+        # r = gaussian_filter1d(r, sigma=1)
+        # g = gaussian_filter1d(g, sigma=1)
+        # b = gaussian_filter1d(b, sigma=1)
 
         output = np.array([r, g,b]) * 255
         return output

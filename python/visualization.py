@@ -16,6 +16,9 @@ import effekts.energy as energyEffekt
 import effekts.spectrum as spectrumEffekt
 import effekts.scrollExtreme as scrollExtremeEffekt
 import effekts.energyExtreme as energyExtremeEffekt
+import effekts.flashy as flashyEffekt
+import effekts.energyRGB as energyRGBEffekt
+import effekts.multipleEnergy as multipleEnergyEffekt
 import composer
 from customTypes.frequencyRange import FrequencyRange
 # Import our visualization effect functions
@@ -25,10 +28,13 @@ visualize_spectrum = spectrumEffekt.visualize_spectrum
 visualize_random = randomEffekt.visualize_random
 visualize_scrollExtreme = scrollExtremeEffekt.visualize_scrollExtreme
 visualize_energyExtreme = energyExtremeEffekt.visualize_energyExtreme
+visualize_energyRGB = energyRGBEffekt.visualize_energyRGB
+visualize_flashy = flashyEffekt.visualize_flashy
+visualize_multipleEnergy = multipleEnergyEffekt.visualize_multipleEnergy
 
 # composer.addEffekt(visualize_scroll,FrequencyRange.ALL,0,75,100)
-composer.addEffekt(visualize_energyExtreme(1),FrequencyRange.low,1,0,180)
-composer.addEffekt(visualize_scroll(2),FrequencyRange.midH,0,0,100)
+composer.addEffekt(visualize_multipleEnergy(1),FrequencyRange.all,1,0,180)
+composer.addEffekt(visualize_scroll(2),FrequencyRange.midHigh,0,0,100)
 
 
 # Setting Global Vars
@@ -249,20 +255,28 @@ if __name__ == '__main__':
         active_color = '#16dbeb'
         inactive_color = '#FFFFFF'
         def energy_click(x):
-            global visualization_effect
-            visualization_effect = visualize_energy
+            global visualization_effect, composer
+            # visualization_effect = visualize_energy
+            composer.clear()
+            composer.addEffekt(visualize_energyRGB(1),FrequencyRange.low,1,0,180)
+            composer.addEffekt(visualize_energyExtreme(2),FrequencyRange.midHigh,0,0,100)
             energy_label.setText('Energy', color=active_color)
             scroll_label.setText('Scroll', color=inactive_color)
             spectrum_label.setText('Spectrum', color=inactive_color)
         def scroll_click(x):
             global visualization_effect
-            visualization_effect = visualize_scroll
+            composer.clear()
+            composer.addEffekt(visualize_scroll(1),FrequencyRange.low,1,0,180)
+            composer.addEffekt(visualize_scrollExtreme(2),FrequencyRange.midHigh,0,0,100)
+            # visualization_effect = visualize_scroll
             energy_label.setText('Energy', color=inactive_color)
             scroll_label.setText('Scroll', color=active_color)
             spectrum_label.setText('Spectrum', color=inactive_color)
         def spectrum_click(x):
             global visualization_effect
-            visualization_effect = visualize_spectrum
+            composer.clear()
+            composer.addEffekt(visualize_random(1),FrequencyRange.low,1,0,180)
+            composer.addEffekt(visualize_flashy(2),FrequencyRange.all,0,0,100)
             energy_label.setText('Energy', color=inactive_color)
             scroll_label.setText('Scroll', color=inactive_color)
             spectrum_label.setText('Spectrum', color=active_color)

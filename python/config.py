@@ -83,7 +83,7 @@ assert FPS <= _max_led_FPS, 'FPS must be <= {}'.format(_max_led_FPS)
 MIN_FREQUENCY = 0
 """Frequencies below this value will be removed during audio processing"""
 
-MAX_FREQUENCY = 4000
+MAX_FREQUENCY = 12000
 """Frequencies above this value will be removed during audio processing"""
 
 N_FFT_BINS = 64

@@ -28,7 +28,7 @@ class visualize_slow:
             self.pixel_filt =  dsp.ExpFilter(np.tile(1, (3, stripSize // 2)),
                         alpha_decay=0.1, alpha_rise=0.99)
         y = np.copy(y)
-        gain.update(y)
+        # gain.update(y)
         y /= gain.value / 1.1
 
 

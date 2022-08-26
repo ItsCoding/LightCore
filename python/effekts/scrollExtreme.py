@@ -21,12 +21,12 @@ class visualize_scrollExtreme:
         y = y**3
         # gain.update(y)
         # print(self.gain.value)
-        y /= gain.value / 10
+        y /= gain.value
         y *= 255.0
 
         y = [i for i in y if i > 0.05]
         if len(y) < 3:
-            y = np.tile(0.0, config.N_FFT_BINS)
+            y = np.tile(0.1, config.N_FFT_BINS)
         y = np.copy(y)
         r = int(np.max(y[:len(y) // 3]))
         g = int(np.max(y[len(y) // 3: 2 * len(y) // 3]))
