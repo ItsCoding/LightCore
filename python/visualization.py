@@ -14,6 +14,8 @@ import os
 import effekts.scroll as scrollEffekt
 import effekts.energy as energyEffekt
 import effekts.spectrum as spectrumEffekt
+import effekts.scrollExtreme as scrollExtremeEffekt
+import effekts.energyExtreme as energyExtremeEffekt
 import composer
 from customTypes.frequencyRange import FrequencyRange
 # Import our visualization effect functions
@@ -21,10 +23,12 @@ visualize_scroll = scrollEffekt.visualize_scroll
 visualize_energy = energyEffekt.visualize_energy
 visualize_spectrum = spectrumEffekt.visualize_spectrum
 visualize_random = randomEffekt.visualize_random
+visualize_scrollExtreme = scrollExtremeEffekt.visualize_scrollExtreme
+visualize_energyExtreme = energyExtremeEffekt.visualize_energyExtreme
 
 # composer.addEffekt(visualize_scroll,FrequencyRange.ALL,0,75,100)
-composer.addEffekt(visualize_random(1),FrequencyRange.low,1,0,180)
-composer.addEffekt(visualize_scroll(2),FrequencyRange.high,0,0,100)
+composer.addEffekt(visualize_energyExtreme(1),FrequencyRange.low,1,0,180)
+composer.addEffekt(visualize_scroll(2),FrequencyRange.midH,0,0,100)
 
 
 # Setting Global Vars
