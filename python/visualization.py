@@ -1,5 +1,6 @@
 from __future__ import print_function
 from __future__ import division
+import random
 import signal
 import sys
 import time
@@ -19,6 +20,7 @@ import effekts.energyExtreme as energyExtremeEffekt
 import effekts.flashy as flashyEffekt
 import effekts.energyRGB as energyRGBEffekt
 import effekts.multipleEnergy as multipleEnergyEffekt
+import effekts.rotatingEnergy as rotatingEnergyEffekt
 import composer
 from customTypes.frequencyRange import FrequencyRange
 # Import our visualization effect functions
@@ -31,10 +33,11 @@ visualize_energyExtreme = energyExtremeEffekt.visualize_energyExtreme
 visualize_energyRGB = energyRGBEffekt.visualize_energyRGB
 visualize_flashy = flashyEffekt.visualize_flashy
 visualize_multipleEnergy = multipleEnergyEffekt.visualize_multipleEnergy
+visualize_rotatingEnergy = rotatingEnergyEffekt.visualize_rotatingEnergy
 
 # composer.addEffekt(visualize_scroll,FrequencyRange.ALL,0,75,100)
-composer.addEffekt(visualize_multipleEnergy(1),FrequencyRange.all,1,0,180)
-composer.addEffekt(visualize_scroll(2),FrequencyRange.midHigh,0,0,100)
+composer.addEffekt(visualize_rotatingEnergy(1),FrequencyRange.all,1,0,180)
+composer.addEffekt(visualize_multipleEnergy(2),FrequencyRange.all,0,0,100)
 
 
 # Setting Global Vars
@@ -85,7 +88,7 @@ def frames_per_second():
         to reduce noise.
     """
     global _time_prev, _fps
-    #changeEffekt()
+    changeEffekt()
     time_now = time.time() * 1000.0
     dt = time_now - _time_prev
     _time_prev = time_now
@@ -154,6 +157,19 @@ def microphone_update(audio_samples):
             prev_fps_update = time.time()
             print('FPS {:.0f} / {:.0f}'.format(fps, config.FPS))
 
+def makeRandomComposition():
+    global composer
+    triangleRandomFrequencys = [FrequencyRange.all, FrequencyRange.low]
+    middleRandomFrequencys = [FrequencyRange.all, FrequencyRange.high,FrequencyRange.mid]
+    randomEffekts = [visualize_spectrum,visualize_energy,visualize_scroll,visualize_random,visualize_scrollExtreme,visualize_energyExtreme,visualize_energyRGB,visualize_flashy,visualize_multipleEnergy,visualize_rotatingEnergy]
+    composer.clear()
+    trf = random.choice(triangleRandomFrequencys)
+    mrf = random.choice(middleRandomFrequencys)
+    reT = random.choice(randomEffekts)
+    reM = random.choice(randomEffekts)
+
+    composer.addEffekt(reT(1),trf,1,0,180)
+    composer.addEffekt(reM(2),mrf,0,0,100)
 
 def checkIfDrop(): 
     rCheck = all(v == 0 for v in led.pixels[0])
@@ -181,13 +197,14 @@ def changeEffekt():
         _lastTime = time.time()
         _randomWait = 0
         if(dropDetected):
-            _randomWait = random.randrange(60, 120, 1)
+            _randomWait = random.randrange(60, config.RANDOM_MAX_WAIT, 1)
         else:
-            _randomWait = random.randrange(1, 120, 1)
+            _randomWait = random.randrange(1, config.RANDOM_MAX_WAIT, 1)
         print(_randomWait)
         copyArray = elements.copy()
-        copyArray.remove(visualization_effect)
-        visualization_effect = random.choice(copyArray)
+        # copyArray.remove(visualization_effect)
+        # visualization_effect = random.choice(copyArray)
+        makeRandomComposition()
 
 
 
