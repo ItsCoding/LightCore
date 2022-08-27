@@ -152,8 +152,8 @@ class Visualization:
             # print(output)
             # output = visualization_effect(mel)
             # output += visualize_energy(mel)
-            # if self.randomEnabled:
-                # self.changeEffekt()
+            if self.randomEnabled:
+                self.changeEffekt()
             led.pixels = self.output
             led.update(composerOutput)
             if config.USE_GUI:
