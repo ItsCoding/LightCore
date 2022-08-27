@@ -43,7 +43,7 @@ export const EffektsPanel = ({ availableEffekts, strip }: EffektsPanelProps) => 
             </Grid>
 
             <Grid container>
-                {availableEffekts.map(effekt => {
+                {availableEffekts.sort((a,b) => a.effektSystemName.localeCompare(b.effektSystemName)).map(effekt => {
                     return (
                         <Grid item xs={6} md={4} key={effekt.effektSystemName}>
                             <Button onClick={() => changeEffekt(effekt)}>{effekt.name}</Button>
