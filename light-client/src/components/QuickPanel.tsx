@@ -1,7 +1,7 @@
-import { QuickControlls } from "./QuickPanel/QuickControlls"
+import { QuickRandomControlls } from "./QuickPanel/QuickRandomControlls"
 
 export const QuickPanel = () => {
     return(<>
-        <QuickControlls />
+        <QuickRandomControlls />
     </>)
 }

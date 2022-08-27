@@ -5,6 +5,7 @@ import { QuickPanel } from './components/QuickPanel';
 import { WebSocketClient } from './system/WebsocketClient';
 import { Effekt } from './types/Effekt';
 import _ from 'lodash';
+import HeaderBar from './components/General/HeaderBar';
 const darkTheme = createTheme({
   palette: {
     mode: 'dark',
@@ -55,6 +56,7 @@ function App() {
     <ThemeProvider theme={darkTheme}>
       {connectionError ? <ConnectionError /> :
         <div>
+          <HeaderBar />
           <QuickPanel />
           <EffektsPanel availableEffekts={availableEffekts} />
         </div>}
