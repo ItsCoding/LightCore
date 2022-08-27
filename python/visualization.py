@@ -86,6 +86,10 @@ class Visualization:
         self.b_curve = None
         self.randomEffekts = None
         self.OFF_EFFEKT = visualize_Off
+        self.ENDABLED_RND_PARTS = {
+            0: True,
+            1: True
+        }
 
         #CONFIG VARS
         self.randomEnabled = True
@@ -186,15 +190,17 @@ class Visualization:
         reM = random.choice(self.randomEffekts)
         print(parts)
         if(parts == "all"):
-            composer.clear()
-            composer.addEffekt(reT(1),trf,1,0,180)
-            composer.addEffekt(reM(0),mrf,0,0,100)
-        elif(parts == "triangle"):
-            composer.removeElementById(1)
-            composer.addEffekt(reT(1),trf,1,0,180)
-        elif(parts == "middle"):
-            composer.removeElementById(0)
-            composer.addEffekt(reM(0),mrf,0,0,100)
+            
+            if self.ENDABLED_RND_PARTS[1]:
+                composer.removeElementById(1)
+                composer.addEffekt(reT(1),trf,1,0,180)
+            if self.ENDABLED_RND_PARTS[0]:
+                composer.removeElementById(0)
+                composer.addEffekt(reM(0),mrf,0,0,100)
+        else:
+            # if self.ENDABLED_RND_PARTS[parts]:
+            composer.removeElementById(parts)
+            composer.addEffekt(reM(parts),mrf,parts,0,100)
         self.queue2Parent.put(json.dumps({"type": "notification.random.effektChanged", "message": {
             "effektTriangle": reT.__name__,
             "effektMiddle": reM.__name__,
@@ -349,6 +355,8 @@ class Visualization:
         # led.update()
         # Start listening to live audio stream
         # wsServer.initServer()
+        # for i in range(0,config.STRIP_COUNT - 1):
+            # self.DISABLED_RND_PARTS[i] = True
         composer.addEffekt(visualize_flashy(0),FrequencyRange.all,0,0,180)
         composer.addEffekt(visualize_flashy(1),FrequencyRange.all,1,0,100)
         microphone.start_stream(self.microphone_update)

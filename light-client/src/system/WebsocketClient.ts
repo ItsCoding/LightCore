@@ -96,20 +96,20 @@ export class WebSocketClient {
         }
     }
 
-    public async lightRandomNextTriangle(): Promise<void> {
+    public async lightRandomNextSpecific(index:number): Promise<void> {
         if (this.socket) {
-            this.send("light.random.next.triangle");
-        }
-    }
-
-    public async lightRandomNextMiddle(): Promise<void> {
-        if (this.socket) {
-            this.send("light.random.next.middle");
+            this.send("light.random.next.specific",{stripIndex: index});
         }
     }
     public async lightRandomSetEnabled(enabled: boolean): Promise<void> {
         if (this.socket) {
             this.send("light.random.setEnabled", { enabled: enabled });
+        }
+    }
+
+    public async lightRandomSetEnabledSpecific(stripIndex:number, enabled: boolean): Promise<void> {
+        if (this.socket) {
+            this.send("light.random.setEnabled.specific", { enabled: enabled, stripIndex });
         }
     }
 

@@ -1,17 +1,9 @@
 import { EffektsPanel } from "../components/EffektsPanel"
+import { strips } from "../system/StripConfig"
 import { Effekt } from "../types/Effekt"
 import { LedStrip } from "../types/Strip"
 
-const stripConfig: LedStrip[] = [
-    {
-        position: "Middle",
-        index: 0,
-        length: 100
-    }, {
-        position: "Triangle",
-        index: 1,
-        length: 180
-    }]
+const stripConfig = strips
 
 type EffektsPageProps = {
     availableEffekts: Array<Effekt>,

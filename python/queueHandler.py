@@ -22,10 +22,8 @@ def handleQueue(queue2Thread,queue2Parent,vis):
             print("Got QueueTask: ", msg)
             if topicType == "light.random.next":
                 vis.makeRandomComposition("all")
-            elif topicType == "light.random.next.triangle":
-                vis.makeRandomComposition("triangle")
-            elif topicType == "light.random.next.middle":
-                vis.makeRandomComposition("middle")
+            elif topicType == "light.random.next.specific":
+                vis.makeRandomComposition(data["stripIndex"])
             elif topicType == "light.random.setEnabled":
                 vis.randomEnabled = data["enabled"]
                 print("Changed Enabled to: ", vis.randomEnabled)
@@ -40,4 +38,7 @@ def handleQueue(queue2Thread,queue2Parent,vis):
             elif topicType == "light.setOff":
                 composer.removeElementById(data["stripIndex"])
                 composer.addEffekt(vis.OFF_EFFEKT(data["stripIndex"]), [0,64], data["stripIndex"], 0, config.STRIP_LED_COUNTS[data["stripIndex"]])
+            elif topicType == "light.random.setEnabled.specific":
+                vis.ENDABLED_RND_PARTS[data["stripIndex"]] = data["enabled"]
+                print("Changed Enabled to: ", vis.ENDABLED_RND_PARTS)
 
