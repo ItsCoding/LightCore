@@ -13,6 +13,13 @@ class visualize_flashy:
             self.b_filt = None
             self.common_mode = None
             self._prev_spectrum = None
+
+    def description():
+        return {
+            "name": "Flashy",
+            "description": "Flashes randomly arround",
+            "effektSystemName": "visualize_flashy",
+        }
     def run(self, y,stripSize,gain: dsp.ExpFilter):
         """Effect that maps the Mel filterbank frequencies onto the LED strip"""
         if(self.r_filt is None):

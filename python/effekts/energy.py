@@ -10,6 +10,12 @@ class visualize_energy:
         self.p_filt = None
         # self.gain = dsp.ExpFilter(np.tile(0.01, config.N_FFT_BINS),
         #                 alpha_decay=0.001, alpha_rise=0.99)
+    def description():
+        return {
+            "name": "Energy",
+            "description": "Expands from the center with increasing sound energy",
+            "effektSystemName": "visualize_energy",
+        }
 
     def run(self, y,stripSize,gain: dsp.ExpFilter):
         """Effect that expands from the center with increasing sound energy"""

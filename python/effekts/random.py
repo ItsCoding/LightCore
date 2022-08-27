@@ -12,7 +12,12 @@ class visualize_random:
         self.p_filt = None
         # self.gain = dsp.ExpFilter(np.tile(0.01, config.N_FFT_BINS),
         #              alpha_decay=0.001, alpha_rise=0.99)
-
+    def description():
+        return {
+            "name": "Random",
+            "description": "Ingrids random energy effekt",
+            "effektSystemName": "visualize_random",
+        }
     def run(self, y,stripSize,gain: dsp.ExpFilter):
         if (self.p is None):
             self.p = np.tile(1.0, (3, stripSize // 2))

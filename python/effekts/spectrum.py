@@ -13,6 +13,12 @@ class visualize_spectrum:
             self.b_filt = None
             self.common_mode = None
             self._prev_spectrum = None
+    def description():
+        return {
+            "name": "Spectrum",
+            "description": "Spectrum",
+            "effektSystemName": "visualize_spectrum",
+        }
     def run(self, y,stripSize,gain: dsp.ExpFilter):
         """Effect that maps the Mel filterbank frequencies onto the LED strip"""
         if(self.r_filt is None):

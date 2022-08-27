@@ -9,7 +9,12 @@ class visualize_scroll:
         self.p = None
         # self.gain = dsp.ExpFilter(np.tile(0.01, config.N_FFT_BINS),
         #                 alpha_decay=0.001, alpha_rise=0.99)
-
+    def description():
+        return {
+            "name": "Scroll",
+            "description": "Scrolls an RGB color across the strip",
+            "effektSystemName": "visualize_scroll",
+        }
     def run(self, y,stripSize,gain: dsp.ExpFilter):
         """Effect that originates in the center and scrolls outwards"""
         

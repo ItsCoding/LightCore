@@ -74,12 +74,18 @@ class Visualization:
         # Array containing the rolling audio sample window
         self.y_roll = np.random.rand(config.N_ROLLING_HISTORY, self.samples_per_frame) / 1e16
         self.app = None
-        self.queue = None
+        self.queue2Thread = None
+        self.queue2Parent = None
         self.fft_plot = None
         self.mel_curve = None
         self.r_curve = None
         self.g_curve = None
         self.b_curve = None
+        self.randomEffekts = None
+
+
+        #CONFIG VARS
+        self.randomEnabled = True
     def frames_per_second(self):
         """Return the estimated frames per second
 
@@ -97,7 +103,7 @@ class Visualization:
             Estimated frames-per-second. This value is low-pass filtered
             to reduce noise.
         """
-        self.changeEffekt()
+        
         time_now = time.time() * 1000.0
         dt = time_now - self._time_prev
         self._time_prev = time_now
@@ -107,7 +113,7 @@ class Visualization:
 
 
     def microphone_update(self,audio_samples):
-        queueHandler.handleQueue(self.queue,self)
+        queueHandler.handleQueue(self.queue2Thread,self.queue2Parent,self)
         # Normalize samples between 0 and 1
         y = audio_samples / 2.0**15
         # Construct a rolling window of audio samples
@@ -146,7 +152,8 @@ class Visualization:
             # print(output)
             # output = visualization_effect(mel)
             # output += visualize_energy(mel)
-
+            # if self.randomEnabled:
+                # self.changeEffekt()
             led.pixels = self.output
             led.update(composerOutput)
             if config.USE_GUI:
@@ -166,18 +173,26 @@ class Visualization:
                 self.prev_fps_update = time.time()
                 print('FPS {:.0f} / {:.0f}'.format(fps, config.FPS))
 
-    def makeRandomComposition(self):
+    def makeRandomComposition(self,parts):
         triangleRandomFrequencys = [FrequencyRange.all, FrequencyRange.low]
         middleRandomFrequencys = [FrequencyRange.all, FrequencyRange.high,FrequencyRange.mid]
-        randomEffekts = [visualize_spectrum,visualize_energy,visualize_scroll,visualize_random,visualize_scrollExtreme,visualize_energyExtreme,visualize_energyRGB,visualize_flashy,visualize_multipleEnergy,visualize_rotatingEnergy]
-        composer.clear()
+        
         trf = random.choice(triangleRandomFrequencys)
         mrf = random.choice(middleRandomFrequencys)
-        reT = random.choice(randomEffekts)
-        reM = random.choice(randomEffekts)
-
-        composer.addEffekt(reT(1),trf,1,0,180)
-        composer.addEffekt(reM(2),mrf,0,0,100)
+        reT = random.choice(self.randomEffekts)
+        reM = random.choice(self.randomEffekts)
+        print(parts)
+        if(parts == "all"):
+            composer.clear()
+            composer.addEffekt(reT(1),trf,1,0,180)
+            composer.addEffekt(reM(2),mrf,0,0,100)
+        elif(parts == "triangle"):
+            composer.removeElementById(1)
+            composer.addEffekt(reT(1),trf,1,0,180)
+        elif(parts == "middle"):
+            composer.removeElementById(2)
+            composer.addEffekt(reM(2),mrf,0,0,100)
+        
 
     def checkIfDrop(self): 
         rCheck = all(v == 0 for v in led.pixels[0])
@@ -208,15 +223,17 @@ class Visualization:
             else:
                 self._randomWait = random.randrange(1, config.RANDOM_MAX_WAIT, 1)
             print(self._randomWait)
-            copyArray = elements.copy()
+            # copyArray = elements.copy()
             # copyArray.remove(visualization_effect)
             # visualization_effect = random.choice(copyArray)
-            self.makeRandomComposition()
+            self.makeRandomComposition("all")
 
 
 
-    def start(self, q):
-        self.queue = q
+    def start(self, q2t, q2p):
+        self.queue2Thread = q2t
+        self.queue2Parent = q2p
+        self.randomEffekts = [visualize_spectrum,visualize_energy,visualize_scroll,visualize_random,visualize_scrollExtreme,visualize_energyExtreme,visualize_energyRGB,visualize_flashy,visualize_multipleEnergy,visualize_rotatingEnergy]
         if config.USE_GUI:
             import pyqtgraph as pg
             from pyqtgraph.Qt import QtGui, QtCore
@@ -323,8 +340,8 @@ class Visualization:
         # led.update()
         # Start listening to live audio stream
         # wsServer.initServer()
-        composer.addEffekt(visualize_scroll(1),FrequencyRange.all,1,0,180)
-        composer.addEffekt(visualize_scroll(2),FrequencyRange.all,0,0,100)
+        composer.addEffekt(visualize_flashy(1),FrequencyRange.all,1,0,180)
+        composer.addEffekt(visualize_flashy(2),FrequencyRange.all,0,0,100)
         microphone.start_stream(self.microphone_update)
 
 

@@ -10,7 +10,12 @@ class visualize_multipleEnergy:
         self.p_filt = None
         # self.gain = dsp.ExpFilter(np.tile(0.01, config.N_FFT_BINS),
         #                 alpha_decay=0.001, alpha_rise=0.99)
-
+    def description():
+        return {
+            "name": "Multiple Energy",
+            "description": "Multiple energy effekts, it is what it is",
+            "effektSystemName": "visualize_multipleEnergy",
+        }
     def run(self, y,stripSize,gain: dsp.ExpFilter):
         """Effect that expands from the center with increasing sound energy"""
         # global p, p_filt

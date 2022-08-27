@@ -8,12 +8,23 @@ from visualization import Visualization
 import composer as comp
 proc = None
 vis = None
-queue = multiprocessing.SimpleQueue()
+queue2Thread = multiprocessing.SimpleQueue()
+queue2Parent = multiprocessing.SimpleQueue()
 class SimpleEcho(WebSocket):
+    def handleQueue(self):
+        while not queue2Parent.empty():
+            incommingData = queue2Parent.get()
+            print("Sending: ", incommingData)
+            self.send_message(incommingData)
+
     def handle(self):
         print("Incomming message:", self.data)
-        queue.put("light.random.next")
-        self.send_message(self.data)
+        # print("Handel Queue")
+        self.handleQueue()
+        print("Handel Queue done")
+        queue2Thread.put(self.data)
+        # print("Sending AKK")
+        # self.send_message("AKK: " + self.data)
 
     def connected(self):
         print(self.address, 'connected')
@@ -23,11 +34,10 @@ class SimpleEcho(WebSocket):
 
 def initServer():
     global proc, queue
-    queue.put("init")
     vis = Visualization()
-    proc = multiprocessing.Process(target=vis.start, args=(queue,))
+    proc = multiprocessing.Process(target=vis.start, args=(queue2Thread,queue2Parent))
     proc.start()
-    server = WebSocketServer('', 8000, SimpleEcho)
+    server = WebSocketServer('0.0.0.0', 8000, SimpleEcho)
     server.serve_forever()
 
 def handler(signum, frame):
