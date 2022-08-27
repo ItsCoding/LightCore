@@ -112,4 +112,20 @@ export class WebSocketClient {
             this.send("light.random.setEnabled", { enabled: enabled });
         }
     }
+
+    public async lightSetEffekt(effekt: string, stripIndex: number, frequency: number[]): Promise<void> {
+        if (this.socket) {
+            this.send("light.setEffekt", { 
+                effektName: effekt,
+                stripIndex: stripIndex,
+                frequencyRange: frequency
+             });
+        }
+    }
+
+    public async lightSetOff(stripIndex: number){
+        if (this.socket) {
+            this.send("light.setOff", { stripIndex: stripIndex });
+        }
+    }
 }

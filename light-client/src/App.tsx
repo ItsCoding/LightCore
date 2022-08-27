@@ -1,11 +1,12 @@
-import { Alert, AlertTitle, createTheme, ThemeProvider } from '@mui/material';
+import { Alert, AlertTitle, createTheme, ThemeProvider, Typography } from '@mui/material';
 import React, { useEffect } from 'react';
-import { EffektsPanel } from './components/EffektsPanel';
-import { QuickPanel } from './components/QuickPanel';
+import { QuickPage } from './pages/QuickPage';
 import { WebSocketClient } from './system/WebsocketClient';
 import { Effekt } from './types/Effekt';
 import _ from 'lodash';
 import HeaderBar from './components/General/HeaderBar';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { EffektsPage } from './pages/EffektsPage';
 const darkTheme = createTheme({
   palette: {
     mode: 'dark',
@@ -22,7 +23,7 @@ function App() {
       console.log("Get available effekts");
       wsClient.send("get.availableEffekts");
       wsClient.addEventHandler(topic => {
-        console.log("TOPIC: ",topic)
+        console.log("TOPIC: ", topic)
         if (topic.type === "return.availableEffekts") {
           const effekts = Effekt.fromJSONArray(topic.message);
           console.log("Available Effekts: ", effekts);
@@ -53,16 +54,19 @@ function App() {
   </Alert>)
 
   return (
-    <ThemeProvider theme={darkTheme}>
-      {connectionError ? <ConnectionError /> :
-        <div>
-          <HeaderBar />
-          <QuickPanel />
-          <EffektsPanel availableEffekts={availableEffekts} />
-        </div>}
-
-    </ThemeProvider>
-
+    <BrowserRouter>
+      <ThemeProvider theme={darkTheme}>
+        {connectionError ? <ConnectionError /> :
+          <div>
+            <HeaderBar />
+            <Routes>
+              <Route path="/" element={<h2>LightCore</h2>} />
+              <Route path="quick" element={<QuickPage />} />
+              <Route path="effekts" element={<EffektsPage availableEffekts={availableEffekts} />} />
+            </Routes>
+          </div>}
+      </ThemeProvider>
+    </BrowserRouter>
   );
 }
 

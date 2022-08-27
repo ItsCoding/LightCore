@@ -23,6 +23,7 @@ import effekts.flashy as flashyEffekt
 import effekts.energyRGB as energyRGBEffekt
 import effekts.multipleEnergy as multipleEnergyEffekt
 import effekts.rotatingEnergy as rotatingEnergyEffekt
+import effekts.off as OffEffekt
 import queueHandler
 # import wsServer as wsServer
 import composer
@@ -38,6 +39,7 @@ visualize_energyRGB = energyRGBEffekt.visualize_energyRGB
 visualize_flashy = flashyEffekt.visualize_flashy
 visualize_multipleEnergy = multipleEnergyEffekt.visualize_multipleEnergy
 visualize_rotatingEnergy = rotatingEnergyEffekt.visualize_rotatingEnergy
+visualize_Off = OffEffekt.visualize_OFF
 
 # composer.addEffekt(visualize_scroll,FrequencyRange.ALL,0,75,100)
 
@@ -83,7 +85,7 @@ class Visualization:
         self.g_curve = None
         self.b_curve = None
         self.randomEffekts = None
-
+        self.OFF_EFFEKT = visualize_Off
 
         #CONFIG VARS
         self.randomEnabled = True
@@ -186,13 +188,13 @@ class Visualization:
         if(parts == "all"):
             composer.clear()
             composer.addEffekt(reT(1),trf,1,0,180)
-            composer.addEffekt(reM(2),mrf,0,0,100)
+            composer.addEffekt(reM(0),mrf,0,0,100)
         elif(parts == "triangle"):
             composer.removeElementById(1)
             composer.addEffekt(reT(1),trf,1,0,180)
         elif(parts == "middle"):
-            composer.removeElementById(2)
-            composer.addEffekt(reM(2),mrf,0,0,100)
+            composer.removeElementById(0)
+            composer.addEffekt(reM(0),mrf,0,0,100)
         self.queue2Parent.put(json.dumps({"type": "notification.random.effektChanged", "message": {
             "effektTriangle": reT.__name__,
             "effektMiddle": reM.__name__,
@@ -307,14 +309,14 @@ class Visualization:
                 # visualization_effect = visualize_energy
                 composer.clear()
                 composer.addEffekt(visualize_energyRGB(1),FrequencyRange.low,1,0,180)
-                composer.addEffekt(visualize_energyExtreme(2),FrequencyRange.midHigh,0,0,100)
+                composer.addEffekt(visualize_energyExtreme(0),FrequencyRange.midHigh,0,0,100)
                 energy_label.setText('Energy', color=active_color)
                 scroll_label.setText('Scroll', color=inactive_color)
                 spectrum_label.setText('Spectrum', color=inactive_color)
             def scroll_click(x):
                 composer.clear()
                 composer.addEffekt(visualize_scroll(1),FrequencyRange.low,1,0,180)
-                composer.addEffekt(visualize_scrollExtreme(2),FrequencyRange.midHigh,0,0,100)
+                composer.addEffekt(visualize_scrollExtreme(0),FrequencyRange.midHigh,0,0,100)
                 # visualization_effect = visualize_scroll
                 energy_label.setText('Energy', color=inactive_color)
                 scroll_label.setText('Scroll', color=active_color)
@@ -322,7 +324,7 @@ class Visualization:
             def spectrum_click(x):
                 composer.clear()
                 composer.addEffekt(visualize_random(1),FrequencyRange.low,1,0,180)
-                composer.addEffekt(visualize_flashy(2),FrequencyRange.all,0,0,100)
+                composer.addEffekt(visualize_flashy(0),FrequencyRange.all,0,0,100)
                 energy_label.setText('Energy', color=inactive_color)
                 scroll_label.setText('Scroll', color=inactive_color)
                 spectrum_label.setText('Spectrum', color=active_color)
@@ -347,8 +349,8 @@ class Visualization:
         # led.update()
         # Start listening to live audio stream
         # wsServer.initServer()
-        composer.addEffekt(visualize_flashy(1),FrequencyRange.all,1,0,180)
-        composer.addEffekt(visualize_flashy(2),FrequencyRange.all,0,0,100)
+        composer.addEffekt(visualize_flashy(0),FrequencyRange.all,0,0,180)
+        composer.addEffekt(visualize_flashy(1),FrequencyRange.all,1,0,100)
         microphone.start_stream(self.microphone_update)
 
 

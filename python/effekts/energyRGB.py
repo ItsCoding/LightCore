@@ -1,13 +1,28 @@
+import random
 import config
 import numpy as np
 import dsp
 from scipy.ndimage.filters import gaussian_filter1d
+
+colorPalette = [
+    [0,0,255],
+    [0,255,0],
+    [255,0,0],
+    [0,255,255],
+    [255,0,255],
+    [255,255,0],
+    [255,255,255],
+    [34,166,179],
+    [190,46,221]
+]
+
 
 class visualize_energyRGB:
     def __init__(self,id):
         self.id = id
         self.p = None
         self.p_filt = None
+        self.rgbColor = random.choice(colorPalette)
         # self.gain = dsp.ExpFilter(np.tile(0.01, config.N_FFT_BINS),
         #                 alpha_decay=0.001, alpha_rise=0.99)
     def description():
@@ -19,12 +34,11 @@ class visualize_energyRGB:
     def run(self, y,stripSize,gain: dsp.ExpFilter):
         """Effect that expands from the center with increasing sound energy"""
         # global p, p_filt
-        rgbColor = [100,0,255]
         if(self.p is None):
             self.p = np.tile(1.0, (3, stripSize // 2))
             self.p_filt =  dsp.ExpFilter(np.tile(1, (3, stripSize // 2)),
                         alpha_decay=0.1, alpha_rise=0.99)
-
+        # print(self.rgbColor)
         y = np.copy(y)
         # gain.update(y)
         y /= gain.value 
@@ -44,18 +58,18 @@ class visualize_energyRGB:
         #g = int(mean * (rgbColor[1] ** scale)) #int(((np.mean(y[len(y) // 3: 2 * len(y) // 3]**scale)) / 100) * rgbColor[1])
         #b = int(mean * (rgbColor[2]  ** scale)) #int(((np.mean(y[2 * len(y) // 3:]**scale)) / 100) * rgbColor[2])
 
-        r = int(np.mean(y[:len(y) // 3]**scale))
-        g = int(np.mean(y[len(y) // 3: 2 * len(y) // 3]**scale))
-        b = int(np.mean(y[2 * len(y) // 3:]**scale))
+        # r = int(np.mean(y[:len(y) // 3]**scale))
+        # g = int(np.mean(y[len(y) // 3: 2 * len(y) // 3]**scale))
+        # b = int(np.mean(y[2 * len(y) // 3:]**scale))
 
 
         # print(r,g,b)
         # Assign color to different frequency regions
-        self.p[0, :mean] = rgbColor[0]
+        self.p[0, :mean] = self.rgbColor[0]
         self.p[0, mean:] = 0.0
-        self.p[1, :mean] = rgbColor[1]
+        self.p[1, :mean] = self.rgbColor[1]
         self.p[1, mean:] = 0.0
-        self.p[2, :mean] = rgbColor[2]
+        self.p[2, :mean] = self.rgbColor[2]
         self.p[2, mean:] = 0.0
         self.p_filt.update(self.p)
         self.p = np.round(self.p_filt.value)
