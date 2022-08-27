@@ -1,5 +1,6 @@
 from __future__ import print_function
 from __future__ import division
+import json
 import multiprocessing
 import random
 import signal
@@ -192,6 +193,12 @@ class Visualization:
         elif(parts == "middle"):
             composer.removeElementById(2)
             composer.addEffekt(reM(2),mrf,0,0,100)
+        self.queue2Parent.put(json.dumps({"type": "notification.random.effektChanged", "message": {
+            "effektTriangle": reT.__name__,
+            "effektMiddle": reM.__name__,
+            "frequencyTriangle": trf,
+            "frequencyMiddle": mrf
+        }}))
         
 
     def checkIfDrop(self): 
