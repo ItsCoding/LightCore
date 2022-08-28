@@ -10,7 +10,7 @@ import json
 if config.DEVICE == 'virtual':
     import socket
     _sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_address = ('127.0.0.1', 8080)
+    server_address = (config.DEBUG_IP, 8080)
     _sock.connect(server_address)
 
 elif config.DEVICE == 'esp8266':
@@ -23,6 +23,18 @@ elif config.DEVICE == 'pi':
                                        config.LED_FREQ_HZ, config.LED_DMA,
                                        config.LED_INVERT, 255)
     strip.begin()
+
+elif config.DEVICE == 'pi-debug':
+    import neopixel
+    strip = neopixel.Adafruit_NeoPixel(config.N_PIXELS, config.LED_PIN,
+                                       config.LED_FREQ_HZ, config.LED_DMA,
+                                       config.LED_INVERT, 255)
+    strip.begin()
+    import socket
+    _sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_address = (config.DEBUG_IP, 8080)
+    _sock.connect(server_address)
+
 elif config.DEVICE == 'blinkstick':
     from blinkstick import blinkstick
     import signal
@@ -165,6 +177,9 @@ def update(composing):
     elif config.DEVICE == 'blinkstick':
          raise Exception('Composition Output not implemented')
         # _update_blinkstick()
+    elif config.DEVICE == 'pi-debug':
+        _update_pi()
+        _update_virtual(composing)
     else:
         raise ValueError('Invalid device selected')
 
