@@ -31,7 +31,7 @@ class visualize_energyRGB:
             "description": "Expands from the center with increasing sound energy but in random static Colors",
             "effektSystemName": "visualize_energyRGB",
         }
-    def run(self, y,stripSize,gain: dsp.ExpFilter):
+    def run(self, y,stripSize,gain: dsp.ExpFilter,instanceData: dict = {}):
         """Effect that expands from the center with increasing sound energy"""
         # global p, p_filt
         if(self.p is None):
@@ -39,6 +39,9 @@ class visualize_energyRGB:
             self.p_filt =  dsp.ExpFilter(np.tile(1, (3, stripSize // 2)),
                         alpha_decay=0.1, alpha_rise=0.99)
         # print(self.rgbColor)
+        rgbColor = self.rgbColor
+        if "color" in instanceData:
+            rgbColor = instanceData["color"]
         y = np.copy(y)
         # gain.update(y)
         y /= gain.value 
@@ -65,11 +68,11 @@ class visualize_energyRGB:
 
         # print(r,g,b)
         # Assign color to different frequency regions
-        self.p[0, :mean] = self.rgbColor[0]
+        self.p[0, :mean] = rgbColor[0]
         self.p[0, mean:] = 0.0
-        self.p[1, :mean] = self.rgbColor[1]
+        self.p[1, :mean] = rgbColor[1]
         self.p[1, mean:] = 0.0
-        self.p[2, :mean] = self.rgbColor[2]
+        self.p[2, :mean] = rgbColor[2]
         self.p[2, mean:] = 0.0
         self.p_filt.update(self.p)
         self.p = np.round(self.p_filt.value)

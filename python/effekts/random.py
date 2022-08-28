@@ -18,7 +18,7 @@ class visualize_random:
             "description": "Ingrids random energy effekt",
             "effektSystemName": "visualize_random",
         }
-    def run(self, y,stripSize,gain: dsp.ExpFilter):
+    def run(self, y,stripSize,gain: dsp.ExpFilter,instanceData: dict = {}):
         if (self.p is None):
             self.p = np.tile(1.0, (3, stripSize // 2))
             self.p_filt = dsp.ExpFilter(np.tile(1, (3, stripSize // 2)),

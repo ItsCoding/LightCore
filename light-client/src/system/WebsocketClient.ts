@@ -113,12 +113,13 @@ export class WebSocketClient {
         }
     }
 
-    public async lightSetEffekt(effekt: string, stripIndex: number, frequency: number[]): Promise<void> {
+    public async lightSetEffekt(effekt: string, stripIndex: number, frequency: number[],instanceData: object = {}): Promise<void> {
         if (this.socket) {
             this.send("light.setEffekt", { 
                 effektName: effekt,
                 stripIndex: stripIndex,
-                frequencyRange: frequency
+                frequencyRange: frequency,
+                instanceData: instanceData
              });
         }
     }

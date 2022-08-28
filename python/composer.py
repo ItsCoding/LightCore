@@ -11,8 +11,8 @@ runningEffekts: list = []
 gain = dsp.ExpFilter(np.tile(0.01, config.cfg["frequencyBins"]),
                          alpha_decay=0.001, alpha_rise=0.99)
 # Add a new effekt to the composition
-def addEffekt(effekt, frequencyRange: array, stripIndex: int, ledStartIndex: int, ledEndIndex: int):
-    runningEffekts.append(ActiveEffekt(effekt, frequencyRange, stripIndex, ledStartIndex, ledEndIndex))
+def addEffekt(effekt, frequencyRange: array, stripIndex: int, ledStartIndex: int, ledEndIndex: int, instanceData: dict = {}):
+    runningEffekts.append(ActiveEffekt(effekt, frequencyRange, stripIndex, ledStartIndex, ledEndIndex,instanceData))
 
 # def getFrequencyRangeByEnum(frequencyRange: FrequencyRange):
 #    return FrequencyRange[frequencyRange]
@@ -37,7 +37,7 @@ def getComposition(frequencyBins):
         tempBins = np.tile(0.0, config.cfg["frequencyBins"])
         np.put(tempBins, range(frequencyRange[0], frequencyRange[1]), frequencyBins)
         # tempBins = frequencyBins[frequencyRange[0]:frequencyRange[1]]
-        effektResult = effekt.effekt.run(tempBins,stipLength,gain)
+        effektResult = effekt.effekt.run(tempBins,stipLength,gain,effekt.instanceData)
 
         brightness = config.cfg["brightness"] / 100
         # Adjust brightness

@@ -77,8 +77,8 @@ export const QuickSystemControlls = ({ lightConfig, setLCConfig }: QuickSystemCo
                 />
                 <Typography gutterBottom>Intensity</Typography>
                 <Slider
-                    min={0.01}
-                    max={2}
+                    min={0.6}
+                    max={1.5}
                     step={0.01}
                     marks={marks}
                     getAriaLabel={() => 'Adjuster'}
