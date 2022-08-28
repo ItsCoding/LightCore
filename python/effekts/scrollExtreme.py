@@ -14,6 +14,8 @@ class visualize_scrollExtreme:
             "name": "ScrollExtreme",
             "description": "Scrolls an RGB color across the strip, but in Extreme colours",
             "effektSystemName": "visualize_scrollExtreme",
+            "group": "scroll",
+            "groupColor": "#8c7ae6",
         }
     def run(self, y,stripSize,gain: dsp.ExpFilter,instanceData: dict = {}):
         """Effect that originates in the center and scrolls outwards"""

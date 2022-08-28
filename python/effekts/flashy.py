@@ -19,6 +19,8 @@ class visualize_flashy:
             "name": "Flashy",
             "description": "Flashes randomly arround",
             "effektSystemName": "visualize_flashy",
+            "group": "spicy",
+            "groupColor": "#22a6b3",
         }
     def run(self, y,stripSize,gain: dsp.ExpFilter,instanceData: dict = {}):
         """Effect that maps the Mel filterbank frequencies onto the LED strip"""

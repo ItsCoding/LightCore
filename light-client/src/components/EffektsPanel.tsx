@@ -62,7 +62,10 @@ export const EffektsPanel = ({ availableEffekts, strip, colorDict }: EffektsPane
                 {availableEffekts.sort((a, b) => a.effektSystemName.localeCompare(b.effektSystemName)).map(effekt => {
                     return (
                         <Grid item xs={6} md={4} key={effekt.effektSystemName}>
-                            <Button variant="outlined" fullWidth style={{height: "50px"}} onClick={() => changeEffekt(effekt)}>{effekt.name}</Button>
+                            <Button variant="outlined" fullWidth style={{
+                                height: "50px",
+                                color: effekt.groupColor,
+                            }} onClick={() => changeEffekt(effekt)}>{effekt.name}</Button>
                         </Grid>)
                 })}
             </Grid>

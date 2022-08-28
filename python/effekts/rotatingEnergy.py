@@ -16,6 +16,8 @@ class visualize_rotatingEnergy:
             "name": "Rotating Energy",
             "description": "Energy effekt that moves around the strip",
             "effektSystemName": "visualize_rotatingEnergy",
+            "group": "moving",
+            "groupColor": "#44bd32",
         }
     def run(self, y,stripSize,gain: dsp.ExpFilter,instanceData: dict = {}):
         """Effect that expands from the center with increasing sound energy"""

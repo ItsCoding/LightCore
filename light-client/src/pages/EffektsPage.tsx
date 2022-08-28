@@ -67,9 +67,6 @@ export const EffektsPage = ({ availableEffekts, isRandomizerActive, setRandomize
                         wsClient.lightRandomSetEnabled(false);
                     }}>Disable</Button>
                 </Alert> : null}
-            {stripConfig.map(strip => {
-                return <EffektsPanel key={strip.index} colorDict={colorDict} availableEffekts={availableEffekts} strip={strip} />
-            })}
             <Card style={{
                 marginTop: 10
             }}>
@@ -91,7 +88,9 @@ export const EffektsPage = ({ availableEffekts, isRandomizerActive, setRandomize
                     })}
                 </CardContent>
             </Card>
-
+            {stripConfig.map(strip => {
+                return <EffektsPanel key={strip.index} colorDict={colorDict} availableEffekts={availableEffekts} strip={strip} />
+            })}
         </div>
     )
 }

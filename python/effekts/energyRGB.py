@@ -30,6 +30,8 @@ class visualize_energyRGB:
             "name": "Energy RGB",
             "description": "Expands from the center with increasing sound energy but in random static Colors",
             "effektSystemName": "visualize_energyRGB",
+            "group": "energy",
+            "groupColor": "#273c75",
         }
     def run(self, y,stripSize,gain: dsp.ExpFilter,instanceData: dict = {}):
         """Effect that expands from the center with increasing sound energy"""

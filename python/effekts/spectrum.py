@@ -18,6 +18,8 @@ class visualize_spectrum:
             "name": "Spectrum",
             "description": "Spectrum",
             "effektSystemName": "visualize_spectrum",
+            "group": "spicy",
+            "groupColor": "#22a6b3",
         }
     def run(self, y,stripSize,gain: dsp.ExpFilter,instanceData: dict = {}):
         """Effect that maps the Mel filterbank frequencies onto the LED strip"""
