@@ -9,10 +9,13 @@ export const HomePage = () => {
                 direction="column"
                 alignItems="center"
                 justifyContent="center"
-                style={{ minHeight: '100vh' }}
+                style={{ minHeight: '80vh' }}
             >
                 <Grid item xs={4}>
-                    <h2>LightCore</h2>
+                    <img style={{
+                        width: "200px",
+                    }}src="lamps.png"/>
+                    <h1>LightCore</h1>
                     <p>Audio-reactive LED controller</p>
                 </Grid>
             </Grid>
