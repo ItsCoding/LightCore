@@ -23,7 +23,7 @@ class visualize_scroll:
 
         # self.p = np.tile(1.0, (3, config.N_PIXELS // 2))
         # print(y)
-        y = y**3
+        y = y**(3 * config.cfg["globalIntensity"])
         # gain.update(y)
         # print(self.gain.value)
         y /= gain.value

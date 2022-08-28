@@ -7,6 +7,12 @@ type QuickSystemControllsProps = {
     setLCConfig: (config: LightCoreConfig) => void,
 }
 
+const marks = [
+    {
+      value: 1,
+      label: 'Normal',
+    }
+  ];
 
 export const QuickSystemControlls = ({ lightConfig, setLCConfig }: QuickSystemControllsProps) => {
     const wsClient = WebSocketClient.getInstance();
@@ -71,8 +77,10 @@ export const QuickSystemControlls = ({ lightConfig, setLCConfig }: QuickSystemCo
                 />
                 <Typography gutterBottom>Intensity</Typography>
                 <Slider
-                    min={1}
-                    max={99}
+                    min={0.01}
+                    max={2}
+                    step={0.01}
+                    marks={marks}
                     getAriaLabel={() => 'Adjuster'}
                     defaultValue={lightConfig.globalIntensity}
                     onChange={(e, value) => setIntensity(value)}
