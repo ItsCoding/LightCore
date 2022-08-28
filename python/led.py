@@ -17,12 +17,12 @@ elif config.DEVICE == 'esp8266':
     import socket
     _sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 # Raspberry Pi controls the LED strip directly
-#elif config.DEVICE == 'pi':
-    # import neopixel
-    # strip = neopixel.Adafruit_NeoPixel(config.N_PIXELS, config.LED_PIN,
-    #                                    config.LED_FREQ_HZ, config.LED_DMA,
-    #                                    config.LED_INVERT, 255)
-    # strip.begin()
+elif config.DEVICE == 'pi':
+    import neopixel
+    strip = neopixel.Adafruit_NeoPixel(config.N_PIXELS, config.LED_PIN,
+                                       config.LED_FREQ_HZ, config.LED_DMA,
+                                       config.LED_INVERT, 255)
+    strip.begin()
 elif config.DEVICE == 'blinkstick':
     from blinkstick import blinkstick
     import signal
@@ -160,8 +160,8 @@ def update(composing):
         # _update_esp8266()
         raise Exception('Composition Output not implemented')
     elif config.DEVICE == 'pi':
-         raise Exception('Composition Output not implemented')
-        # _update_pi()
+        #  raise Exception('Composition Output not implemented')
+        _update_pi()
     elif config.DEVICE == 'blinkstick':
          raise Exception('Composition Output not implemented')
         # _update_blinkstick()

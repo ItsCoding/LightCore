@@ -6,7 +6,7 @@ import os
 
 
 #DEVICE = 'esp8266'
-DEVICE = 'virtual'
+DEVICE = 'pi'
 """Device used to control LED strip. Must be 'pi',  'esp8266' or 'blinkstick'
 
 'esp8266' means that you are using an ESP8266 module to control the LED strip
