@@ -34,7 +34,7 @@ function App() {
 
   const connectWS = async () => {
     try {
-      await wsClient.connect(`ws://192.168.178.48:8000`);
+      await wsClient.connect(`ws://${window.location.hostname}:8000`);
       console.log("Get available effekts");
       wsClient.send("get.availableEffekts");
       wsClient.send("system.config.get")
