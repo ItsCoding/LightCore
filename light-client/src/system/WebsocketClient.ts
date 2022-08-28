@@ -128,4 +128,10 @@ export class WebSocketClient {
             this.send("light.setOff", { stripIndex: stripIndex });
         }
     }
+
+    public async changeConfigProperty(property: string, value: any): Promise<void> {
+        if (this.socket) {
+            this.send("system.config.change", { key: property, value: value });
+        }
+    }
 }

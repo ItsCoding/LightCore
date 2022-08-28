@@ -16,7 +16,7 @@ class visualize_slow:
         self.id = id
         self.pixel = None
         self.pixel_filt = None
-        # self.gain = dsp.ExpFilter(np.tile(0.01, config.N_FFT_BINS),
+        # self.gain = dsp.ExpFilter(np.tile(0.01, config.cfg["frequencyBins"]),
         #                 alpha_decay=0.001, alpha_rise=0.99)
     def description():
         return {

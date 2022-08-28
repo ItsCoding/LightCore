@@ -10,26 +10,32 @@ proc = None
 vis = None
 queue2Thread = multiprocessing.SimpleQueue()
 queue2Parent = multiprocessing.SimpleQueue()
+clients = []
 class SimpleEcho(WebSocket):
     def handleQueue(self):
         while not queue2Parent.empty():
             incommingData = queue2Parent.get()
-            print("Sending: ", incommingData)
+            # print("Sending: ", incommingData)
             self.send_message(incommingData)
+            for client in clients:
+                if client != self:
+                    client.send_message(incommingData)
 
     def handle(self):
         print("Incomming message:", self.data)
         # print("Handel Queue")
         self.handleQueue()
-        print("Handel Queue done")
+        # print("Handel Queue done")
         queue2Thread.put(self.data)
         # print("Sending AKK")
         # self.send_message("AKK: " + self.data)
 
     def connected(self):
         print(self.address, 'connected')
+        clients.append(self)
 
     def handle_close(self):
+        clients.remove(self)
         print(self.address, 'closed')
 
 def initServer():

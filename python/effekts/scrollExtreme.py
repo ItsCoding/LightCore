@@ -7,7 +7,7 @@ class visualize_scrollExtreme:
     def __init__(self,id):
         self.id = id
         self.p = None
-        # self.gain = dsp.ExpFilter(np.tile(0.01, config.N_FFT_BINS),
+        # self.gain = dsp.ExpFilter(np.tile(0.01, config.cfg["frequencyBins"]),
         #                 alpha_decay=0.001, alpha_rise=0.99)
     def description():
         return {
@@ -31,7 +31,7 @@ class visualize_scrollExtreme:
 
         y = [i for i in y if i > 0.05]
         if len(y) < 3:
-            y = np.tile(0.1, config.N_FFT_BINS)
+            y = np.tile(0.1, config.cfg["frequencyBins"])
         y = np.copy(y)
         r = int(np.max(y[:len(y) // 3]))
         g = int(np.max(y[len(y) // 3: 2 * len(y) // 3]))

@@ -9,7 +9,7 @@ class visualize_rotatingEnergy:
         self.id = id
         self.p = None
         self.p_filt = None
-        # self.gain = dsp.ExpFilter(np.tile(0.01, config.N_FFT_BINS),
+        # self.gain = dsp.ExpFilter(np.tile(0.01, config.cfg["frequencyBins"]),
         #                 alpha_decay=0.001, alpha_rise=0.99)
     def description():
         return {
@@ -35,7 +35,7 @@ class visualize_rotatingEnergy:
         scale = 1
         y = [i for i in y if i > 0.05]
         if len(y) < 3:
-            y = np.tile(0.0, config.N_FFT_BINS)
+            y = np.tile(0.0, config.cfg["frequencyBins"])
         y = np.copy(y)
         y = y ** scale
         # print(mean)
@@ -63,7 +63,10 @@ class visualize_rotatingEnergy:
         self.p[1, :] = 0.0
         self.p[2, :] = 0.0
         loopRange = list(range(0,stripSize, int(stripSize/ 3)))
-        milliseconds = int(round(time.time() * 1000) / 5)
+
+        speed = (1.0 - (config.cfg["globalSpeed"] / 100)) * 10
+
+        milliseconds = int(round(time.time() * 1000) / speed)
         offset = (milliseconds % (stripSize * 4)) // 3
         # print(offset)
         for i in loopRange:

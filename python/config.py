@@ -3,6 +3,8 @@ from __future__ import print_function
 from __future__ import division
 import os
 
+
+
 #DEVICE = 'esp8266'
 DEVICE = 'virtual'
 """Device used to control LED strip. Must be 'pi',  'esp8266' or 'blinkstick'
@@ -32,7 +34,7 @@ if DEVICE == 'pi':
     """LED signal frequency in Hz (usually 800kHz)"""
     LED_DMA = 5
     """DMA channel used for generating PWM signal (try 5)"""
-    BRIGHTNESS = 255
+    # BRIGHTNESS = 255
     """Brightness of LED strip between 0 and 255"""
     LED_INVERT = False
     """Set True if using an inverting logic level converter"""
@@ -45,7 +47,7 @@ if DEVICE == 'blinkstick':
 if DEVICE == "virtual":
     SOFTWARE_GAMMA_CORRECTION = False
     
-BRIGHTNESS = 255
+BRIGHTNESS = 100
 USE_GUI = True
 """Whether or not to display a PyQtGraph GUI plot of visualization"""
 
@@ -111,4 +113,25 @@ MIN_VOLUME_THRESHOLD = 1e-7
 STRIP_COUNT = 2
 STRIP_LED_COUNTS = [100,180]
 
-RANDOM_MAX_WAIT = 10
+RANDOM_MAX_WAIT = 20
+RANDOM_MIN_WAIT = 5
+
+DROP_RANDOM_MAX_WAIT = 20
+DROP_RANDOM_MIN_WAIT = 5
+
+GLOBAL_SPEED = 50
+GLOBAL_INTENSITY = 50
+
+cfg = {
+    "device": DEVICE,
+    "brightness": BRIGHTNESS,
+    "minFrequency": MIN_FREQUENCY,
+    "maxFrequency": MAX_FREQUENCY,
+    "frequencyBins": N_FFT_BINS,
+    "randomMaxWait": RANDOM_MAX_WAIT,
+    "randomMinWait": RANDOM_MIN_WAIT,
+    "dropRandomMaxWait": DROP_RANDOM_MAX_WAIT,
+    "dropRandomMinWait": DROP_RANDOM_MIN_WAIT,
+    "globalSpeed": GLOBAL_SPEED,
+    "globalIntensity": GLOBAL_INTENSITY,
+}

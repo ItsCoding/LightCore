@@ -23,7 +23,7 @@ class visualize_energyRGB:
         self.p = None
         self.p_filt = None
         self.rgbColor = random.choice(colorPalette)
-        # self.gain = dsp.ExpFilter(np.tile(0.01, config.N_FFT_BINS),
+        # self.gain = dsp.ExpFilter(np.tile(0.01, config.cfg["frequencyBins"]),
         #                 alpha_decay=0.001, alpha_rise=0.99)
     def description():
         return {
@@ -49,7 +49,7 @@ class visualize_energyRGB:
         scale = 1.05
         y = [i for i in y if i > 0.05]
         if len(y) < 3:
-            y = np.tile(0.0, config.N_FFT_BINS)
+            y = np.tile(0.0, config.cfg["frequencyBins"])
         y = np.copy(y)
         mean = int(((np.mean(y) / 100) * stripSize) ** scale)
         # print(mean)

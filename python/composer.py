@@ -8,7 +8,7 @@ import dsp
 from customTypes.frequencyRange import FrequencyRange
 from customTypes.stripFrame import StripFrame
 runningEffekts: list = []
-gain = dsp.ExpFilter(np.tile(0.01, config.N_FFT_BINS),
+gain = dsp.ExpFilter(np.tile(0.01, config.cfg["frequencyBins"]),
                          alpha_decay=0.001, alpha_rise=0.99)
 # Add a new effekt to the composition
 def addEffekt(effekt, frequencyRange: array, stripIndex: int, ledStartIndex: int, ledEndIndex: int):
@@ -34,11 +34,21 @@ def getComposition(frequencyBins):
             frameDict[effekt.stripIndex] = StripFrame(effekt.stripIndex, stipLength)
 
         frequencyRange = effekt.frequencyRange
-        tempBins = np.tile(0.0, config.N_FFT_BINS)
+        tempBins = np.tile(0.0, config.cfg["frequencyBins"])
         np.put(tempBins, range(frequencyRange[0], frequencyRange[1]), frequencyBins)
         # tempBins = frequencyBins[frequencyRange[0]:frequencyRange[1]]
         effektResult = effekt.effekt.run(tempBins,stipLength,gain)
 
+        brightness = config.cfg["brightness"] / 100
+        # Adjust brightness
+        effektResult[0] = [int(i * brightness) for i in effektResult[0]]
+        effektResult[1] = [int(i * brightness) for i in effektResult[1]]
+        effektResult[2] = [int(i * brightness) for i in effektResult[2]]
+
+
+        # effektResult[0, :] *= brightness
+        # effektResult[1, :] *= brightness
+        # effektResult[2, :] *= brightness
         frameDict[effekt.stripIndex].addFrame(effektResult, effekt.ledStartIndex, effekt.ledEndIndex)
 
 

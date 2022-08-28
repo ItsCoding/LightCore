@@ -1,55 +1,36 @@
 import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import { Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
+import { Tab, Tabs } from '@mui/material';
 import SpeedIcon from '@mui/icons-material/Speed';
 import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
-import { useNavigate } from 'react-router-dom';
 
+type HeaderBarProps = {
+    changeTab: (key: string) => void;
+}
 
-export default function HeaderBar() {
-    const [drawerOpen, setDrawerOpen] = React.useState(false);
-    const [title, setTitle] = React.useState("LightCore");
-    const navigate = useNavigate();
-    const navigateTo = (path: string, t: string) => {
-        setTitle(t);
-        navigate(path);
+export default function HeaderBar({changeTab}: HeaderBarProps) {
+    const [selectedPath, setSelectedPath] = React.useState("");
+    // const navigate = useNavigate();
+    const navigateTo = (path: string) => {
+        console.log(path)
+        setSelectedPath(path);
+        changeTab(path);
     }
 
     return (
         <>
-            <Drawer
-                anchor={'left'}
-                open={drawerOpen}
-                onClose={() => setDrawerOpen(false)}
-            >
-                <List>
-                    <ListItem disablePadding>
-                        <ListItemButton onClick={() => navigateTo("quick","QuickControlls")}>
-                            <ListItemIcon>
-                                <SpeedIcon />
-                            </ListItemIcon>
-                            <ListItemText primary="QuickControlls" />
-                        </ListItemButton>
-                    </ListItem>
-                    <ListItem disablePadding>
-                        <ListItemButton onClick={() => navigateTo("effekts","Effekts")}>
-                            <ListItemIcon>
-                                <TipsAndUpdatesIcon />
-                            </ListItemIcon>
-                            <ListItemText primary="Effekts" />
-                        </ListItemButton>
-                    </ListItem>
-                </List>
-            </Drawer>
             <Box sx={{ flexGrow: 1 }}>
-                <AppBar position="static">
-                    <Toolbar>
+                <AppBar position="fixed" sx={{ top: 'auto', bottom: 0 }}>
+                    <Tabs
+                        value={selectedPath}
+                        onChange={(e,value) => navigateTo(value)}
+                        aria-label="icon tabs example">
+                        <Tab value={"quick"} icon={<SpeedIcon />} aria-label="quick" />
+                        <Tab value={"effekts"} icon={<TipsAndUpdatesIcon />} aria-label="effekts" />
+                        {/* <Tab icon={<PersonPinIcon />} aria-label="person" /> */}
+                    </Tabs>
+                    {/* <Toolbar>
                         <IconButton
                             size="large"
                             edge="start"
@@ -63,7 +44,7 @@ export default function HeaderBar() {
                         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                             {title}
                         </Typography>
-                    </Toolbar>
+                    </Toolbar> */}
                 </AppBar>
             </Box>
         </>

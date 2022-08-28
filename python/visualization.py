@@ -56,13 +56,13 @@ class Visualization:
         self._lastTime = time.time()
         self._randomWait = 0
         self.output = []
-        self.fft_plot_filter = dsp.ExpFilter(np.tile(1e-1, config.N_FFT_BINS),
+        self.fft_plot_filter = dsp.ExpFilter(np.tile(1e-1, config.cfg["frequencyBins"]),
                                 alpha_decay=0.5, alpha_rise=0.99)
 
-        self.mel_gain = dsp.ExpFilter(np.tile(1e-1, config.N_FFT_BINS),
+        self.mel_gain = dsp.ExpFilter(np.tile(1e-1, config.cfg["frequencyBins"]),
                                 alpha_decay=0.01, alpha_rise=0.99)
 
-        self.mel_smoothing = dsp.ExpFilter(np.tile(1e-1, config.N_FFT_BINS),
+        self.mel_smoothing = dsp.ExpFilter(np.tile(1e-1, config.cfg["frequencyBins"]),
                                 alpha_decay=0.5, alpha_rise=0.99)
 
         self.volume = dsp.ExpFilter(config.MIN_VOLUME_THRESHOLD,
@@ -234,9 +234,9 @@ class Visualization:
             self._lastTime = time.time()
             self._randomWait = 0
             if(dropDetected):
-                self._randomWait = random.randrange(60, config.RANDOM_MAX_WAIT, 1)
+                self._randomWait = random.randrange(config.cfg["dropRandomMinWait"], config.cfg["dropRandomMaxWait"], 1)
             else:
-                self._randomWait = random.randrange(1, config.RANDOM_MAX_WAIT, 1)
+                self._randomWait = random.randrange(config.cfg["randomMinWait"], config.cfg["randomMaxWait"], 1)
             print(self._randomWait)
             # copyArray = elements.copy()
             # copyArray.remove(visualization_effect)
@@ -264,7 +264,7 @@ class Visualization:
             self.fft_plot = layout.addPlot(title='Filterbank Output', colspan=3)
             self.fft_plot.setRange(yRange=[-0.1, 1.2])
             self.fft_plot.disableAutoRange(axis=pg.ViewBox.YAxis)
-            x_data = np.array(range(1, config.N_FFT_BINS + 1))
+            x_data = np.array(range(1, config.cfg["frequencyBins"] + 1))
             self.mel_curve = pg.PlotCurveItem()
             self.mel_curve.setData(x=x_data, y=x_data*0)
             self.fft_plot.addItem(self.mel_curve)
@@ -298,16 +298,16 @@ class Visualization:
                 maxf = freq_slider.tickValue(1)**2.0 * (config.MIC_RATE / 2.0)
                 t = 'Frequency range: {:.0f} - {:.0f} Hz'.format(minf, maxf)
                 freq_label.setText(t)
-                config.MIN_FREQUENCY = minf
-                config.MAX_FREQUENCY = maxf
+                config.cfg["minFrequency"] = minf
+                config.cfg["maxFrequency"] = maxf
                 dsp.create_mel_bank()
             freq_slider = pg.TickSliderItem(orientation='bottom', allowAdd=False)
             freq_slider.tickMoveFinished = freq_slider_change
             freq_slider.addTick((config.MIN_FREQUENCY / (config.MIC_RATE / 2.0))**0.5)
             freq_slider.addTick((config.MAX_FREQUENCY / (config.MIC_RATE / 2.0))**0.5)
             freq_label.setText('Frequency range: {} - {} Hz'.format(
-                config.MIN_FREQUENCY,
-                config.MAX_FREQUENCY))
+                config.cfg["minFrequency"],
+                config.cfg["maxFrequency"]))
             # Effect selection
             active_color = '#16dbeb'
             inactive_color = '#FFFFFF'

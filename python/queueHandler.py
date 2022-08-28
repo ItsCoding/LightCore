@@ -19,7 +19,7 @@ def handleQueue(queue2Thread,queue2Parent,vis):
             msg = json.loads(incommingData)
             topicType = msg["type"]
             data = msg["message"]
-            print("Got QueueTask: ", msg)
+            # print("Got QueueTask: ", msg)
             if topicType == "light.random.next":
                 vis.makeRandomComposition("all")
             elif topicType == "light.random.next.specific":
@@ -41,4 +41,11 @@ def handleQueue(queue2Thread,queue2Parent,vis):
             elif topicType == "light.random.setEnabled.specific":
                 vis.ENDABLED_RND_PARTS[data["stripIndex"]] = data["enabled"]
                 print("Changed Enabled to: ", vis.ENDABLED_RND_PARTS)
+            elif topicType == "system.config.change":
+                config.cfg[data["key"]] = data["value"]
+                print(config.cfg)
+                print("Changing Config")
+            elif topicType == "system.config.get":
+                print("Pushing Config in Queue")
+                queue2Parent.put(json.dumps({"type": "return.system.config", "message": config.cfg}))
 
