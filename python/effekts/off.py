@@ -16,7 +16,7 @@ class visualize_OFF:
             "effektSystemName": "visualize_OFF",
         }
 
-    def run(self, y,stripSize,gain):
+    def run(self, y,stripSize,gain,additionalData):
         """Effect that expands from the center with increasing sound energy"""
         # global p, p_filt
         # if(self.p is None):

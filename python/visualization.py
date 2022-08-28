@@ -23,6 +23,10 @@ import effekts.flashy as flashyEffekt
 import effekts.energyRGB as energyRGBEffekt
 import effekts.multipleEnergy as multipleEnergyEffekt
 import effekts.rotatingEnergy as rotatingEnergyEffekt
+import effekts.energyInverted as energyInvertedEffekt
+import effekts.energyRGBInverted as energyRGBInvertedEffekt
+import effekts.energyExtremeInverted as energyExtremeInvertedEffekt
+import effekts.scrollInverted as scrollInvertedEffekt
 import effekts.off as OffEffekt
 import queueHandler
 # import wsServer as wsServer
@@ -40,6 +44,10 @@ visualize_flashy = flashyEffekt.visualize_flashy
 visualize_multipleEnergy = multipleEnergyEffekt.visualize_multipleEnergy
 visualize_rotatingEnergy = rotatingEnergyEffekt.visualize_rotatingEnergy
 visualize_Off = OffEffekt.visualize_OFF
+visualize_energyInverted = energyInvertedEffekt.visualize_energyInverted
+visualize_energyRGBInverted = energyRGBInvertedEffekt.visualize_energyRGBInverted
+visualize_energyExtremeInverted = energyExtremeInvertedEffekt.visualize_energyExtremeInverted
+visualize_scrollInverted = scrollInvertedEffekt.visualize_scrollInverted
 
 # composer.addEffekt(visualize_scroll,FrequencyRange.ALL,0,75,100)
 
@@ -248,7 +256,9 @@ class Visualization:
     def start(self, q2t, q2p):
         self.queue2Thread = q2t
         self.queue2Parent = q2p
-        self.randomEffekts = [visualize_spectrum,visualize_energy,visualize_scroll,visualize_random,visualize_scrollExtreme,visualize_energyExtreme,visualize_energyRGB,visualize_flashy,visualize_multipleEnergy,visualize_rotatingEnergy]
+        self.randomEffekts = [visualize_spectrum,visualize_energy,visualize_scroll,visualize_random,visualize_scrollExtreme,
+                            visualize_energyExtreme,visualize_energyRGB,visualize_flashy,visualize_multipleEnergy,visualize_rotatingEnergy,
+                            visualize_energyInverted,visualize_energyRGBInverted,visualize_energyExtremeInverted,visualize_scrollInverted]
         if config.USE_GUI:
             import pyqtgraph as pg
             from pyqtgraph.Qt import QtGui, QtCore

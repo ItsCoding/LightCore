@@ -3,7 +3,7 @@ import numpy as np
 import dsp
 from scipy.ndimage.filters import gaussian_filter1d
 
-class visualize_energyExtreme:
+class visualize_energyExtremeInverted:
     def __init__(self,id):
         self.id = id
         self.p = None
@@ -12,9 +12,9 @@ class visualize_energyExtreme:
         #                 alpha_decay=0.001, alpha_rise=0.99)
     def description():
         return {
-            "name": "Energy Extreme",
-            "description": "Expands from the center with increasing sound energy, but in Extreme colors",
-            "effektSystemName": "visualize_energyExtreme",
+            "name": "Energy Ext Inverted",
+            "description": "Expands from the edges to the center with increasing sound energy, but in Extreme colors",
+            "effektSystemName": "visualize_energyExtremeInverted",
         }
     def run(self, y,stripSize,gain: dsp.ExpFilter,instanceData: dict = {}):
         """Effect that expands from the center with increasing sound energy"""
@@ -55,4 +55,4 @@ class visualize_energyExtreme:
         self.p[1, :] = gaussian_filter1d(self.p[1, :], sigma=4.0)
         self.p[2, :] = gaussian_filter1d(self.p[2, :], sigma=4.0)
         # Set the new pixel value
-        return np.concatenate((self.p[:, ::-1], self.p), axis=1)
+        return np.concatenate(( self.p,self.p[:, ::-1]), axis=1)

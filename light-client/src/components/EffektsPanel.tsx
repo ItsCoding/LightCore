@@ -56,11 +56,13 @@ export const EffektsPanel = ({ availableEffekts, strip, colorDict }: EffektsPane
                 </Grid>
             </Grid>
 
-            <Grid container>
+            <Grid style={{
+                marginTop: "10px",
+            }} container columnSpacing={2} rowSpacing={2}>
                 {availableEffekts.sort((a, b) => a.effektSystemName.localeCompare(b.effektSystemName)).map(effekt => {
                     return (
                         <Grid item xs={6} md={4} key={effekt.effektSystemName}>
-                            <Button onClick={() => changeEffekt(effekt)}>{effekt.name}</Button>
+                            <Button variant="outlined" fullWidth style={{height: "50px"}} onClick={() => changeEffekt(effekt)}>{effekt.name}</Button>
                         </Grid>)
                 })}
             </Grid>
