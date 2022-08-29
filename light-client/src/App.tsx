@@ -13,12 +13,14 @@ const darkTheme = createTheme({
     mode: 'dark',
   },
 });
+const wsClient = WebSocketClient.getInstance();
 
 function App() {
-  const wsClient = WebSocketClient.getInstance();
   const [activeRoute, setActiveRoute] = React.useState("home");
   const [availableEffekts, setAvailableEffekts] = React.useState<Array<Effekt>>([]);
   const [connectionError, setConnectionError] = React.useState<boolean>(false);
+  const connectedToWs = React.useRef(false);
+
 
   //System
   const [lcConfig, setLcConfig] = React.useState<LightCoreConfig>();
@@ -33,8 +35,10 @@ function App() {
 
 
   const connectWS = async () => {
+    if(connectedToWs.current) return;
     try {
-      await wsClient.connect(`ws://192.168.178.48:8000`);
+      connectedToWs.current = true;
+      await wsClient.connect(`ws://${window.location.hostname}:8000`);
       console.log("Get available effekts");
       wsClient.send("get.availableEffekts");
       wsClient.send("system.config.get")

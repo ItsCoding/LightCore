@@ -77,30 +77,41 @@ export const QuickRandomControlls = ({ randomEnabled, randomSpecific, lightConfi
                 }}
                     justifyContent="center"
                 >
-                    <Grid xs={6} md={1} item>
-                        <Button variant="outlined" onClick={() => wsClient.lightRandomNext()}>Next Random Comp</Button>
-                    </Grid>
-                    <Grid xs={6} md={1} item>
+                    <Grid xs={6} md={2} item>
                         <Button variant="outlined" style={{
                             backgroundColor: randomEnabled ? "green" : "red",
+                            width: "100%",
+                            height: "100%",
                         }} onClick={() => {
                             setRandomEnabled(!randomEnabled);
                             wsClient.lightRandomSetEnabled(!randomEnabled);
                         }}>Random comp. toggle</Button>
                     </Grid>
                     {strips.map(strip => (
-                        <Grid xs={6} md={1} item>
+                        <Grid xs={6} md={2} item>
                             <Button variant="outlined" style={{
                                 backgroundColor: randomSpecific[strip.index] ? "green" : "red",
+                                width: "100%",
+                                height: "100%",
                             }} onClick={() => {
                                 wsClient.lightRandomSetEnabledSpecific(strip.index, !randomSpecific[strip.index]);
                                 toggleRandoSpecific(strip.index);
                             }}>RND {strip.position} toggle</Button>
                         </Grid>
                     ))}
+                    <Grid xs={6} md={2} item>
+                        <Button style={{
+                            width: "100%",
+                            height: "100%",
+                        }} variant="outlined" onClick={() => wsClient.lightRandomNext()}>Next Random Comp</Button>
+                    </Grid>
                     {strips.map(strip => (
-                        <Grid xs={6} md={1} item>
-                            <Button variant="outlined" onClick={() => wsClient.lightRandomNextSpecific(strip.index)}>Next Comp {strip.position}</Button>
+                        <Grid xs={6} md={2} item>
+                            <Button variant="outlined" style={{
+                                width: "100%",
+                                height: "100%",
+                            }}
+                                onClick={() => wsClient.lightRandomNextSpecific(strip.index)}>Next Comp {strip.position}</Button>
                         </Grid>
                     ))}
                 </Grid>

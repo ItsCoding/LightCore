@@ -1,4 +1,4 @@
-import { Alert, AlertTitle, Box, Button, Card, CardContent, CardHeader, Tab, Tabs } from "@mui/material"
+import { Alert, AlertTitle, Box, Button, Card, CardContent, CardHeader, Grid, Tab, Tabs } from "@mui/material"
 import React from "react"
 import { ColorResult } from "react-color"
 import { EffektsPanel } from "../components/EffektsPanel"
@@ -88,9 +88,17 @@ export const EffektsPage = ({ availableEffekts, isRandomizerActive, setRandomize
                     })}
                 </CardContent>
             </Card>
-            {stripConfig.map(strip => {
-                return <EffektsPanel key={strip.index} colorDict={colorDict} availableEffekts={availableEffekts} strip={strip} />
-            })}
+            <Grid container spacing={2}>
+                {stripConfig.map(strip => {
+                    return (
+                        <Grid item xs={12} md={6}>
+                            <EffektsPanel key={strip.index} colorDict={colorDict} availableEffekts={availableEffekts} strip={strip} />
+                        </Grid>
+                    )
+                })}
+
+            </Grid>
+
         </div>
     )
 }

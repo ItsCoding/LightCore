@@ -15,7 +15,7 @@ class visualize_scroll:
             "description": "Scrolls an RGB color across the strip",
             "effektSystemName": "visualize_scroll",
             "group": "scroll",
-            "groupColor": "#8c7ae6",
+            "groupColor": "#ff00d7",
         }
     def run(self, y,stripSize,gain: dsp.ExpFilter,instanceData: dict = {}):
         """Effect that originates in the center and scrolls outwards"""

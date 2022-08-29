@@ -16,7 +16,7 @@ class visualize_energyExtreme:
             "description": "Expands from the center with increasing sound energy, but in Extreme colors",
             "effektSystemName": "visualize_energyExtreme",
             "group": "energy",
-            "groupColor": "#273c75",
+            "groupColor": "#5b82ec",
         }
     def run(self, y,stripSize,gain: dsp.ExpFilter,instanceData: dict = {}):
         """Effect that expands from the center with increasing sound energy"""

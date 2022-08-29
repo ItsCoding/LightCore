@@ -39,7 +39,7 @@ class SimpleEcho(WebSocket):
         print(self.address, 'closed')
 
 def initServer():
-    global proc, queue
+    global proc, queue2Thread,queue2Parent
     vis = Visualization()
     proc = multiprocessing.Process(target=vis.start, args=(queue2Thread,queue2Parent))
     proc.start()
