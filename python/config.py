@@ -6,7 +6,7 @@ import os
 
 
 #DEVICE = 'esp8266'
-DEVICE = 'virtual'
+DEVICE = 'esp'
 """Device used to control LED strip. Must be 'pi',  'esp8266' or 'blinkstick'
 
 'esp8266' means that you are using an ESP8266 module to control the LED strip
@@ -19,12 +19,12 @@ audio input and control the LED strip directly.
 to control the leds connected to it.
 """
 
-if DEVICE == 'esp8266':
-    UDP_IP = '192.168.0.150'
+if DEVICE == 'esp':
+    UDP_IP = '10.40.0.184'
     """IP address of the ESP8266. Must match IP in ws2812_controller.ino"""
     UDP_PORT = 7777
     """Port number used for socket communication between Python and ESP8266"""
-    SOFTWARE_GAMMA_CORRECTION = False
+    SOFTWARE_GAMMA_CORRECTION = True
     """Set to False because the firmware handles gamma correction + dither"""
 
 if DEVICE == 'pi':
@@ -45,8 +45,10 @@ if DEVICE == 'blinkstick':
     SOFTWARE_GAMMA_CORRECTION = True
     """Set to True because blinkstick doesn't use hardware dithering"""
 if DEVICE == "virtual":
-    SOFTWARE_GAMMA_CORRECTION = False
-    
+    SOFTWARE_GAMMA_CORRECTION = True
+if DEVICE == "mqtt":
+    SOFTWARE_GAMMA_CORRECTION = True
+
 BRIGHTNESS = 100
 USE_GUI = True
 """Whether or not to display a PyQtGraph GUI plot of visualization"""

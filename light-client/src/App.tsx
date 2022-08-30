@@ -8,11 +8,32 @@ import HeaderBar from './components/General/HeaderBar';
 import { EffektsPage } from './pages/EffektsPage';
 import { LightCoreConfig } from './types/LightCoreConfig';
 import { HomePage } from './pages/HomePage';
-const darkTheme = createTheme({
+
+export const themeOptions = createTheme({
   palette: {
     mode: 'dark',
+    primary: {
+      main: '#003566',
+    },
+    secondary: {
+      main: '#ffd60a',
+    },
+    background: {
+      default: '#000000',
+      paper: '#181818',
+    },
+    text: {
+      primary: '#d4d4d4',
+    },
+    divider: '#080808',
   },
 });
+
+// const darkTheme = createTheme({
+//   palette: {
+//     mode: 'dark',
+//   },
+// });
 const wsClient = WebSocketClient.getInstance();
 
 function App() {
@@ -93,7 +114,7 @@ function App() {
   }
 
   return (
-    <ThemeProvider theme={darkTheme}>
+    <ThemeProvider theme={themeOptions}>
       {connectionError ? <ConnectionError /> :
 
         <div>
