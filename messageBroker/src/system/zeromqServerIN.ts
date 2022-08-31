@@ -5,7 +5,9 @@ export class ZeroMQServerIN {
     private server = new Socket('pull');
     private onMessageHandler: (message: string) => void;
 
-    constructor() { }
+    constructor(callback: (message: string) => void) {
+        this.onMessageHandler = callback;
+     }
 
     public start(): void {
         const self = this;
@@ -17,9 +19,5 @@ export class ZeroMQServerIN {
             }
         });
         console.log('ZeroMQ-IN queue bound to port 7321');
-    }
-
-    public onMessage(callback: (message: string) => void) {
-        this.onMessageHandler = callback;
     }
 }

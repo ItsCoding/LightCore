@@ -1,6 +1,15 @@
 {
-    "compilerOptions": {
-      "esModuleInterop": true,
-      "target": "ES6"
-    }
-  }
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "target": "ES6",
+    "lib": [
+      "ES6"
+    ],
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true
+  },
+  "include": [
+    "src"
+  ]
+}
