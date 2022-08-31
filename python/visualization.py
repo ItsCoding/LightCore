@@ -98,7 +98,7 @@ class Visualization:
             0: True,
             1: True
         }
-
+        self.noAudioCount = 0
         #CONFIG VARS
         self.randomEnabled = True
     def frames_per_second(self):
@@ -138,7 +138,10 @@ class Visualization:
         
         vol = np.max(np.abs(y_data))
         if vol < config.MIN_VOLUME_THRESHOLD:
-            print('No audio input. Volume below threshold. Volume:', vol)
+            if self.noAudioCount > 50:
+                self.noAudioCount = 0
+                print('No audio input. Volume below threshold. Volume:', vol, 'Count:', self.noAudioCount)
+            self.noAudioCount += 1
             # led.pixels = np.tile(0, (3, config.N_PIXELS))
             # led.update()
         else:

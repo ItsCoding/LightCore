@@ -8,6 +8,7 @@ import HeaderBar from './components/General/HeaderBar';
 import { EffektsPage } from './pages/EffektsPage';
 import { LightCoreConfig } from './types/LightCoreConfig';
 import { HomePage } from './pages/HomePage';
+import { ReturnType } from './types/TopicReturnType';
 
 export const themeOptions = createTheme({
   palette: {
@@ -56,27 +57,24 @@ function App() {
 
 
   const connectWS = async () => {
-    if(connectedToWs.current) return;
+    if (connectedToWs.current) return;
     try {
       connectedToWs.current = true;
       await wsClient.connect(`ws://${window.location.hostname}:8000`);
+      wsClient.addEventHandler(ReturnType.AVAILABLE_EFFEKTS, topic => {
+        const effekts = Effekt.fromJSONArray(topic.message);
+        console.log("Available Effekts: ", effekts);
+        setAvailableEffekts(effekts);
+      })
+
+      wsClient.addEventHandler(ReturnType.SYSTEM.CONFIG, topic => {
+        const conf = LightCoreConfig.fromJSON(topic.message);
+        console.log("System Config: ", conf);
+        setLcConfig(conf);
+      })
       console.log("Get available effekts");
       wsClient.send("get.availableEffekts");
       wsClient.send("system.config.get")
-      wsClient.addEventHandler(topic => {
-        console.log("TOPIC: ", topic)
-        switch (topic.type) {
-          case "return.availableEffekts":
-            const effekts = Effekt.fromJSONArray(topic.message);
-            console.log("Available Effekts: ", effekts);
-            setAvailableEffekts(effekts);
-            break;
-          case "return.system.config":
-            const conf = LightCoreConfig.fromJSON(topic.message);
-            console.log("System Config: ", conf);
-            setLcConfig(conf);
-        }
-      })
     } catch (error) {
       console.error("WS-Error", error);
       setConnectionError(true);

@@ -2,6 +2,7 @@ import { ServerTopic } from "../types/ServerTopic";
 
 export type WebSocketEvent = {
     eventHandlerID: string,
+    topic: string,
     handler: (topic: ServerTopic) => void
 }
 
@@ -22,7 +23,11 @@ export class WebSocketClient {
     private handleMessage(message: string): void {
         console.log(message);
         const topic = JSON.parse(message) as ServerTopic;
-        this.eventHandlers.forEach((eventHandler) => eventHandler.handler(topic))
+        this.eventHandlers.forEach((eventHandler) => {
+            if (eventHandler.topic === topic.type) {
+                eventHandler.handler(topic);
+            }
+        })
     }
 
     public connect(url: string): Promise<void> {
@@ -75,11 +80,12 @@ export class WebSocketClient {
 
     }
 
-    public addEventHandler(handler: (topic: ServerTopic) => void): string {
+    public addEventHandler(topic: string, handler: (topic: ServerTopic) => void): string {
         const eventHandlerID = Math.random().toString(36).substring(7);
         this.eventHandlers.push({
             eventHandlerID: eventHandlerID,
-            handler: handler
+            handler: handler,
+            topic
         });
         return eventHandlerID
     }

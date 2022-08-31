@@ -7,7 +7,7 @@ export class DataAPI {
     constructor() {
         this.db = new DataSource({
             type: "sqlite",
-            database: "../db.sqlite",
+            database: "db.sqlite",
             entities: [KeyValue],
         });
         this.db.initialize().then(() => {
