@@ -6,8 +6,8 @@ import os
 
 
 #DEVICE = 'esp8266'
-DEVICE = 'esp'
-"""Device used to control LED strip. Must be 'pi',  'esp8266' or 'blinkstick'
+DEVICE = 'virtual'
+"""Device used to control LED strip. Must be 'esp' or 'virtual'
 
 'esp8266' means that you are using an ESP8266 module to control the LED strip
 and commands will be sent to the ESP8266 over WiFi.
@@ -27,26 +27,7 @@ if DEVICE == 'esp':
     SOFTWARE_GAMMA_CORRECTION = True
     """Set to False because the firmware handles gamma correction + dither"""
 
-if DEVICE == 'pi':
-    LED_PIN = 18
-    """GPIO pin connected to the LED strip pixels (must support PWM)"""
-    LED_FREQ_HZ = 800000
-    """LED signal frequency in Hz (usually 800kHz)"""
-    LED_DMA = 5
-    """DMA channel used for generating PWM signal (try 5)"""
-    # BRIGHTNESS = 255
-    """Brightness of LED strip between 0 and 255"""
-    LED_INVERT = False
-    """Set True if using an inverting logic level converter"""
-    SOFTWARE_GAMMA_CORRECTION = True
-    """Set to True because Raspberry Pi doesn't use hardware dithering"""
-
-if DEVICE == 'blinkstick':
-    SOFTWARE_GAMMA_CORRECTION = True
-    """Set to True because blinkstick doesn't use hardware dithering"""
 if DEVICE == "virtual":
-    SOFTWARE_GAMMA_CORRECTION = True
-if DEVICE == "mqtt":
     SOFTWARE_GAMMA_CORRECTION = True
 
 BRIGHTNESS = 100

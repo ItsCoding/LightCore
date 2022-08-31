@@ -39,7 +39,8 @@ class visualize_flashy:
 
         y = np.copy(interpolate(y, config.N_PIXELS // 2))
         self.common_mode.update(y)
-        y = y
+        scale = 1.5 * config.cfg["globalIntensity"]
+        y = y ** scale
         diff = y - self._prev_spectrum
         self._prev_spectrum = np.copy(y)
         # Color channel mappings
