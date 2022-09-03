@@ -3,7 +3,7 @@
 * Sketch written by Joey Babcock - https://joeybabcock.me/blog/, and Scott Lawson (Below) 
 * Codebase created by ScottLawsonBC - https://github.com/scottlawsonbc
 */
-#include <NeoPixelBus.h>
+#include <Adafruit_NeoPixel.h>
 
 #if defined(ESP8266)
 #include <ESP8266WiFi.h>
@@ -13,33 +13,32 @@
 #else
 #error "This is not a ESP8266 or ESP32!"
 #endif
+#define PIN D1
 
 // Set to the number of LEDs in your LED strip
-#define NUM_LEDS 60
+#define NUM_LEDS 540
 // Maximum number of packets to hold in the buffer. Don't change this.
 #define BUFFER_LEN 1024
 // Toggles FPS output (1 = print FPS over serial, 0 = disable output)
 #define PRINT_FPS 1
 
 //NeoPixelBus settings
-const uint8_t PixelPin = 3;  // make sure to set this to the correct pin, ignored for Esp8266(set to 3 by default for DMA)
-
 // Wifi and socket settings
-const char* ssid     = "YOUR_WIFI_SSID";
-const char* password = "YOUR_WIFI_PASSWORD";
+const char* ssid     = "FakeGigabit";
+const char* password = "Schreib was rein.";
 unsigned int localPort = 7777;
 char packetBuffer[BUFFER_LEN];
 
 uint8_t N = 0;
-
+uint8_t offset = 0;
 WiFiUDP port;
 // Network information
 // IP must match the IP in config.py
-IPAddress ip(192, 168, 0, 150);
+IPAddress ip(10, 40, 0, 184);
 // Set gateway to your router's gateway
-IPAddress gateway(192, 168, 0, 1);
+IPAddress gateway(10, 40, 0, 1);
 IPAddress subnet(255, 255, 255, 0);
-NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod> ledstrip(NUM_LEDS, PixelPin);
+Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUM_LEDS, PIN, NEO_GRB + NEO_KHZ400);
 
 void setup() {
     Serial.begin(115200);
@@ -61,8 +60,8 @@ void setup() {
     
     port.begin(localPort);
     
-    ledstrip.Begin();//Begin output
-    ledstrip.Show();//Clear the strip for use
+    strip.begin();
+    strip.show();
 }
 
 #if PRINT_FPS
@@ -76,13 +75,14 @@ void loop() {
     // If packets have been received, interpret the command
     if (packetSize) {
         int len = port.read(packetBuffer, BUFFER_LEN);
-        for(int i = 0; i < len; i+=4) {
+        for(int i = 0; i < len; i+=5) {
             packetBuffer[len] = 0;
-            N = packetBuffer[i];
-            RgbColor pixel((uint8_t)packetBuffer[i+1], (uint8_t)packetBuffer[i+2], (uint8_t)packetBuffer[i+3]);//color
-            ledstrip.SetPixelColor(N, pixel);//N is the pixel number
+            offset = packetBuffer[i];
+            N = packetBuffer[i+1];
+            N = N + (offset * 256);
+            strip.setPixelColor(N, (uint8_t)packetBuffer[i+3],(uint8_t)packetBuffer[i+2], (uint8_t)packetBuffer[i+4]);
         } 
-        ledstrip.Show();
+        strip.show();
         #if PRINT_FPS
             fpsCounter++;
             Serial.print("/");//Monitors connection(shows jumps/jitters in packets)

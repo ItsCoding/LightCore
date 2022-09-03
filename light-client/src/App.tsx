@@ -8,11 +8,33 @@ import HeaderBar from './components/General/HeaderBar';
 import { EffektsPage } from './pages/EffektsPage';
 import { LightCoreConfig } from './types/LightCoreConfig';
 import { HomePage } from './pages/HomePage';
-const darkTheme = createTheme({
+import { ReturnType } from './types/TopicReturnType';
+
+export const themeOptions = createTheme({
   palette: {
     mode: 'dark',
+    primary: {
+      main: '#003566',
+    },
+    secondary: {
+      main: '#ffd60a',
+    },
+    background: {
+      default: '#000000',
+      paper: '#181818',
+    },
+    text: {
+      primary: '#d4d4d4',
+    },
+    divider: '#080808',
   },
 });
+
+// const darkTheme = createTheme({
+//   palette: {
+//     mode: 'dark',
+//   },
+// });
 const wsClient = WebSocketClient.getInstance();
 
 function App() {
@@ -35,27 +57,24 @@ function App() {
 
 
   const connectWS = async () => {
-    if(connectedToWs.current) return;
+    if (connectedToWs.current) return;
     try {
       connectedToWs.current = true;
       await wsClient.connect(`ws://${window.location.hostname}:8000`);
-      console.log("Get available effekts");
-      wsClient.send("get.availableEffekts");
-      wsClient.send("system.config.get")
-      wsClient.addEventHandler(topic => {
-        console.log("TOPIC: ", topic)
-        switch (topic.type) {
-          case "return.availableEffekts":
-            const effekts = Effekt.fromJSONArray(topic.message);
-            console.log("Available Effekts: ", effekts);
-            setAvailableEffekts(effekts);
-            break;
-          case "return.system.config":
-            const conf = LightCoreConfig.fromJSON(topic.message);
-            console.log("System Config: ", conf);
-            setLcConfig(conf);
-        }
+      wsClient.addEventHandler(ReturnType.DATA.AVAILABLE_EFFEKTS, topic => {
+        const effekts = Effekt.fromJSONArray(topic.message);
+        console.log("Available Effekts: ", effekts);
+        setAvailableEffekts(effekts);
       })
+
+      wsClient.addEventHandler(ReturnType.SYSTEM.CONFIG, topic => {
+        const conf = LightCoreConfig.fromJSON(topic.message);
+        console.log("System Config: ", conf);
+        setLcConfig(conf);
+      })
+      console.log("Get available effekts");
+      wsClient.send("data.get.availableEffekts");
+      wsClient.send("system.config.get")
     } catch (error) {
       console.error("WS-Error", error);
       setConnectionError(true);
@@ -64,14 +83,7 @@ function App() {
   }
 
   useEffect(() => {
-    _.debounce(connectWS, 1000)();
-    const interval = setInterval(() => {
-      wsClient.send("system.queue.echo");
-    }, 1000);
-    return () => {
-      clearInterval(interval);
-      // wsClient.disconnect();
-    }
+    connectWS();
   }, [])
 
   const ConnectionError = () => (<Alert severity="error">
@@ -93,7 +105,7 @@ function App() {
   }
 
   return (
-    <ThemeProvider theme={darkTheme}>
+    <ThemeProvider theme={themeOptions}>
       {connectionError ? <ConnectionError /> :
 
         <div>

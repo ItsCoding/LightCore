@@ -42,6 +42,9 @@ export const QuickRandomControlls = ({ randomEnabled, randomSpecific, lightConfi
         if (!Array.isArray(time)) {
             return;
         }
+        if(time[0] === time[1]) {
+            time[1] += 1;
+        }
         lightConfig.randomMinWait = time[0];
         lightConfig.randomMaxWait = time[1];
         wsClient.changeConfigProperty("randomMinWait", time[0]);
@@ -52,6 +55,9 @@ export const QuickRandomControlls = ({ randomEnabled, randomSpecific, lightConfi
     const setDropRandomWait = (time: number[] | number) => {
         if (!Array.isArray(time)) {
             return;
+        }
+        if(time[0] === time[1]) {
+            time[1] += 1;
         }
         lightConfig.dropRandomMinWait = time[0];
         lightConfig.dropRandomMaxWait = time[1];
@@ -78,8 +84,7 @@ export const QuickRandomControlls = ({ randomEnabled, randomSpecific, lightConfi
                     justifyContent="center"
                 >
                     <Grid xs={6} md={2} item>
-                        <Button variant="outlined" style={{
-                            backgroundColor: randomEnabled ? "green" : "red",
+                        <Button variant="contained" color={randomEnabled ? "secondary" : "primary"} style={{
                             width: "100%",
                             height: "100%",
                         }} onClick={() => {
@@ -89,11 +94,10 @@ export const QuickRandomControlls = ({ randomEnabled, randomSpecific, lightConfi
                     </Grid>
                     {strips.map(strip => (
                         <Grid xs={6} md={2} item>
-                            <Button variant="outlined" style={{
-                                backgroundColor: randomSpecific[strip.index] ? "green" : "red",
+                            <Button variant="contained" color={randomSpecific[strip.index] ? "secondary" : "primary"} style={{
                                 width: "100%",
                                 height: "100%",
-                            }} onClick={() => {
+                            }} onTouchStart={() => {
                                 wsClient.lightRandomSetEnabledSpecific(strip.index, !randomSpecific[strip.index]);
                                 toggleRandoSpecific(strip.index);
                             }}>RND {strip.position} toggle</Button>
@@ -103,15 +107,15 @@ export const QuickRandomControlls = ({ randomEnabled, randomSpecific, lightConfi
                         <Button style={{
                             width: "100%",
                             height: "100%",
-                        }} variant="outlined" onClick={() => wsClient.lightRandomNext()}>Next Random Comp</Button>
+                        }} variant="contained" onTouchStart={() => wsClient.lightRandomNext()}>Next Random Comp</Button>
                     </Grid>
                     {strips.map(strip => (
                         <Grid xs={6} md={2} item>
-                            <Button variant="outlined" style={{
+                            <Button variant="contained" style={{
                                 width: "100%",
                                 height: "100%",
                             }}
-                                onClick={() => wsClient.lightRandomNextSpecific(strip.index)}>Next Comp {strip.position}</Button>
+                            onTouchStart={() => wsClient.lightRandomNextSpecific(strip.index)}>Next Comp {strip.position}</Button>
                         </Grid>
                     ))}
                 </Grid>
@@ -120,8 +124,8 @@ export const QuickRandomControlls = ({ randomEnabled, randomSpecific, lightConfi
                 }}>
                     <Typography gutterBottom>Randomizer wait time</Typography>
                     <Slider
-                        min={0}
-                        max={1000}
+                        min={1}
+                        max={120}
                         getAriaLabel={() => 'Randomizer wait time'}
                         defaultValue={[lightConfig.randomMinWait, lightConfig.randomMaxWait]}
                         onChange={(e, value) => setRandomWait(value)}
@@ -131,7 +135,7 @@ export const QuickRandomControlls = ({ randomEnabled, randomSpecific, lightConfi
                     <Typography gutterBottom>Drop Randomizer wait time</Typography>
                     <Slider
                         min={1}
-                        max={1000}
+                        max={120}
                         getAriaLabel={() => 'Drop Randomizer wait time'}
                         defaultValue={[lightConfig.dropRandomMinWait, lightConfig.dropRandomMaxWait]}
                         onChange={(e, value) => setDropRandomWait(value)}

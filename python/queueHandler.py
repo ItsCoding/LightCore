@@ -27,12 +27,12 @@ def handleQueue(queue2Thread,queue2Parent,vis):
             elif topicType == "light.random.setEnabled":
                 vis.randomEnabled = data["enabled"]
                 print("Changed Enabled to: ", vis.randomEnabled)
-            elif topicType == "get.availableEffekts":
+            elif topicType == "data.get.availableEffekts":
                 availableEffekts = []
                 for effekt in vis.randomEffekts:
                     availableEffekts.append(effekt.description())
                 print("Pushing available Effekts in Queue")
-                queue2Parent.put(json.dumps({"type": "return.availableEffekts", "message": availableEffekts}))
+                queue2Parent.put(json.dumps({"type": "return.data.availableEffekts", "message": availableEffekts}))
             elif topicType == "light.setEffekt":
                 addSpecificEffektToComp(vis,data["effektName"],data["stripIndex"],data["frequencyRange"],data["instanceData"])
             elif topicType == "light.setOff":

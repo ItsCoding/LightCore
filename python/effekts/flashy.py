@@ -25,21 +25,22 @@ class visualize_flashy:
     def run(self, y,stripSize,gain: dsp.ExpFilter,instanceData: dict = {}):
         """Effect that maps the Mel filterbank frequencies onto the LED strip"""
         if(self.r_filt is None):
-            self._prev_spectrum = np.tile(0.01, config.N_PIXELS // 2)
-            self.r_filt = dsp.ExpFilter(np.tile(0.01, config.N_PIXELS // 2),
+            self._prev_spectrum = np.tile(0.01, stripSize // 2)
+            self.r_filt = dsp.ExpFilter(np.tile(0.01, stripSize // 2),
                        alpha_decay=0.2, alpha_rise=0.99)
 
-            self.b_filt = dsp.ExpFilter(np.tile(0.01, config.N_PIXELS // 2),
+            self.b_filt = dsp.ExpFilter(np.tile(0.01, stripSize // 2),
                                 alpha_decay=0.1, alpha_rise=0.5)
 
-            # self.p = np.tile(1.0, (3, config.N_PIXELS // 2))
-            self.common_mode = dsp.ExpFilter(np.tile(0.01, config.N_PIXELS // 2),
+            # self.p = np.tile(1.0, (3, stripSize // 2))
+            self.common_mode = dsp.ExpFilter(np.tile(0.01, stripSize // 2),
                                 alpha_decay=0.99, alpha_rise=0.01)
 
 
-        y = np.copy(interpolate(y, config.N_PIXELS // 2))
+        y = np.copy(interpolate(y, stripSize // 2))
         self.common_mode.update(y)
-        y = y
+        scale = 1.5 * config.cfg["globalIntensity"]
+        y = y ** scale
         diff = y - self._prev_spectrum
         self._prev_spectrum = np.copy(y)
         # Color channel mappings
@@ -55,11 +56,11 @@ class visualize_flashy:
         g = [i for i in g if i > 0.1]
         b = [i for i in b if i > 0.1]
         if(len(r) < 1):
-            r = np.tile(0, config.N_PIXELS)
+            r = np.tile(0, stripSize)
         if(len(g) < 1):
-            g = np.tile(0, config.N_PIXELS)
+            g = np.tile(0, stripSize)
         if(len(b) < 1):
-            b = np.tile(0, config.N_PIXELS)
+            b = np.tile(0, stripSize)
 
         r = interpolate(r, stripSize)
         g = interpolate(g, stripSize)

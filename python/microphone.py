@@ -21,9 +21,10 @@ def start_stream(callback):
             y = y.astype(np.float32)
             stream.read(stream.get_read_available(), exception_on_overflow=False)
             callback(y)
-        except IOError:
+        except IOError as e:
             overflows += 1
             if time.time() > prev_ovf_time + 1:
+                print(e)
                 prev_ovf_time = time.time()
                 print('Audio buffer has overflowed {} times'.format(overflows))
     stream.stop_stream()

@@ -2,12 +2,13 @@ import { ServerTopic } from "../types/ServerTopic";
 
 export type WebSocketEvent = {
     eventHandlerID: string,
+    topic: string,
     handler: (topic: ServerTopic) => void
 }
 
 export class WebSocketClient {
     private static instance: WebSocketClient;
-    
+
     private socket: WebSocket | undefined = undefined;
     private constructor() { }
     private eventHandlers: WebSocketEvent[] = [];
@@ -22,12 +23,16 @@ export class WebSocketClient {
     private handleMessage(message: string): void {
         console.log(message);
         const topic = JSON.parse(message) as ServerTopic;
-        this.eventHandlers.forEach((eventHandler) => eventHandler.handler(topic))
+        this.eventHandlers.forEach((eventHandler) => {
+            if (eventHandler.topic === topic.type) {
+                eventHandler.handler(topic);
+            }
+        })
     }
 
     public connect(url: string): Promise<void> {
         return new Promise((resolve, reject) => {
-            if(this.socket) {
+            if (this.socket) {
                 resolve()
             }
             this.socket = new WebSocket(url);
@@ -48,7 +53,7 @@ export class WebSocketClient {
             this.socket.onclose = (event) => {
                 console.log(event);
             }
-        })   
+        })
     }
 
     public async disconnect(): Promise<void> {
@@ -63,23 +68,24 @@ export class WebSocketClient {
                 type: topicType,
                 message: body ?? {}
             } as ServerTopic;
-            if(this.socket?.readyState === WebSocket.OPEN) {
+            if (this.socket?.readyState === WebSocket.OPEN) {
                 console.log("Sending message: " + JSON.stringify(message));
                 this.socket.send(JSON.stringify(message))
-            }else{
+            } else {
                 console.log("Socket not ready");
             }
         } catch (error) {
             console.error("WS send error: ", error);
         }
-        
+
     }
 
-    public addEventHandler(handler: (topic: ServerTopic) => void): string {
+    public addEventHandler(topic: string, handler: (topic: ServerTopic) => void): string {
         const eventHandlerID = Math.random().toString(36).substring(7);
         this.eventHandlers.push({
             eventHandlerID: eventHandlerID,
-            handler: handler
+            handler: handler,
+            topic
         });
         return eventHandlerID
     }
@@ -96,9 +102,9 @@ export class WebSocketClient {
         }
     }
 
-    public async lightRandomNextSpecific(index:number): Promise<void> {
+    public async lightRandomNextSpecific(index: number): Promise<void> {
         if (this.socket) {
-            this.send("light.random.next.specific",{stripIndex: index});
+            this.send("light.random.next.specific", { stripIndex: index });
         }
     }
     public async lightRandomSetEnabled(enabled: boolean): Promise<void> {
@@ -107,24 +113,24 @@ export class WebSocketClient {
         }
     }
 
-    public async lightRandomSetEnabledSpecific(stripIndex:number, enabled: boolean): Promise<void> {
+    public async lightRandomSetEnabledSpecific(stripIndex: number, enabled: boolean): Promise<void> {
         if (this.socket) {
             this.send("light.random.setEnabled.specific", { enabled: enabled, stripIndex });
         }
     }
 
-    public async lightSetEffekt(effekt: string, stripIndex: number, frequency: number[],instanceData: object = {}): Promise<void> {
+    public async lightSetEffekt(effekt: string, stripIndex: number, frequency: number[], instanceData: object = {}): Promise<void> {
         if (this.socket) {
-            this.send("light.setEffekt", { 
+            this.send("light.setEffekt", {
                 effektName: effekt,
                 stripIndex: stripIndex,
                 frequencyRange: frequency,
                 instanceData: instanceData
-             });
+            });
         }
     }
 
-    public async lightSetOff(stripIndex: number){
+    public async lightSetOff(stripIndex: number) {
         if (this.socket) {
             this.send("light.setOff", { stripIndex: stripIndex });
         }
@@ -133,6 +139,19 @@ export class WebSocketClient {
     public async changeConfigProperty(property: string, value: any): Promise<void> {
         if (this.socket) {
             this.send("system.config.change", { key: property, value: value });
+        }
+    }
+
+    //Data will return with the type return.wsapi.getKeyValue
+    public async issueKeyGet(key: string) {
+        if (this.socket) {
+            this.send("wsapi.getKeyValue", { key: key });
+        }
+    }
+
+    public async issueKeySet(key: string, value: any) {
+        if (this.socket) {
+            this.send("wsapi.setKeyValue", { key: key, value: value });
         }
     }
 }
