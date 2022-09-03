@@ -8,7 +8,7 @@ http://julip.co/2012/05/arduino-python-soundlight-spectrum/
 import signal
 import sys
 import numpy
-from recorder import *
+from bpmdetector.recorder import *
 from time import perf_counter, sleep
 import multiprocessing
 
@@ -103,6 +103,7 @@ def handler(signum, frame):
     exit(1)
 
 def start(queue):
+    global input_recorder, queueToParent
     queueToParent = queue
     signal.signal(signal.SIGINT, handler)
     input_recorder = InputRecorder()

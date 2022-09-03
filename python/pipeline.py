@@ -8,59 +8,33 @@ from visualization import Visualization
 import composer as comp
 import time
 import zmq
+import bpmdetector.beatDetector as beatDetector
 
-proc = None
+procRendering = None
+procBPM = None
 vis = None
 queue2Thread = multiprocessing.SimpleQueue()
 queue2Parent = multiprocessing.SimpleQueue()
+bpmQueue = multiprocessing.SimpleQueue()
 clients = []
-# class SimpleEcho(WebSocket):
-#     def handleQueue(self):
-#         while not queue2Parent.empty():
-#             incommingData = queue2Parent.get()
-#             # print("Sending: ", incommingData)
-#             self.send_message(incommingData)
-#             for client in clients:
-#                 if client != self:
-#                     client.send_message(incommingData)
-
-#     def handle(self):
-#         print("Incomming message:", self.data)
-#         # print("Handel Queue")
-#         self.handleQueue()
-#         # print("Handel Queue done")
-#         queue2Thread.put(self.data)
-#         # print("Sending AKK")
-#         # self.send_message("AKK: " + self.data)
-
-#     def connected(self):
-#         print(self.address, 'connected')
-#         clients.append(self)
-
-#     def handle_close(self):
-#         clients.remove(self)
-#         print(self.address, 'closed')
-
-# def initServer():
-#     global proc, queue2Thread,queue2Parent
-#     vis = Visualization()
-#     proc = multiprocessing.Process(target=vis.start, args=(queue2Thread,queue2Parent))
-#     proc.start()
-#     server = WebSocketServer('0.0.0.0', 8000, SimpleEcho)
-#     server.serve_forever()
 
 def handler(signum, frame):
-    global proc
-    proc.terminate()
+    global procBPM, procRendering
+    procBPM.terminate()
+    procRendering.terminate()
     exit(1)
 
 
 def initServer():
-    global proc, queue2Thread,queue2Parent
+    global procRendering, queue2Thread,queue2Parent,procBPM
     vis = Visualization()
-    proc = multiprocessing.Process(target=vis.start, args=(queue2Thread,queue2Parent))
-    proc.start()
-    print("Started")
+    procRendering = multiprocessing.Process(target=vis.start, args=(queue2Thread,queue2Parent,bpmQueue))
+    procRendering.start()
+    print("Started Rendering Process")
+
+    procBPM = multiprocessing.Process(target=beatDetector.start, args=(bpmQueue,))
+    procBPM.start()
+    print("Started BPM Process")
     
     context = zmq.Context()
     socket = context.socket(zmq.PULL)

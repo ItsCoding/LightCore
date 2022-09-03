@@ -27,6 +27,7 @@ import effekts.energyInverted as energyInvertedEffekt
 import effekts.energyRGBInverted as energyRGBInvertedEffekt
 import effekts.energyExtremeInverted as energyExtremeInvertedEffekt
 import effekts.scrollInverted as scrollInvertedEffekt
+import effekts.flashyBpm as flashyBpmEffekt
 import effekts.off as OffEffekt
 import queueHandler
 # import wsServer as wsServer
@@ -48,6 +49,7 @@ visualize_energyInverted = energyInvertedEffekt.visualize_energyInverted
 visualize_energyRGBInverted = energyRGBInvertedEffekt.visualize_energyRGBInverted
 visualize_energyExtremeInverted = energyExtremeInvertedEffekt.visualize_energyExtremeInverted
 visualize_scrollInverted = scrollInvertedEffekt.visualize_scrollInverted
+visualize_flashyBpm = flashyBpmEffekt.visualize_flashyBPM
 
 # composer.addEffekt(visualize_scroll,FrequencyRange.ALL,0,75,100)
 
@@ -87,11 +89,14 @@ class Visualization:
         self.app = None
         self.queue2Thread = None
         self.queue2Parent = None
+        self.bpmQueue = None
         self.fft_plot = None
         self.mel_curve = None
         self.r_curve = None
         self.g_curve = None
         self.b_curve = None
+        self.avg_Bpm = 0
+        self.beat = False
         self.randomEffekts = None
         self.OFF_EFFEKT = visualize_Off
         self.ENDABLED_RND_PARTS = {
@@ -129,6 +134,10 @@ class Visualization:
 
     def microphone_update(self,audio_samples):
         queueHandler.handleQueue(self.queue2Thread,self.queue2Parent,self)
+        while not self.bpmQueue.empty():
+            message = self.bpmQueue.get()
+            self.beat = message["beat"]
+            self.avg_Bpm = message["bpm"]
         # Normalize samples between 0 and 1
         y = audio_samples / 2.0**15
         # Construct a rolling window of audio samples
@@ -165,7 +174,7 @@ class Visualization:
             # Map filterbank output onto LED strip
             
             # mel = np.concatenate((mel[:6],np.full(26,0)),axis=0)
-            composerOutput = composer.getComposition(mel)
+            composerOutput = composer.getComposition(mel,self)
             self.output = composerOutput[0].getLEDS()
             # print(output)
             # output = visualization_effect(mel)
@@ -256,12 +265,14 @@ class Visualization:
 
 
 
-    def start(self, q2t, q2p):
+    def start(self, q2t, q2p, bpmQ):
         self.queue2Thread = q2t
+        self.bpmQueue = bpmQ
         self.queue2Parent = q2p
         self.randomEffekts = [visualize_spectrum,visualize_energy,visualize_scroll,visualize_random,visualize_scrollExtreme,
                             visualize_energyExtreme,visualize_energyRGB,visualize_flashy,visualize_multipleEnergy,visualize_rotatingEnergy,
-                            visualize_energyInverted,visualize_energyRGBInverted,visualize_energyExtremeInverted,visualize_scrollInverted]
+                            visualize_energyInverted,visualize_energyRGBInverted,visualize_energyExtremeInverted,visualize_scrollInverted,
+                            visualize_flashyBpm]
         if config.USE_GUI:
             import pyqtgraph as pg
             from pyqtgraph.Qt import QtGui, QtCore
