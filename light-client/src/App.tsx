@@ -61,7 +61,7 @@ function App() {
     try {
       connectedToWs.current = true;
       await wsClient.connect(`ws://${window.location.hostname}:8000`);
-      wsClient.addEventHandler(ReturnType.AVAILABLE_EFFEKTS, topic => {
+      wsClient.addEventHandler(ReturnType.DATA.AVAILABLE_EFFEKTS, topic => {
         const effekts = Effekt.fromJSONArray(topic.message);
         console.log("Available Effekts: ", effekts);
         setAvailableEffekts(effekts);
@@ -73,7 +73,7 @@ function App() {
         setLcConfig(conf);
       })
       console.log("Get available effekts");
-      wsClient.send("get.availableEffekts");
+      wsClient.send("data.get.availableEffekts");
       wsClient.send("system.config.get")
     } catch (error) {
       console.error("WS-Error", error);
@@ -83,14 +83,7 @@ function App() {
   }
 
   useEffect(() => {
-    _.debounce(connectWS, 1000)();
-    const interval = setInterval(() => {
-      wsClient.send("system.queue.echo");
-    }, 1000);
-    return () => {
-      clearInterval(interval);
-      // wsClient.disconnect();
-    }
+    connectWS();
   }, [])
 
   const ConnectionError = () => (<Alert severity="error">

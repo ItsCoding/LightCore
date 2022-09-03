@@ -204,14 +204,14 @@ class Visualization:
             
             if self.ENDABLED_RND_PARTS[1]:
                 composer.removeElementById(1)
-                composer.addEffekt(reT(1),trf,1,0,180)
+                composer.addEffekt(reT(1),trf,1,0,config.STRIP_LED_COUNTS[1])
             if self.ENDABLED_RND_PARTS[0]:
                 composer.removeElementById(0)
-                composer.addEffekt(reM(0),mrf,0,0,100)
+                composer.addEffekt(reM(0),mrf,0,0,config.STRIP_LED_COUNTS[0])
         else:
             # if self.ENDABLED_RND_PARTS[parts]:
             composer.removeElementById(parts)
-            composer.addEffekt(reM(parts),mrf,parts,0,100)
+            composer.addEffekt(reM(parts),mrf,parts,0,config.STRIP_LED_COUNTS[parts])
         self.queue2Parent.put(json.dumps({"type": "notification.random.effektChanged", "message": {
             "effektTriangle": reT.__name__,
             "effektMiddle": reM.__name__,
@@ -295,7 +295,7 @@ class Visualization:
             self.g_curve = pg.PlotCurveItem(pen=g_pen)
             self.b_curve = pg.PlotCurveItem(pen=b_pen)
             # Define x data
-            x_data = np.array(range(1, config.N_PIXELS + 1))
+            x_data = np.array(range(1, config.STRIP_LED_COUNTS[0] + 1))
             self.r_curve.setData(x=x_data, y=x_data*0)
             self.g_curve.setData(x=x_data, y=x_data*0)
             self.b_curve.setData(x=x_data, y=x_data*0)

@@ -37,6 +37,7 @@ USE_GUI = True
 DISPLAY_FPS = True
 """Whether to display the FPS when running (can reduce performance)"""
 
+#ToDo: This need to be replaced
 N_PIXELS = 100
 """Number of pixels in the LED strip (must match ESP8266 firmware)"""
 
@@ -63,7 +64,7 @@ The FPS should not exceed the maximum refresh rate of the LED strip, which
 depends on how long the LED strip is.
 """
 _max_led_FPS = int(((N_PIXELS * 30e-6) + 50e-6)**-1.0)
-assert FPS <= _max_led_FPS, 'FPS must be <= {}'.format(_max_led_FPS)
+# assert FPS <= _max_led_FPS, 'FPS must be <= {}'.format(_max_led_FPS)
 
 MIN_FREQUENCY = 0
 """Frequencies below this value will be removed during audio processing"""
@@ -94,7 +95,7 @@ MIN_VOLUME_THRESHOLD = 1e-7
 
 
 STRIP_COUNT = 2
-STRIP_LED_COUNTS = [100,180]
+STRIP_LED_COUNTS = [540,180]
 
 RANDOM_MAX_WAIT = 90
 RANDOM_MIN_WAIT = 5

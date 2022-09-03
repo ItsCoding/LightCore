@@ -16,7 +16,7 @@
 #define PIN D1
 
 // Set to the number of LEDs in your LED strip
-#define NUM_LEDS 100
+#define NUM_LEDS 540
 // Maximum number of packets to hold in the buffer. Don't change this.
 #define BUFFER_LEN 1024
 // Toggles FPS output (1 = print FPS over serial, 0 = disable output)
@@ -30,7 +30,7 @@ unsigned int localPort = 7777;
 char packetBuffer[BUFFER_LEN];
 
 uint8_t N = 0;
-
+uint8_t offset = 0;
 WiFiUDP port;
 // Network information
 // IP must match the IP in config.py
@@ -75,10 +75,12 @@ void loop() {
     // If packets have been received, interpret the command
     if (packetSize) {
         int len = port.read(packetBuffer, BUFFER_LEN);
-        for(int i = 0; i < len; i+=4) {
+        for(int i = 0; i < len; i+=5) {
             packetBuffer[len] = 0;
-            N = packetBuffer[i];
-            strip.setPixelColor(N, (uint8_t)packetBuffer[i+2],(uint8_t)packetBuffer[i+1], (uint8_t)packetBuffer[i+3]);
+            offset = packetBuffer[i];
+            N = packetBuffer[i+1];
+            N = N + (offset * 256);
+            strip.setPixelColor(N, (uint8_t)packetBuffer[i+3],(uint8_t)packetBuffer[i+2], (uint8_t)packetBuffer[i+4]);
         } 
         strip.show();
         #if PRINT_FPS

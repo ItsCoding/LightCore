@@ -58,24 +58,30 @@ def _update_esp8266():
     pixels = np.clip(pixels, 0, 255).astype(int)
     # Optionally apply gamma correc tio
     p = _gamma[pixels] if config.SOFTWARE_GAMMA_CORRECTION else np.copy(pixels)
-    MAX_PIXELS_PER_PACKET = 200
+    MAX_PIXELS_PER_PACKET = 540
     # Pixel indices
     idx = range(pixels.shape[1])
     idx = [i for i in idx if not np.array_equal(p[:, i], _prev_pixels[:, i])]
     n_packets = len(idx) // MAX_PIXELS_PER_PACKET + 1
     idx = np.array_split(idx, n_packets)
+    # print(len(idx),len(idx[0]))
     for packet_indices in idx:
         m = '' if _is_python_2 else []
         for i in packet_indices:
-            if _is_python_2:
-                m += chr(i) + chr(p[0][i]) + chr(p[1][i]) + chr(p[2][i])
-            else:
-                m.append(i)  # Index of pixel to change
-                m.append(p[0][i])  # Pixel red value
+                offset = int(i / 256)
+                newI = i % 256
+                m.append(offset)
+                m.append(newI)  # Index of pixel to change
+                m.append(p[0][i]) # Pixel red value
                 m.append(p[1][i])  # Pixel green value
                 m.append(p[2][i])  # Pixel blue value
-        m = m if _is_python_2 else bytes(m)
-        _sock.sendto(m, (config.UDP_IP, config.UDP_PORT))
+        # print(len(m))
+        m = m if _is_python_2 else bytearray(m)
+        try:
+            _sock.sendto(m, (config.UDP_IP, config.UDP_PORT))
+        except Exception as e:
+            print(e)
+            print("There is something with the ESP connection....")
     _prev_pixels = np.copy(p)
 
 
