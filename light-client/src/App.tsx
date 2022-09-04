@@ -9,6 +9,7 @@ import { EffektsPage } from './pages/EffektsPage';
 import { LightCoreConfig } from './types/LightCoreConfig';
 import { HomePage } from './pages/HomePage';
 import { ReturnType } from './types/TopicReturnType';
+import { ColorsPage } from './pages/ColorsPage';
 
 export const themeOptions = createTheme({
   palette: {
@@ -42,7 +43,7 @@ function App() {
   const [availableEffekts, setAvailableEffekts] = React.useState<Array<Effekt>>([]);
   const [connectionError, setConnectionError] = React.useState<boolean>(false);
   const connectedToWs = React.useRef(false);
-
+  const [touchCapable, setTouchCapable] = React.useState<Boolean>(window.touchToggle);
 
   //System
   const [lcConfig, setLcConfig] = React.useState<LightCoreConfig>();
@@ -128,8 +129,9 @@ function App() {
                 isRandomizerActive={randomEnabled}
                 setRandomizerActive={setRandomEnabled}
               />} />
+              <Route path="colors" element={<ColorsPage />} />
             </div>
-            <HeaderBar changeTab={(key) => setActiveRoute(key)} />
+            <HeaderBar setTouchCapable={setTouchCapable} changeTab={(key) => setActiveRoute(key)} />
           </> : <div>
             <Grid
               container

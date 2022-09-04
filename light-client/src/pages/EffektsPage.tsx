@@ -46,11 +46,17 @@ export const EffektsPage = ({ availableEffekts, isRandomizerActive, setRandomize
     const [activeColorPanel, setActiveColorPanel] = React.useState<number>(0)
     const [colorDict, setColorDict] = React.useState<ColorDict>({})
 
-    const changeColor = (color: ColorResult, index: number) => {
-        setColorDict({
-            ...colorDict,
-            [index]: color
-        })
+    const changeColor = (color: ColorResult | null, index: number) => {
+        if (color === null) {
+            const copyDict = { ...colorDict }
+            delete copyDict[index]
+            setColorDict(copyDict)
+        } else {
+            setColorDict({
+                ...colorDict,
+                [index]: color
+            })
+        }
     }
 
     const getColor = (index: number) => {
@@ -83,7 +89,7 @@ export const EffektsPage = ({ availableEffekts, isRandomizerActive, setRandomize
                     {/* </Box> */}
                     {stripConfig.map((strip, index) => {
                         return <TabPanel key={index} value={activeColorPanel} index={index}>
-                            <EffektColor onChange={(c) => changeColor(c, strip.index)} selectedColor={getColor(strip.index)} />
+                            <EffektColor onChange={(c) => changeColor(c, strip.index)} selectedColor={getColor(strip.index)} key={`effekt-color-s-${strip.index}`} />
                         </TabPanel>
                     })}
                 </CardContent>

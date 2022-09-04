@@ -23,6 +23,7 @@ import effekts.flashy.flashy as flashyEffekt
 import effekts.energy.energyRGB as energyRGBEffekt
 import effekts.energy.multipleEnergy as multipleEnergyEffekt
 import effekts.energy.rotatingEnergy as rotatingEnergyEffekt
+import effekts.energy.rotatingEnergyInverted as rotatingEnergyInvertedEffekt
 import effekts.energy.energyInverted as energyInvertedEffekt
 import effekts.energy.energyRGBInverted as energyRGBInvertedEffekt
 import effekts.energy.energyExtremeInverted as energyExtremeInvertedEffekt
@@ -62,6 +63,7 @@ visualize_flashSectionUpwards = flashSectionUpwardsEffekt.visualize_flashSection
 visualize_rushUpwards = rushUpwardsEffekt.visualize_rushUpwards
 visualize_flashRotating = flashRotatingEffekt.visualize_flashRotating
 visualize_flashSectionMirrored = flashSectionMirroredEffekt.visualize_flashSectionMirrored
+visualize_rotatingEnergyInverted = rotatingEnergyInvertedEffekt.visualize_rotatingEnergyInverted
 
 # composer.addEffekt(visualize_scroll,FrequencyRange.ALL,0,75,100)
 
@@ -291,7 +293,7 @@ class Visualization:
                             visualize_energyExtreme,visualize_energyRGB,visualize_flashy,visualize_multipleEnergy,visualize_rotatingEnergy,
                             visualize_energyInverted,visualize_energyRGBInverted,visualize_energyExtremeInverted,visualize_scrollInverted,
                             visualize_flashyBpm,visualize_flashSection,visualize_flashSectionUpwards,visualize_rushUpwards,
-                            visualize_flashRotating,visualize_flashSectionMirrored]
+                            visualize_flashRotating,visualize_flashSectionMirrored,visualize_rotatingEnergyInverted]
         if config.USE_GUI:
             import pyqtgraph as pg
             from pyqtgraph.Qt import QtGui, QtCore

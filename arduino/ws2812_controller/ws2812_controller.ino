@@ -16,7 +16,7 @@
 #define PIN D1
 
 // Set to the number of LEDs in your LED strip
-#define NUM_LEDS 540
+#define NUM_LEDS 100
 // Maximum number of packets to hold in the buffer. Don't change this.
 #define BUFFER_LEN 1024
 // Toggles FPS output (1 = print FPS over serial, 0 = disable output)
@@ -38,7 +38,7 @@ IPAddress ip(10, 40, 0, 184);
 // Set gateway to your router's gateway
 IPAddress gateway(10, 40, 0, 1);
 IPAddress subnet(255, 255, 255, 0);
-Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUM_LEDS, PIN, NEO_GRB + NEO_KHZ400);
+Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUM_LEDS, PIN, NEO_GRB + NEO_KHZ800);
 
 void setup() {
     Serial.begin(115200);

@@ -52,13 +52,13 @@ class visualize_flashSection:
         # scale = 1.1 * config.cfg["globalIntensity"]
         if "color" in instanceData:
             self.rgbColor = instanceData["color"]
-
+        randSize = random.randint(2,10)
         if "beatChanged" in instanceData:
             if instanceData["beatChanged"]:
                 self.lastFlash = int(round(time.time() * 1000))
-                randPos = random.randint(0,8)
-                randStart = int((stripSize / 8) * randPos)
-                randEnd = int((stripSize / 8) * (randPos + 1))
+                randPos = random.randint(0,randSize)
+                randStart = int((stripSize / randSize) * randPos)
+                randEnd = int((stripSize / randSize) * (randPos + 1))
                 self.p[0][randStart: randEnd] = self.rgbColor[0]
                 self.p[1][randStart: randEnd] = self.rgbColor[1]
                 self.p[2][randStart: randEnd] = self.rgbColor[2]

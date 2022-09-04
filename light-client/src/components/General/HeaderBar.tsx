@@ -1,15 +1,16 @@
 import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
-import { Tab, Tabs } from '@mui/material';
+import { Divider, FormControlLabel, FormGroup, Switch, Tab, Tabs, Toolbar } from '@mui/material';
 import SpeedIcon from '@mui/icons-material/Speed';
 import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
-
+import ColorLensIcon from '@mui/icons-material/ColorLens';
 type HeaderBarProps = {
     changeTab: (key: string) => void;
+    setTouchCapable: (capable: boolean) => void;
 }
 
-export default function HeaderBar({changeTab}: HeaderBarProps) {
+export default function HeaderBar({ changeTab, setTouchCapable }: HeaderBarProps) {
     const [selectedPath, setSelectedPath] = React.useState("");
     // const navigate = useNavigate();
     const navigateTo = (path: string) => {
@@ -18,19 +19,35 @@ export default function HeaderBar({changeTab}: HeaderBarProps) {
         changeTab(path);
     }
 
+    React.useEffect(() => {
+        console.log("Toggled!")
+    },[window.touchToggle])
+
+    const onTouchChanged = (state: boolean) => {
+        window.touchToggle = state;
+        console.log(window.touchToggle);
+        setTouchCapable(state);
+    }
+
     return (
         <>
             <Box sx={{ flexGrow: 1 }}>
                 <AppBar position="fixed" sx={{ top: 'auto', bottom: 0 }}>
-                    <Tabs
-                        value={selectedPath}
-                        onChange={(e,value) => navigateTo(value)}
-                        aria-label="icon tabs example">
-                        <Tab value={"quick"} icon={<SpeedIcon />} aria-label="quick" />
-                        <Tab value={"effekts"} icon={<TipsAndUpdatesIcon />} aria-label="effekts" />
-                        {/* <Tab icon={<PersonPinIcon />} aria-label="person" /> */}
-                    </Tabs>
-                    {/* <Toolbar>
+                    <Toolbar>
+                        <Tabs
+                            centered
+                            value={selectedPath}
+                            onChange={(e, value) => navigateTo(value)}
+                            style={{
+                                width: "100%"
+                            }}
+                            aria-label="icon tabs example">
+                            <Tab value={"quick"} icon={<SpeedIcon />} aria-label="quick" />
+                            <Tab value={"effekts"} icon={<TipsAndUpdatesIcon />} aria-label="effekts" />
+                            {/* <Tab value={"colors"} icon={<ColorLensIcon />} aria-label="colors" /> */}
+                            {/* <Tab icon={<PersonPinIcon />} aria-label="person" /> */}
+                        </Tabs>
+                        {/* <Toolbar>
                         <IconButton
                             size="large"
                             edge="start"
@@ -45,6 +62,15 @@ export default function HeaderBar({changeTab}: HeaderBarProps) {
                             {title}
                         </Typography>
                     </Toolbar> */}
+                        <FormGroup aria-controls="menu-appbar" style={{
+                            position: "absolute",
+                            right: "4vh",
+                            // top: "2vh"
+                        }}>
+                            <FormControlLabel control={<Switch defaultChecked />} label="Touch" checked={window.touchToggle ? true : false} onChange={(e,state) => onTouchChanged(state)} />
+                        </FormGroup>
+                    </Toolbar>
+
                 </AppBar>
             </Box>
         </>

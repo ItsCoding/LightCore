@@ -8,12 +8,12 @@ import json
 import socket
 
 # ESP8266 uses WiFi communication
-if config.DEVICE == 'virtual' or config.DEVICE == 'esp':
+if config.DEVICE == 'virtual' or config.DEVICE == 'espv':
     _vsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_address = ('127.0.0.1', 8080)
     _vsock.connect(server_address)
 
-if config.DEVICE == 'esp':
+if config.DEVICE == 'esp' or config.DEVICE == 'espv':
     _sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 _gamma = np.load(config.GAMMA_TABLE_PATH)
@@ -90,6 +90,9 @@ def update(composing):
     if config.DEVICE == 'virtual':
         _update_virtual(composing)
     elif config.DEVICE == 'esp':
+        # _update_virtual(composing)
+        _update_esp8266()
+    elif config.DEVICE == 'espv':
         _update_virtual(composing)
         _update_esp8266()
     else:

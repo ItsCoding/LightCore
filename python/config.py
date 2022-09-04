@@ -19,7 +19,7 @@ audio input and control the LED strip directly.
 to control the leds connected to it.
 """
 
-if DEVICE == 'esp':
+if DEVICE == 'esp' or DEVICE == 'espv':
     UDP_IP = '10.40.0.184'
     """IP address of the ESP8266. Must match IP in ws2812_controller.ino"""
     UDP_PORT = 7777
@@ -27,7 +27,7 @@ if DEVICE == 'esp':
     SOFTWARE_GAMMA_CORRECTION = True
     """Set to False because the firmware handles gamma correction + dither"""
 
-if DEVICE == "virtual":
+if DEVICE == "virtual" or DEVICE == "espv":
     SOFTWARE_GAMMA_CORRECTION = True
 
 BRIGHTNESS = 100
@@ -100,8 +100,8 @@ STRIP_LED_COUNTS = [100,180]
 RANDOM_MAX_WAIT = 8
 RANDOM_MIN_WAIT = 4
 
-DROP_RANDOM_MAX_WAIT = 90
-DROP_RANDOM_MIN_WAIT = 30
+DROP_RANDOM_MAX_WAIT = 10
+DROP_RANDOM_MIN_WAIT = 5
 
 GLOBAL_SPEED = 50
 GLOBAL_INTENSITY = 1.0

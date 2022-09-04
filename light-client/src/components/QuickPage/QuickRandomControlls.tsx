@@ -5,6 +5,7 @@ import React, { useEffect } from "react";
 import { strips } from "../../system/StripConfig";
 import { WebSocketClient } from "../../system/WebsocketClient";
 import { LightCoreConfig } from "../../types/LightCoreConfig";
+import { TouchButton } from "../General/TouchButton";
 
 
 
@@ -94,28 +95,28 @@ export const QuickRandomControlls = ({ randomEnabled, randomSpecific, lightConfi
                     </Grid>
                     {strips.map(strip => (
                         <Grid xs={6} md={2} item>
-                            <Button variant="contained" color={randomSpecific[strip.index] ? "secondary" : "primary"} style={{
+                            <TouchButton variant="contained" color={randomSpecific[strip.index] ? "secondary" : "primary"} style={{
                                 width: "100%",
                                 height: "100%",
-                            }} onTouchStart={() => {
+                            }} onInteract={() => {
                                 wsClient.lightRandomSetEnabledSpecific(strip.index, !randomSpecific[strip.index]);
                                 toggleRandoSpecific(strip.index);
-                            }}>RND {strip.position} toggle</Button>
+                            }}>RND {strip.position} toggle</TouchButton>
                         </Grid>
                     ))}
                     <Grid xs={6} md={2} item>
-                        <Button style={{
+                        <TouchButton style={{
                             width: "100%",
                             height: "100%",
-                        }} variant="contained" onTouchStart={() => wsClient.lightRandomNext()}>Next Random Comp</Button>
+                        }} variant="contained" onInteract={() => wsClient.lightRandomNext()}>Next Random Comp</TouchButton>
                     </Grid>
                     {strips.map(strip => (
                         <Grid xs={6} md={2} item>
-                            <Button variant="contained" style={{
+                            <TouchButton variant="contained" style={{
                                 width: "100%",
                                 height: "100%",
                             }}
-                            onTouchStart={() => wsClient.lightRandomNextSpecific(strip.index)}>Next Comp {strip.position}</Button>
+                            onInteract={() => wsClient.lightRandomNextSpecific(strip.index)}>Next Comp {strip.position}</TouchButton>
                         </Grid>
                     ))}
                 </Grid>
