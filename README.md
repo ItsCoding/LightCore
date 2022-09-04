@@ -17,6 +17,9 @@ pip install numpy
 pip install scipy
 pip install pyqtgraph
 pip install pyaudio
+pip install matplotlib
+pip install zmq
+
 ```
 If `pip` is not found try using `python -m pip install` instead.
 
@@ -33,6 +36,9 @@ pip3 install numpy
 pip3 install scipy
 pip3 install pyqtgraph
 pip3 install pyaudio
+pip3 install matplotlib
+pip3 install zmq
+
 ```
 
 Running the visualization can be done using the command below.

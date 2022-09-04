@@ -1,7 +1,6 @@
 from customTypes.frequencyRange import FrequencyRange
 from effekts.energyExtreme import visualize_energyExtreme
 from effekts.energyRGB import visualize_energyRGB
-from simple_websocket_server import WebSocketServer, WebSocket
 import multiprocessing
 import signal
 from visualization import Visualization
