@@ -30,7 +30,7 @@ class visualize_flashSection:
             "name": "Flash Section",
             "description": "A effekt that flash a section when beat changes",
             "effektSystemName": "visualize_flashSection",
-            "group": "beat",
+            "group": "beat-flash",
             "groupColor": "#FFFEE",
         }
 
