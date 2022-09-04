@@ -23,7 +23,7 @@ export const EffektsPanel = ({ availableEffekts, strip, colorDict }: EffektsPane
     const wsClient = WebSocketClient.getInstance();
     const [selectedEffekt, setSelectedEffekt] = React.useState<Effekt | null>(null);
     const [position, setPosition] = React.useState<number[]>([0, strip.length]);
-   
+
     const changeEffekt = () => {
         if (!selectedEffekt) {
 
@@ -57,7 +57,7 @@ export const EffektsPanel = ({ availableEffekts, strip, colorDict }: EffektsPane
         wsClient.lightAddEffekt(selectedEffekt.effektSystemName, strip.index, freq.range, additionalData, position[0], position[1]);
     }
 
-    
+
     // const groupEffekts = (effekts: Array<Effekt>) => {
     //     const groups: { [index: string]: Array<Effekt> } = {}
     //     effekts.forEach(effekt => {
@@ -106,6 +106,7 @@ export const EffektsPanel = ({ availableEffekts, strip, colorDict }: EffektsPane
                     valueLabelDisplay="auto"
                     getAriaValueText={(value) => `Pixel ${value}`}
                     max={strip.length}
+                    marks={strip.marks}
                 />
             </div>
             <Grid style={{

@@ -92,7 +92,7 @@ export const EffektsPage = ({ availableEffekts, isRandomizerActive, setRandomize
             <Card style={{
                 marginTop: 10
             }}>
-                <CardHeader title={"Colours"} />
+                <CardHeader title={"Colors"} />
                 <CardContent style={{
                     paddingTop: 0,
                 }}>

@@ -136,7 +136,7 @@ export class WebSocketClient {
     public lightAddEffekt(effekt: string, stripIndex: number, frequency: number[], instanceData: object = {},startIndex:number, endIndex: number): string {
         const instanceUUID = Math.random().toString(36).substring(7);
         if (this.socket) {
-            this.send("light.setEffekt", {
+            this.send("light.addEffekt", {
                 effektName: effekt,
                 stripIndex: stripIndex,
                 frequencyRange: frequency,
