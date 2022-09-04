@@ -35,7 +35,7 @@ export default function HeaderBar({ changeTab, setTouchCapable }: HeaderBarProps
                 <AppBar position="fixed" sx={{ top: 'auto', bottom: 0 }}>
                     <Toolbar>
                         <Tabs
-                            centered
+                            // centered
                             value={selectedPath}
                             onChange={(e, value) => navigateTo(value)}
                             style={{
