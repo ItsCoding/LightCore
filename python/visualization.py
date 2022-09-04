@@ -12,23 +12,23 @@ import config
 import microphone
 import dsp
 import led
-import effekts.random as randomEffekt
+import effekts.misc.random as randomEffekt
 import os
-import effekts.scroll as scrollEffekt
-import effekts.energy as energyEffekt
-import effekts.spectrum as spectrumEffekt
-import effekts.scrollExtreme as scrollExtremeEffekt
-import effekts.energyExtreme as energyExtremeEffekt
-import effekts.flashy as flashyEffekt
-import effekts.energyRGB as energyRGBEffekt
-import effekts.multipleEnergy as multipleEnergyEffekt
-import effekts.rotatingEnergy as rotatingEnergyEffekt
-import effekts.energyInverted as energyInvertedEffekt
-import effekts.energyRGBInverted as energyRGBInvertedEffekt
-import effekts.energyExtremeInverted as energyExtremeInvertedEffekt
-import effekts.scrollInverted as scrollInvertedEffekt
-import effekts.flashyBpm as flashyBpmEffekt
-import effekts.off as OffEffekt
+import effekts.scroll.scroll as scrollEffekt
+import effekts.energy.energy as energyEffekt
+import effekts.misc.spectrum as spectrumEffekt
+import effekts.scroll.scrollExtreme as scrollExtremeEffekt
+import effekts.energy.energyExtreme as energyExtremeEffekt
+import effekts.flashy.flashy as flashyEffekt
+import effekts.energy.energyRGB as energyRGBEffekt
+import effekts.energy.multipleEnergy as multipleEnergyEffekt
+import effekts.energy.rotatingEnergy as rotatingEnergyEffekt
+import effekts.energy.energyInverted as energyInvertedEffekt
+import effekts.energy.energyRGBInverted as energyRGBInvertedEffekt
+import effekts.energy.energyExtremeInverted as energyExtremeInvertedEffekt
+import effekts.scroll.scrollInverted as scrollInvertedEffekt
+import effekts.flashy.flashyBpm as flashyBpmEffekt
+import effekts.system.off as OffEffekt
 import queueHandler
 # import wsServer as wsServer
 import composer
