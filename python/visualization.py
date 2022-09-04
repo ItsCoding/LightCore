@@ -198,7 +198,8 @@ class Visualization:
                 self.changeEffekt(hasBeatChanged)
             # mel = np.concatenate((mel[:6],np.full(26,0)),axis=0)
             composerOutput = composer.getComposition(mel,self,hasBeatChanged)
-            self.output = composerOutput[0].getLEDS()
+            if(len(composerOutput) > 0):
+                self.output = composerOutput[0].getLEDS()
             # print(output)
             # output = visualization_effect(mel)
             # output += visualize_energy(mel)
@@ -243,12 +244,13 @@ class Visualization:
             # if self.ENDABLED_RND_PARTS[parts]:
             composer.removeElementById(parts)
             composer.addEffekt(reM(parts),mrf,parts,0,config.STRIP_LED_COUNTS[parts])
-        self.queue2Parent.put(json.dumps({"type": "notification.random.effektChanged", "message": {
-            "effektTriangle": reT.__name__,
-            "effektMiddle": reM.__name__,
-            "frequencyTriangle": trf,
-            "frequencyMiddle": mrf
-        }}))
+        queueHandler.reportEffekts(self, self.queue2Parent)
+        # self.queue2Parent.put(json.dumps({"type": "notification.random.effektChanged", "message": {
+        #     "effektTriangle": reT.__name__,
+        #     "effektMiddle": reM.__name__,
+        #     "frequencyTriangle": trf,
+        #     "frequencyMiddle": mrf
+        # }}))
         
 
     def checkIfDrop(self): 
@@ -404,8 +406,8 @@ class Visualization:
         # wsServer.initServer()
         # for i in range(0,config.STRIP_COUNT - 1):
             # self.DISABLED_RND_PARTS[i] = True
-        composer.addEffekt(visualize_flashy(0),FrequencyRange.all,0,0,180)
-        composer.addEffekt(visualize_flashy(1),FrequencyRange.all,1,0,100)
+        composer.addEffekt(visualize_energy(0),FrequencyRange.all,0,0,180)
+        composer.addEffekt(visualize_energy(1),FrequencyRange.all,1,0,100)
         microphone.start_stream(self.microphone_update)
 
 

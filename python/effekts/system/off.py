@@ -9,11 +9,13 @@ class visualize_OFF:
         # self.p = None
         # self.gain = dsp.ExpFilter(np.tile(0.01, config.cfg["frequencyBins"]),
         #                 alpha_decay=0.001, alpha_rise=0.99)
-    def description(self):
+    def description():
         return {
             "name": "OFF",
             "description": "Turns the LEDs off, should only be used by system",
             "effektSystemName": "visualize_OFF",
+            "group": "system",
+            "groupColor": "black",
         }
 
     def run(self, y,stripSize,gain,additionalData):

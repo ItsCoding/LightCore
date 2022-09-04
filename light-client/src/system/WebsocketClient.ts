@@ -119,20 +119,45 @@ export class WebSocketClient {
         }
     }
 
-    public async lightSetEffekt(effekt: string, stripIndex: number, frequency: number[], instanceData: object = {}): Promise<void> {
+    public lightSetEffekt(effekt: string, stripIndex: number, frequency: number[], instanceData: object = {}): string {
+        const instanceUUID = Math.random().toString(36).substring(7);
         if (this.socket) {
             this.send("light.setEffekt", {
                 effektName: effekt,
                 stripIndex: stripIndex,
                 frequencyRange: frequency,
-                instanceData: instanceData
+                instanceData: instanceData,
+                instanceUUID: instanceUUID
             });
         }
+        return instanceUUID;
+    }
+
+    public lightAddEffekt(effekt: string, stripIndex: number, frequency: number[], instanceData: object = {},startIndex:number, endIndex: number): string {
+        const instanceUUID = Math.random().toString(36).substring(7);
+        if (this.socket) {
+            this.send("light.setEffekt", {
+                effektName: effekt,
+                stripIndex: stripIndex,
+                frequencyRange: frequency,
+                instanceData: instanceData,
+                instanceUUID: instanceUUID,
+                startIndex: startIndex,
+                endIndex: endIndex
+            });
+        }
+        return instanceUUID;
     }
 
     public async lightSetOff(stripIndex: number) {
         if (this.socket) {
             this.send("light.setOff", { stripIndex: stripIndex });
+        }
+    }
+
+    public async lightRemoveEffekt(instanceUUID: number) {
+        if (this.socket) {
+            this.send("light.removeEffekt", { instanceUUID: instanceUUID });
         }
     }
 
@@ -152,6 +177,12 @@ export class WebSocketClient {
     public async issueKeySet(key: string, value: any) {
         if (this.socket) {
             this.send("wsapi.setKeyValue", { key: key, value: value });
+        }
+    }
+
+    public async lightReport() {
+        if (this.socket) {
+            this.send("light.report", {});
         }
     }
 }

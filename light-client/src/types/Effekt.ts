@@ -5,7 +5,7 @@ export class Effekt {
         public name: string,
         public effektSystemName: string,
         public description: string,
-        public group?: string,
+        public group: string,
         public groupColor?: string
     ){}
 
@@ -13,7 +13,7 @@ export class Effekt {
         accessor.get("name", expectString),
         accessor.get("effektSystemName", expectString),
         accessor.get("description", expectString),
-        accessor.getOptional("group", expectString),
+        accessor.get("group", expectString),
         accessor.getOptional("groupColor", expectString)
     ));
 

@@ -13,16 +13,16 @@ class visualize_flashyBPM:
             self.b_filt = None
             self.common_mode = None
             self._prev_spectrum = None
+            self.description = {
+                "name": "FlashyBPM",
+                "description": "Flashes randomly arround",
+                "effektSystemName": "visualize_flashyBPM",
+                "group": "spicy",
+                "groupColor": "coral",
+                "bpmSensitive": True,
+            }
 
-    def description():
-        return {
-            "name": "FlashyBPM",
-            "description": "Flashes randomly arround",
-            "effektSystemName": "visualize_flashyBPM",
-            "group": "spicy",
-            "groupColor": "coral",
-            "bpmSensitive": True,
-        }
+    
     def run(self, y,stripSize,gain: dsp.ExpFilter,instanceData):
         """Effect that maps the Mel filterbank frequencies onto the LED strip"""
         if(self.r_filt is None):

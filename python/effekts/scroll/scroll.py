@@ -9,8 +9,7 @@ class visualize_scroll:
         self.p = None
         # self.gain = dsp.ExpFilter(np.tile(0.01, config.cfg["frequencyBins"]),
         #                 alpha_decay=0.001, alpha_rise=0.99)
-    def description():
-        return {
+        self.description = {
             "name": "Scroll",
             "description": "Scrolls an RGB color across the strip",
             "effektSystemName": "visualize_scroll",

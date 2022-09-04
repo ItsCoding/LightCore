@@ -22,10 +22,8 @@ class visualize_rushUpwards:
         self.id = id
         self.p = None
         self.rgbColor = random.choice(colorPalette)
-
-    def description():
-        return {
-            "name": "Rush Upwards",
+        self.description = {
+            "name": "Rush upwards",
             "description": "A effekt that rushes upwards when beat changes",
             "effektSystemName": "visualize_rushUpwards",
             "group": "beat-rush",

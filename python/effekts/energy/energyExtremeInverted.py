@@ -10,9 +10,8 @@ class visualize_energyExtremeInverted:
         self.p_filt = None
         # self.gain = dsp.ExpFilter(np.tile(0.01, config.cfg["frequencyBins"]),
         #                 alpha_decay=0.001, alpha_rise=0.99)
-    def description():
-        return {
-            "name": "Energy Ext Inverted",
+        self.description = {
+            "name": "Energy extreme Inverted",
             "description": "Expands from the edges to the center with increasing sound energy, but in Extreme colors",
             "effektSystemName": "visualize_energyExtremeInverted",
             "group": "energy",

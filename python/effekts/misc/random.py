@@ -12,11 +12,12 @@ class visualize_random:
         self.p_filt = None
         # self.gain = dsp.ExpFilter(np.tile(0.01, config.cfg["frequencyBins"]),
         #              alpha_decay=0.001, alpha_rise=0.99)
-    def description():
-        return {
+        self.description = {
             "name": "Random",
             "description": "Ingrids random energy effekt",
             "effektSystemName": "visualize_random",
+            "group": "spicy",
+            "groupColor": "coral",
         }
     def run(self, y,stripSize,gain: dsp.ExpFilter,instanceData: dict = {}):
         if (self.p is None):

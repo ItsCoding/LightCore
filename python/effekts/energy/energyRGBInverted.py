@@ -24,10 +24,9 @@ class visualize_energyRGBInverted:
         self.p_filt = None
         self.rgbColor = random.choice(colorPalette)
         # self.gain = dsp.ExpFilter(np.tile(0.01, config.cfg["frequencyBins"]),
-        #                 alpha_decay=0.001, alpha_rise=0.99)
-    def description():
-        return {
-            "name": "Energy RGB Inverted",
+        #                 alpha_decay=0.001, alpha_rise=0.99)#
+        self.description = {
+            "name": "Energy RGB inverted",
             "description": "Expands from the outer edges to the center with increasing sound energy but in random static Colors",
             "effektSystemName": "visualize_energyRGBInverted",
             "group": "energy",

@@ -10,8 +10,7 @@ class visualize_multipleEnergy:
         self.p_filt = None
         # self.gain = dsp.ExpFilter(np.tile(0.01, config.cfg["frequencyBins"]),
         #                 alpha_decay=0.001, alpha_rise=0.99)
-    def description():
-        return {
+        self.description = {
             "name": "Multiple Energy",
             "description": "Multiple energy effekts, it is what it is",
             "effektSystemName": "visualize_multipleEnergy",

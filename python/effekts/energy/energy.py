@@ -8,16 +8,17 @@ class visualize_energy:
         self.id = id
         self.p = None
         self.p_filt = None
-        # self.gain = dsp.ExpFilter(np.tile(0.01, config.cfg["frequencyBins"]),
-        #                 alpha_decay=0.001, alpha_rise=0.99)
-    def description():
-        return {
+        self.description = {
             "name": "Energy",
             "description": "Expands from the center with increasing sound energy",
             "effektSystemName": "visualize_energy",
             "group": "energy",
             "groupColor": "#5b82ec",
         }
+        # self.gain = dsp.ExpFilter(np.tile(0.01, config.cfg["frequencyBins"]),
+        #            
+        #      alpha_decay=0.001, alpha_rise=0.99)
+
 
     def run(self, y,stripSize,gain: dsp.ExpFilter,instanceData: dict = {}):
         """Effect that expands from the center with increasing sound energy"""

@@ -1,17 +1,41 @@
 
 import json
+from tracemalloc import start
 import composer
 import config
 
 
-def addSpecificEffektToComp(vis,effektName,stripIndex,frequencyRange,instanceData):
-    print("Adding Effekt: ", effektName, " to strip: ", stripIndex)
+def setSpecificEffekt(vis,effektName,stripIndex,frequencyRange,instanceData,instanceUUID):
+    print("Adding Effekt: ", effektName, " to strip: ", stripIndex, instanceUUID)
     effektClass = next(x for x in vis.randomEffekts if x.__name__ == effektName)
     if effektClass == None:
         return
     stripLength = config.STRIP_LED_COUNTS[stripIndex]
-    composer.removeElementById(stripIndex)
-    composer.addEffekt(effektClass(stripIndex),frequencyRange,stripIndex,0,stripLength,instanceData)
+    composer.removeElementByStripIndex(stripIndex)
+    composer.addEffekt(effektClass(instanceUUID),frequencyRange,stripIndex,0,stripLength,instanceData)
+
+def addEffektToComp(vis,effektName,stripIndex,frequencyRange,instanceData,instanceUUID,startIndex,endIndex):
+    effektClass = next(x for x in vis.randomEffekts if x.__name__ == effektName)
+    if effektClass == None:
+        return
+    composer.addEffekt(effektClass(instanceUUID),frequencyRange,stripIndex,startIndex,endIndex,instanceData)
+
+def reportEffekts(vis,queue2Parent):
+    comEffekts = composer.getEffekts()
+    effektList = []
+    for activeEffekt in comEffekts:
+
+        effektList.append({
+            "id": activeEffekt.effekt.id,
+            "frequencyRange": activeEffekt.frequencyRange,
+            "stripIndex": activeEffekt.stripIndex,
+            "ledStartIndex": activeEffekt.ledStartIndex,
+            "ledEndIndex": activeEffekt.ledEndIndex,
+            "instanceData": activeEffekt.instanceData,
+            "effektSystemName": activeEffekt.effekt.__class__.__name__,
+            "effektName": activeEffekt.effekt.description["name"],
+        })
+    queue2Parent.put(json.dumps({"type": "return.data.activeEffekts", "message": effektList}))
 
 def handleQueue(queue2Thread,queue2Parent,vis):
     while not queue2Thread.empty():
@@ -30,14 +54,22 @@ def handleQueue(queue2Thread,queue2Parent,vis):
             elif topicType == "data.get.availableEffekts":
                 availableEffekts = []
                 for effekt in vis.randomEffekts:
-                    availableEffekts.append(effekt.description())
+                    availableEffekts.append(effekt(1).description)
                 print("Pushing available Effekts in Queue")
                 queue2Parent.put(json.dumps({"type": "return.data.availableEffekts", "message": availableEffekts}))
             elif topicType == "light.setEffekt":
-                addSpecificEffektToComp(vis,data["effektName"],data["stripIndex"],data["frequencyRange"],data["instanceData"])
+                setSpecificEffekt(vis,data["effektName"],data["stripIndex"],data["frequencyRange"],data["instanceData"],data["instanceUUID"])
+                reportEffekts(vis,queue2Parent)
+            elif topicType == "light.removeEffekt":
+                composer.removeElementById(data["instanceUUID"])
+                reportEffekts(vis,queue2Parent)
+            elif topicType == "light.addEffekt":
+                addEffektToComp(vis,data["effektName"],data["stripIndex"],data["frequencyRange"],data["instanceData"],data["instanceUUID"],data["startIndex"],data["endIndex"])
+                reportEffekts(vis,queue2Parent)
             elif topicType == "light.setOff":
                 composer.removeElementById(data["stripIndex"])
                 composer.addEffekt(vis.OFF_EFFEKT(data["stripIndex"]), [0,64], data["stripIndex"], 0, config.STRIP_LED_COUNTS[data["stripIndex"]])
+                reportEffekts(vis,queue2Parent)
             elif topicType == "light.random.setEnabled.specific":
                 vis.ENDABLED_RND_PARTS[data["stripIndex"]] = data["enabled"]
                 print("Changed Enabled to: ", vis.ENDABLED_RND_PARTS)
@@ -48,4 +80,6 @@ def handleQueue(queue2Thread,queue2Parent,vis):
             elif topicType == "system.config.get":
                 print("Pushing Config in Queue")
                 queue2Parent.put(json.dumps({"type": "return.system.config", "message": config.cfg}))
+            elif topicType == "light.report":
+                reportEffekts(vis,queue2Parent)
 

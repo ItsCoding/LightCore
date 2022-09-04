@@ -25,8 +25,7 @@ class visualize_energyRGB:
         self.rgbColor = random.choice(colorPalette)
         # self.gain = dsp.ExpFilter(np.tile(0.01, config.cfg["frequencyBins"]),
         #                 alpha_decay=0.001, alpha_rise=0.99)
-    def description():
-        return {
+        self.description = {
             "name": "Energy RGB",
             "description": "Expands from the center with increasing sound energy but in random static Colors",
             "effektSystemName": "visualize_energyRGB",

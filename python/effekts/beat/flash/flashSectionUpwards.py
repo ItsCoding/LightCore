@@ -25,15 +25,14 @@ class visualize_flashSectionUpwards:
         self.rgbColor = random.choice(colorPalette)
         self.lastFlash = 0
         self.position = 0
-        
-    def description():
-        return {
-            "name": "Flash Section Upwards",
+        self.description = {
+            "name": "Flash section upwards",
             "description": "A effekt that flash a section when beat changes",
             "effektSystemName": "visualize_flashSectionUpwards",
             "group": "beat-flash",
             "groupColor": "#FFFEE",
         }
+  
 
     def run(self, y,stripSize,gain: dsp.ExpFilter,instanceData: dict = {}):
         """Effect that expands from the center with increasing sound energy"""

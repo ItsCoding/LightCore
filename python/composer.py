@@ -22,7 +22,13 @@ def clear():
 #needs to be tested
 def removeElementById(id):
     runningEffekts[:] = [effekt for effekt in runningEffekts if effekt.effekt.id != id]
-    
+
+def removeElementByStripIndex(stripIndex):
+    runningEffekts[:] = [effekt for effekt in runningEffekts if effekt.stripIndex != stripIndex]
+
+def getEffekts():
+    return runningEffekts
+
 # Get the renderd composition output
 def getComposition(frequencyBins,vis,beatChanged):
     frameDict = {}
@@ -51,5 +57,8 @@ def getComposition(frequencyBins,vis,beatChanged):
         frameDict[effekt.stripIndex].addFrame(effektResult, effekt.ledStartIndex, effekt.ledEndIndex)
 
 
-
+    # if(len(frameDict) == 0):
+    #     return {
+    #         0: np.tile(0, (3, config.STRIP_LED_COUNTS[0]))
+    #     }
     return frameDict

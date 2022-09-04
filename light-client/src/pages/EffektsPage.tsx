@@ -1,11 +1,14 @@
 import { Alert, AlertTitle, Box, Button, Card, CardContent, CardHeader, Grid, Tab, Tabs } from "@mui/material"
-import React from "react"
+import React, { useEffect } from "react"
 import { ColorResult } from "react-color"
 import { EffektsPanel } from "../components/EffektsPanel"
+import { ActiveEffekts } from "../components/EffektsPanel/ActiveEffekts"
 import { EffektColor } from "../components/EffektsPanel/EffektColor"
 import { strips } from "../system/StripConfig"
 import { WebSocketClient } from "../system/WebsocketClient"
+import { ActiveEffekt } from "../types/ActiveEffekt"
 import { Effekt } from "../types/Effekt"
+import { ReturnType } from "../types/TopicReturnType"
 
 const stripConfig = strips
 
@@ -45,6 +48,7 @@ export const EffektsPage = ({ availableEffekts, isRandomizerActive, setRandomize
     const wsClient = WebSocketClient.getInstance()
     const [activeColorPanel, setActiveColorPanel] = React.useState<number>(0)
     const [colorDict, setColorDict] = React.useState<ColorDict>({})
+    const [activeEffekts, setActiveEffekts] = React.useState<Array<ActiveEffekt>>([]);
 
     const changeColor = (color: ColorResult | null, index: number) => {
         if (color === null) {
@@ -62,6 +66,18 @@ export const EffektsPage = ({ availableEffekts, isRandomizerActive, setRandomize
     const getColor = (index: number) => {
         return colorDict[index]?.hex || "#000000"
     }
+
+    useEffect(() => {
+        const eventID = wsClient.addEventHandler(ReturnType.DATA.ACTIVE_EFFEKTS, (topic => {
+            console.log("EFFEKT_ACTIVE", topic)
+            const incommingEffekts = ActiveEffekt.fromJSONArray(topic.message);
+            console.log("IncommingActives: ", incommingEffekts)
+            setActiveEffekts(incommingEffekts);
+        }))
+        return () => {
+            wsClient.removeEventHandler(eventID)
+        }
+    }, [])
 
     return (
         <div>
@@ -104,6 +120,11 @@ export const EffektsPage = ({ availableEffekts, isRandomizerActive, setRandomize
                 })}
 
             </Grid>
+            <div style={{
+                marginTop: 20
+            }}>
+                <ActiveEffekts activeEffekts={activeEffekts} />
+            </div>
 
         </div>
     )

@@ -25,9 +25,7 @@ class visualize_flashSectionUpwardsAscending:
         self.rgbColor = random.choice(colorPalette)
         self.lastFlash = 0
         self.position = 0
-        
-    def description():
-        return {
+        self.description = {
             "name": "Flash Section Upwards ascending",
             "description": "A effekt that flash a section when beat changes",
             "effektSystemName": "visualize_flashSectionUpwardsAscending",
