@@ -44,13 +44,6 @@ class visualize_flashSectionUpwards:
             self.p_filt =  dsp.ExpFilter(np.tile(1, (3, stripSize // 2)),
                         alpha_decay=0.1, alpha_rise=0.99)
 
-        # y = np.copy(y)
-        # # gain.update(y)
-        # y /= gain.value
-        # # Scale by the width of the LED strip
-        # y *= float((stripSize) - 1)
-        # # Map color channels according to energy in the different freq bands
-        # scale = 1.1 * config.cfg["globalIntensity"]
         if "color" in instanceData:
             self.rgbColor = instanceData["color"]
 

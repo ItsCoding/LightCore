@@ -35,7 +35,7 @@ class visualize_scroll:
         b = int(np.max(y[2 * len(y) // 3:]))
         # Scrolling effect window
         self.p[:, 1:] = self.p[:, :-1]
-        self.p *= 0.98
+        # self.p *= 0.98
         self.p = gaussian_filter1d(self.p, sigma=0.2)
         # Create new color originating at the center
         self.p[0, 0] = r

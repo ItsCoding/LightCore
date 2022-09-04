@@ -31,6 +31,10 @@ import effekts.flashy.flashyBpm as flashyBpmEffekt
 import effekts.system.off as OffEffekt
 import effekts.beat.flash.flashSection as flashSectionEffekt
 import effekts.beat.flash.flashSectionUpwards as flashSectionUpwardsEffekt
+import effekts.beat.rush.rushUpwards as rushUpwardsEffekt
+import effekts.beat.flash.flashRotating as flashRotatingEffekt
+
+
 import queueHandler
 # import wsServer as wsServer
 import composer
@@ -54,6 +58,8 @@ visualize_scrollInverted = scrollInvertedEffekt.visualize_scrollInverted
 visualize_flashyBpm = flashyBpmEffekt.visualize_flashyBPM
 visualize_flashSection = flashSectionEffekt.visualize_flashSection
 visualize_flashSectionUpwards = flashSectionUpwardsEffekt.visualize_flashSectionUpwards
+visualize_rushUpwards = rushUpwardsEffekt.visualize_rushUpwards
+visualize_flashRotating = flashRotatingEffekt.visualize_flashRotating
 
 # composer.addEffekt(visualize_scroll,FrequencyRange.ALL,0,75,100)
 
@@ -282,7 +288,8 @@ class Visualization:
         self.randomEffekts = [visualize_spectrum,visualize_energy,visualize_scroll,visualize_random,visualize_scrollExtreme,
                             visualize_energyExtreme,visualize_energyRGB,visualize_flashy,visualize_multipleEnergy,visualize_rotatingEnergy,
                             visualize_energyInverted,visualize_energyRGBInverted,visualize_energyExtremeInverted,visualize_scrollInverted,
-                            visualize_flashyBpm,visualize_flashSection,visualize_flashSectionUpwards]
+                            visualize_flashyBpm,visualize_flashSection,visualize_flashSectionUpwards,visualize_rushUpwards,
+                            visualize_flashRotating]
         if config.USE_GUI:
             import pyqtgraph as pg
             from pyqtgraph.Qt import QtGui, QtCore
