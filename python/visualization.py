@@ -133,11 +133,17 @@ class Visualization:
 
 
     def microphone_update(self,audio_samples):
+        hasBeatChanged = False
         queueHandler.handleQueue(self.queue2Thread,self.queue2Parent,self)
         while not self.bpmQueue.empty():
             message = self.bpmQueue.get()
             self.beat = message["beat"]
             self.avg_Bpm = message["bpm"]
+            hasBeatChanged = True
+            if(self.beat):
+                print("- BPM: " + str(self.avg_Bpm))
+            else:
+                 print("| BPM: " + str(self.avg_Bpm))
         # Normalize samples between 0 and 1
         y = audio_samples / 2.0**15
         # Construct a rolling window of audio samples
@@ -172,15 +178,15 @@ class Visualization:
             mel /= self.mel_gain.value
             mel = self.mel_smoothing.update(mel)
             # Map filterbank output onto LED strip
-            
+            if self.randomEnabled:
+                self.changeEffekt(hasBeatChanged)
             # mel = np.concatenate((mel[:6],np.full(26,0)),axis=0)
             composerOutput = composer.getComposition(mel,self)
             self.output = composerOutput[0].getLEDS()
             # print(output)
             # output = visualization_effect(mel)
             # output += visualize_energy(mel)
-            if self.randomEnabled:
-                self.changeEffekt()
+            
             led.pixels = self.output
             led.update(composerOutput)
             if config.USE_GUI:
@@ -238,7 +244,7 @@ class Visualization:
     def minute_passed(self):
         return time.time() - self._lastTime >= self._randomWait
 
-    def changeEffekt(self):
+    def changeEffekt(self,hasBeatChanged):
         elements = [visualize_spectrum,visualize_energy,visualize_scroll]
         timeToChange = self.minute_passed()
         dropDetected = self.checkIfDrop()
@@ -246,9 +252,9 @@ class Visualization:
         #print(led.pixels[1])
         #print(led.pixels[2])
 
-        if(dropDetected):
+        if(dropDetected and hasBeatChanged):
             print("DROOOOOOOP!!!")
-        if(timeToChange or dropDetected):
+        if(timeToChange or dropDetected and hasBeatChanged):
             print("Change Effekt \n")
             #print(output)
             self._lastTime = time.time()

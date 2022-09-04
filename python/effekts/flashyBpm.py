@@ -71,8 +71,8 @@ class visualize_flashyBPM:
         if instanceData["beat"]:
             output[:(stripSize//4)] = 0
             output[(stripSize//4)*3:] = 0
-            print("Pong")
+            # print("Pong")
         else:
            output[stripSize//4:(stripSize//4)*2] = 0
-           print("Ping")
+        #    print("Ping")
         return output
