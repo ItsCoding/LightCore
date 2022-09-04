@@ -1,14 +1,14 @@
 import { Autocomplete, Button, Card, CardContent, CardHeader, Grid, MenuItem, Select, Slider, TextField } from "@mui/material";
-import React, { useEffect } from "react";
+import { makeStyles } from "@mui/styles";
+import React from "react";
 import { ColorResult } from "react-color";
 import { WebSocketClient } from "../system/WebsocketClient";
-import { ActiveEffekt } from "../types/ActiveEffekt";
 import { Effekt } from "../types/Effekt";
 import { EffektAdditionalData } from "../types/EffektAdditionalData";
 import { FrequencyRange } from "../types/FrequencyRanges";
 import { LedStrip } from "../types/Strip";
-import { ReturnType } from "../types/TopicReturnType";
-import { TouchButton } from "./General/TouchButton";
+
+
 
 type EffektsPanelProps = {
     availableEffekts: Array<Effekt>,
@@ -18,7 +18,9 @@ type EffektsPanelProps = {
     },
 }
 
+
 export const EffektsPanel = ({ availableEffekts, strip, colorDict }: EffektsPanelProps) => {
+    // const classes = useStyles();
     const [selectedFreqRange, setSelectedFreqRange] = React.useState<number>(0);
     const wsClient = WebSocketClient.getInstance();
     const [selectedEffekt, setSelectedEffekt] = React.useState<Effekt | null>(null);
@@ -112,8 +114,9 @@ export const EffektsPanel = ({ availableEffekts, strip, colorDict }: EffektsPane
             <Grid style={{
                 marginTop: "20px"
             }} container spacing={2}>
-                <Grid item xs={8}>
+                <Grid item xs={6} md={8}>
                     <Autocomplete
+                        // className={classes.root}
                         id="grouped-demo"
                         options={availableEffekts.sort((a, b) => -b.name.localeCompare(a.name))}
                         groupBy={(option) => option.group.toLocaleUpperCase()}
@@ -127,10 +130,10 @@ export const EffektsPanel = ({ availableEffekts, strip, colorDict }: EffektsPane
                         renderInput={(params) => <TextField {...params} label="Effekt..." />}
                     />
                 </Grid>
-                <Grid item xs={2}>
+                <Grid item xs={3} md={2}>
                     <Button variant="contained" style={{ height: "100%" }} fullWidth onClick={() => addEffekt()}>Add</Button>
                 </Grid>
-                <Grid item xs={2}>
+                <Grid item xs={3} md={2}>
                     <Button variant="contained" style={{ height: "100%" }} fullWidth onClick={() => changeEffekt()}>Set</Button>
                 </Grid>
             </Grid>
