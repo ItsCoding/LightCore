@@ -29,6 +29,7 @@ import effekts.energy.energyExtremeInverted as energyExtremeInvertedEffekt
 import effekts.scroll.scrollInverted as scrollInvertedEffekt
 import effekts.flashy.flashyBpm as flashyBpmEffekt
 import effekts.system.off as OffEffekt
+import effekts.beat.flashSection as flashSectionEffekt
 import queueHandler
 # import wsServer as wsServer
 import composer
@@ -50,6 +51,7 @@ visualize_energyRGBInverted = energyRGBInvertedEffekt.visualize_energyRGBInverte
 visualize_energyExtremeInverted = energyExtremeInvertedEffekt.visualize_energyExtremeInverted
 visualize_scrollInverted = scrollInvertedEffekt.visualize_scrollInverted
 visualize_flashyBpm = flashyBpmEffekt.visualize_flashyBPM
+visualize_flashSection = flashSectionEffekt.visualize_flashSection
 
 # composer.addEffekt(visualize_scroll,FrequencyRange.ALL,0,75,100)
 
@@ -181,7 +183,7 @@ class Visualization:
             if self.randomEnabled:
                 self.changeEffekt(hasBeatChanged)
             # mel = np.concatenate((mel[:6],np.full(26,0)),axis=0)
-            composerOutput = composer.getComposition(mel,self)
+            composerOutput = composer.getComposition(mel,self,hasBeatChanged)
             self.output = composerOutput[0].getLEDS()
             # print(output)
             # output = visualization_effect(mel)
@@ -278,7 +280,7 @@ class Visualization:
         self.randomEffekts = [visualize_spectrum,visualize_energy,visualize_scroll,visualize_random,visualize_scrollExtreme,
                             visualize_energyExtreme,visualize_energyRGB,visualize_flashy,visualize_multipleEnergy,visualize_rotatingEnergy,
                             visualize_energyInverted,visualize_energyRGBInverted,visualize_energyExtremeInverted,visualize_scrollInverted,
-                            visualize_flashyBpm]
+                            visualize_flashyBpm,visualize_flashSection]
         if config.USE_GUI:
             import pyqtgraph as pg
             from pyqtgraph.Qt import QtGui, QtCore

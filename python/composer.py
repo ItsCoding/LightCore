@@ -24,7 +24,7 @@ def removeElementById(id):
     runningEffekts[:] = [effekt for effekt in runningEffekts if effekt.effekt.id != id]
     
 # Get the renderd composition output
-def getComposition(frequencyBins,vis):
+def getComposition(frequencyBins,vis,beatChanged):
     frameDict = {}
     effekt: ActiveEffekt
     gain.update(frequencyBins)
@@ -39,6 +39,7 @@ def getComposition(frequencyBins,vis):
         # tempBins = frequencyBins[frequencyRange[0]:frequencyRange[1]]
         effekt.instanceData["bpm"] = vis.avg_Bpm
         effekt.instanceData["beat"] = vis.beat
+        effekt.instanceData["beatChanged"] = beatChanged
         effektResult = effekt.effekt.run(tempBins,stipLength,gain,effekt.instanceData)
 
         brightness = config.cfg["brightness"] / 100
