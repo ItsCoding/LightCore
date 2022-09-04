@@ -46,8 +46,8 @@ class visualize_rushUpwards:
         # # Map color channels according to energy in the different freq bands
         # scale = 1.1 * config.cfg["globalIntensity"]
         length = int((stripSize // 2) / 10)
-        self.p[:, length:] = self.p[:, :-length]
-        self.p[:,:length] = 0
+        self.p[:, 2:] = self.p[:, :-2]
+        self.p[:,:2] = 0
         if "color" in instanceData:
             self.rgbColor = instanceData["color"]
 

@@ -33,6 +33,7 @@ import effekts.beat.flash.flashSection as flashSectionEffekt
 import effekts.beat.flash.flashSectionUpwards as flashSectionUpwardsEffekt
 import effekts.beat.rush.rushUpwards as rushUpwardsEffekt
 import effekts.beat.flash.flashRotating as flashRotatingEffekt
+import effekts.beat.flash.flashSectionMirrored as flashSectionMirroredEffekt
 
 
 import queueHandler
@@ -60,6 +61,7 @@ visualize_flashSection = flashSectionEffekt.visualize_flashSection
 visualize_flashSectionUpwards = flashSectionUpwardsEffekt.visualize_flashSectionUpwards
 visualize_rushUpwards = rushUpwardsEffekt.visualize_rushUpwards
 visualize_flashRotating = flashRotatingEffekt.visualize_flashRotating
+visualize_flashSectionMirrored = flashSectionMirroredEffekt.visualize_flashSectionMirrored
 
 # composer.addEffekt(visualize_scroll,FrequencyRange.ALL,0,75,100)
 
@@ -289,7 +291,7 @@ class Visualization:
                             visualize_energyExtreme,visualize_energyRGB,visualize_flashy,visualize_multipleEnergy,visualize_rotatingEnergy,
                             visualize_energyInverted,visualize_energyRGBInverted,visualize_energyExtremeInverted,visualize_scrollInverted,
                             visualize_flashyBpm,visualize_flashSection,visualize_flashSectionUpwards,visualize_rushUpwards,
-                            visualize_flashRotating]
+                            visualize_flashRotating,visualize_flashSectionMirrored]
         if config.USE_GUI:
             import pyqtgraph as pg
             from pyqtgraph.Qt import QtGui, QtCore

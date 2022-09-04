@@ -50,7 +50,7 @@ def plot_audio_and_detect_beats():
         global prev_beat
         curr_time = perf_counter()
         # print(curr_time - prev_beat)
-        if curr_time - prev_beat > 60/180: # 180 BPM max
+        if curr_time - prev_beat > 60/200: # 200 BPM max
             
             # change the button color
             global colors_idx
