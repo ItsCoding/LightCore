@@ -1,4 +1,5 @@
-import { Alert, AlertTitle, Autocomplete, Button, Card, CardActions, CardContent, CardHeader, Chip, Grid, Tab, Tabs, TextField } from "@mui/material"
+import { Alert, AlertTitle, Autocomplete, Button, Card, CardActions, CardContent, CardHeader, Chip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, Tab, Tabs, TextField } from "@mui/material"
+import { useSnackbar } from "notistack"
 import React, { useEffect } from "react"
 import { ColorResult } from "react-color"
 import { EffektsPanel } from "../components/EffektsPanel"
@@ -6,7 +7,7 @@ import { ActiveEffekts } from "../components/EffektsPanel/ActiveEffekts"
 import { EffektColor } from "../components/EffektsPanel/EffektColor"
 import { EditComposition } from "../components/General/Compositions/EditComposition"
 import { strips } from "../system/StripConfig"
-import { createUUID, getFontColorByBgColor, randomColor } from "../system/Utils"
+import { createUUID, getFontColorByBgColor, ModalTransition, randomColor } from "../system/Utils"
 import { WebSocketClient } from "../system/WebsocketClient"
 import { ActiveEffekt } from "../types/ActiveEffekt"
 import { Composition } from "../types/Composition"
@@ -49,6 +50,15 @@ type ColorDict = {
     [index: number]: ColorResult
 }
 
+type ConfirmDictType = {
+    [index: number]: {
+        title: string,
+        text: JSX.Element,
+        confirm: () => void,
+        confirmText: string
+    }
+}
+
 
 export const EffektsPage = ({ availableEffekts, isRandomizerActive, setRandomizerActive, compositionStore, setCompositionStore }: EffektsPageProps) => {
     const wsClient = WebSocketClient.getInstance()
@@ -57,6 +67,10 @@ export const EffektsPage = ({ availableEffekts, isRandomizerActive, setRandomize
     const [activeEffekts, setActiveEffekts] = React.useState<Array<ActiveEffekt>>([]);
     const [selectedTags, setSelectedTags] = React.useState<Array<CompositionTag>>([]);
     const [newComposition, setNewCompositionName] = React.useState<Composition | null>(null);
+    const [selectedExistingComposition, setSelectedExistingComposition] = React.useState<boolean>(false);
+    const [confirmDialogOpen, setConfirmDialogOpen] = React.useState<number>(0);
+    const { enqueueSnackbar } = useSnackbar();
+
     const changeColor = (color: ColorResult | null, index: number) => {
         if (color === null) {
             const copyDict = { ...colorDict }
@@ -103,23 +117,36 @@ export const EffektsPage = ({ availableEffekts, isRandomizerActive, setRandomize
         if (typeof stuff === "string") {
             const nComp = new Composition(createUUID(), stuff, selectedTags, activeEffekts)
             console.log("Create new composition", nComp)
+            setSelectedExistingComposition(false);
             setNewCompositionName(nComp)
         } else if (stuff !== null) {
+            setSelectedExistingComposition(true);
+            setSelectedTags(stuff.tags)
             setNewCompositionName(stuff)
+        }
+    }
+
+    const confirmSave = () => {
+        if (selectedExistingComposition) {
+            setConfirmDialogOpen(1);
+        } else {
+            saveComposition();
         }
     }
 
     const saveComposition = () => {
         if (newComposition !== null) {
             const newComp = new Composition(newComposition.id, newComposition.compositionName, selectedTags, activeEffekts);
-            const newStore = [...compositionStore, newComp]
+            const newStore = [...compositionStore.filter(a => a.id !== newComp.id), newComp]
             console.log(newStore)
             setCompositionStore(newStore)
             setNewCompositionName(null)
             setSelectedTags([])
+            enqueueSnackbar(`Saved composition: ${newComp.compositionName}!`, { variant: 'success', anchorOrigin: { vertical: "top", horizontal: "right" } });
         } else {
-            console.log("New Composition is null", newComposition)
+            enqueueSnackbar(`No composition to save!`, { variant: 'error', anchorOrigin: { vertical: "top", horizontal: "right" } });
         }
+        setConfirmDialogOpen(0);
     }
 
 
@@ -130,22 +157,94 @@ export const EffektsPage = ({ availableEffekts, isRandomizerActive, setRandomize
             console.log("IncommingActives: ", incommingEffekts)
             setActiveEffekts(incommingEffekts);
         }))
+        wsClient.lightReport();
         return () => {
             wsClient.removeEventHandler(eventID)
         }
     }, [])
 
+    const confirmDict: ConfirmDictType = {
+        0: {
+            title: "",
+            text: <></>,
+            confirm: () => {},
+            confirmText: ""
+        },
+        1: {
+            title: "Overwrite existing composition?",
+            text: (
+                <DialogContentText id="alert-dialog-slide-description">
+                    If you confirm <b>{newComposition?.compositionName}</b> will be overridden with the current effekt composition.
+                </DialogContentText>
+            ),
+            confirm: saveComposition,
+            confirmText: "Save"
+        },
+        2: {
+            title: "Delete composition?",
+            text: (
+                <DialogContentText id="alert-dialog-slide-description">
+                    If you confirm <b>{newComposition?.compositionName}</b> will be deleted.
+                </DialogContentText>
+            ),
+            confirm: () => {
+                const newStore = compositionStore.filter(a => a.id !== newComposition?.id)
+                setCompositionStore(newStore)
+                setNewCompositionName(null)
+                setSelectedTags([])
+                setConfirmDialogOpen(0);
+                enqueueSnackbar(`Deleted composition: ${newComposition?.compositionName}!`, { variant: 'success', anchorOrigin: { vertical: "top", horizontal: "right" } });
+            },
+            confirmText: "Delete"
+        },
+        3: {
+            title: "Load composition?",
+            text: (
+                <DialogContentText id="alert-dialog-slide-description">
+                    If you confirm <b>{newComposition?.compositionName}</b> will be loaded.
+                </DialogContentText>
+            ),
+            confirm: () => {
+                if (newComposition) {
+                    newComposition.activate();
+                    setActiveEffekts(newComposition.activeEffekts);
+                    setConfirmDialogOpen(0);
+                    enqueueSnackbar(`Loaded composition: ${newComposition?.compositionName}!`, { variant: 'success', anchorOrigin: { vertical: "top", horizontal: "right" } });
+                }
+            },
+            confirmText: "Load"
+        }
+    }
+
+
     return (
         <div>
-            <EditComposition onSave={() => { }} open={false} onClose={() => { }} activeEffekts={activeEffekts} />
-            {isRandomizerActive ?
-                <Alert severity="warning">
-                    <AlertTitle>Warning</AlertTitle>
-                    <strong>Randomizer</strong> is active. <Button onClick={() => {
-                        setRandomizerActive(false);
-                        wsClient.lightRandomSetEnabled(false);
-                    }}>Disable</Button>
-                </Alert> : null}
+            <Dialog
+                open={confirmDialogOpen > 0}
+                TransitionComponent={ModalTransition}
+                keepMounted
+                onClose={() => setConfirmDialogOpen(0)}
+                aria-describedby="alert-dialog-slide-description"
+            >
+                <DialogTitle>{confirmDict[confirmDialogOpen].title}</DialogTitle>
+                <DialogContent>
+                    {confirmDict[confirmDialogOpen].text}
+                </DialogContent>
+                <DialogActions>
+                    <Button variant="outlined" style={{ color: "#d4d4d4", borderColor: "#d4d4d4" }} onClick={() => setConfirmDialogOpen(0)}>Abort</Button>
+                    <Button variant="contained" onClick={confirmDict[confirmDialogOpen].confirm}>{confirmDict[confirmDialogOpen].confirmText}</Button>
+                </DialogActions>
+            </Dialog>
+            {
+                isRandomizerActive ?
+                    <Alert severity="warning">
+                        <AlertTitle>Warning</AlertTitle>
+                        <strong>Randomizer</strong> is active. <Button onClick={() => {
+                            setRandomizerActive(false);
+                            wsClient.lightRandomSetEnabled(false);
+                        }}>Disable</Button>
+                    </Alert> : null
+            }
             <Card style={{
                 marginTop: 10
             }}>
@@ -181,7 +280,7 @@ export const EffektsPage = ({ availableEffekts, isRandomizerActive, setRandomize
                 marginTop: 20
             }}>
                 <Card>
-                    <CardHeader title={"Create composition"} />
+                    <CardHeader title={"Composition"} />
                     <CardContent>
                         <ActiveEffekts activeEffekts={activeEffekts} />
                     </CardContent>
@@ -248,12 +347,14 @@ export const EffektsPage = ({ availableEffekts, isRandomizerActive, setRandomize
                                 />
                             )}
                         />
-                        <Button color="success" variant="contained" onClick={() => { saveComposition() }}>Save</Button>
+                        <Button color="success" variant="contained" onClick={() => { confirmSave() }}>Save</Button>
+                        <Button color="primary" variant="contained" disabled={!selectedExistingComposition} onClick={() => { setConfirmDialogOpen(3) }}>Load</Button>
+                        <Button color="error" variant="contained" onClick={() => { setConfirmDialogOpen(2) }}>Delete</Button>
                     </CardActions>
                 </Card>
                 {/* <ActiveEffekts activeEffekts={activeEffekts} /> */}
             </div>
 
-        </div>
+        </div >
     )
 }

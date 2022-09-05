@@ -11,6 +11,7 @@ import { HomePage } from './pages/HomePage';
 import { ReturnType, WSApiKey } from './types/TopicReturnType';
 import { ColorsPage } from './pages/ColorsPage';
 import { Composition } from './types/Composition';
+import { SnackbarProvider } from 'notistack';
 
 export const themeOptions = createTheme({
   palette: {
@@ -83,7 +84,7 @@ function App() {
 
       wsClient.addEventHandler(ReturnType.WSAPI.GET_KEY_VALUE, topic => {
         console.log("Got Key Value: ", topic);
-        if(topic.message === null) return;
+        if (topic.message === null) return;
         const msg: WSApiKey = topic.message;
         if (msg.key === "compositionStore" && msg.value) {
           const comps = Composition.fromJSONArray(JSON.parse(msg.value));
@@ -125,51 +126,53 @@ function App() {
 
   return (
     <ThemeProvider theme={themeOptions}>
-      {connectionError ? <ConnectionError /> :
+      <SnackbarProvider maxSnack={8}>
+        {connectionError ? <ConnectionError /> :
 
-        <div>
-          {lcConfig ? <>
-            <div style={{
-              paddingBottom: "6vh",
-              margin: "10px"
-            }}>
-              <Route path="home" element={<HomePage />} />
-              <Route path="quick" element={<QuickPage
-                randomEnabled={randomEnabled}
-                randomSpecific={randomSpecific}
-                setRandomEnabled={setRandomEnabled}
-                setRandomSpecific={setRandomSpecific}
-                lightConfig={lcConfig}
-                setLCConfig={setLcConfig}
-              />} />
-              <Route path="effekts" element={<EffektsPage
-                availableEffekts={availableEffekts}
-                isRandomizerActive={randomEnabled}
-                setRandomizerActive={setRandomEnabled}
-                compositionStore={compositionStore}
-                setCompositionStore={changeCompositionStore}
-              />} />
-              <Route path="colors" element={<ColorsPage />} />
-            </div>
-            <HeaderBar setTouchCapable={setTouchCapable} changeTab={(key) => setActiveRoute(key)} />
-          </> : <div>
-            <Grid
-              container
-              spacing={0}
-              direction="column"
-              alignItems="center"
-              justifyContent="center"
-              style={{ minHeight: '80vh' }}
-            >
-              <Grid item xs={3}>
-                <h2>Connecting...</h2>
-                <LinearProgress />
+          <div>
+            {lcConfig ? <>
+              <div style={{
+                paddingBottom: "6vh",
+                margin: "10px"
+              }}>
+                <Route path="home" element={<HomePage />} />
+                <Route path="quick" element={<QuickPage
+                  randomEnabled={randomEnabled}
+                  randomSpecific={randomSpecific}
+                  setRandomEnabled={setRandomEnabled}
+                  setRandomSpecific={setRandomSpecific}
+                  lightConfig={lcConfig}
+                  setLCConfig={setLcConfig}
+                />} />
+                <Route path="effekts" element={<EffektsPage
+                  availableEffekts={availableEffekts}
+                  isRandomizerActive={randomEnabled}
+                  setRandomizerActive={setRandomEnabled}
+                  compositionStore={compositionStore}
+                  setCompositionStore={changeCompositionStore}
+                />} />
+                <Route path="colors" element={<ColorsPage />} />
+              </div>
+              <HeaderBar setTouchCapable={setTouchCapable} changeTab={(key) => setActiveRoute(key)} />
+            </> : <div>
+              <Grid
+                container
+                spacing={0}
+                direction="column"
+                alignItems="center"
+                justifyContent="center"
+                style={{ minHeight: '80vh' }}
+              >
+                <Grid item xs={3}>
+                  <h2>Connecting...</h2>
+                  <LinearProgress />
+                </Grid>
               </Grid>
-            </Grid>
-          </div>}
-        </div>
+            </div>}
+          </div>
 
-      }
+        }
+      </SnackbarProvider>
     </ThemeProvider>
   );
 }

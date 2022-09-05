@@ -1,9 +1,9 @@
 import { ActiveEffekt } from "../../types/ActiveEffekt"
-import { DataGrid, GridColDef, GridRenderCellParams, GridValueGetterParams } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridRenderCellParams, GridToolbarContainer, GridValueGetterParams } from '@mui/x-data-grid';
 import { strips } from "../../system/StripConfig";
 import { WebSocketClient } from "../../system/WebsocketClient";
-import { Button } from "@mui/material";
-import { useEffect } from "react";
+import { Button, IconButton } from "@mui/material";
+import ReplayIcon from '@mui/icons-material/Replay';
 type ActiveEffektsProps = {
     activeEffekts: Array<ActiveEffekt>,
 }
@@ -32,15 +32,22 @@ export const ActiveEffekts = ({ activeEffekts }: ActiveEffektsProps) => {
             field: 'xID', headerName: '#',
             renderCell: (params: GridRenderCellParams) =>
                 <>
-                    <Button variant="outlined" style={{color:"#d4d4d4", borderColor: "#d4d4d4"}} onClick={() => {
+                    <Button variant="outlined" style={{ color: "#d4d4d4", borderColor: "#d4d4d4" }} onClick={() => {
                         wsClient.lightRemoveEffekt(params.row.id);
                     }}>Remove</Button>
                 </>,
         },
     ];
-    useEffect(() => {
-        wsClient.lightReport();
-    }, [])
+
+    const CustomToolbar = () => {
+        return (
+            <GridToolbarContainer>
+                <IconButton color="default" aria-label="reload" component="label" onClick={() => wsClient.lightReport()}>
+                    <ReplayIcon />
+                </IconButton>
+            </GridToolbarContainer>
+        );
+    }
 
     return (<div>
         <DataGrid
@@ -53,7 +60,9 @@ export const ActiveEffekts = ({ activeEffekts }: ActiveEffektsProps) => {
             rowsPerPageOptions={[100]}
             disableSelectionOnClick
             hideFooter
-
+            components={{
+                Toolbar: CustomToolbar,
+            }}
         />
     </div>)
 }

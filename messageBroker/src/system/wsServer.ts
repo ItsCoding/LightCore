@@ -54,7 +54,7 @@ export class WebsocketServer {
                 case "wsapi.getKeyValue":
                     let gkey = messageObject.message.key;
                     this.dataAPI.getKeyValue(gkey).then((value) => {
-                        console.log("GET", gkey, value);
+                        // console.log("GET", gkey, value);
                         this.sendMessage(JSON.stringify({ type: "return.wsapi.getKeyValue", message: { value: value, key: gkey } }));
                     });
 
@@ -62,7 +62,7 @@ export class WebsocketServer {
                 case "wsapi.setKeyValue":
                     let key = messageObject.message.key;
                     let value = messageObject.message.value;
-                    console.log("SET", key, value)
+                    // console.log("SET", key, value)
                     this.dataAPI.setKeyValue(key, value);
                     break;
                 case "wsapi.pipeline.batch":

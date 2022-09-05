@@ -12,7 +12,9 @@ class StripFrame:
         for i in range(3):
             if endIndex > self.stripLength:
                 endIndex = self.stripLength
-            np.put(self.leds[i], range(startIndex, endIndex), frame[i][startIndex:endIndex])
+            scaledUp = np.tile(0, self.stripLength)
+            scaledUp[startIndex:endIndex] = frame[i]
+            np.put(self.leds[i], range(startIndex, endIndex), scaledUp)
 
     def getLEDS(self):
         return self.leds

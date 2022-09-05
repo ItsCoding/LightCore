@@ -194,18 +194,26 @@ class Visualization:
             mel /= self.mel_gain.value
             mel = self.mel_smoothing.update(mel)
             # Map filterbank output onto LED strip
-            if self.randomEnabled:
-                self.changeEffekt(hasBeatChanged)
-            # mel = np.concatenate((mel[:6],np.full(26,0)),axis=0)
-            composerOutput = composer.getComposition(mel,self,hasBeatChanged)
-            if(len(composerOutput) > 0):
-                self.output = composerOutput[0].getLEDS()
-            # print(output)
-            # output = visualization_effect(mel)
-            # output += visualize_energy(mel)
-            
-            led.pixels = self.output
-            led.update(composerOutput)
+            try:
+                if self.randomEnabled:
+                    self.changeEffekt(hasBeatChanged)
+                # mel = np.concatenate((mel[:6],np.full(26,0)),axis=0)
+                composerOutput = composer.getComposition(mel,self,hasBeatChanged)
+                if(len(composerOutput) > 0 and "getLEDS" in dir(composerOutput[0])):
+                    self.output = composerOutput[0].getLEDS()
+                # print(output)
+                # output = visualization_effect(mel)
+                # output += visualize_energy(mel)
+                
+                led.pixels = self.output
+                led.update(composerOutput)
+
+            except Exception as e:
+                print("There was an error in the render pipeline")
+                print(e)
+
+
+
             if config.USE_GUI:
                 # Plot filterbank output
                 x = np.linspace(config.MIN_FREQUENCY, config.MAX_FREQUENCY, len(mel))
