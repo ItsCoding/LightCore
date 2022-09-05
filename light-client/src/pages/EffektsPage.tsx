@@ -282,7 +282,7 @@ export const EffektsPage = ({ availableEffekts, isRandomizerActive, setRandomize
                 <Card>
                     <CardHeader title={"Composition"} />
                     <CardContent>
-                        <ActiveEffekts activeEffekts={activeEffekts} />
+                        <ActiveEffekts activeEffekts={activeEffekts} availableEffekts={availableEffekts}/>
                     </CardContent>
                     <CardActions style={{
                         margin: 10

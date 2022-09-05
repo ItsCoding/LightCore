@@ -14,7 +14,7 @@ class visualize_rotatingEnergyInverted:
         self.description = {
             "name": "Rotating Energy Inverted",
             "description": "Energy effekt that moves around the strip",
-            "effektSystemName": "visualize_rotatingEnergy",
+            "effektSystemName": "visualize_rotatingEnergyInverted",
             "group": "moving",
             "groupColor": "#44bd32",
         }

@@ -36,7 +36,7 @@ export class Composition {
     public activate() {
         const affectedStrips = [...new Set(this.activeEffekts.map(activeEffekt => activeEffekt.stripIndex))];
         const transaction = WebSocketClient.startTransaction();
-        const activeUUIDs: string[] = [];
+        const activeUUIDs: (string | number)[] = [];
         affectedStrips.forEach(stripIndex => {
             transaction.lightClear(stripIndex);
         });

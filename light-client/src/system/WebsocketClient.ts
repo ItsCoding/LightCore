@@ -167,8 +167,8 @@ export class WebSocketClient {
         return instanceUUID;
     }
 
-    public lightAddEffekt(effekt: string, stripIndex: number, frequency: number[], instanceData: object = {}, startIndex: number, endIndex: number): string {
-        const instanceUUID = Math.random().toString(36).substring(7);
+    public lightAddEffekt(effekt: string, stripIndex: number, frequency: number[], instanceData: object = {}, startIndex: number, endIndex: number, instanceUUID?: string | number): string | number {
+        if(!instanceUUID) instanceUUID =  Math.random().toString(36).substring(7);
         if (this.socket || this.inTransaction) {
             this.send("light.addEffekt", {
                 effektName: effekt,
@@ -189,7 +189,7 @@ export class WebSocketClient {
         }
     }
 
-    public async lightRemoveEffekt(instanceUUID: number) {
+    public async lightRemoveEffekt(instanceUUID: string | number) {
         if (this.socket || this.inTransaction) {
             this.send("light.removeEffekt", { instanceUUID: instanceUUID });
         }
