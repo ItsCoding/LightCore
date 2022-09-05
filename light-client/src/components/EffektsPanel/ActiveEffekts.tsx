@@ -5,9 +5,12 @@ import { WebSocketClient } from "../../system/WebsocketClient";
 import { Button, IconButton } from "@mui/material";
 import ReplayIcon from '@mui/icons-material/Replay';
 import { borderRadius } from "@mui/system";
+import { getBackgroundColor, getHoverBackgroundColor } from "../../system/Utils";
 type ActiveEffektsProps = {
     activeEffekts: Array<ActiveEffekt>,
 }
+
+
 
 export const ActiveEffekts = ({ activeEffekts }: ActiveEffektsProps) => {
     const wsClient = WebSocketClient.getInstance();
@@ -69,12 +72,23 @@ export const ActiveEffekts = ({ activeEffekts }: ActiveEffektsProps) => {
             style={{ width: '100%' }}
             rows={activeEffekts}
             columns={columns}
+            sx={{
+                '& .offColor': {
+                    bgcolor: (theme) =>
+                        getBackgroundColor(theme.palette.error.main, theme.palette.mode),
+                    '&:hover': {
+                        bgcolor: (theme) =>
+                            getHoverBackgroundColor(theme.palette.error.main, theme.palette.mode),
+                    },
+                },
+            }}
             pageSize={100}
             autoHeight
             disableColumnMenu
             rowsPerPageOptions={[100]}
             disableSelectionOnClick
             hideFooter
+            getRowClassName={(params) => params.row.effektSystemName === "visualize_OFF" ? "offColor" : ""}
             components={{
                 Toolbar: CustomToolbar,
             }}

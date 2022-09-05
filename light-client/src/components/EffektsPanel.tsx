@@ -84,6 +84,7 @@ export const EffektsPanel = ({ availableEffekts, strip, colorDict }: EffektsPane
                         style={{
                             minWidth: "100%",
                         }}
+                        size="small"
                         value={selectedFreqRange}
                         onChange={(e) => setSelectedFreqRange(e.target.value as number)}
                         label="Age"
@@ -103,6 +104,7 @@ export const EffektsPanel = ({ availableEffekts, strip, colorDict }: EffektsPane
                 paddingRight: 5
             }}>
                 <Slider
+                    
                     value={position}
                     onChange={(e, newValue) => setPosition(newValue as number[])}
                     valueLabelDisplay="auto"
@@ -112,13 +114,17 @@ export const EffektsPanel = ({ availableEffekts, strip, colorDict }: EffektsPane
                 />
             </div>
             <Grid style={{
-                marginTop: "20px"
+                marginTop: "0px"
             }} container spacing={2}>
                 <Grid item xs={6} md={8}>
                     <Autocomplete
+                        size="small"
                         // className={classes.root}
                         id="grouped-demo"
-                        options={availableEffekts.sort((a, b) => -b.name.localeCompare(a.name))}
+                        options={availableEffekts.sort((a, b) => {
+                            return -b.group.localeCompare(a.group) || -b.name.localeCompare(a.name)
+                        })}
+                        // options={availableEffekts.sort((a, b) => -b.name.localeCompare(a.name))}
                         groupBy={(option) => option.group.toLocaleUpperCase()}
                         getOptionLabel={(option) => option.name}
                         sx={{ width: "100%" }}

@@ -167,7 +167,7 @@ export const EffektsPage = ({ availableEffekts, isRandomizerActive, setRandomize
         0: {
             title: "",
             text: <></>,
-            confirm: () => {},
+            confirm: () => { },
             confirmText: ""
         },
         1: {
@@ -277,7 +277,7 @@ export const EffektsPage = ({ availableEffekts, isRandomizerActive, setRandomize
 
             </Grid>
             <div style={{
-                marginTop: 20
+                marginTop: 10
             }}>
                 <Card>
                     <CardHeader title={"Composition"} />
@@ -287,69 +287,87 @@ export const EffektsPage = ({ availableEffekts, isRandomizerActive, setRandomize
                     <CardActions style={{
                         margin: 10
                     }}>
-                        <Autocomplete
-                            style={{
-                                width: "20vw",
-                                paddingRight: 10,
-                            }}
-                            id="names-standard"
-                            options={compositionStore}
-                            freeSolo
-                            onChange={(e, value) => { changeComp(value) }}
-                            getOptionLabel={(option) => (typeof option === "string" ? option : option.compositionName)}
-                            // defaultValue={[top100Films[13]]}
-                            renderInput={(params) => (
-                                <TextField
-                                    {...params}
-                                    variant="standard"
-                                    label="Compositionname"
-                                    placeholder="Name..."
+                        <Grid container columnSpacing={2} rowSpacing={2}>
+                            <Grid item xs={12} md={4}>
+                                <Autocomplete
+                                    fullWidth
+                                    size="small"
+                                    id="names-standard"
+                                    options={compositionStore}
+                                    freeSolo
+                                    onChange={(e, value) => { changeComp(value) }}
+                                    getOptionLabel={(option) => (typeof option === "string" ? option : option.compositionName)}
+                                    // defaultValue={[top100Films[13]]}
+                                    renderInput={(params) => (
+                                        <TextField
+                                            {...params}
+                                            variant="standard"
+                                            label="Compositionname"
+                                            placeholder="Name..."
+                                        />
+                                    )}
                                 />
-                            )}
-                        />
-                        <Autocomplete
-                            style={{
-                                width: "20vw",
-                                paddingRight: 10,
-                            }}
-                            multiple
-                            id="tags-standard"
-                            options={getUsedTags()}
-                            freeSolo
-                            value={selectedTags}
-                            onChange={(e, value) => { changeSelectedTags(value) }}
-                            getOptionLabel={(option) => (typeof option === "string" ? option : option.name)}
-                            renderTags={(value, getTagProps) => {
-                                return value.map(tag =>
-                                    <Chip style={{
-                                        marginRight: 5,
-                                        marginLeft: 5,
-                                        height: "80%",
-                                        backgroundColor: `#${tag.color}`,
-                                        color: getFontColorByBgColor(tag.color)
-                                    }} label={tag.name} key={tag.id} {...getTagProps} />
-                                )
+                            </Grid>
+                            <Grid item xs={12} md={4}>
+                                <Autocomplete
+                                    size="small"
+                                    fullWidth
+                                    multiple
+                                    id="tags-standard"
+                                    options={getUsedTags()}
+                                    freeSolo
+                                    value={selectedTags}
+                                    onChange={(e, value) => { changeSelectedTags(value) }}
+                                    getOptionLabel={(option) => (typeof option === "string" ? option : option.name)}
+                                    renderTags={(value, getTagProps) => {
+                                        return value.map(tag =>
+                                            <Chip style={{
+                                                marginRight: 5,
+                                                marginLeft: 5,
+                                                height: "80%",
+                                                backgroundColor: `#${tag.color}`,
+                                                color: getFontColorByBgColor(tag.color)
+                                            }} label={tag.name} key={tag.id} {...getTagProps} />
+                                        )
 
-                            }}
-                            // renderOption={(option, value) => (<Chip style={{
-                            //     marginRight: 5,
-                            //     marginLeft: 5,
-                            //     height: "60%",
-                            //     backgroundColor: `#${value.color}`
-                            // }} key={value.id} label={value.name} {...option}/>)}
+                                    }}
+                                    // renderOption={(option, value) => (<Chip style={{
+                                    //     marginRight: 5,
+                                    //     marginLeft: 5,
+                                    //     height: "60%",
+                                    //     backgroundColor: `#${value.color}`
+                                    // }} key={value.id} label={value.name} {...option}/>)}
 
-                            renderInput={(params) => (
-                                <TextField
-                                    {...params}
-                                    variant="standard"
-                                    label="Tags"
-                                    placeholder="Tags..."
+                                    renderInput={(params) => (
+                                        <TextField
+                                            {...params}
+                                            variant="standard"
+                                            label="Tags"
+                                            placeholder="Tags..."
+                                        />
+                                    )}
                                 />
-                            )}
-                        />
-                        <Button color="success" variant="contained" onClick={() => { confirmSave() }}>Save</Button>
-                        <Button color="primary" variant="contained" disabled={!selectedExistingComposition} onClick={() => { setConfirmDialogOpen(3) }}>Load</Button>
-                        <Button color="error" variant="contained" onClick={() => { setConfirmDialogOpen(2) }}>Delete</Button>
+                            </Grid>
+                            <Grid item xs={12} md={4}>
+                                <Grid container justifyContent={"center"} spacing={4}>
+                                    <Grid item xs={4} md={4}>
+                                        <Button fullWidth color="success" variant="contained" onClick={() => { confirmSave() }}>Save</Button>
+                                    </Grid>
+                                    <Grid item xs={4} md={4}>
+                                        <Button fullWidth color="primary" variant="contained" disabled={!selectedExistingComposition} onClick={() => { setConfirmDialogOpen(3) }}>Load</Button>
+                                    </Grid>
+                                    <Grid item xs={4} md={4}>
+                                        <Button fullWidth color="error" variant="contained" onClick={() => { setConfirmDialogOpen(2) }}>Delete</Button>
+                                    </Grid>
+                                </Grid>
+
+
+
+                            </Grid>
+                        </Grid>
+
+
+
                     </CardActions>
                 </Card>
                 {/* <ActiveEffekts activeEffekts={activeEffekts} /> */}

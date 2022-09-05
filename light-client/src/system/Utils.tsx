@@ -1,4 +1,4 @@
-import { Slide } from "@mui/material";
+import { darken, lighten, Slide } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
 import React from "react";
 
@@ -24,5 +24,11 @@ export const ModalTransition = React.forwardRef(function Transition(
     },
     ref: React.Ref<unknown>,
 ) {
-    return <Slide direction="up" ref = { ref } {...props} />;
-  });
+    return <Slide direction="up" ref={ref} {...props} />;
+});
+
+export const getBackgroundColor = (color: string, mode: string) =>
+    mode === 'dark' ? darken(color, 0.6) : lighten(color, 0.6);
+
+export const getHoverBackgroundColor = (color: string, mode: string) =>
+    mode === 'dark' ? darken(color, 0.5) : lighten(color, 0.5);

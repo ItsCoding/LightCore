@@ -36,6 +36,8 @@ import effekts.beat.rush.rushUpwards as rushUpwardsEffekt
 import effekts.beat.flash.flashRotating as flashRotatingEffekt
 import effekts.beat.flash.flashSectionMirrored as flashSectionMirroredEffekt
 import effekts.beat.flash.flashSectionUpwardsAscending as flashSectionUpwardsAscendingEffekt
+import effekts.beat.flash.flashSectionRandomColor as flashSectionRandomColorEffekt
+import effekts.beat.flash.flashSectionMirroredRandomColor as flashSectionMirroredRandomColorEffekt
 
 
 import queueHandler
@@ -66,13 +68,19 @@ visualize_flashRotating = flashRotatingEffekt.visualize_flashRotating
 visualize_flashSectionMirrored = flashSectionMirroredEffekt.visualize_flashSectionMirrored
 visualize_rotatingEnergyInverted = rotatingEnergyInvertedEffekt.visualize_rotatingEnergyInverted
 visualize_flashSectionUpwardsAscending = flashSectionUpwardsAscendingEffekt.visualize_flashSectionUpwardsAscending
+visualize_flashSectionRandomColor = flashSectionRandomColorEffekt.visualize_flashSectionRandomColor
+visualize_flashSectionMirroredRandomColor = flashSectionMirroredRandomColorEffekt.visualize_flashSectionMirroredRandomColor
 
 # composer.addEffekt(visualize_scroll,FrequencyRange.ALL,0,75,100)
 
 
 # Setting Global Vars
 
-
+def checkInDir(dir, key):
+    for d in dir:
+        if key in d:
+            return True
+    return False
 class Visualization:
     def __init__(self):
         self._time_prev = time.time() * 1000.0
@@ -194,23 +202,23 @@ class Visualization:
             mel /= self.mel_gain.value
             mel = self.mel_smoothing.update(mel)
             # Map filterbank output onto LED strip
-            try:
-                if self.randomEnabled:
-                    self.changeEffekt(hasBeatChanged)
-                # mel = np.concatenate((mel[:6],np.full(26,0)),axis=0)
-                composerOutput = composer.getComposition(mel,self,hasBeatChanged)
-                if(len(composerOutput) > 0 and "getLEDS" in dir(composerOutput[0])):
-                    self.output = composerOutput[0].getLEDS()
-                # print(output)
-                # output = visualization_effect(mel)
-                # output += visualize_energy(mel)
-                
-                led.pixels = self.output
-                led.update(composerOutput)
+            # try:
+            if self.randomEnabled:
+                self.changeEffekt(hasBeatChanged)
+            # mel = np.concatenate((mel[:6],np.full(26,0)),axis=0)
+            composerOutput = composer.getComposition(mel,self,hasBeatChanged)
+            if(len(composerOutput) > 0 and 0 in composerOutput and "getLEDS" in dir(composerOutput[0])):
+                self.output = composerOutput[0].getLEDS()
+            # print(output)
+            # output = visualization_effect(mel)
+            # output += visualize_energy(mel)
+            
+            led.pixels = self.output
+            led.update(composerOutput)
 
-            except Exception as e:
-                print("There was an error in the render pipeline")
-                print(e)
+            # except Exception as e:
+            #     print("There was an error in the render pipeline")
+            #     print(e)
 
 
 
@@ -303,7 +311,8 @@ class Visualization:
                             visualize_energyExtreme,visualize_energyRGB,visualize_flashy,visualize_multipleEnergy,visualize_rotatingEnergy,
                             visualize_energyInverted,visualize_energyRGBInverted,visualize_energyExtremeInverted,visualize_scrollInverted,
                             visualize_flashyBpm,visualize_flashSection,visualize_flashSectionUpwards,visualize_rushUpwards,
-                            visualize_flashRotating,visualize_flashSectionMirrored,visualize_rotatingEnergyInverted,visualize_flashSectionUpwardsAscending]
+                            visualize_flashRotating,visualize_flashSectionMirrored,visualize_rotatingEnergyInverted,visualize_flashSectionUpwardsAscending,
+                            visualize_flashSectionRandomColor,visualize_flashSectionMirroredRandomColor]
         if config.USE_GUI:
             import pyqtgraph as pg
             from pyqtgraph.Qt import QtGui, QtCore
