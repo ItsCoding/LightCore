@@ -19,7 +19,7 @@ class StripFrame:
                 endIndex = endIndex - 1
             self.leds[i, startIndex:endIndex] = frame[i]
             # np.put(self.leds[i], range(startIndex, endIndex), scaledUp)
-        print(self.leds[0])
+        # print(self.leds[0])
 
     def getLEDS(self):
         return self.leds
