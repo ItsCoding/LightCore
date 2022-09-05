@@ -132,7 +132,7 @@ function App() {
           <div>
             {lcConfig ? <>
               <div style={{
-                paddingBottom: "6vh",
+                paddingBottom: "8vh",
                 margin: "10px"
               }}>
                 <Route path="home" element={<HomePage />} />

@@ -1,3 +1,4 @@
+from tracemalloc import start
 import numpy as np
 
 
@@ -12,9 +13,13 @@ class StripFrame:
         for i in range(3):
             if endIndex > self.stripLength:
                 endIndex = self.stripLength
-            scaledUp = np.tile(0, self.stripLength)
-            scaledUp[startIndex:endIndex] = frame[i]
-            np.put(self.leds[i], range(startIndex, endIndex), scaledUp)
+            # scaledUp = np.tile(0, self.stripLength)
+            print(len(frame[i]),endIndex - startIndex,endIndex,startIndex,len(range(startIndex, endIndex)))
+            if len(frame[i]) < endIndex - startIndex:
+                endIndex = endIndex - 1
+            self.leds[i, startIndex:endIndex] = frame[i]
+            # np.put(self.leds[i], range(startIndex, endIndex), scaledUp)
+        print(self.leds[0])
 
     def getLEDS(self):
         return self.leds

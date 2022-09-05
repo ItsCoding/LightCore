@@ -51,7 +51,7 @@ export const ActiveEffekts = ({ activeEffekts }: ActiveEffektsProps) => {
 
     return (<div>
         <DataGrid
-            style={{ height: 400, width: '100%' }}
+            style={{ width: '100%' }}
             rows={activeEffekts}
             columns={columns}
             pageSize={100}

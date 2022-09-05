@@ -35,7 +35,7 @@ def getComposition(frequencyBins,vis,beatChanged):
     effekt: ActiveEffekt
     gain.update(frequencyBins)
     for effekt in runningEffekts:
-        stipLength = effekt.ledEndIndex - effekt.ledStartIndex + 1
+        stipLength = effekt.ledEndIndex - effekt.ledStartIndex
         if stipLength > config.STRIP_LED_COUNTS[effekt.stripIndex]:
             stipLength = config.STRIP_LED_COUNTS[effekt.stripIndex]
 

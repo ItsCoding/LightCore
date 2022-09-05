@@ -55,6 +55,10 @@ export class WebSocketClient {
             }
             this.socket.onerror = (error) => {
                 console.log(error);
+                setTimeout(() => {
+                    console.log("Trying to reconnect...");
+                    this.connect(url);
+                })
             }
             this.socket.onclose = (event) => {
                 console.log(event);
