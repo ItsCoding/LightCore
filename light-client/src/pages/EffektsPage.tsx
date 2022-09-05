@@ -1,12 +1,16 @@
-import { Alert, AlertTitle, Box, Button, Card, CardContent, CardHeader, Grid, Tab, Tabs } from "@mui/material"
+import { Alert, AlertTitle, Autocomplete, Button, Card, CardActions, CardContent, CardHeader, Chip, Grid, Tab, Tabs, TextField } from "@mui/material"
 import React, { useEffect } from "react"
 import { ColorResult } from "react-color"
 import { EffektsPanel } from "../components/EffektsPanel"
 import { ActiveEffekts } from "../components/EffektsPanel/ActiveEffekts"
 import { EffektColor } from "../components/EffektsPanel/EffektColor"
+import { EditComposition } from "../components/General/Compositions/EditComposition"
 import { strips } from "../system/StripConfig"
+import { createUUID, getFontColorByBgColor, randomColor } from "../system/Utils"
 import { WebSocketClient } from "../system/WebsocketClient"
 import { ActiveEffekt } from "../types/ActiveEffekt"
+import { Composition } from "../types/Composition"
+import { CompositionTag } from "../types/CompositionTag"
 import { Effekt } from "../types/Effekt"
 import { ReturnType } from "../types/TopicReturnType"
 
@@ -16,6 +20,8 @@ type EffektsPageProps = {
     availableEffekts: Array<Effekt>,
     isRandomizerActive: boolean,
     setRandomizerActive: (active: boolean) => void,
+    compositionStore: Array<Composition>,
+    setCompositionStore: (store: Array<Composition>) => void,
 }
 
 interface TabPanelProps {
@@ -44,12 +50,13 @@ type ColorDict = {
 }
 
 
-export const EffektsPage = ({ availableEffekts, isRandomizerActive, setRandomizerActive }: EffektsPageProps) => {
+export const EffektsPage = ({ availableEffekts, isRandomizerActive, setRandomizerActive, compositionStore, setCompositionStore }: EffektsPageProps) => {
     const wsClient = WebSocketClient.getInstance()
     const [activeColorPanel, setActiveColorPanel] = React.useState<number>(0)
     const [colorDict, setColorDict] = React.useState<ColorDict>({})
     const [activeEffekts, setActiveEffekts] = React.useState<Array<ActiveEffekt>>([]);
-
+    const [selectedTags, setSelectedTags] = React.useState<Array<CompositionTag>>([]);
+    const [newComposition, setNewCompositionName] = React.useState<Composition | null>(null);
     const changeColor = (color: ColorResult | null, index: number) => {
         if (color === null) {
             const copyDict = { ...colorDict }
@@ -67,6 +74,55 @@ export const EffektsPage = ({ availableEffekts, isRandomizerActive, setRandomize
         return colorDict[index]?.hex || "#000000"
     }
 
+    const getUsedTags = () => {
+        const tags: { [key: string]: CompositionTag } = {}
+        compositionStore.forEach((comp) => {
+            comp.tags.forEach((tag) => {
+                if (!tags[tag.id]) tags[tag.id] = tag
+            })
+        })
+
+        return Object.keys(tags).map((key) => tags[key]);
+    }
+
+    const changeSelectedTags = (stuff: (string | CompositionTag)[]) => {
+        let selectedTags: CompositionTag[] = []
+        stuff.forEach((tag) => {
+            if (typeof tag === "string") {
+                selectedTags.push({ id: tag, name: tag, color: randomColor() })
+            } else {
+                selectedTags.push(tag)
+            }
+        });
+        console.log("Set selectedTags to", selectedTags)
+        setSelectedTags(selectedTags)
+    }
+
+    const changeComp = (stuff: string | Composition | null) => {
+        console.log("Set newComposition to", stuff)
+        if (typeof stuff === "string") {
+            const nComp = new Composition(createUUID(), stuff, selectedTags, activeEffekts)
+            console.log("Create new composition", nComp)
+            setNewCompositionName(nComp)
+        } else if (stuff !== null) {
+            setNewCompositionName(stuff)
+        }
+    }
+
+    const saveComposition = () => {
+        if (newComposition !== null) {
+            const newComp = new Composition(newComposition.id, newComposition.compositionName, selectedTags, activeEffekts);
+            const newStore = [...compositionStore, newComp]
+            console.log(newStore)
+            setCompositionStore(newStore)
+            setNewCompositionName(null)
+            setSelectedTags([])
+        } else {
+            console.log("New Composition is null", newComposition)
+        }
+    }
+
+
     useEffect(() => {
         const eventID = wsClient.addEventHandler(ReturnType.DATA.ACTIVE_EFFEKTS, (topic => {
             console.log("EFFEKT_ACTIVE", topic)
@@ -81,6 +137,7 @@ export const EffektsPage = ({ availableEffekts, isRandomizerActive, setRandomize
 
     return (
         <div>
+            <EditComposition onSave={() => { }} open={false} onClose={() => { }} activeEffekts={activeEffekts} />
             {isRandomizerActive ?
                 <Alert severity="warning">
                     <AlertTitle>Warning</AlertTitle>
@@ -123,7 +180,78 @@ export const EffektsPage = ({ availableEffekts, isRandomizerActive, setRandomize
             <div style={{
                 marginTop: 20
             }}>
-                <ActiveEffekts activeEffekts={activeEffekts} />
+                <Card>
+                    <CardHeader title={"Create composition"} />
+                    <CardContent>
+                        <ActiveEffekts activeEffekts={activeEffekts} />
+                    </CardContent>
+                    <CardActions style={{
+                        margin: 10
+                    }}>
+                        <Autocomplete
+                            style={{
+                                width: "20vw",
+                                paddingRight: 10,
+                            }}
+                            id="names-standard"
+                            options={compositionStore}
+                            freeSolo
+                            onChange={(e, value) => { changeComp(value) }}
+                            getOptionLabel={(option) => (typeof option === "string" ? option : option.compositionName)}
+                            // defaultValue={[top100Films[13]]}
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    variant="standard"
+                                    label="Compositionname"
+                                    placeholder="Name..."
+                                />
+                            )}
+                        />
+                        <Autocomplete
+                            style={{
+                                width: "20vw",
+                                paddingRight: 10,
+                            }}
+                            multiple
+                            id="tags-standard"
+                            options={getUsedTags()}
+                            freeSolo
+                            value={selectedTags}
+                            onChange={(e, value) => { changeSelectedTags(value) }}
+                            getOptionLabel={(option) => (typeof option === "string" ? option : option.name)}
+                            renderTags={(value, getTagProps) => {
+                                return value.map(tag =>
+                                    <Chip style={{
+                                        marginRight: 5,
+                                        marginLeft: 5,
+                                        height: "80%",
+                                        backgroundColor: `#${tag.color}`,
+                                        color: getFontColorByBgColor(tag.color)
+                                    }} label={tag.name} key={tag.id} {...getTagProps} />
+                                )
+
+                            }}
+                            // renderOption={(option, value) => (<Chip style={{
+                            //     marginRight: 5,
+                            //     marginLeft: 5,
+                            //     height: "60%",
+                            //     backgroundColor: `#${value.color}`
+                            // }} key={value.id} label={value.name} {...option}/>)}
+
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    variant="standard"
+                                    label="Tags"
+                                    placeholder="Tags..."
+                                />
+                            )}
+                        />
+                        <Button color="success" variant="contained" onClick={() => { saveComposition() }}>Save</Button>
+                    </CardActions>
+                </Card>
+                {/* <ActiveEffekts activeEffekts={activeEffekts} /> */}
             </div>
 
         </div>

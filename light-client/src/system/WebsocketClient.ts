@@ -22,12 +22,12 @@ export class WebSocketClient {
         return WebSocketClient.instance;
     }
 
-    public static startTransaction(): WebSocketClient {  
+    public static startTransaction(): WebSocketClient {
         return new WebSocketClient(true);
     }
 
     private handleMessage(message: string): void {
-        console.log(message);
+        // console.log(message);
         const topic = JSON.parse(message) as ServerTopic;
         this.eventHandlers.forEach((eventHandler) => {
             if (eventHandler.topic === topic.type) {
@@ -99,7 +99,7 @@ export class WebSocketClient {
                 message: body ?? {}
             } as ServerTopic;
             if (this.socket?.readyState === WebSocket.OPEN) {
-                console.log("Sending message: " + JSON.stringify(message));
+                console.log("Sending message: ", message);
                 this.socket.send(JSON.stringify(message))
             } else {
                 console.log("Socket not ready");
@@ -204,7 +204,7 @@ export class WebSocketClient {
         }
     }
 
-    public async issueKeySet(key: string, value: any) {
+    public async issueKeySet(key: string, value: string) {
         if (this.socket || this.inTransaction) {
             this.send("wsapi.setKeyValue", { key: key, value: value });
         }

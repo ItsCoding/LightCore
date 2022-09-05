@@ -9,6 +9,7 @@ export class DataAPI {
             type: "sqlite",
             database: "db.sqlite",
             entities: [KeyValue],
+            synchronize: true
         });
         this.db.initialize().then(() => {
             console.log("Database initialized");

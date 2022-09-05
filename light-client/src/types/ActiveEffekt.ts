@@ -40,4 +40,17 @@ export class ActiveEffekt {
     })
 
     public static readonly fromJSONArray = arrayMapper(ActiveEffekt.fromJSON);
+
+    public toJSON() {
+        return {
+            id: this.id,
+            effektName: this.effektName,
+            stripIndex: this.stripIndex,
+            frequencyRange: this.frequencyRange,
+            instanceData: this.instanceData,
+            ledStartIndex: this.startIndex,
+            ledEndIndex: this.endIndex,
+            effektSystemName: this.effektSystemName
+        }
+    }
 }

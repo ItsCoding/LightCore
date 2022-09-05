@@ -10,3 +10,8 @@ export const ReturnType = {
         GET_KEY_VALUE: "return.wsapi.getKeyValue",
     },
 }
+
+export type WSApiKey = {
+    key: string,
+    value?: string
+}

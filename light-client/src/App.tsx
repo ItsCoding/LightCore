@@ -8,8 +8,9 @@ import HeaderBar from './components/General/HeaderBar';
 import { EffektsPage } from './pages/EffektsPage';
 import { LightCoreConfig } from './types/LightCoreConfig';
 import { HomePage } from './pages/HomePage';
-import { ReturnType } from './types/TopicReturnType';
+import { ReturnType, WSApiKey } from './types/TopicReturnType';
 import { ColorsPage } from './pages/ColorsPage';
+import { Composition } from './types/Composition';
 
 export const themeOptions = createTheme({
   palette: {
@@ -42,6 +43,7 @@ function App() {
   const [activeRoute, setActiveRoute] = React.useState("home");
   const [availableEffekts, setAvailableEffekts] = React.useState<Array<Effekt>>([]);
   const [connectionError, setConnectionError] = React.useState<boolean>(false);
+  const [compositionStore, setCompositionStore] = React.useState<Array<Composition>>([]);
   const connectedToWs = React.useRef(false);
   const [touchCapable, setTouchCapable] = React.useState<Boolean>(window.touchToggle);
 
@@ -56,6 +58,11 @@ function App() {
   const [randomEnabled, setRandomEnabled] = React.useState(true);
   const [randomSpecific, setRandomSpecific] = React.useState<RNDSpecificDict>({});
 
+  const changeCompositionStore = (comps: Array<Composition>) => {
+    setCompositionStore(comps);
+    const compJSON = comps.map((comp) => comp.toJSON());
+    wsClient.issueKeySet("compositionStore", JSON.stringify(compJSON));
+  }
 
   const connectWS = async () => {
     if (connectedToWs.current) return;
@@ -73,9 +80,20 @@ function App() {
         console.log("System Config: ", conf);
         setLcConfig(conf);
       })
+
+      wsClient.addEventHandler(ReturnType.WSAPI.GET_KEY_VALUE, topic => {
+        console.log("Got Key Value: ", topic);
+        if(topic.message === null) return;
+        const msg: WSApiKey = topic.message;
+        if (msg.key === "compositionStore" && msg.value) {
+          const comps = Composition.fromJSONArray(JSON.parse(msg.value));
+          setCompositionStore(comps);
+        }
+      });
       console.log("Get available effekts");
       wsClient.send("data.get.availableEffekts");
       wsClient.send("system.config.get")
+      wsClient.issueKeyGet("compositionStore");
     } catch (error) {
       console.error("WS-Error", error);
       setConnectionError(true);
@@ -128,6 +146,8 @@ function App() {
                 availableEffekts={availableEffekts}
                 isRandomizerActive={randomEnabled}
                 setRandomizerActive={setRandomEnabled}
+                compositionStore={compositionStore}
+                setCompositionStore={changeCompositionStore}
               />} />
               <Route path="colors" element={<ColorsPage />} />
             </div>

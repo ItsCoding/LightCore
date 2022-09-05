@@ -53,12 +53,16 @@ export class WebsocketServer {
             switch (messageObject.type) {
                 case "wsapi.getKeyValue":
                     let gkey = messageObject.message.key;
-                    let gvalue = this.dataAPI.getKeyValue(gkey);
-                    this.zeroMQServerOUT.sendMessage({ type: "return.wsapi.getKeyValue", message: { value: gvalue, key: gkey } });
+                    this.dataAPI.getKeyValue(gkey).then((value) => {
+                        console.log("GET", gkey, value);
+                        this.sendMessage(JSON.stringify({ type: "return.wsapi.getKeyValue", message: { value: value, key: gkey } }));
+                    });
+
                     return;
                 case "wsapi.setKeyValue":
                     let key = messageObject.message.key;
                     let value = messageObject.message.value;
+                    console.log("SET", key, value)
                     this.dataAPI.setKeyValue(key, value);
                     break;
                 case "wsapi.pipeline.batch":
