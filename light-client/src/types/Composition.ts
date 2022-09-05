@@ -49,5 +49,6 @@ export class Composition {
                 activeEffekt.endIndex));
         });
         transaction.commit();
+        return activeUUIDs;
     }
 }

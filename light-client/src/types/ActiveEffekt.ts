@@ -14,6 +14,11 @@ export function expectStringOrNumber(jsonValue: JsonValue): string | number  {
     return jsonValue;
 }
 
+export function expectAnything(jsonValue: JsonValue): any {
+    //Whatever
+    return jsonValue;
+}
+
 export class ActiveEffekt {
     constructor(
         public id: string | number,
@@ -32,7 +37,7 @@ export class ActiveEffekt {
             accessor.get("effektName", expectString),
             accessor.get("stripIndex", expectNumber),
             accessor.get("frequencyRange", arrayMapper(expectNumber)),
-            accessor.get("instanceData", mapObjectMapper(expectStringOrNumberOrBool)),
+            accessor.get("instanceData", mapObjectMapper(expectAnything)),
             accessor.get("ledStartIndex", expectNumber),
             accessor.get("ledEndIndex", expectNumber),
             accessor.get("effektSystemName", expectString)

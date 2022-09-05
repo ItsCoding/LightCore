@@ -4,6 +4,7 @@ import { strips } from "../../system/StripConfig";
 import { WebSocketClient } from "../../system/WebsocketClient";
 import { Button, IconButton } from "@mui/material";
 import ReplayIcon from '@mui/icons-material/Replay';
+import { borderRadius } from "@mui/system";
 type ActiveEffektsProps = {
     activeEffekts: Array<ActiveEffekt>,
 }
@@ -28,6 +29,20 @@ export const ActiveEffekts = ({ activeEffekts }: ActiveEffektsProps) => {
         },
         { field: 'startIndex', headerName: 'Startindex' },
         { field: 'endIndex', headerName: 'Endindex' },
+        {
+            field: 'yID', headerName: 'Static color',
+            renderCell: (params: GridRenderCellParams) =>
+                <>
+                    {params.row.instanceData.hasOwnProperty("color") ?
+                        <div style={{
+                            backgroundColor: `rgb(${params.row.instanceData.color[0]},${params.row.instanceData.color[1]},${params.row.instanceData.color[2]})`,
+                            width: "3vh",
+                            height: "3vh",
+                            borderRadius: "50%",
+                        }}></div>
+                        : " - "}
+                </>,
+        },
         {
             field: 'xID', headerName: '#',
             renderCell: (params: GridRenderCellParams) =>
