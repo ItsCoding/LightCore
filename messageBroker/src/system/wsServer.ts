@@ -19,7 +19,7 @@ export class WebsocketServer {
     }
 
     public start(): void {
-        const self = this; 
+        const self = this;
         this.zeroMQServerIN.start();
         this.zeroMQServerOUT.start();
         this.wss.on('connection', function connection(ws) {
@@ -40,7 +40,7 @@ export class WebsocketServer {
         console.log("Websocket server bound to port 8000");
     }
 
-    public sendMessage(message: string ): void {
+    public sendMessage(message: string): void {
         this.clients.forEach(client => {
             client.send(message);
         });
@@ -48,21 +48,27 @@ export class WebsocketServer {
 
 
     public messageHandler(message: string): void {
-        let messageObject: {type: string, message: any} = JSON.parse(message);
-        if(messageObject.type.startsWith("wsapi")){
-            switch(messageObject.type){
+        let messageObject: { type: string, message: any } = JSON.parse(message);
+        if (messageObject.type.startsWith("wsapi")) {
+            switch (messageObject.type) {
                 case "wsapi.getKeyValue":
                     let gkey = messageObject.message.key;
                     let gvalue = this.dataAPI.getKeyValue(gkey);
-                    this.zeroMQServerOUT.sendMessage({type: "return.wsapi.getKeyValue", message: {value:gvalue,key:gkey}});
+                    this.zeroMQServerOUT.sendMessage({ type: "return.wsapi.getKeyValue", message: { value: gvalue, key: gkey } });
                     return;
                 case "wsapi.setKeyValue":
                     let key = messageObject.message.key;
                     let value = messageObject.message.value;
                     this.dataAPI.setKeyValue(key, value);
                     break;
+                case "wsapi.pipeline.batch":
+                    let batch: Object[] = messageObject.message.batch;
+                    batch.forEach(ele => {
+                        this.zeroMQServerOUT.sendMessage(JSON.stringify(ele));
+                    })
+                    break;
             }
-        }else{
+        } else {
             this.zeroMQServerOUT.sendMessage(message);
         }
     }

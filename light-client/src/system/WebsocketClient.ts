@@ -8,9 +8,11 @@ export type WebSocketEvent = {
 
 export class WebSocketClient {
     private static instance: WebSocketClient;
-
+    private transactionLog: ServerTopic[] = [];
     private socket: WebSocket | undefined = undefined;
-    private constructor() { }
+    private constructor(
+        public inTransaction?: boolean
+    ) { }
     private eventHandlers: WebSocketEvent[] = [];
 
     public static getInstance(): WebSocketClient {
@@ -18,6 +20,10 @@ export class WebSocketClient {
             WebSocketClient.instance = new WebSocketClient();
         }
         return WebSocketClient.instance;
+    }
+
+    public static startTransaction(): WebSocketClient {  
+        return new WebSocketClient(true);
     }
 
     private handleMessage(message: string): void {
@@ -62,7 +68,31 @@ export class WebSocketClient {
         }
     }
 
+    public commit(): void {
+        if (this.inTransaction) {
+            const trueWsClient = WebSocketClient.getInstance();
+            trueWsClient.sendBatch(this.transactionLog);
+        } else {
+            console.warn("Cannot commit when not in transaction");
+        }
+    }
+
+    public getTransactions(): ServerTopic[] {
+        if (!this.inTransaction) {
+            console.warn("Getting transactions outside of transaction is not allowed");
+            return [];
+        }
+        return this.transactionLog;
+    }
+
     public send(topicType: string, body?: any): void {
+        if (this.inTransaction) {
+            this.transactionLog.push({
+                type: topicType,
+                message: body
+            });
+            return;
+        }
         try {
             let message = {
                 type: topicType,
@@ -97,31 +127,31 @@ export class WebSocketClient {
     }
 
     public async lightRandomNext(): Promise<void> {
-        if (this.socket) {
+        if (this.socket || this.inTransaction) {
             this.send("light.random.next",);
         }
     }
 
     public async lightRandomNextSpecific(index: number): Promise<void> {
-        if (this.socket) {
+        if (this.socket || this.inTransaction) {
             this.send("light.random.next.specific", { stripIndex: index });
         }
     }
     public async lightRandomSetEnabled(enabled: boolean): Promise<void> {
-        if (this.socket) {
+        if (this.socket || this.inTransaction) {
             this.send("light.random.setEnabled", { enabled: enabled });
         }
     }
 
     public async lightRandomSetEnabledSpecific(stripIndex: number, enabled: boolean): Promise<void> {
-        if (this.socket) {
+        if (this.socket || this.inTransaction) {
             this.send("light.random.setEnabled.specific", { enabled: enabled, stripIndex });
         }
     }
 
     public lightSetEffekt(effekt: string, stripIndex: number, frequency: number[], instanceData: object = {}): string {
         const instanceUUID = Math.random().toString(36).substring(7);
-        if (this.socket) {
+        if (this.socket || this.inTransaction) {
             this.send("light.setEffekt", {
                 effektName: effekt,
                 stripIndex: stripIndex,
@@ -133,9 +163,9 @@ export class WebSocketClient {
         return instanceUUID;
     }
 
-    public lightAddEffekt(effekt: string, stripIndex: number, frequency: number[], instanceData: object = {},startIndex:number, endIndex: number): string {
+    public lightAddEffekt(effekt: string, stripIndex: number, frequency: number[], instanceData: object = {}, startIndex: number, endIndex: number): string {
         const instanceUUID = Math.random().toString(36).substring(7);
-        if (this.socket) {
+        if (this.socket || this.inTransaction) {
             this.send("light.addEffekt", {
                 effektName: effekt,
                 stripIndex: stripIndex,
@@ -150,39 +180,51 @@ export class WebSocketClient {
     }
 
     public async lightSetOff(stripIndex: number) {
-        if (this.socket) {
+        if (this.socket || this.inTransaction) {
             this.send("light.setOff", { stripIndex: stripIndex });
         }
     }
 
     public async lightRemoveEffekt(instanceUUID: number) {
-        if (this.socket) {
+        if (this.socket || this.inTransaction) {
             this.send("light.removeEffekt", { instanceUUID: instanceUUID });
         }
     }
 
     public async changeConfigProperty(property: string, value: any): Promise<void> {
-        if (this.socket) {
+        if (this.socket || this.inTransaction) {
             this.send("system.config.change", { key: property, value: value });
         }
     }
 
     //Data will return with the type return.wsapi.getKeyValue
     public async issueKeyGet(key: string) {
-        if (this.socket) {
+        if (this.socket || this.inTransaction) {
             this.send("wsapi.getKeyValue", { key: key });
         }
     }
 
     public async issueKeySet(key: string, value: any) {
-        if (this.socket) {
+        if (this.socket || this.inTransaction) {
             this.send("wsapi.setKeyValue", { key: key, value: value });
         }
     }
 
     public async lightReport() {
-        if (this.socket) {
+        if (this.socket || this.inTransaction) {
             this.send("light.report", {});
+        }
+    }
+
+    public async lightClear(stripIndex: number) {
+        if (this.socket || this.inTransaction) {
+            this.send("light.clearStrip", { stripIndex: stripIndex });
+        }
+    }
+
+    public async sendBatch(batch: ServerTopic[]) {
+        if (this.socket || this.inTransaction) {
+            this.send("wsapi.pipeline.batch", { batch: batch });
         }
     }
 }

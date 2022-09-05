@@ -63,6 +63,9 @@ def handleQueue(queue2Thread,queue2Parent,vis):
             elif topicType == "light.removeEffekt":
                 composer.removeElementById(data["instanceUUID"])
                 reportEffekts(vis,queue2Parent)
+            elif topicType == "light.clearStrip":
+                composer.removeElementByStripIndex(data["stripIndex"])
+                reportEffekts(vis,queue2Parent)
             elif topicType == "light.addEffekt":
                 addEffektToComp(vis,data["effektName"],data["stripIndex"],data["frequencyRange"],data["instanceData"],data["instanceUUID"],data["startIndex"],data["endIndex"])
                 reportEffekts(vis,queue2Parent)
