@@ -231,18 +231,16 @@ class Visualization:
         mrf = random.choice(middleRandomFrequencys)
         reT = random.choice(self.randomEffekts)
         reM = random.choice(self.randomEffekts)
-        print(parts)
-        if(parts == "all"):
-            
+        if(parts == "all"):   
             if self.ENDABLED_RND_PARTS[1]:
-                composer.removeElementById(1)
+                composer.removeElementByStripIndex(1)
                 composer.addEffekt(reT(1),trf,1,0,config.STRIP_LED_COUNTS[1])
             if self.ENDABLED_RND_PARTS[0]:
-                composer.removeElementById(0)
+                composer.removeElementByStripIndex(0)
                 composer.addEffekt(reM(0),mrf,0,0,config.STRIP_LED_COUNTS[0])
         else:
             # if self.ENDABLED_RND_PARTS[parts]:
-            composer.removeElementById(parts)
+            composer.removeElementByStripIndex(parts)
             composer.addEffekt(reM(parts),mrf,parts,0,config.STRIP_LED_COUNTS[parts])
         queueHandler.reportEffekts(self, self.queue2Parent)
         # self.queue2Parent.put(json.dumps({"type": "notification.random.effektChanged", "message": {
