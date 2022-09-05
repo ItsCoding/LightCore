@@ -14,7 +14,7 @@ class StripFrame:
             if endIndex > self.stripLength:
                 endIndex = self.stripLength
             # scaledUp = np.tile(0, self.stripLength)
-            print(len(frame[i]),endIndex - startIndex,endIndex,startIndex,len(range(startIndex, endIndex)))
+            # print(len(frame[i]),endIndex - startIndex,endIndex,startIndex,len(range(startIndex, endIndex)))
             if len(frame[i]) < endIndex - startIndex:
                 endIndex = endIndex - 1
             self.leds[i, startIndex:endIndex] = frame[i]
