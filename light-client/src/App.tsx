@@ -1,7 +1,7 @@
 import { Alert, AlertTitle, createTheme, Grid, LinearProgress, ThemeProvider, Typography } from '@mui/material';
 import React, { useEffect } from 'react';
 import { QuickPage } from './pages/QuickPage';
-import { WebSocketClient } from './system/WebsocketClient';
+import { ClientMode, WebSocketClient } from './system/WebsocketClient';
 import { Effekt } from './types/Effekt';
 import _ from 'lodash';
 import HeaderBar from './components/General/HeaderBar';
@@ -118,6 +118,18 @@ function App() {
     connectWS();
   }, [])
 
+  useEffect(() => {
+    if (activeRoute !== "stage" && wsClient.mode === ClientMode.STAGE && wsClient.connected) {
+      wsClient.mode = ClientMode.EDITOR;
+      initEventHandler();
+      console.log("🌈 Switched to Editor Mode");
+    } else if (activeRoute === "stage" && wsClient.mode === ClientMode.EDITOR) {
+      wsClient.mode = ClientMode.STAGE;
+      wsClient.unsubscribeAll();
+      console.log("⚠️ Switched to Stage Mode");
+    }
+  }, [activeRoute])
+
   const ConnectionError = () => (<Alert severity="error">
     <AlertTitle>Error</AlertTitle>
     There is an error in the — <strong>WebSocket connection</strong>
@@ -143,38 +155,38 @@ function App() {
 
           <div>
             {lcConfig ? <>
-              <div style={{
-                paddingBottom: "8vh",
-                margin: "10px"
-              }}>
-                <Route path="home" element={<HomePage />} />
-                <Route path="quick" element={<QuickPage
-                  randomEnabled={randomEnabled}
-                  randomSpecific={randomSpecific}
-                  setRandomEnabled={setRandomEnabled}
-                  setRandomSpecific={setRandomSpecific}
-                  lightConfig={lcConfig}
-                  setLCConfig={setLcConfig}
-                />} />
-                <Route path="effekts" element={<EffektsPage
-                  availableEffekts={availableEffekts}
-                  isRandomizerActive={randomEnabled}
-                  setRandomizerActive={setRandomEnabled}
-                  compositionStore={compositionStore}
-                  setCompositionStore={changeCompositionStore}
-                />} />
-                <Route path="stage" element={<StagePage
-                  setActiveRoute={(route) => setActiveRoute(route)
-                  } />} />
-                <Route path="boardeditor" element={<BoardEditor
-                  compositions={compositionStore}
-                  availableBoards={availableBoards}
-                  setAvailableBoards={setAvailableBoards}
-                />} />
-                <Route path="colors" element={<ColorsPage />} />
-              </div>
               {
-                activeRoute !== "stage" ? <HeaderBar setTouchCapable={setTouchCapable} changeTab={(key) => setActiveRoute(key)} /> : null
+                activeRoute !== "stage" ?
+                  <>
+                    <HeaderBar setTouchCapable={setTouchCapable} changeTab={(key) => setActiveRoute(key)} />
+                    <div style={{
+                      paddingBottom: "8vh",
+                      margin: "10px"
+                    }}>
+                      <Route path="home" element={<HomePage />} />
+                      <Route path="quick" element={<QuickPage
+                        randomEnabled={randomEnabled}
+                        randomSpecific={randomSpecific}
+                        setRandomEnabled={setRandomEnabled}
+                        setRandomSpecific={setRandomSpecific}
+                        lightConfig={lcConfig}
+                        setLCConfig={setLcConfig}
+                      />} />
+                      <Route path="effekts" element={<EffektsPage
+                        availableEffekts={availableEffekts}
+                        isRandomizerActive={randomEnabled}
+                        setRandomizerActive={setRandomEnabled}
+                        compositionStore={compositionStore}
+                        setCompositionStore={changeCompositionStore}
+                      />} />
+                      <Route path="boardeditor" element={<BoardEditor
+                        compositions={compositionStore}
+                        availableBoards={availableBoards}
+                        setAvailableBoards={setAvailableBoards}
+                      />} />
+                      <Route path="colors" element={<ColorsPage />} />
+                    </div>
+                  </> : <StagePage setActiveRoute={setActiveRoute} />
               }
             </> : <div>
               <Grid

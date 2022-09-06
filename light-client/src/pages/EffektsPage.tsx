@@ -157,7 +157,7 @@ export const EffektsPage = ({ availableEffekts, isRandomizerActive, setRandomize
             console.log("IncommingActives: ", incommingEffekts)
             setActiveEffekts(incommingEffekts);
         }))
-        wsClient.lightReport();
+        // wsClient.lightReport();
         return () => {
             wsClient.removeEventHandler(eventID)
         }

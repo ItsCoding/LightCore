@@ -6,10 +6,18 @@ export type WebSocketEvent = {
     handler: (topic: ServerTopic) => void
 }
 
+export enum ClientMode {
+    STAGE = 0,
+    EDITOR = 1,
+}
+
 export class WebSocketClient {
     private static instance: WebSocketClient;
     private transactionLog: ServerTopic[] = [];
     private socket: WebSocket | undefined = undefined;
+    public mode:ClientMode = ClientMode.EDITOR;
+    public connected: boolean = false;
+
     private constructor(
         public inTransaction?: boolean
     ) { }
@@ -45,6 +53,7 @@ export class WebSocketClient {
             console.log("Connecting to WS:" + url);
             this.socket.onopen = () => {
                 console.log('WebSocket connected');
+                this.connected = true;
                 setTimeout(() => {
                     console.log("Resolving")
                     resolve();

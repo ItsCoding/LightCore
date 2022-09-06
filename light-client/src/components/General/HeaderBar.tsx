@@ -72,7 +72,9 @@ export default function HeaderBar({ changeTab, setTouchCapable }: HeaderBarProps
                             <FormControlLabel control={<Switch defaultChecked />} label="Touch" checked={window.touchToggle ? true : false} onChange={(e,state) => onTouchChanged(state)} />
                         </FormGroup> */}
                         <IconButton color='error' aria-label="fullscreen" onClick={() => {
-                            document.documentElement.requestFullscreen()
+                            if (document.documentElement.requestFullscreen) {
+                                document.documentElement.requestFullscreen();
+                            }
                             changeTab("stage");
                         }} component="label" >
                             <StreamIcon />
