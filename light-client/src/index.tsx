@@ -2,6 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
+import { TouchBackend } from 'react-dnd-touch-backend'
 // import reportWebVitals from './reportWebVitals';
 
 declare global {
@@ -9,13 +12,18 @@ declare global {
 }
 
 window.touchToggle = (('ontouchstart' in window) || (navigator.maxTouchPoints > 0));
+const dndBackend = window.touchToggle ? TouchBackend : HTML5Backend;
 console.log("Am i Touch capable? ", window.touchToggle)
 const root = ReactDOM.createRoot(
-    document.getElementById('root') as HTMLElement
-  );
+  document.getElementById('root') as HTMLElement
+);
 root.render(
   <React.StrictMode>
-    <App />
+
+    <DndProvider backend={dndBackend}>
+      <App />
+    </DndProvider>
+
   </React.StrictMode>
 );
 

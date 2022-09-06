@@ -13,10 +13,12 @@ export const strips: LedStrip[] = [
         position: "Middle",
         index: 0,
         length: 100,
-        marks: generateMarks(100, 25)
+        marks: generateMarks(100, 25),
+        symbol: "-",
     }, {
         position: "Triangle",
         index: 1,
         length: 180,
-        marks: generateMarks(180, 30)
+        marks: generateMarks(180, 30),
+        symbol: "△",
     }]

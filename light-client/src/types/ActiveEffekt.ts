@@ -19,13 +19,17 @@ export function expectAnything(jsonValue: JsonValue): any {
     return jsonValue;
 }
 
+export type InstanceDataType = {
+    [key: string | number]: any;
+}
+
 export class ActiveEffekt {
     constructor(
         public id: string | number,
         public effektName: string,
         public stripIndex: number,
         public frequencyRange: number[],
-        public instanceData: object,
+        public instanceData: InstanceDataType,
         public startIndex: number,
         public endIndex: number,
         public effektSystemName: string

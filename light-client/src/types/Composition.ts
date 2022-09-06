@@ -33,8 +33,12 @@ export class Composition {
         }
     }
 
+    public getAffectedStrips() {
+        return [...new Set(this.activeEffekts.map(activeEffekt => activeEffekt.stripIndex))];
+    }
+
     public activate() {
-        const affectedStrips = [...new Set(this.activeEffekts.map(activeEffekt => activeEffekt.stripIndex))];
+        const affectedStrips = this.getAffectedStrips();
         const transaction = WebSocketClient.startTransaction();
         const activeUUIDs: (string | number)[] = [];
         affectedStrips.forEach(stripIndex => {

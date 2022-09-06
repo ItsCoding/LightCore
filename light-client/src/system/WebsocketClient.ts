@@ -130,6 +130,10 @@ export class WebSocketClient {
         });
     }
 
+    public unsubscribeAll() {
+        this.eventHandlers = [];
+    }
+
     public async lightRandomNext(): Promise<void> {
         if (this.socket || this.inTransaction) {
             this.send("light.random.next",);
@@ -168,7 +172,7 @@ export class WebSocketClient {
     }
 
     public lightAddEffekt(effekt: string, stripIndex: number, frequency: number[], instanceData: object = {}, startIndex: number, endIndex: number, instanceUUID?: string | number): string | number {
-        if(!instanceUUID) instanceUUID =  Math.random().toString(36).substring(7);
+        if (!instanceUUID) instanceUUID = Math.random().toString(36).substring(7);
         if (this.socket || this.inTransaction) {
             this.send("light.addEffekt", {
                 effektName: effekt,

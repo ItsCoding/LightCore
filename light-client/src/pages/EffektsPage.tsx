@@ -357,7 +357,7 @@ export const EffektsPage = ({ availableEffekts, isRandomizerActive, setRandomize
                                         <Button fullWidth color="primary" variant="contained" disabled={!selectedExistingComposition} onClick={() => { setConfirmDialogOpen(3) }}>Load</Button>
                                     </Grid>
                                     <Grid item xs={4} md={4}>
-                                        <Button fullWidth color="error" variant="contained" onClick={() => { setConfirmDialogOpen(2) }}>Delete</Button>
+                                        <Button fullWidth color="error" variant="contained" disabled={!selectedExistingComposition} onClick={() => { setConfirmDialogOpen(2) }}>Delete</Button>
                                     </Grid>
                                 </Grid>
 

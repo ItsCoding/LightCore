@@ -1,10 +1,11 @@
 import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
-import { Divider, FormControlLabel, FormGroup, Switch, Tab, Tabs, Toolbar } from '@mui/material';
+import { IconButton, Tab, Tabs, Toolbar } from '@mui/material';
 import SpeedIcon from '@mui/icons-material/Speed';
 import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
-import ColorLensIcon from '@mui/icons-material/ColorLens';
+import StreamIcon from '@mui/icons-material/Stream';
+import BorderInnerIcon from '@mui/icons-material/BorderInner';
 type HeaderBarProps = {
     changeTab: (key: string) => void;
     setTouchCapable: (capable: boolean) => void;
@@ -21,7 +22,7 @@ export default function HeaderBar({ changeTab, setTouchCapable }: HeaderBarProps
 
     React.useEffect(() => {
         console.log("Toggled!")
-    },[window.touchToggle])
+    }, [window.touchToggle])
 
     const onTouchChanged = (state: boolean) => {
         window.touchToggle = state;
@@ -44,6 +45,7 @@ export default function HeaderBar({ changeTab, setTouchCapable }: HeaderBarProps
                             aria-label="icon tabs example">
                             <Tab value={"quick"} icon={<SpeedIcon />} aria-label="quick" />
                             <Tab value={"effekts"} icon={<TipsAndUpdatesIcon />} aria-label="effekts" />
+                            <Tab value={"boardeditor"} icon={<BorderInnerIcon />} aria-label="boardeditor" />
                             {/* <Tab value={"colors"} icon={<ColorLensIcon />} aria-label="colors" /> */}
                             {/* <Tab icon={<PersonPinIcon />} aria-label="person" /> */}
                         </Tabs>
@@ -62,13 +64,19 @@ export default function HeaderBar({ changeTab, setTouchCapable }: HeaderBarProps
                             {title}
                         </Typography>
                     </Toolbar> */}
-                        <FormGroup aria-controls="menu-appbar" style={{
+                        {/* <FormGroup aria-controls="menu-appbar" style={{
                             position: "absolute",
                             right: "4vh",
                             // top: "2vh"
                         }}>
                             <FormControlLabel control={<Switch defaultChecked />} label="Touch" checked={window.touchToggle ? true : false} onChange={(e,state) => onTouchChanged(state)} />
-                        </FormGroup>
+                        </FormGroup> */}
+                        <IconButton color='error' aria-label="fullscreen" onClick={() => {
+                            document.documentElement.requestFullscreen()
+                            changeTab("stage");
+                        }} component="label" >
+                            <StreamIcon />
+                        </IconButton>
                     </Toolbar>
 
                 </AppBar>

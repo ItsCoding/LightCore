@@ -12,6 +12,9 @@ import { ReturnType, WSApiKey } from './types/TopicReturnType';
 import { ColorsPage } from './pages/ColorsPage';
 import { Composition } from './types/Composition';
 import { SnackbarProvider } from 'notistack';
+import { StagePage } from './pages/StagePage';
+import { BoardEditor } from './pages/BoardEditor';
+import { Board, JSON2Board } from './types/Board';
 
 export const themeOptions = createTheme({
   palette: {
@@ -47,6 +50,7 @@ function App() {
   const [compositionStore, setCompositionStore] = React.useState<Array<Composition>>([]);
   const connectedToWs = React.useRef(false);
   const [touchCapable, setTouchCapable] = React.useState<Boolean>(window.touchToggle);
+  const [availableBoards, setAvailableBoards] = React.useState<Array<Board>>([]);
 
   //System
   const [lcConfig, setLcConfig] = React.useState<LightCoreConfig>();
@@ -65,36 +69,44 @@ function App() {
     wsClient.issueKeySet("compositionStore", JSON.stringify(compJSON));
   }
 
+  const initEventHandler = () => {
+    wsClient.addEventHandler(ReturnType.DATA.AVAILABLE_EFFEKTS, topic => {
+      const effekts = Effekt.fromJSONArray(topic.message);
+      console.log("Available Effekts: ", effekts);
+      setAvailableEffekts(effekts);
+    })
+
+    wsClient.addEventHandler(ReturnType.SYSTEM.CONFIG, topic => {
+      const conf = LightCoreConfig.fromJSON(topic.message);
+      console.log("System Config: ", conf);
+      setLcConfig(conf);
+    })
+
+    wsClient.addEventHandler(ReturnType.WSAPI.GET_KEY_VALUE, topic => {
+      console.log("Got Key Value: ", topic);
+      if (topic.message === null) return;
+      const msg: WSApiKey = topic.message;
+      if (msg.key === "compositionStore" && msg.value) {
+        const comps = Composition.fromJSONArray(JSON.parse(msg.value));
+        setCompositionStore(comps);
+      } else if (msg.key === "boards" && msg.value) {
+        const boards: Board[] = JSON.parse(msg.value).map((b: any) => JSON2Board(b));
+        setAvailableBoards(boards);
+      }
+    });
+    console.log("Get available effekts");
+    wsClient.send("data.get.availableEffekts");
+    wsClient.send("system.config.get")
+    wsClient.issueKeyGet("compositionStore");
+    wsClient.issueKeyGet("boards");
+  }
+
   const connectWS = async () => {
     if (connectedToWs.current) return;
     try {
       connectedToWs.current = true;
       await wsClient.connect(`ws://${window.location.hostname}:8000`);
-      wsClient.addEventHandler(ReturnType.DATA.AVAILABLE_EFFEKTS, topic => {
-        const effekts = Effekt.fromJSONArray(topic.message);
-        console.log("Available Effekts: ", effekts);
-        setAvailableEffekts(effekts);
-      })
-
-      wsClient.addEventHandler(ReturnType.SYSTEM.CONFIG, topic => {
-        const conf = LightCoreConfig.fromJSON(topic.message);
-        console.log("System Config: ", conf);
-        setLcConfig(conf);
-      })
-
-      wsClient.addEventHandler(ReturnType.WSAPI.GET_KEY_VALUE, topic => {
-        console.log("Got Key Value: ", topic);
-        if (topic.message === null) return;
-        const msg: WSApiKey = topic.message;
-        if (msg.key === "compositionStore" && msg.value) {
-          const comps = Composition.fromJSONArray(JSON.parse(msg.value));
-          setCompositionStore(comps);
-        }
-      });
-      console.log("Get available effekts");
-      wsClient.send("data.get.availableEffekts");
-      wsClient.send("system.config.get")
-      wsClient.issueKeyGet("compositionStore");
+      initEventHandler();
     } catch (error) {
       console.error("WS-Error", error);
       setConnectionError(true);
@@ -113,7 +125,7 @@ function App() {
 
   type RouteProps = {
     element: JSX.Element
-    path: string
+    path: string,
   }
 
   const Route = ({ element, path }: RouteProps) => {
@@ -151,9 +163,19 @@ function App() {
                   compositionStore={compositionStore}
                   setCompositionStore={changeCompositionStore}
                 />} />
+                <Route path="stage" element={<StagePage
+                  setActiveRoute={(route) => setActiveRoute(route)
+                  } />} />
+                <Route path="boardeditor" element={<BoardEditor
+                  compositions={compositionStore}
+                  availableBoards={availableBoards}
+                  setAvailableBoards={setAvailableBoards}
+                />} />
                 <Route path="colors" element={<ColorsPage />} />
               </div>
-              <HeaderBar setTouchCapable={setTouchCapable} changeTab={(key) => setActiveRoute(key)} />
+              {
+                activeRoute !== "stage" ? <HeaderBar setTouchCapable={setTouchCapable} changeTab={(key) => setActiveRoute(key)} /> : null
+              }
             </> : <div>
               <Grid
                 container

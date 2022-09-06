@@ -4,9 +4,10 @@ import { strips } from "../../system/StripConfig";
 import { WebSocketClient } from "../../system/WebsocketClient";
 import { Button, IconButton } from "@mui/material";
 import ReplayIcon from '@mui/icons-material/Replay';
-import { borderRadius } from "@mui/system";
 import { getBackgroundColor, getHoverBackgroundColor } from "../../system/Utils";
 import { Effekt } from "../../types/Effekt";
+import { useSnackbar } from "notistack";
+import { ActiveEffektsColorPicker } from "./ActiveEffektsColorPicker";
 type ActiveEffektsProps = {
     activeEffekts: Array<ActiveEffekt>,
     availableEffekts: Array<Effekt>,
@@ -17,7 +18,7 @@ type ActiveEffektsProps = {
 
 export const ActiveEffekts = ({ activeEffekts, availableEffekts }: ActiveEffektsProps) => {
     const wsClient = WebSocketClient.getInstance();
-
+    const { enqueueSnackbar } = useSnackbar();
     const getAvailableStrips = () => {
         return strips.map(strip => {
             return { value: strip.index, label: strip.position }
@@ -29,6 +30,7 @@ export const ActiveEffekts = ({ activeEffekts, availableEffekts }: ActiveEffekts
             return { value: effekt.effektSystemName, label: effekt.name }
         })
     }
+
 
     const columns: GridColDef[] = [
         { field: 'id', headerName: 'ID' },
@@ -47,11 +49,12 @@ export const ActiveEffekts = ({ activeEffekts, availableEffekts }: ActiveEffekts
             valueGetter: (params: GridValueGetterParams) =>
                 `${params.row.frequencyRange[0]}-${params.row.frequencyRange[1]}`,
             width: 200,
+            editable: true
         },
         { field: 'startIndex', headerName: 'Startindex', editable: true, type: 'number', },
         { field: 'endIndex', headerName: 'Endindex', editable: true, type: 'number', },
         {
-            field: 'yID', headerName: 'Static color',
+            field: 'yColor', headerName: 'Static color',
             renderCell: (params: GridRenderCellParams) =>
                 <>
                     {params.row.instanceData.hasOwnProperty("color") ?
@@ -63,6 +66,8 @@ export const ActiveEffekts = ({ activeEffekts, availableEffekts }: ActiveEffekts
                         }}></div>
                         : " - "}
                 </>,
+            editable: true,
+            renderEditCell: ActiveEffektsColorPicker
         },
         {
             field: 'xID', headerName: '#',
@@ -87,6 +92,7 @@ export const ActiveEffekts = ({ activeEffekts, availableEffekts }: ActiveEffekts
 
     const changeKeyInActiveEffekt = (id: string | number, key: string, value: any) => {
         const activeEffekt = activeEffekts.find(ae => ae.id === id);
+        console.log("Got change", id, key, value);
         if (activeEffekt) {
             switch (key) {
                 case "effektName":
@@ -101,6 +107,25 @@ export const ActiveEffekts = ({ activeEffekts, availableEffekts }: ActiveEffekts
                 case "endIndex":
                     activeEffekt.endIndex = value;
                     break;
+                case "frequencyRange":
+                    let range: number[] = []
+                    if (typeof value === "string") {
+                        range = value.split("-").map(r => parseInt(r));
+                    }
+                    if (range.length === 2 && range[0] < range[1] && range[0] >= 0 && range[1] <= 64) {
+                        activeEffekt.frequencyRange = range;
+                    } else {
+                        enqueueSnackbar(`There is an error with your Frequencyrange. It should be like "[START]-[END] and only be in range between 0 and 64!"`, { variant: 'error', anchorOrigin: { vertical: "top", horizontal: "right" } });
+                    }
+                    break;
+                case "yColor":
+                    console.log("Got color", value);
+                    if (value && value.length === 3) {
+                        activeEffekt.instanceData["color"] = value;
+                    } else {
+                        delete activeEffekt.instanceData["color"];
+                        break;
+                    }
             }
             const transaction = WebSocketClient.startTransaction();
             transaction.lightRemoveEffekt(id);
@@ -139,6 +164,7 @@ export const ActiveEffekts = ({ activeEffekts, availableEffekts }: ActiveEffekts
             onCellEditCommit={(params) => {
                 changeKeyInActiveEffekt(params.id, params.field, params.value);
             }}
+            // experimentalFeatures={{ newEditingApi: true }}
             hideFooter
             getRowClassName={(params) => params.row.effektSystemName === "visualize_OFF" ? "offColor" : ""}
             components={{

@@ -8,6 +8,7 @@ export class LedStrip {
         public index: number,
         public position: string,
         public length: number,
-        public marks: StripMarks[]
+        public marks: StripMarks[],
+        public symbol: string,
     ) { }
 }
