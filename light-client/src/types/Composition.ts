@@ -2,10 +2,14 @@ import { arrayMapper, expectString, objectMapper } from "@daniel-faber/json-ts";
 import { WebSocketClient } from "../system/WebsocketClient";
 import { ActiveEffekt } from "./ActiveEffekt";
 import { CompositionTag, expectCompositionTag } from "./CompositionTag";
+import { ReturnType } from "./TopicReturnType";
 
 const wsClient = WebSocketClient.getInstance();
 
 export class Composition {
+    private activeUUIDs: (string | number)[] = [];
+    private eventHandlerID: string | undefined = undefined;
+    private deactivateHandler: (() => void) | undefined = undefined;
     constructor(
         public id: string,
         public compositionName: string,
@@ -37,10 +41,19 @@ export class Composition {
         return [...new Set(this.activeEffekts.map(activeEffekt => activeEffekt.stripIndex))];
     }
 
-    public activate() {
+    private callDeactivateHandler() {
+        if (this.deactivateHandler) {
+            this.deactivateHandler();
+            this.deactivateHandler = undefined;
+        }
+    }
+
+    public activate(onDeactivate: () => void) {
         const affectedStrips = this.getAffectedStrips();
         const transaction = WebSocketClient.startTransaction();
         const activeUUIDs: (string | number)[] = [];
+        this.deactivateHandler = onDeactivate;
+
         affectedStrips.forEach(stripIndex => {
             transaction.lightClear(stripIndex);
         });
@@ -52,7 +65,48 @@ export class Composition {
                 activeEffekt.startIndex,
                 activeEffekt.endIndex));
         });
+        setTimeout(() => {
+            this.eventHandlerID = wsClient.addEventHandler(ReturnType.DATA.ACTIVE_EFFEKTS, topic => {
+                if (topic.message === null) return;
+                const activeEffekts = ActiveEffekt.fromJSONArray(topic.message);
+                const activeUUIDs = activeEffekts.filter(activeEffekt => this.activeUUIDs.includes(activeEffekt.id));
+                if (activeUUIDs.length === 0) {
+                    this.activeUUIDs = [];
+                    this.callDeactivateHandler();
+                    wsClient.removeEventHandler(this.eventHandlerID!);
+                } else {
+                    this.activeUUIDs = activeUUIDs.map(activeEffekt => activeEffekt.id);
+                }
+            })
+        }, 500)
         transaction.commit();
-        return activeUUIDs;
+        this.activeUUIDs = activeUUIDs;
+    }
+
+    public deactivate() {
+        if (this.activeUUIDs.length === 0) return;
+        const transaction = WebSocketClient.startTransaction();
+        this.activeUUIDs.forEach(uuid => {
+            transaction.lightRemoveEffekt(uuid);
+        });
+        transaction.commit();
+        this.activeUUIDs = [];
+        this.callDeactivateHandler();
+    }
+
+    public toggle(onDeactivate: () => void) {
+        if (this.activeUUIDs.length > 0) {
+            this.deactivate();
+        } else {
+            this.activate(onDeactivate);
+        }
+    }
+
+    public get isActive() {
+        return this.activeUUIDs.length > 0;
+    }
+
+    public get activeIds() {
+        return this.activeUUIDs;
     }
 }

@@ -90,6 +90,20 @@ export const ActiveEffekts = ({ activeEffekts, availableEffekts }: ActiveEffekts
         );
     }
 
+    const checkStripIndex = (value: number,id:string | number) => {
+        const rowData = activeEffekts.find(ae => ae.id === id);
+        if (rowData) {
+            const strip = strips.find(s => s.index === rowData.stripIndex);
+            if (!strip) return false;
+            if (value < 0 || value > strip.length) {
+                enqueueSnackbar(`Startindex must be between 0 and ${strip.length}`, { variant: "error" });
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
     const changeKeyInActiveEffekt = (id: string | number, key: string, value: any) => {
         const activeEffekt = activeEffekts.find(ae => ae.id === id);
         console.log("Got change", id, key, value);
@@ -102,10 +116,18 @@ export const ActiveEffekts = ({ activeEffekts, availableEffekts }: ActiveEffekts
                     activeEffekt.stripIndex = value;
                     break;
                 case "startIndex":
-                    activeEffekt.startIndex = value;
+                    if(activeEffekt.endIndex < value){
+                        enqueueSnackbar(`Startindex must be smaller than endindex`, { variant: "error" });
+                    }else if(checkStripIndex(value,id)){
+                        activeEffekt.startIndex = value;
+                    }
                     break;
                 case "endIndex":
-                    activeEffekt.endIndex = value;
+                    if(activeEffekt.startIndex > value){
+                        enqueueSnackbar(`Endindex must be greater than startindex`, { variant: "error" });
+                    }else if(checkStripIndex(value,id)){
+                        activeEffekt.endIndex = value;
+                    }
                     break;
                 case "frequencyRange":
                     let range: number[] = []

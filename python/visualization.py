@@ -122,6 +122,7 @@ class Visualization:
         self.avg_Bpm = 0
         self.beat = False
         self.randomEffekts = None
+        self.allEffekts = None
         self.OFF_EFFEKT = visualize_Off
         self.ENDABLED_RND_PARTS = {
             0: True,
@@ -164,10 +165,11 @@ class Visualization:
             self.beat = message["beat"]
             self.avg_Bpm = message["bpm"]
             hasBeatChanged = True
-            if(self.beat):
-                print("- BPM: " + str(self.avg_Bpm))
-            else:
-                 print("| BPM: " + str(self.avg_Bpm))
+            if(config.DISPLAY_BPM):
+                if(self.beat):
+                    print("- BPM: " + str(self.avg_Bpm))
+                else:
+                    print("| BPM: " + str(self.avg_Bpm))
         # Normalize samples between 0 and 1
         y = audio_samples / 2.0**15
         # Construct a rolling window of audio samples
@@ -313,6 +315,7 @@ class Visualization:
                             visualize_flashyBpm,visualize_flashSection,visualize_flashSectionUpwards,visualize_rushUpwards,
                             visualize_flashRotating,visualize_flashSectionMirrored,visualize_rotatingEnergyInverted,visualize_flashSectionUpwardsAscending,
                             visualize_flashSectionRandomColor,visualize_flashSectionMirroredRandomColor]
+        self.allEffekts = self.randomEffekts + [visualize_Off]
         if config.USE_GUI:
             import pyqtgraph as pg
             from pyqtgraph.Qt import QtGui, QtCore

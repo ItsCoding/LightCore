@@ -34,7 +34,8 @@ BRIGHTNESS = 100
 USE_GUI = False
 """Whether or not to display a PyQtGraph GUI plot of visualization"""
 
-DISPLAY_FPS = False
+DISPLAY_FPS = True
+DISPLAY_BPM = False
 """Whether to display the FPS when running (can reduce performance)"""
 
 #ToDo: This need to be replaced
@@ -95,7 +96,7 @@ MIN_VOLUME_THRESHOLD = 1e-7
 
 
 STRIP_COUNT = 2
-STRIP_LED_COUNTS = [100,180]
+STRIP_LED_COUNTS = [300,540]
 
 RANDOM_MAX_WAIT = 8
 RANDOM_MIN_WAIT = 4

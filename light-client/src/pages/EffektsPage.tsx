@@ -10,6 +10,7 @@ import { strips } from "../system/StripConfig"
 import { createUUID, getFontColorByBgColor, ModalTransition, randomColor } from "../system/Utils"
 import { WebSocketClient } from "../system/WebsocketClient"
 import { ActiveEffekt } from "../types/ActiveEffekt"
+import { setAllCompositions } from "../types/Board"
 import { Composition } from "../types/Composition"
 import { CompositionTag } from "../types/CompositionTag"
 import { Effekt } from "../types/Effekt"
@@ -142,6 +143,7 @@ export const EffektsPage = ({ availableEffekts, isRandomizerActive, setRandomize
             setCompositionStore(newStore)
             setNewCompositionName(null)
             setSelectedTags([])
+            setAllCompositions(newStore)
             enqueueSnackbar(`Saved composition: ${newComp.compositionName}!`, { variant: 'success', anchorOrigin: { vertical: "top", horizontal: "right" } });
         } else {
             enqueueSnackbar(`No composition to save!`, { variant: 'error', anchorOrigin: { vertical: "top", horizontal: "right" } });
@@ -206,7 +208,7 @@ export const EffektsPage = ({ availableEffekts, isRandomizerActive, setRandomize
             ),
             confirm: () => {
                 if (newComposition) {
-                    newComposition.activate();
+                    newComposition.activate(() => {});
                     setActiveEffekts(newComposition.activeEffekts);
                     setConfirmDialogOpen(0);
                     enqueueSnackbar(`Loaded composition: ${newComposition?.compositionName}!`, { variant: 'success', anchorOrigin: { vertical: "top", horizontal: "right" } });

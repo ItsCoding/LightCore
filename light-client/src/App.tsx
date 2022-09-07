@@ -14,7 +14,7 @@ import { Composition } from './types/Composition';
 import { SnackbarProvider } from 'notistack';
 import { StagePage } from './pages/StagePage';
 import { BoardEditor } from './pages/BoardEditor';
-import { Board, JSON2Board } from './types/Board';
+import { Board, JSON2Board, setAllCompositions } from './types/Board';
 
 export const themeOptions = createTheme({
   palette: {
@@ -88,6 +88,7 @@ function App() {
       const msg: WSApiKey = topic.message;
       if (msg.key === "compositionStore" && msg.value) {
         const comps = Composition.fromJSONArray(JSON.parse(msg.value));
+        setAllCompositions(comps)
         setCompositionStore(comps);
       } else if (msg.key === "boards" && msg.value) {
         const boards: Board[] = JSON.parse(msg.value).map((b: any) => JSON2Board(b));

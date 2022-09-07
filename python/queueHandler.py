@@ -7,7 +7,7 @@ import config
 
 def setSpecificEffekt(vis,effektName,stripIndex,frequencyRange,instanceData,instanceUUID):
     print("Adding Effekt: ", effektName, " to strip: ", stripIndex, instanceUUID)
-    effektClass = next(x for x in vis.randomEffekts if x.__name__ == effektName)
+    effektClass = next(x for x in vis.allEffekts if x.__name__ == effektName)
     if effektClass == None:
         return
     stripLength = config.STRIP_LED_COUNTS[stripIndex]
@@ -15,7 +15,7 @@ def setSpecificEffekt(vis,effektName,stripIndex,frequencyRange,instanceData,inst
     composer.addEffekt(effektClass(instanceUUID),frequencyRange,stripIndex,0,stripLength,instanceData)
 
 def addEffektToComp(vis,effektName,stripIndex,frequencyRange,instanceData,instanceUUID,startIndex,endIndex):
-    effektClass = next(x for x in vis.randomEffekts if x.__name__ == effektName)
+    effektClass = next(x for x in vis.allEffekts if x.__name__ == effektName)
     if effektClass == None:
         return
     composer.addEffekt(effektClass(instanceUUID),frequencyRange,stripIndex,startIndex,endIndex,instanceData)

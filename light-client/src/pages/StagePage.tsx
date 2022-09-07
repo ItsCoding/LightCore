@@ -11,11 +11,10 @@ export type StagePageProps = {
 export const StagePage = ({setActiveRoute}: StagePageProps) => {
     const [activeBoard, setActiveBoard] = useState<Board>({ elements: {} })
     const [availableBoards, setAvailableBoards] = useState<Array<Board>>([])
-
+    
     useEffect(() => {
         initEvents(setAvailableBoards)
     },[])
-
 
     return (<>
 

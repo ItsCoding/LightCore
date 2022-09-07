@@ -3,7 +3,7 @@ import { Grid, Paper, useMediaQuery } from "@mui/material"
 import { useDrop } from "react-dnd";
 import { DropResult } from "../../types/BoardEditor/DropType";
 import { Composition } from "../../types/Composition";
-import { Board } from "../../types/Board";
+import { Board, BoardElement } from "../../types/Board";
 import { Box } from "@mui/system";
 import { BoardButtonInfos } from "./BoardButtonInfos";
 import { useEffect } from "react";
@@ -28,7 +28,7 @@ const DropButton = ({ positionIndex, matches, board, setBoard, matchesPC, setAct
 
     const changeElementInBoard = (index: number, data: Composition) => {
         const newBoard = board
-        newBoard.elements[index] = { data }
+        newBoard.elements[index] = new BoardElement(data)
         setBoard(newBoard)
     }
 
