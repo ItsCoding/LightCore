@@ -32,7 +32,7 @@ export const PreviewCanvas = () => {
                 const g = frameDict[stripIndex][1][x] ?? 255;
                 const b = frameDict[stripIndex][2][x] ?? 255;
                 ctx.fillStyle = `rgb(${r},${g},${b})`;
-                ctx.fillRect(x, y, 1, 1);
+                ctx.fillRect(x - 120, y, 1, 1);
             }
 
         }
@@ -40,8 +40,8 @@ export const PreviewCanvas = () => {
 
     const drawLeftTriangleLED = (frameDict: FrameDict, stripIndex: number, from: number, to: number, ctx: CanvasRenderingContext2D) => {
         for (let x = from; x < to; x++) {
-            const yPos = (x * 10 * 86 / 100);
-            const xPos = (x * 10 * 50 / 100) + 60;
+            const yPos = (x * 1 * 86 / 100);
+            const xPos = (x * 1 * 50 / 100) + 60;
 
             if (ctx) {
                 const r = frameDict[stripIndex][0][to - 1 - x] ?? 255;
@@ -56,8 +56,8 @@ export const PreviewCanvas = () => {
 
     const drawRightTriangleLED = (frameDict: FrameDict, stripIndex: number, from: number, to: number, ctx: CanvasRenderingContext2D) => {
         for (let x = from; x < to; x++) {
-            const yPos = (x * 10 * 86 / 100);
-            const xPos = 240 - (x * 10 * 50 / 100);
+            const yPos = (x * 1 * 86 / 100) - 310;
+            const xPos = 240 - (x * 1 * 50 / 100) + 180;
 
             if (ctx) {
                 const r = frameDict[stripIndex][0][x] ?? 255;
@@ -65,23 +65,25 @@ export const PreviewCanvas = () => {
                 const b = frameDict[stripIndex][2][x] ?? 255;
                 ctx.fillStyle = `rgb(${r},${g},${b})`;
                 ctx.fillRect(xPos, yPos, 1, 1);
+                // if(x === 400)  console.log(xPos,yPos)
             }
 
         }
     }
 
     const drawMiddleLED = (frameDict: FrameDict, stripIndex: number, from: number, to: number, ctx: CanvasRenderingContext2D) => {
-        const y = (60 * 86 / 100) - 80;
+        const y = (60 * 86 / 100);
         for (let x = from; x < to; x++) {
-
             if (ctx) {
                 const r = frameDict[stripIndex][0][x] ?? 255;
                 const g = frameDict[stripIndex][1][x] ?? 255;
                 const b = frameDict[stripIndex][2][x] ?? 255;
                 // console.log(r,g,b)
-                // ctx.fillStyle = `rgb(${r},${g},${b})`;
-                ctx.fillStyle = `rgb(255,255,255)`;
-                ctx.fillRect(x, y, 10, 100);
+                ctx.fillStyle = `rgb(${r},${g},${b})`;
+                // const color = `rgb(255,255,255)`;
+                // ctx.fillStyle = color;
+                // console.log(y)
+                ctx.fillRect(x, y, 1, 1);
             }
 
         }
@@ -95,8 +97,8 @@ export const PreviewCanvas = () => {
         // canvas.height = 500;
         const ctx = canvas.getContext('2d');
         if (ctx) {
-            ctx.canvas.width = 500;
-            ctx.canvas.height = 500;
+            ctx.canvas.width = 300;
+            ctx.canvas.height = 160;
         }
         if (1 in frameDict && ctx) {
             // console.log("Drawing frame 1");
@@ -110,14 +112,14 @@ export const PreviewCanvas = () => {
         }
         const imgBox = imageRef.current;
         if (imgBox) {
-            imgBox.src = canvas.toDataURL();
+            imgBox.setAttribute("src",canvas.toDataURL())
         }
     }
 
     return (
         <img ref={imageRef} style={{
             objectFit: "contain",
-            width: "fit-content"
+            width: "100%"
         }} alt="Preview" />
     )
 
