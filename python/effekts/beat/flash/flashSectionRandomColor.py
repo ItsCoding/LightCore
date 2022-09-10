@@ -30,6 +30,7 @@ class visualize_flashSectionRandomColor:
             "effektSystemName": "visualize_flashSectionRandomColor",
             "group": "beat-flash",
             "groupColor": "#FFFEE",
+            "bpmSensitive": True,
         }
 
 

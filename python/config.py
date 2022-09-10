@@ -6,7 +6,7 @@ import os
 
 
 #DEVICE = 'esp8266'
-DEVICE = 'virtual'
+DEVICE = 'espv'
 """Device used to control LED strip. Must be 'esp' or 'virtual'
 
 'esp8266' means that you are using an ESP8266 module to control the LED strip
@@ -20,7 +20,7 @@ to control the leds connected to it.
 """
 
 if DEVICE == 'esp' or DEVICE == 'espv':
-    UDP_IP = '10.40.0.184'
+    UDP_IP = '10.40.0.185'
     """IP address of the ESP8266. Must match IP in ws2812_controller.ino"""
     UDP_PORT = 7777
     """Port number used for socket communication between Python and ESP8266"""
@@ -39,7 +39,7 @@ DISPLAY_BPM = False
 """Whether to display the FPS when running (can reduce performance)"""
 
 #ToDo: This need to be replaced
-N_PIXELS = 100
+N_PIXELS = 300
 """Number of pixels in the LED strip (must match ESP8266 firmware)"""
 
 GAMMA_TABLE_PATH = os.path.join(os.path.dirname(__file__), 'gamma_table.npy')

@@ -68,7 +68,7 @@ def _update_esp8266():
     for packet_indices in idx:
         m = '' if _is_python_2 else []
         for i in packet_indices:
-                offset = int(i / 256)
+                offset = i // 256
                 newI = i % 256
                 m.append(offset)
                 m.append(newI)  # Index of pixel to change

@@ -30,6 +30,7 @@ class visualize_flashRotating:
             "effektSystemName": "visualize_flashRotating",
             "group": "beat-flash",
             "groupColor": "#FFFEE",
+            "bpmSensitive": True,
         }
    
 

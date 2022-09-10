@@ -30,6 +30,7 @@ class visualize_flashSectionMirroredRandomColor:
             "effektSystemName": "visualize_flashSectionMirroredRandomColor",
             "group": "beat-flash",
             "groupColor": "#FFFEE",
+            "bpmSensitive": True,
         }
         
     def run(self, y,stripSize,gain: dsp.ExpFilter,instanceData: dict = {}):
