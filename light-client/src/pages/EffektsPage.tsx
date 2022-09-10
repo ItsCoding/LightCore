@@ -172,6 +172,11 @@ export const EffektsPage = ({ availableEffekts, isRandomizerActive, setRandomize
 
     const changePreviewMode = (chk: boolean) => {
         console.log("Change preview mode to: ", chk)
+        if(!chk){
+            activeEffekts.forEach((effekt) => {
+                wsClient.lightClear(effekt.stripIndex);
+            });
+        }
         wsClient.lightReport();
         setInPreviewMode(chk)
     }
