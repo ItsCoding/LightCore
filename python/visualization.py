@@ -39,6 +39,9 @@ import effekts.beat.flash.flashSectionUpwardsAscending as flashSectionUpwardsAsc
 import effekts.beat.flash.flashSectionRandomColor as flashSectionRandomColorEffekt
 import effekts.beat.flash.flashSectionMirroredRandomColor as flashSectionMirroredRandomColorEffekt
 
+import effekts.static.RotatingRainbow as RotatingRainbowEffekt
+import effekts.static.Stars as StarsEffekt
+
 
 import queueHandler
 # import wsServer as wsServer
@@ -70,6 +73,8 @@ visualize_rotatingEnergyInverted = rotatingEnergyInvertedEffekt.visualize_rotati
 visualize_flashSectionUpwardsAscending = flashSectionUpwardsAscendingEffekt.visualize_flashSectionUpwardsAscending
 visualize_flashSectionRandomColor = flashSectionRandomColorEffekt.visualize_flashSectionRandomColor
 visualize_flashSectionMirroredRandomColor = flashSectionMirroredRandomColorEffekt.visualize_flashSectionMirroredRandomColor
+visualize_rotatingRainbow = RotatingRainbowEffekt.visualize_rotatingRainbow
+visualize_stars = StarsEffekt.visualize_stars
 
 # composer.addEffekt(visualize_scroll,FrequencyRange.ALL,0,75,100)
 
@@ -314,7 +319,7 @@ class Visualization:
                             visualize_energyInverted,visualize_energyRGBInverted,visualize_energyExtremeInverted,visualize_scrollInverted,
                             visualize_flashyBpm,visualize_flashSection,visualize_flashSectionUpwards,visualize_rushUpwards,
                             visualize_flashRotating,visualize_flashSectionMirrored,visualize_rotatingEnergyInverted,visualize_flashSectionUpwardsAscending,
-                            visualize_flashSectionRandomColor,visualize_flashSectionMirroredRandomColor]
+                            visualize_flashSectionRandomColor,visualize_flashSectionMirroredRandomColor,visualize_rotatingRainbow,visualize_stars]
         self.allEffekts = self.randomEffekts + [visualize_Off]
         if config.USE_GUI:
             import pyqtgraph as pg
