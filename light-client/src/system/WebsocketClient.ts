@@ -35,8 +35,8 @@ export class WebSocketClient {
     }
 
     private handleMessage(message: string): void {
-        // console.log(message);
         const topic = JSON.parse(message) as ServerTopic;
+        // console.log("Received message: ", topic);
         this.eventHandlers.forEach((eventHandler) => {
             if (eventHandler.topic === topic.type) {
                 eventHandler.handler(topic);

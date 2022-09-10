@@ -221,14 +221,7 @@ class Visualization:
             # output += visualize_energy(mel)
             
             led.pixels = self.output
-            led.update(composerOutput)
-
-            # except Exception as e:
-            #     print("There was an error in the render pipeline")
-            #     print(e)
-
-
-
+            led.update(composerOutput,self.queue2Parent)
             if config.USE_GUI:
                 # Plot filterbank output
                 x = np.linspace(config.MIN_FREQUENCY, config.MAX_FREQUENCY, len(mel))

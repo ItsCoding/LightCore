@@ -10,7 +10,10 @@ def setSpecificEffekt(vis,effektName,stripIndex,frequencyRange,instanceData,inst
     effektClass = next(x for x in vis.allEffekts if x.__name__ == effektName)
     if effektClass == None:
         return
-    stripLength = config.STRIP_LED_COUNTS[stripIndex]
+    realIndex = stripIndex
+    if(realIndex < 0):
+        realIndex = (realIndex * -1 ) - 5
+    stripLength = config.STRIP_LED_COUNTS[realIndex]
     composer.removeElementByStripIndex(stripIndex)
     composer.addEffekt(effektClass(instanceUUID),frequencyRange,stripIndex,0,stripLength,instanceData)
 

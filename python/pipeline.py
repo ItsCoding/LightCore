@@ -53,7 +53,7 @@ def initServer():
         #  Do some 'work'
         while not queue2Parent.empty():
             incommingData = queue2Parent.get()
-            print("Sending to ZeroMQ: ", len(incommingData))
+            # print("Sending to ZeroMQ: ", len(incommingData))
             socket2Node.send_string(incommingData)
         # print("...")
     

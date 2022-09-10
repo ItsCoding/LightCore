@@ -84,16 +84,38 @@ def _update_esp8266():
             print("There is something with the ESP connection....")
     _prev_pixels = np.copy(p)
 
+def _updateClient(composing,queue2Parent):
+    global pixels, _prev_pixels, _vsock
+    frameDict = {}
+    # sumPixels = np.array([[],[],[]])
+    for key in composing:
+        frame = composing[key].getLEDS()
+        frame = np.clip(frame, 0, 255).astype(int)
+        frame = np.copy(frame) 
+        frameDict[key] = frame.tolist()
+    queue2Parent.put(json.dumps({"type": "return.preview.frameDict", "message": frameDict}))
 
-def update(composing):
+def update(composing,queue2Parent):
+
+    positiveComp = {}
+    negativeComp = {}
+    for key in composing:
+        if key >= 0:
+            positiveComp[key] = composing[key]
+        else:
+            negativeComp[key] = composing[key]
+
+    if len(negativeComp) > 0:
+        _updateClient(negativeComp,queue2Parent)
+
     """Updates the LED strip values"""
     if config.DEVICE == 'virtual':
-        _update_virtual(composing)
+        _update_virtual(positiveComp)
     elif config.DEVICE == 'esp':
         # _update_virtual(composing)
         _update_esp8266()
     elif config.DEVICE == 'espv':
-        _update_virtual(composing)
+        _update_virtual(positiveComp)
         _update_esp8266()
     else:
         raise ValueError('Invalid device selected')

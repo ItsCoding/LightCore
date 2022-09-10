@@ -14,7 +14,7 @@ export class ZeroMQServerIN {
         this.server.bindSync('tcp://127.0.0.1:7321');
         this.server.on('message', function (msg) {
             if (self.onMessageHandler) {
-                console.log("ZEROMQ received: " + msg.toString().length);
+                // console.log("ZEROMQ received: " + msg.toString().length);
                 self.onMessageHandler(msg.toString());
             }
         });

@@ -48,18 +48,18 @@ export class Composition {
         }
     }
 
-    public activate(onDeactivate: () => void) {
+    public activate(onDeactivate: () => void, preview?: boolean) {
         const affectedStrips = this.getAffectedStrips();
         const transaction = WebSocketClient.startTransaction();
         const activeUUIDs: (string | number)[] = [];
         this.deactivateHandler = onDeactivate;
 
         affectedStrips.forEach(stripIndex => {
-            transaction.lightClear(stripIndex);
+            transaction.lightClear(preview ? (stripIndex + 5) * -1 : stripIndex);
         });
         this.activeEffekts.forEach(activeEffekt => {
             activeUUIDs.push(transaction.lightAddEffekt(activeEffekt.effektSystemName,
-                activeEffekt.stripIndex,
+                preview ? (activeEffekt.stripIndex + 5) * -1 : activeEffekt.stripIndex,
                 activeEffekt.frequencyRange,
                 activeEffekt.instanceData,
                 activeEffekt.startIndex,

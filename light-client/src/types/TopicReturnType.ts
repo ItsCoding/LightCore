@@ -9,6 +9,9 @@ export const ReturnType = {
     WSAPI:{
         GET_KEY_VALUE: "return.wsapi.getKeyValue",
     },
+    PREVIEW:{
+        FRAME_DICT : "return.preview.frameDict",
+    }
 }
 
 export type WSApiKey = {

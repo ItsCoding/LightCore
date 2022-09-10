@@ -1,4 +1,4 @@
-import { Alert, AlertTitle, Autocomplete, Button, Card, CardActions, CardContent, CardHeader, Chip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, Tab, Tabs, TextField } from "@mui/material"
+import { Alert, AlertTitle, Autocomplete, Box, Button, Card, CardActions, CardContent, CardHeader, Chip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControlLabel, FormGroup, Grid, Modal, Switch, Tab, Tabs, TextField, Toolbar } from "@mui/material"
 import { useSnackbar } from "notistack"
 import React, { useEffect } from "react"
 import { ColorResult } from "react-color"
@@ -6,6 +6,7 @@ import { EffektsPanel } from "../components/EffektsPanel"
 import { ActiveEffekts } from "../components/EffektsPanel/ActiveEffekts"
 import { EffektColor } from "../components/EffektsPanel/EffektColor"
 import { EditComposition } from "../components/General/Compositions/EditComposition"
+import { PreviewCanvas } from "../components/General/PreviewCanvas"
 import { strips } from "../system/StripConfig"
 import { createUUID, getFontColorByBgColor, ModalTransition, randomColor } from "../system/Utils"
 import { WebSocketClient } from "../system/WebsocketClient"
@@ -70,6 +71,8 @@ export const EffektsPage = ({ availableEffekts, isRandomizerActive, setRandomize
     const [newComposition, setNewCompositionName] = React.useState<Composition | null>(null);
     const [selectedExistingComposition, setSelectedExistingComposition] = React.useState<boolean>(false);
     const [confirmDialogOpen, setConfirmDialogOpen] = React.useState<number>(0);
+    const [inPreviewMode, setInPreviewMode] = React.useState<boolean>(false);
+    const [previewOpen, setPreviewOpen] = React.useState<boolean>(false);
     const { enqueueSnackbar } = useSnackbar();
 
     const changeColor = (color: ColorResult | null, index: number) => {
@@ -154,16 +157,24 @@ export const EffektsPage = ({ availableEffekts, isRandomizerActive, setRandomize
 
     useEffect(() => {
         const eventID = wsClient.addEventHandler(ReturnType.DATA.ACTIVE_EFFEKTS, (topic => {
-            console.log("EFFEKT_ACTIVE", topic)
             const incommingEffekts = ActiveEffekt.fromJSONArray(topic.message);
-            console.log("IncommingActives: ", incommingEffekts)
-            setActiveEffekts(incommingEffekts);
+            if (inPreviewMode) {
+                setActiveEffekts(incommingEffekts.filter((effekt) => effekt.stripIndex < 0))
+            } else {
+                setActiveEffekts(incommingEffekts.filter((effekt) => effekt.stripIndex >= 0))
+            }
         }))
-        // wsClient.lightReport();
+        wsClient.lightReport();
         return () => {
             wsClient.removeEventHandler(eventID)
         }
-    }, [])
+    }, [inPreviewMode])
+
+    const changePreviewMode = (chk: boolean) => {
+        console.log("Change preview mode to: ", chk)
+        wsClient.lightReport();
+        setInPreviewMode(chk)
+    }
 
     const confirmDict: ConfirmDictType = {
         0: {
@@ -208,7 +219,7 @@ export const EffektsPage = ({ availableEffekts, isRandomizerActive, setRandomize
             ),
             confirm: () => {
                 if (newComposition) {
-                    newComposition.activate(() => {});
+                    newComposition.activate(() => { }, inPreviewMode);
                     setActiveEffekts(newComposition.activeEffekts);
                     setConfirmDialogOpen(0);
                     enqueueSnackbar(`Loaded composition: ${newComposition?.compositionName}!`, { variant: 'success', anchorOrigin: { vertical: "top", horizontal: "right" } });
@@ -219,8 +230,31 @@ export const EffektsPage = ({ availableEffekts, isRandomizerActive, setRandomize
     }
 
 
+    const modalStyle = {
+        position: 'absolute' as 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: "60%",
+        bgcolor: 'background.paper',
+        border: '2px solid #000',
+        boxShadow: 24,
+        p: 4,
+      };
+
     return (
         <div>
+            <Modal
+                open={previewOpen}
+                onClose={() => setPreviewOpen(false)}
+                aria-labelledby="Preview"
+                aria-describedby="previewmodal"
+            >
+                <Box sx={modalStyle}>
+                    <PreviewCanvas />
+                </Box>
+
+            </Modal>
             <Dialog
                 open={confirmDialogOpen > 0}
                 TransitionComponent={ModalTransition}
@@ -272,7 +306,7 @@ export const EffektsPage = ({ availableEffekts, isRandomizerActive, setRandomize
                 {stripConfig.map(strip => {
                     return (
                         <Grid item xs={12} md={6}>
-                            <EffektsPanel key={strip.index} colorDict={colorDict} availableEffekts={availableEffekts} strip={strip} />
+                            <EffektsPanel key={strip.index} colorDict={colorDict} availableEffekts={availableEffekts} strip={strip} inPreviewMode={inPreviewMode} />
                         </Grid>
                     )
                 })}
@@ -282,9 +316,15 @@ export const EffektsPage = ({ availableEffekts, isRandomizerActive, setRandomize
                 marginTop: 10
             }}>
                 <Card>
-                    <CardHeader title={"Composition"} />
+                    <CardHeader title={"Composition"} action={(<Toolbar>
+                        <FormGroup>
+                            <FormControlLabel control={<Switch checked={inPreviewMode} onChange={(e, checked) => changePreviewMode(checked)} />} label="Preview" />
+                        </FormGroup>
+                        <Button disabled={!inPreviewMode} color="info" variant="contained" onClick={() => { setPreviewOpen(true) }}>Open Preview</Button>
+                    </Toolbar>
+                    )} />
                     <CardContent>
-                        <ActiveEffekts activeEffekts={activeEffekts} availableEffekts={availableEffekts}/>
+                        <ActiveEffekts activeEffekts={activeEffekts} availableEffekts={availableEffekts} />
                     </CardContent>
                     <CardActions style={{
                         margin: 10
