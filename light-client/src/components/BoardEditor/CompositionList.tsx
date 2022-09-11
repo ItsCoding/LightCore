@@ -1,9 +1,10 @@
-import { Chip, List, ListItem, ListItemText } from "@mui/material";
+import { Chip, IconButton, List, ListItem, ListItemText } from "@mui/material";
 import { useDrag } from "react-dnd";
 import { createUUID, getFontColorByBgColor } from "../../system/Utils";
 import { DropResult } from "../../types/BoardEditor/DropType";
 import { Composition } from "../../types/Composition";
-
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import ReorderIcon from '@mui/icons-material/Reorder';
 export type CompositionListProps = {
     compositions: Array<Composition>;
 }
@@ -13,7 +14,7 @@ type DraggableListItemProps = {
 }
 
 const DraggableListItem = ({ composition }: DraggableListItemProps) => {
-    const [{ isDragging }, drag] = useDrag(() => ({
+    const [{ isDragging }, drag, dragPreview] = useDrag(() => ({
         type: "compositionListItem",
         item: { rID: createUUID(), data: composition },
         end: (item, monitor) => {
@@ -37,8 +38,15 @@ const DraggableListItem = ({ composition }: DraggableListItemProps) => {
             paddingBottom: "0px",
             marginBottom: "8px",
         }}
-        
-        ref={drag}>
+        ref={dragPreview}
+    >
+        <div ref={drag} style={{
+            height: "100%",
+            marginLeft: "8px",
+            marginRight: "16px",
+        }}>
+            <ReorderIcon/>
+        </div>
         <ListItemText primary={composition.compositionName} secondary={<div style={{
             marginTop: "5px",
         }}>{
@@ -53,13 +61,16 @@ const DraggableListItem = ({ composition }: DraggableListItemProps) => {
                         }} label={tag.name} key={tag.id} />)
                 })
             }</div>} />
+        <IconButton onClick={() => composition.activate(() => { })}>
+            <PlayArrowIcon />
+        </IconButton>
     </ListItem>
 }
 
 
 export const CompositionList = ({ compositions }: CompositionListProps) => {
     return (
-        <List sx={{ width: '100%', bgcolor: 'background.paper', padding: { padding: 0 } }}>
+        <List sx={{ width: '100%', bgcolor: 'background.paper', padding: { padding: 0 }, overflow: 'auto', maxHeight: "60vh" }}>
             {compositions.map((composition, i) => {
                 return (
                     <DraggableListItem composition={composition} key={composition.id} />

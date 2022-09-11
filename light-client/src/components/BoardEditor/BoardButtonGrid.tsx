@@ -4,14 +4,15 @@ import { useDrop } from "react-dnd";
 import { DropResult } from "../../types/BoardEditor/DropType";
 import { Composition } from "../../types/Composition";
 import { Board, BoardElement } from "../../types/Board";
-import { Box } from "@mui/system";
 import { BoardButtonInfos } from "./BoardButtonInfos";
-import React, { useEffect, useMemo } from "react";
+import React from "react";
 import ClearIcon from '@mui/icons-material/Clear';
 type BoardButtonGridProps = {
     board: Board;
     setBoard: React.Dispatch<React.SetStateAction<Board>>;
     setActiveIndex: React.Dispatch<React.SetStateAction<number>>;
+    setReRender: React.Dispatch<React.SetStateAction<boolean>>;
+    reRender: boolean
 }
 
 type DropButtonProps = {
@@ -33,6 +34,8 @@ const DropButton = ({ positionIndex, matches, board, setBoard, matchesPC, setAct
         newBoard.elements[index] = new BoardElement(data)
         console.log("Board after change: ", newBoard)
         setBoard(newBoard)
+        console.log("Set reRender to:", !reRender)
+        setReRender(!reRender)
     }
 
     const getButtonHeigth = () => {
@@ -65,7 +68,7 @@ const DropButton = ({ positionIndex, matches, board, setBoard, matchesPC, setAct
             isOver: monitor.isOver(),
             canDrop: monitor.canDrop(),
         }),
-    }), [board])
+    }), [board,reRender])
 
     return (<Paper ref={drop}
         style={{
@@ -74,7 +77,12 @@ const DropButton = ({ positionIndex, matches, board, setBoard, matchesPC, setAct
             position: "relative",
         }}>
         {myElement && <>
-            <BoardButtonInfos composition={myElement.data} />
+            <div  onClick={() => myElement.data.activate(() => {})} style={{
+                height: "100%",
+            }}>
+                <BoardButtonInfos composition={myElement.data} />
+            </div>
+
             <IconButton aria-label="delete" size="small"
                 onClick={() => clearSelf()}
                 sx={{
@@ -89,13 +97,13 @@ const DropButton = ({ positionIndex, matches, board, setBoard, matchesPC, setAct
     </Paper>)
 }
 
-export const BoardButtonGrid = ({ board, setBoard, setActiveIndex }: BoardButtonGridProps) => {
+export const BoardButtonGrid = ({ board, setBoard, setActiveIndex,reRender,setReRender }: BoardButtonGridProps) => {
 
     const amountButtons = Array.from(Array(41).keys())
     const theme = useTheme();
     const matches = useMediaQuery(theme.breakpoints.only('xs'));
     const matchesPC = useMediaQuery(theme.breakpoints.only('xl'));
-    const [reRender, setReRender] = React.useState(false)
+   
     const getButtonHeigth = () => {
         if (matches) {
             return "6vh"

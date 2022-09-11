@@ -15,7 +15,7 @@ export type BoardEditorProps = {
 }
 
 export const BoardEditor = ({ compositions, availableBoards, setAvailableBoards }: BoardEditorProps) => {
-
+    const [reRender, setReRender] = useState(false)
     const [board, setBoard] = useState<Board>({ elements: {} })
     const [activeIndex, setActiveIndex] = useState<number>(-1)
     const [tabIndex, setTabIndex] = useState<number>(0)
@@ -24,7 +24,7 @@ export const BoardEditor = ({ compositions, availableBoards, setAvailableBoards 
         <div>
             <Grid container columnSpacing={2}>
                 <Grid item md={8}>
-                    <BoardButtonGrid setActiveIndex={setActiveIndex} board={board} setBoard={setBoard} />
+                    <BoardButtonGrid setReRender={setReRender} reRender={reRender} setActiveIndex={setActiveIndex} board={board} setBoard={setBoard} />
                 </Grid>
                 <Grid item md={4}>
                     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
