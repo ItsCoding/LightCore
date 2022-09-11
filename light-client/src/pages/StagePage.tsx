@@ -13,7 +13,7 @@ export const StagePage = ({setActiveRoute}: StagePageProps) => {
     const [availableBoards, setAvailableBoards] = useState<Array<Board>>([])
     
     useEffect(() => {
-        initEvents(setAvailableBoards)
+        initEvents(setAvailableBoards,setActiveBoard)
     },[])
 
     return (<>

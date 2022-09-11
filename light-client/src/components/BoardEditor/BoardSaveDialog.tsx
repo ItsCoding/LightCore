@@ -4,7 +4,7 @@ import { useSnackbar } from "notistack";
 import { useState } from "react";
 import { createUUID, ModalTransition } from "../../system/Utils";
 import { WebSocketClient } from "../../system/WebsocketClient";
-import { Board, Board2JSON } from "../../types/Board";
+import { Board, Board2JSON, JSON2Board } from "../../types/Board";
 
 export type BoardSaveDialogProps = {
     board: Board;
@@ -36,7 +36,7 @@ export const BoardSaveDialog = ({ availableBoards, board, setAvailableBoards, se
             return
         }
         let newAavailableBoards = []
-        let newBoard: Board = {elements: {}}
+        let newBoard: Board = { elements: {} }
         if (selectedBoard) {
             newBoard = { ...selectedBoard, elements: board.elements, description: boardDescription }
             newAavailableBoards = availableBoards.map(b => b.id === selectedBoard.id ? newBoard : b)
@@ -62,6 +62,25 @@ export const BoardSaveDialog = ({ availableBoards, board, setAvailableBoards, se
         }
     }
 
+    const loadBoard = () => {
+        if (selectedBoard) {
+            const b = availableBoards.find(b => b.id === selectedBoard.id)!
+            const bCoppy = JSON2Board(Board2JSON(b))
+            setBoard(bCoppy)
+            enqueueSnackbar(`Loaded board: ${selectedBoard?.name}!`, { variant: 'success', anchorOrigin: { vertical: "top", horizontal: "right" } });
+            setConfirmDialog(0)
+        }
+    }
+
+    const confirmLoad = () => {
+        if (Object.keys(board.elements).length > 0) {
+            console.log("BOARD ID", board.id)
+            setConfirmDialog(3)
+        } else {
+            loadBoard()
+        }
+    }
+
     const onAutocompleteChange = (e: any, v: Board | string | null) => {
         if (typeof v === "string") {
             setSelectedBoard(null)
@@ -84,7 +103,7 @@ export const BoardSaveDialog = ({ availableBoards, board, setAvailableBoards, se
             confirmText: ""
         },
         1: {
-            title: "Overwrite existing composition?",
+            title: "Overwrite existing board?",
             text: (
                 <DialogContentText id="alert-dialog-slide-description">
                     If you confirm <b>{selectedBoard?.name}</b> will be overridden with the current board.
@@ -94,7 +113,7 @@ export const BoardSaveDialog = ({ availableBoards, board, setAvailableBoards, se
             confirmText: "Save"
         },
         2: {
-            title: "Delete composition?",
+            title: "Delete Board?",
             text: (
                 <DialogContentText id="alert-dialog-slide-description">
                     If you confirm <b>{selectedBoard?.name}</b> will be deleted.
@@ -108,18 +127,14 @@ export const BoardSaveDialog = ({ availableBoards, board, setAvailableBoards, se
             confirmText: "Delete"
         },
         3: {
-            title: "Load composition?",
+            title: "Load Board?",
             text: (
                 <DialogContentText id="alert-dialog-slide-description">
                     If you confirm <b>{selectedBoard?.name}</b> will be loaded.
                 </DialogContentText>
             ),
             confirm: () => {
-                if (selectedBoard) {
-                    setBoard(selectedBoard)
-                    enqueueSnackbar(`Loaded board: ${selectedBoard?.name}!`, { variant: 'success', anchorOrigin: { vertical: "top", horizontal: "right" } });
-                    setConfirmDialog(0)
-                }
+                loadBoard();
             },
             confirmText: "Load"
         }
@@ -182,7 +197,7 @@ export const BoardSaveDialog = ({ availableBoards, board, setAvailableBoards, se
                 <Button variant="contained" color="success" fullWidth onClick={() => confirmSave()}>Save</Button>
             </Grid>
             <Grid item xs={4}>
-                <Button variant="contained" fullWidth disabled={!selectedBoard} onClick={() => setConfirmDialog(3)}>Load</Button>
+                <Button variant="contained" fullWidth disabled={!selectedBoard} onClick={() => confirmLoad()}>Load</Button>
             </Grid>
             <Grid item xs={4}>
                 <Button fullWidth color="error" variant="contained" onClick={() => { setConfirmDialog(2) }} disabled={!selectedBoard}>Delete</Button>

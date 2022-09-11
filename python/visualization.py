@@ -244,14 +244,23 @@ class Visualization:
                 self.prev_fps_update = time.time()
                 print('FPS {:.0f} / {:.0f}'.format(fps, config.FPS))
 
+    def checkIfAllowed(self,rnd1,rnd2):
+        if(rnd1 == visualize_rotatingRainbow and rnd2 == visualize_rotatingRainbow):
+            return False
+        return True
+
     def makeRandomComposition(self,parts):
         triangleRandomFrequencys = [FrequencyRange.all, FrequencyRange.low]
         middleRandomFrequencys = [FrequencyRange.all, FrequencyRange.high,FrequencyRange.mid]
-        
-        trf = random.choice(triangleRandomFrequencys)
-        mrf = random.choice(middleRandomFrequencys)
-        reT = random.choice(self.randomEffekts)
-        reM = random.choice(self.randomEffekts)
+        isAllowedCombination = False
+
+        while not isAllowedCombination:
+            trf = random.choice(triangleRandomFrequencys)
+            mrf = random.choice(middleRandomFrequencys)
+            reT = random.choice(self.randomEffekts)
+            reM = random.choice(self.randomEffekts)
+            isAllowedCombination = self.checkIfAllowed(reT,reM)
+
         if(parts == "all"):   
             if self.ENDABLED_RND_PARTS[1]:
                 composer.removeElementByStripIndex(1)

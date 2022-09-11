@@ -4,7 +4,7 @@ import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
 import StreamIcon from '@mui/icons-material/Stream';
 import TuneIcon from '@mui/icons-material/Tune';
-import React from "react";
+import React, { useEffect } from "react";
 import { Board } from "../../types/Board";
 
 export type StageToolbarProps = {
