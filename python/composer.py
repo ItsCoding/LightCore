@@ -58,11 +58,10 @@ def getComposition(frequencyBins,vis,beatChanged):
         effekt.instanceData["beatChanged"] = beatChanged
         effektResult = effekt.effekt.run(tempBins,stipLength,gain,effekt.instanceData)
 
-        brightness = config.cfg["brightness"] / 100
         # Adjust brightness
-        effektResult[0] = [int(i * brightness) for i in effektResult[0]]
-        effektResult[1] = [int(i * brightness) for i in effektResult[1]]
-        effektResult[2] = [int(i * brightness) for i in effektResult[2]]
+        # effektResult[0] = [int(i * brightness) for i in effektResult[0]]
+        # effektResult[1] = [int(i * brightness) for i in effektResult[1]]
+        # effektResult[2] = [int(i * brightness) for i in effektResult[2]]
 
         frameDict[effekt.stripIndex].addFrame(effektResult, effekt.ledStartIndex, effekt.ledEndIndex)
 

@@ -5,6 +5,7 @@ export const ReturnType = {
     },
     SYSTEM:{
         CONFIG: "return.system.config",
+        STATUS: "return.system.status"
     },
     WSAPI:{
         GET_KEY_VALUE: "return.wsapi.getKeyValue",

@@ -23,12 +23,6 @@ const InnerButton = ({ composition, matches }: InnerButtonProps) => {
     const onDeactivateHandler = () => {
         setActive(false)
     }
-    if (composition) {
-        console.log(composition.compositionName, active)
-    }
-
-
-
     return (
         <Grid item xs={4} md={2}>
             <TouchButton
@@ -69,18 +63,18 @@ export const ButtonGrid = ({ board }: ButtonGridProsp) => {
             wsClient.removeEventHandler(handlerID)
         }
     }, [board])
-    console.log("IS SX: ", matches)
+    // console.log("IS SX: ", matches)
     return (
         <Grid container columnSpacing={1} rowSpacing={1}>
             {
                 amountButtons.map((btn, i) => {
                     const composition = board.elements[i]?.data
                     return (
-                        <InnerButton composition={composition} matches={matches} />
+                        <InnerButton key={i} composition={composition} matches={matches} />
                     )
                 })
             }
-            <Grid item xs={4} md={2}>
+            <Grid item xs={4} md={2} key={42}>
                 <TouchButton
                     style={{
                         height: matches ? "6vh" : "11.7vh",

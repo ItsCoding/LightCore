@@ -37,6 +37,7 @@ export class WebSocketClient {
     private handleMessage(message: string): void {
         const topic = JSON.parse(message) as ServerTopic;
         // console.log("Received message: ", topic);
+        if (topic.message === null) return;
         this.eventHandlers.forEach((eventHandler) => {
             if (eventHandler.topic === topic.type) {
                 eventHandler.handler(topic);
@@ -250,6 +251,12 @@ export class WebSocketClient {
     public async beatTap(){
         if (this.socket || this.inTransaction) {
             this.send("beat.tap", {});
+        }
+    }
+
+    public async getSystemStatus(){
+        if (this.socket || this.inTransaction) {
+            this.send("system.status.get", {});
         }
     }
 }

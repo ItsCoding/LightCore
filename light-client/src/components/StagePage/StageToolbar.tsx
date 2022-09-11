@@ -1,20 +1,22 @@
-import { AppBar, Autocomplete, Button, Divider, IconButton, MenuItem, Paper, Popover, Select, Tab, Tabs, TextField, Toolbar, Typography } from "@mui/material"
+import { AppBar, Button, Divider, IconButton, MenuItem, Paper, Popover, Select, Tab, Tabs, Toolbar, Typography } from "@mui/material"
 import { Box } from "@mui/system"
-import FullscreenIcon from '@mui/icons-material/Fullscreen';
-import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
-import StreamIcon from '@mui/icons-material/Stream';
+// import FullscreenIcon from '@mui/icons-material/Fullscreen';
+import PermDataSettingIcon from '@mui/icons-material/PermDataSetting';
+// import StreamIcon from '@mui/icons-material/Stream';
+import ShuffleIcon from '@mui/icons-material/Shuffle';
 import TuneIcon from '@mui/icons-material/Tune';
-import React, { useEffect } from "react";
+import React from "react";
 import { Board } from "../../types/Board";
-
 export type StageToolbarProps = {
     setActiveRoute: React.Dispatch<React.SetStateAction<string>>;
     availableBoards: Array<Board>;
     setActiveBoard: React.Dispatch<React.SetStateAction<Board>>;
     activeBoard: Board;
+    setActiveWidget: React.Dispatch<React.SetStateAction<string | undefined>>;
+    activeWidget: string | undefined;
 }
 
-export const StageToolbar = ({ setActiveRoute, activeBoard, availableBoards, setActiveBoard }: StageToolbarProps) => {
+export const StageToolbar = ({ activeWidget, setActiveWidget, setActiveRoute, activeBoard, availableBoards, setActiveBoard }: StageToolbarProps) => {
 
     const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
 
@@ -22,20 +24,22 @@ export const StageToolbar = ({ setActiveRoute, activeBoard, availableBoards, set
         setAnchorEl(event.currentTarget);
     };
 
-    const Divi = () => <Divider orientation="vertical" variant="middle" sx={{ borderColor: "#7C7C7C", marginLeft: "20px",marginRight: "20px", }} flexItem />
+    const changeWidget = (widget: string) => {
+        if (activeWidget === widget) {
+            setActiveWidget(undefined);
+        } else {
+            setActiveWidget(widget);
+        }
+    }
+
+    const Divi = () => <Divider orientation="vertical" variant="middle" sx={{ borderColor: "#7C7C7C", marginLeft: "20px", marginRight: "20px", }} flexItem />
 
     return (<Box sx={{ flexGrow: 1 }}>
         <AppBar position="fixed" sx={{ top: 'auto', bottom: 0 }}>
-            <Toolbar>
-
-                <Tabs
-                    // centered
-
-                    aria-label="icon tabs example">
-                    <Tab value={"effekts"} icon={<TipsAndUpdatesIcon />} aria-label="effekts" />
-                    <Tab value={"stage"} icon={<StreamIcon />} aria-label="stage" />
-                    {/* <Tab value={"colors"} icon={<ColorLensIcon />} aria-label="colors" /> */}
-                    {/* <Tab icon={<PersonPinIcon />} aria-label="person" /> */}
+            <Toolbar style={{ paddingLeft: "0px", paddingRight: "0px" }}>
+                <Tabs onChange={(e, value) => changeWidget(value)}>
+                    <Tab sx={{ paddingLeft: "8px", paddingRight: "8px", minWidth: "60px" }} value={"randomizer"} icon={<ShuffleIcon style={{ color: "rgba(255, 255, 255, 0.7)" }} />} aria-label="effekts" />
+                    <Tab sx={{ paddingLeft: "8px", paddingRight: "8px", minWidth: "60px" }} value={"system"} icon={<PermDataSettingIcon style={{ color: "rgba(255, 255, 255, 0.7)" }} />} aria-label="effekts" />
                 </Tabs>
                 <Divi />
                 <Select

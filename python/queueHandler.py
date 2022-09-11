@@ -86,6 +86,17 @@ def handleQueue(queue2Thread,queue2Parent,vis):
             elif topicType == "system.config.get":
                 print("Pushing Config in Queue")
                 queue2Parent.put(json.dumps({"type": "return.system.config", "message": config.cfg}))
+            elif topicType == "system.status.get":
+                print("Pushing Status in Queue")
+                retMessage = {
+                     "type": "return.system.status", 
+                      "message": {
+                            "config": config.cfg,
+                            "specificRandomizerEnabled": vis.ENDABLED_RND_PARTS,
+                            "mainRandomizerEnabled": vis.randomEnabled
+                        }
+                }
+                queue2Parent.put(json.dumps(retMessage))
             elif topicType == "light.report":
                 reportEffekts(vis,queue2Parent)
             elif topicType == "beat.tap":
