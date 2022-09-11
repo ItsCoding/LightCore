@@ -27,7 +27,7 @@ class visualize_rotatingRainbow:
         speed = (1.0 - (config.cfg["globalSpeed"] / 100)) * 10
 
         milliseconds = int(round(time.time() * 1000) / speed)
-        offset = (milliseconds % (stripSize * 4)) // 4
+        offset = milliseconds// 4
 
         for i in range(stripSize):
             iOff = i + offset

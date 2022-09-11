@@ -88,4 +88,6 @@ def handleQueue(queue2Thread,queue2Parent,vis):
                 queue2Parent.put(json.dumps({"type": "return.system.config", "message": config.cfg}))
             elif topicType == "light.report":
                 reportEffekts(vis,queue2Parent)
+            elif topicType == "beat.tap":
+                vis.hasBeatChanged = True
 

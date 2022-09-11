@@ -42,6 +42,8 @@ import effekts.beat.flash.flashSectionMirroredRandomColor as flashSectionMirrore
 import effekts.static.RotatingRainbow as RotatingRainbowEffekt
 import effekts.static.Stars as StarsEffekt
 
+import effekts.simple.colorStep as colorStepEffekt
+import effekts.simple.colorStepRandom as colorStepRandomEffekt
 
 import queueHandler
 # import wsServer as wsServer
@@ -75,6 +77,8 @@ visualize_flashSectionRandomColor = flashSectionRandomColorEffekt.visualize_flas
 visualize_flashSectionMirroredRandomColor = flashSectionMirroredRandomColorEffekt.visualize_flashSectionMirroredRandomColor
 visualize_rotatingRainbow = RotatingRainbowEffekt.visualize_rotatingRainbow
 visualize_stars = StarsEffekt.visualize_stars
+visualize_colorStep = colorStepEffekt.visualize_colorStep
+visualize_colorStepRandom = colorStepRandomEffekt.visualize_colorStepRandom
 
 # composer.addEffekt(visualize_scroll,FrequencyRange.ALL,0,75,100)
 
@@ -134,6 +138,7 @@ class Visualization:
             1: True
         }
         self.noAudioCount = 0
+        self.hasBeatChanged = False
         #CONFIG VARS
         self.randomEnabled = True
     def frames_per_second(self):
@@ -163,13 +168,13 @@ class Visualization:
 
 
     def microphone_update(self,audio_samples):
-        hasBeatChanged = False
+        self.hasBeatChanged = False
         queueHandler.handleQueue(self.queue2Thread,self.queue2Parent,self)
-        while not self.bpmQueue.empty():
+        while not self.bpmQueue.empty() and config.cfg["beatDetection"]:
             message = self.bpmQueue.get()
             self.beat = message["beat"]
             self.avg_Bpm = message["bpm"]
-            hasBeatChanged = True
+            self.hasBeatChanged = True
             if(config.DISPLAY_BPM):
                 if(self.beat):
                     print("- BPM: " + str(self.avg_Bpm))
@@ -211,9 +216,9 @@ class Visualization:
             # Map filterbank output onto LED strip
             # try:
             if self.randomEnabled:
-                self.changeEffekt(hasBeatChanged)
+                self.changeEffekt(self.hasBeatChanged)
             # mel = np.concatenate((mel[:6],np.full(26,0)),axis=0)
-            composerOutput = composer.getComposition(mel,self,hasBeatChanged)
+            composerOutput = composer.getComposition(mel,self,self.hasBeatChanged)
             if(len(composerOutput) > 0 and 0 in composerOutput and "getLEDS" in dir(composerOutput[0])):
                 self.output = composerOutput[0].getLEDS()
             # print(output)
@@ -312,7 +317,8 @@ class Visualization:
                             visualize_energyInverted,visualize_energyRGBInverted,visualize_energyExtremeInverted,visualize_scrollInverted,
                             visualize_flashyBpm,visualize_flashSection,visualize_flashSectionUpwards,visualize_rushUpwards,
                             visualize_flashRotating,visualize_flashSectionMirrored,visualize_rotatingEnergyInverted,visualize_flashSectionUpwardsAscending,
-                            visualize_flashSectionRandomColor,visualize_flashSectionMirroredRandomColor,visualize_rotatingRainbow,visualize_stars]
+                            visualize_flashSectionRandomColor,visualize_flashSectionMirroredRandomColor,visualize_rotatingRainbow,visualize_stars,
+                            visualize_colorStep,visualize_colorStepRandom]
         self.allEffekts = self.randomEffekts + [visualize_Off]
         if config.USE_GUI:
             import pyqtgraph as pg

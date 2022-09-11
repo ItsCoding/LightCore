@@ -6,7 +6,7 @@ import { Composition } from "../../types/Composition";
 import { Board, BoardElement } from "../../types/Board";
 import { Box } from "@mui/system";
 import { BoardButtonInfos } from "./BoardButtonInfos";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 
 type BoardButtonGridProps = {
     board: Board;
@@ -28,7 +28,9 @@ const DropButton = ({ positionIndex, matches, board, setBoard, matchesPC, setAct
 
     const changeElementInBoard = (index: number, data: Composition) => {
         const newBoard = board
+        console.log("Board before change: ", newBoard)
         newBoard.elements[index] = new BoardElement(data)
+        console.log("Board after change: ", newBoard)
         setBoard(newBoard)
     }
 
@@ -53,7 +55,7 @@ const DropButton = ({ positionIndex, matches, board, setBoard, matchesPC, setAct
             isOver: monitor.isOver(),
             canDrop: monitor.canDrop(),
         }),
-    }))
+    }), [board])
 
     return (<Paper ref={drop}
         style={{
@@ -66,10 +68,20 @@ const DropButton = ({ positionIndex, matches, board, setBoard, matchesPC, setAct
 
 export const BoardButtonGrid = ({ board, setBoard, setActiveIndex }: BoardButtonGridProps) => {
 
-    const amountButtons = Array.from(Array(42).keys())
+    const amountButtons = Array.from(Array(41).keys())
     const theme = useTheme();
     const matches = useMediaQuery(theme.breakpoints.only('xs'));
     const matchesPC = useMediaQuery(theme.breakpoints.only('xl'));
+
+    const getButtonHeigth = () => {
+        if (matches) {
+            return "6vh"
+        } else if (matchesPC) {
+            return "10vh"
+        } else {
+            return "8vh"
+        }
+    }
 
     return (
 
@@ -83,7 +95,18 @@ export const BoardButtonGrid = ({ board, setBoard, setActiveIndex }: BoardButton
                     )
                 })
             }
-        </Grid>
+            <Grid item xs={4} md={2}>
+                <Paper elevation={0}
+                style={{
+                    height: getButtonHeigth(),
+                    width: "100%",
+                    display: "flex",
+                    textAlign: "center",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                }}><h2>Beat Tap</h2></Paper>
+            </Grid>
+        </Grid >
 
     )
 }

@@ -106,6 +106,7 @@ DROP_RANDOM_MIN_WAIT = 5
 
 GLOBAL_SPEED = 50
 GLOBAL_INTENSITY = 1.0
+DETECT_BEAT = True
 
 cfg = {
     "device": DEVICE,
@@ -119,4 +120,5 @@ cfg = {
     "dropRandomMinWait": DROP_RANDOM_MIN_WAIT,
     "globalSpeed": GLOBAL_SPEED,
     "globalIntensity": GLOBAL_INTENSITY,
+    "beatDetection": DETECT_BEAT,
 }

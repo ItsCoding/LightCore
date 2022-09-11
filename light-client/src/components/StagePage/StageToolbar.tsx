@@ -1,4 +1,4 @@
-import { AppBar, Autocomplete, Button, Divider, IconButton, Paper, Popover, Tab, Tabs, TextField, Toolbar, Typography } from "@mui/material"
+import { AppBar, Autocomplete, Button, Divider, IconButton, MenuItem, Paper, Popover, Select, Tab, Tabs, TextField, Toolbar, Typography } from "@mui/material"
 import { Box } from "@mui/system"
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
@@ -22,6 +22,8 @@ export const StageToolbar = ({ setActiveRoute, activeBoard, availableBoards, set
         setAnchorEl(event.currentTarget);
     };
 
+    const Divi = () => <Divider orientation="vertical" variant="middle" sx={{ borderColor: "#7C7C7C", marginLeft: "20px",marginRight: "20px", }} flexItem />
+
     return (<Box sx={{ flexGrow: 1 }}>
         <AppBar position="fixed" sx={{ top: 'auto', bottom: 0 }}>
             <Toolbar>
@@ -35,28 +37,36 @@ export const StageToolbar = ({ setActiveRoute, activeBoard, availableBoards, set
                     {/* <Tab value={"colors"} icon={<ColorLensIcon />} aria-label="colors" /> */}
                     {/* <Tab icon={<PersonPinIcon />} aria-label="person" /> */}
                 </Tabs>
-                <Divider orientation="vertical" variant="middle" flexItem />
-                <Autocomplete
+                <Divi />
+                <Select
                     sx={{
                         // paddingTop: "10px",
-                        paddingLeft: "20px",
-                        paddingRight: "20px",
                         width: "20vw"
                     }}
-                    disablePortal
-                    clearIcon={null}
-                    // size="small"
-                    value={activeBoard}
+                    // disablePortal
+                    // clearIcon={null}
+                    size="small"
+                    value={activeBoard.id}
+                    variant="standard"
                     onChange={(e, v) => {
-                        if (v) { setActiveBoard(v) } else { setActiveBoard({ elements: {} }) }
+                        const boardID = e.target.value as string;
+                        const lookupBoard = availableBoards.find(b => b.id === boardID);
+                        if (lookupBoard) { setActiveBoard(lookupBoard) } else { setActiveBoard({ elements: {} }) }
                     }}
                     id="combo-box-demo"
-                    options={availableBoards}
-                    getOptionLabel={(option) => typeof option === "string" ? option : (option.name ?? "")}
-                    renderOption={(props, option) => <Typography {...props} variant="body1">{option.name}<small> {option.description}</small></Typography>}
-                    renderInput={(params) => <TextField {...params} variant="standard" label="Board" />}
-                />
-                <Divider orientation="vertical" variant="middle" flexItem />
+
+                // options={availableBoards}
+                // getOptionLabel={(option) => typeof option === "string" ? option : (option.name ?? "")}
+                // renderOption={(props, option) => }
+                // renderInput={(params) => <TextField {...params} variant="standard" label="Board" />}
+                >
+                    {availableBoards.map(board => (
+                        <MenuItem value={board.id}>
+                            <Typography variant="body1">{board.name}<small> {board.description}</small></Typography>
+                        </MenuItem>
+                    ))}
+                </Select>
+                <Divi />
                 <Popover
                     open={Boolean(anchorEl)}
                     anchorEl={anchorEl}

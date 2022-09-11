@@ -5,6 +5,7 @@ import { Board } from "../../types/Board";
 import { BoardButtonInfos } from "../BoardEditor/BoardButtonInfos";
 import { useState } from "react";
 import { Composition } from "../../types/Composition";
+import { WebSocketClient } from "../../system/WebsocketClient";
 
 type ButtonGridProsp = {
     board: Board;
@@ -48,8 +49,8 @@ const InnerButton = ({ composition, matches }: InnerButtonProps) => {
 
 
 export const ButtonGrid = ({ board }: ButtonGridProsp) => {
-
-    const amountButtons = Array.from(Array(42).keys())
+    const wsClient = WebSocketClient.getInstance()
+    const amountButtons = Array.from(Array(41).keys())
     const theme = useTheme();
     const matches = useMediaQuery(theme.breakpoints.only('xs'));
 
@@ -65,5 +66,23 @@ export const ButtonGrid = ({ board }: ButtonGridProsp) => {
                     )
                 })
             }
+            <Grid item xs={4} md={2}>
+                <TouchButton
+                    style={{
+                        height: matches ? "6vh" : "11.7vh",
+                        color: "white",
+                        display: "flex",
+                        textAlign: "center",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                    }}
+                    variant="outlined"
+                    color="error"
+                    fullWidth
+                    size="medium"
+                    onInteract={() => { wsClient.beatTap() }}>
+                    <h2>Beat Tap</h2>
+                </TouchButton>
+            </Grid>
         </Grid>)
 }

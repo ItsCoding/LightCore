@@ -140,7 +140,14 @@ export const EffektsPage = ({ availableEffekts, isRandomizerActive, setRandomize
 
     const saveComposition = () => {
         if (newComposition !== null) {
-            const newComp = new Composition(newComposition.id, newComposition.compositionName, selectedTags, activeEffekts);
+            let acte = Array.from(activeEffekts); // copy
+            if (inPreviewMode) {
+                acte = acte.map(eff => {
+                    eff.stripIndex = (eff.stripIndex * -1) - 5
+                    return eff;
+                })
+            }
+            const newComp = new Composition(newComposition.id, newComposition.compositionName, selectedTags, acte);
             const newStore = [...compositionStore.filter(a => a.id !== newComp.id), newComp]
             console.log(newStore)
             setCompositionStore(newStore)
@@ -172,7 +179,7 @@ export const EffektsPage = ({ availableEffekts, isRandomizerActive, setRandomize
 
     const changePreviewMode = (chk: boolean) => {
         console.log("Change preview mode to: ", chk)
-        if(!chk){
+        if (!chk) {
             activeEffekts.forEach((effekt) => {
                 wsClient.lightClear(effekt.stripIndex);
             });
@@ -245,7 +252,7 @@ export const EffektsPage = ({ availableEffekts, isRandomizerActive, setRandomize
         border: '2px solid #000',
         boxShadow: 24,
         p: 4,
-      };
+    };
 
     return (
         <div>

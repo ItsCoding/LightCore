@@ -1,4 +1,4 @@
-import { Autocomplete, Button, Card, CardContent, CardHeader, Grid, MenuItem, Select, Slider, TextField } from "@mui/material";
+import { Autocomplete, Button, Card, CardContent, CardHeader, Grid, MenuItem, Select, Slider, TextField, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React from "react";
 import { ColorResult } from "react-color";
@@ -107,7 +107,7 @@ export const EffektsPanel = ({ availableEffekts, strip, colorDict, inPreviewMode
                 paddingRight: 5
             }}>
                 <Slider
-                    
+
                     value={position}
                     onChange={(e, newValue) => setPosition(newValue as number[])}
                     valueLabelDisplay="auto"
@@ -129,6 +129,7 @@ export const EffektsPanel = ({ availableEffekts, strip, colorDict, inPreviewMode
                         })}
                         // options={availableEffekts.sort((a, b) => -b.name.localeCompare(a.name))}
                         groupBy={(option) => option.group.toLocaleUpperCase()}
+                        renderOption={(props, option) => <Typography variant="body1">{option.name}</Typography>}
                         getOptionLabel={(option) => option.name}
                         sx={{ width: "100%" }}
                         onChange={(e, value) => {

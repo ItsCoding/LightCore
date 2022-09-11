@@ -244,4 +244,10 @@ export class WebSocketClient {
             this.send("wsapi.pipeline.batch", { batch: batch });
         }
     }
+
+    public async beatTap(){
+        if (this.socket || this.inTransaction) {
+            this.send("beat.tap", {});
+        }
+    }
 }
