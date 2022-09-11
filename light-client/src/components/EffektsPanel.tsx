@@ -2,6 +2,7 @@ import { Autocomplete, Button, Card, CardContent, CardHeader, Grid, MenuItem, Se
 import { makeStyles } from "@mui/styles";
 import React from "react";
 import { ColorResult } from "react-color";
+import { createShortID, createUUID } from "../system/Utils";
 import { WebSocketClient } from "../system/WebsocketClient";
 import { Effekt } from "../types/Effekt";
 import { EffektAdditionalData } from "../types/EffektAdditionalData";
@@ -26,7 +27,7 @@ export const EffektsPanel = ({ availableEffekts, strip, colorDict, inPreviewMode
     const wsClient = WebSocketClient.getInstance();
     const [selectedEffekt, setSelectedEffekt] = React.useState<Effekt | null>(null);
     const [position, setPosition] = React.useState<number[]>([0, strip.length]);
-
+    const [zIndex,setZIndex] = React.useState<number>(0);
     const changeEffekt = () => {
         if (!selectedEffekt) {
 
@@ -42,7 +43,7 @@ export const EffektsPanel = ({ availableEffekts, strip, colorDict, inPreviewMode
         }
         console.log("AdditionalData", additionalData)
         const stripIndex = inPreviewMode ? (strip.index + 5) * -1 : strip.index
-        wsClient.lightSetEffekt(selectedEffekt.effektSystemName, stripIndex, freq.range, additionalData);
+        wsClient.lightSetEffekt(selectedEffekt.effektSystemName, stripIndex, freq.range, additionalData,zIndex);
     }
 
     const addEffekt = () => {
@@ -59,7 +60,7 @@ export const EffektsPanel = ({ availableEffekts, strip, colorDict, inPreviewMode
         }
         console.log("AdditionalData", additionalData)
         const stripIndex = inPreviewMode ? (strip.index + 5) * -1 : strip.index
-        wsClient.lightAddEffekt(selectedEffekt.effektSystemName, stripIndex, freq.range, additionalData, position[0], position[1]);
+        wsClient.lightAddEffekt(selectedEffekt.effektSystemName, stripIndex, freq.range, additionalData, position[0], position[1],createShortID(),zIndex);
     }
 
 
@@ -83,22 +84,29 @@ export const EffektsPanel = ({ availableEffekts, strip, colorDict, inPreviewMode
         <CardContent>
             <Grid container spacing={2}>
                 <Grid item xs={8}>
-                    <Select
-                        style={{
-                            minWidth: "100%",
-                        }}
+                    <Autocomplete
                         size="small"
-                        value={selectedFreqRange}
-                        onChange={(e) => setSelectedFreqRange(e.target.value as number)}
-                        label="Age"
-                    >
-                        {FrequencyRange.allRanges.map((range, index) => {
-                            return <MenuItem value={index}>{range.name}</MenuItem>
+                        // className={classes.root}
+                        id="grouped-demo"
+                        options={availableEffekts.sort((a, b) => {
+                            return -b.group.localeCompare(a.group) || -b.name.localeCompare(a.name)
                         })}
-                    </Select>
+                        // options={availableEffekts.sort((a, b) => -b.name.localeCompare(a.name))}
+                        groupBy={(option) => option.group.toLocaleUpperCase()}
+                        renderOption={(props, option) => <Typography {...props} variant="body1">{option.name}</Typography>}
+                        getOptionLabel={(option) => option.name}
+                        sx={{ width: "100%" }}
+                        onChange={(e, value) => {
+                            setSelectedEffekt(value)
+                            // if (value !== null) changeEffekt(value)
+                        }}
+                        value={selectedEffekt}
+                        renderInput={(params) => <TextField {...params} label="Effekt..." />}
+                    />
+
                 </Grid>
                 <Grid item xs={4}>
-                    <Button variant="contained" color="error" onClick={() => wsClient.lightSetOff(inPreviewMode ? (strip.index + 5) * -1 : strip.index)} style={{ height: "100%", width: "100%" }}>Off</Button>
+                    <TextField label="zIndex" value={zIndex} onChange={(e) => setZIndex(parseInt(e.target.value))} defaultValue={0}  type="number" fullWidth size="small"/>
                 </Grid>
             </Grid>
             <h4>Position range</h4>
@@ -119,32 +127,29 @@ export const EffektsPanel = ({ availableEffekts, strip, colorDict, inPreviewMode
             <Grid style={{
                 marginTop: "0px"
             }} container spacing={2}>
-                <Grid item xs={6} md={8}>
-                    <Autocomplete
-                        size="small"
-                        // className={classes.root}
-                        id="grouped-demo"
-                        options={availableEffekts.sort((a, b) => {
-                            return -b.group.localeCompare(a.group) || -b.name.localeCompare(a.name)
-                        })}
-                        // options={availableEffekts.sort((a, b) => -b.name.localeCompare(a.name))}
-                        groupBy={(option) => option.group.toLocaleUpperCase()}
-                        renderOption={(props, option) => <Typography {...props} variant="body1">{option.name}</Typography>}
-                        getOptionLabel={(option) => option.name}
-                        sx={{ width: "100%" }}
-                        onChange={(e, value) => {
-                            setSelectedEffekt(value)
-                            // if (value !== null) changeEffekt(value)
+                <Grid item xs={12} md={6}>
+                    <Select
+                        style={{
+                            minWidth: "100%",
                         }}
-                        value={selectedEffekt}
-                        renderInput={(params) => <TextField {...params} label="Effekt..." />}
-                    />
+                        size="small"
+                        value={selectedFreqRange}
+                        onChange={(e) => setSelectedFreqRange(e.target.value as number)}
+                        label="Age"
+                    >
+                        {FrequencyRange.allRanges.map((range, index) => {
+                            return <MenuItem value={index}>{range.name}</MenuItem>
+                        })}
+                    </Select>
                 </Grid>
-                <Grid item xs={3} md={2}>
+                <Grid item xs={4} md={2}>
                     <Button variant="contained" style={{ height: "100%" }} fullWidth onClick={() => addEffekt()}>Add</Button>
                 </Grid>
-                <Grid item xs={3} md={2}>
+                <Grid item xs={4} md={2}>
                     <Button variant="contained" style={{ height: "100%" }} fullWidth onClick={() => changeEffekt()}>Set</Button>
+                </Grid>
+                <Grid item xs={4} md={2}>
+                    <Button variant="contained" color="error" onClick={() => wsClient.lightSetOff(inPreviewMode ? (strip.index + 5) * -1 : strip.index)} style={{ height: "100%", width: "100%" }}>Off</Button>
                 </Grid>
             </Grid>
 

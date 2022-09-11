@@ -9,6 +9,11 @@ export const createUUID = () => {
     });
 }
 
+export const createShortID = () => {
+    //return random 8 character string
+    return Math.random().toString(36).substring(2, 10);
+}
+
 export const randomColor = () => {
     return Math.floor(Math.random() * 16777215).toString(16);
 }

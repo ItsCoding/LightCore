@@ -166,7 +166,7 @@ export class WebSocketClient {
         }
     }
 
-    public lightSetEffekt(effekt: string, stripIndex: number, frequency: number[], instanceData: object = {}): string {
+    public lightSetEffekt(effekt: string, stripIndex: number, frequency: number[], instanceData: object = {},zIndex:number = 0): string {
         const instanceUUID = Math.random().toString(36).substring(7);
         if (this.socket || this.inTransaction) {
             this.send("light.setEffekt", {
@@ -174,13 +174,14 @@ export class WebSocketClient {
                 stripIndex: stripIndex,
                 frequencyRange: frequency,
                 instanceData: instanceData,
-                instanceUUID: instanceUUID
+                instanceUUID: instanceUUID,
+                zIndex: zIndex
             });
         }
         return instanceUUID;
     }
 
-    public lightAddEffekt(effekt: string, stripIndex: number, frequency: number[], instanceData: object = {}, startIndex: number, endIndex: number, instanceUUID?: string | number): string | number {
+    public lightAddEffekt(effekt: string, stripIndex: number, frequency: number[], instanceData: object = {}, startIndex: number, endIndex: number, instanceUUID?: string | number,zIndex: number = 0): string | number {
         if (!instanceUUID) instanceUUID = Math.random().toString(36).substring(7);
         if (this.socket || this.inTransaction) {
             this.send("light.addEffekt", {
@@ -190,7 +191,8 @@ export class WebSocketClient {
                 instanceData: instanceData,
                 instanceUUID: instanceUUID,
                 startIndex: startIndex,
-                endIndex: endIndex
+                endIndex: endIndex,
+                zIndex: zIndex
             });
         }
         return instanceUUID;

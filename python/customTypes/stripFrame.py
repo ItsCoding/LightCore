@@ -17,7 +17,9 @@ class StripFrame:
             # print(len(frame[i]),endIndex - startIndex,endIndex,startIndex,len(range(startIndex, endIndex)))
             if len(frame[i]) < endIndex - startIndex:
                 endIndex = endIndex - 1
-            self.leds[i, startIndex:endIndex] = frame[i]
+            self.leds[i, startIndex:endIndex] = np.add(self.leds[i, startIndex:endIndex], frame[i])
+            # for x in range(startIndex, endIndex):
+            #     self.leds[i][x] = self.leds[i][x] + frame[i][x]
             # np.put(self.leds[i], range(startIndex, endIndex), scaledUp)
         # print(self.leds[0])
 

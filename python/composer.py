@@ -11,8 +11,9 @@ runningEffekts: list = []
 gain = dsp.ExpFilter(np.tile(0.01, config.cfg["frequencyBins"]),
                          alpha_decay=0.001, alpha_rise=0.99)
 # Add a new effekt to the composition
-def addEffekt(effekt, frequencyRange: array, stripIndex: int, ledStartIndex: int, ledEndIndex: int, instanceData: dict = {}):
-    runningEffekts.append(ActiveEffekt(effekt, frequencyRange, stripIndex, ledStartIndex, ledEndIndex,instanceData))
+def addEffekt(effekt, frequencyRange: array, stripIndex: int, ledStartIndex: int, ledEndIndex: int, instanceData: dict = {}, zIndex: int = 0):
+    runningEffekts.append(ActiveEffekt(effekt, frequencyRange, stripIndex, ledStartIndex, ledEndIndex,instanceData,zIndex))
+    runningEffekts.sort(key=lambda x: x.zIndex, reverse=True)
 
 # def getFrequencyRangeByEnum(frequencyRange: FrequencyRange):
 #    return FrequencyRange[frequencyRange]
@@ -22,9 +23,11 @@ def clear():
 #needs to be tested
 def removeElementById(id):
     runningEffekts[:] = [effekt for effekt in runningEffekts if effekt.effekt.id != id]
+    runningEffekts.sort(key=lambda x: x.zIndex, reverse=True)
 
 def removeElementByStripIndex(stripIndex):
     runningEffekts[:] = [effekt for effekt in runningEffekts if effekt.stripIndex != stripIndex]
+    runningEffekts.sort(key=lambda x: x.zIndex, reverse=True)
 
 def getEffekts():
     return runningEffekts

@@ -11,6 +11,9 @@ export const ReturnType = {
     },
     PREVIEW:{
         FRAME_DICT : "return.preview.frameDict",
+    },
+    BEAT:{
+        DETECTED: "return.beat.detected",
     }
 }
 

@@ -32,7 +32,8 @@ export class ActiveEffekt {
         public instanceData: InstanceDataType,
         public startIndex: number,
         public endIndex: number,
-        public effektSystemName: string
+        public effektSystemName: string,
+        public zIndex: number = 0
     ){}
 
     public static readonly fromJSON = objectMapper(accessor => {
@@ -44,7 +45,8 @@ export class ActiveEffekt {
             accessor.get("instanceData", mapObjectMapper(expectAnything)),
             accessor.get("ledStartIndex", expectNumber),
             accessor.get("ledEndIndex", expectNumber),
-            accessor.get("effektSystemName", expectString)
+            accessor.get("effektSystemName", expectString),
+            accessor.getOptional("zIndex", expectNumber)
         );
     })
 
@@ -59,7 +61,8 @@ export class ActiveEffekt {
             instanceData: this.instanceData,
             ledStartIndex: this.startIndex,
             ledEndIndex: this.endIndex,
-            effektSystemName: this.effektSystemName
+            effektSystemName: this.effektSystemName,
+            zIndex: this.zIndex
         }
     }
 }

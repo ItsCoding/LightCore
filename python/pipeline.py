@@ -29,7 +29,7 @@ def initServer():
     procRendering.start()
     print("Started Rendering Process")
 
-    procBPM = multiprocessing.Process(target=beatDetector.start, args=(bpmQueue,))
+    procBPM = multiprocessing.Process(target=beatDetector.start, args=(bpmQueue,queue2Parent))
     procBPM.start()
     print("Started BPM Process")
     

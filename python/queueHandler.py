@@ -5,7 +5,7 @@ import composer
 import config
 
 
-def setSpecificEffekt(vis,effektName,stripIndex,frequencyRange,instanceData,instanceUUID):
+def setSpecificEffekt(vis,effektName,stripIndex,frequencyRange,instanceData,instanceUUID,zIndex):
     print("Adding Effekt: ", effektName, " to strip: ", stripIndex, instanceUUID)
     effektClass = next(x for x in vis.allEffekts if x.__name__ == effektName)
     if effektClass == None:
@@ -15,13 +15,13 @@ def setSpecificEffekt(vis,effektName,stripIndex,frequencyRange,instanceData,inst
         realIndex = (realIndex * -1 ) - 5
     stripLength = config.STRIP_LED_COUNTS[realIndex]
     composer.removeElementByStripIndex(stripIndex)
-    composer.addEffekt(effektClass(instanceUUID),frequencyRange,stripIndex,0,stripLength,instanceData)
+    composer.addEffekt(effektClass(instanceUUID),frequencyRange,stripIndex,0,stripLength,instanceData,zIndex)
 
-def addEffektToComp(vis,effektName,stripIndex,frequencyRange,instanceData,instanceUUID,startIndex,endIndex):
+def addEffektToComp(vis,effektName,stripIndex,frequencyRange,instanceData,instanceUUID,startIndex,endIndex,zIndex):
     effektClass = next(x for x in vis.allEffekts if x.__name__ == effektName)
     if effektClass == None:
         return
-    composer.addEffekt(effektClass(instanceUUID),frequencyRange,stripIndex,startIndex,endIndex,instanceData)
+    composer.addEffekt(effektClass(instanceUUID),frequencyRange,stripIndex,startIndex,endIndex,instanceData,zIndex)
 
 def reportEffekts(vis,queue2Parent):
     comEffekts = composer.getEffekts()
@@ -61,7 +61,7 @@ def handleQueue(queue2Thread,queue2Parent,vis):
                 print("Pushing available Effekts in Queue")
                 queue2Parent.put(json.dumps({"type": "return.data.availableEffekts", "message": availableEffekts}))
             elif topicType == "light.setEffekt":
-                setSpecificEffekt(vis,data["effektName"],data["stripIndex"],data["frequencyRange"],data["instanceData"],data["instanceUUID"])
+                setSpecificEffekt(vis,data["effektName"],data["stripIndex"],data["frequencyRange"],data["instanceData"],data["instanceUUID"],data["zIndex"])
                 reportEffekts(vis,queue2Parent)
             elif topicType == "light.removeEffekt":
                 composer.removeElementById(data["instanceUUID"])
@@ -70,11 +70,11 @@ def handleQueue(queue2Thread,queue2Parent,vis):
                 composer.removeElementByStripIndex(data["stripIndex"])
                 reportEffekts(vis,queue2Parent)
             elif topicType == "light.addEffekt":
-                addEffektToComp(vis,data["effektName"],data["stripIndex"],data["frequencyRange"],data["instanceData"],data["instanceUUID"],data["startIndex"],data["endIndex"])
+                addEffektToComp(vis,data["effektName"],data["stripIndex"],data["frequencyRange"],data["instanceData"],data["instanceUUID"],data["startIndex"],data["endIndex"],data["zIndex"])
                 reportEffekts(vis,queue2Parent)
             elif topicType == "light.setOff":
                 composer.removeElementById(data["stripIndex"])
-                composer.addEffekt(vis.OFF_EFFEKT(data["stripIndex"]), [0,64], data["stripIndex"], 0, config.STRIP_LED_COUNTS[data["stripIndex"]])
+                composer.addEffekt(vis.OFF_EFFEKT(data["stripIndex"]), [0,64], data["stripIndex"], 0, config.STRIP_LED_COUNTS[data["stripIndex"]],99999999)
                 reportEffekts(vis,queue2Parent)
             elif topicType == "light.random.setEnabled.specific":
                 vis.ENDABLED_RND_PARTS[data["stripIndex"]] = data["enabled"]
@@ -89,5 +89,5 @@ def handleQueue(queue2Thread,queue2Parent,vis):
             elif topicType == "light.report":
                 reportEffekts(vis,queue2Parent)
             elif topicType == "beat.tap":
-                vis.hasBeatChanged = True
+                vis.hasBeatChangedManual = True
 

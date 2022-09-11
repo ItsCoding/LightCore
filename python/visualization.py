@@ -44,6 +44,7 @@ import effekts.static.Stars as StarsEffekt
 
 import effekts.simple.colorStep as colorStepEffekt
 import effekts.simple.colorStepRandom as colorStepRandomEffekt
+import effekts.simple.colorStepRandomMultiple as colorStepRandomMultipleEffekt
 
 import queueHandler
 # import wsServer as wsServer
@@ -79,6 +80,7 @@ visualize_rotatingRainbow = RotatingRainbowEffekt.visualize_rotatingRainbow
 visualize_stars = StarsEffekt.visualize_stars
 visualize_colorStep = colorStepEffekt.visualize_colorStep
 visualize_colorStepRandom = colorStepRandomEffekt.visualize_colorStepRandom
+visualize_colorStepRandomMultiple = colorStepRandomMultipleEffekt.visualize_colorStepRandomMultiple
 
 # composer.addEffekt(visualize_scroll,FrequencyRange.ALL,0,75,100)
 
@@ -169,6 +171,7 @@ class Visualization:
 
     def microphone_update(self,audio_samples):
         self.hasBeatChanged = False
+        self.hasBeatChangedManual = False
         queueHandler.handleQueue(self.queue2Thread,self.queue2Parent,self)
         while not self.bpmQueue.empty() and config.cfg["beatDetection"]:
             message = self.bpmQueue.get()
@@ -180,6 +183,7 @@ class Visualization:
                     print("- BPM: " + str(self.avg_Bpm))
                 else:
                     print("| BPM: " + str(self.avg_Bpm))
+        self.hasBeatChanged = (self.hasBeatChanged or self.hasBeatChangedManual)
         # Normalize samples between 0 and 1
         y = audio_samples / 2.0**15
         # Construct a rolling window of audio samples
@@ -327,7 +331,7 @@ class Visualization:
                             visualize_flashyBpm,visualize_flashSection,visualize_flashSectionUpwards,visualize_rushUpwards,
                             visualize_flashRotating,visualize_flashSectionMirrored,visualize_rotatingEnergyInverted,visualize_flashSectionUpwardsAscending,
                             visualize_flashSectionRandomColor,visualize_flashSectionMirroredRandomColor,visualize_rotatingRainbow,visualize_stars,
-                            visualize_colorStep,visualize_colorStepRandom]
+                            visualize_colorStep,visualize_colorStepRandom,visualize_colorStepRandomMultiple]
         self.allEffekts = self.randomEffekts + [visualize_Off]
         if config.USE_GUI:
             import pyqtgraph as pg
