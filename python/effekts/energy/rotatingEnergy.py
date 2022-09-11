@@ -78,7 +78,7 @@ class visualize_rotatingEnergy:
         speed = (1.0 - (config.cfg["globalSpeed"] / 100)) * 10
 
         milliseconds = int(round(time.time() * 1000) / speed)
-        offset = (milliseconds % (stripSize * 4)) // self.loopCount
+        offset = milliseconds // self.loopCount
         # print(offset)
        
         tempP = np.tile(0, (3, self.longerP))

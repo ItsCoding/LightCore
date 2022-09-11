@@ -129,7 +129,7 @@ export const EffektsPanel = ({ availableEffekts, strip, colorDict, inPreviewMode
                         })}
                         // options={availableEffekts.sort((a, b) => -b.name.localeCompare(a.name))}
                         groupBy={(option) => option.group.toLocaleUpperCase()}
-                        renderOption={(props, option) => <Typography variant="body1">{option.name}</Typography>}
+                        renderOption={(props, option) => <Typography {...props} variant="body1">{option.name}</Typography>}
                         getOptionLabel={(option) => option.name}
                         sx={{ width: "100%" }}
                         onChange={(e, value) => {

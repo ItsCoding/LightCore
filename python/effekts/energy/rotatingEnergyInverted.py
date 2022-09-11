@@ -1,3 +1,4 @@
+import random
 import time
 import config
 import numpy as np
@@ -9,6 +10,8 @@ class visualize_rotatingEnergyInverted:
         self.id = id
         self.p = None
         self.p_filt = None
+        self.loopCount = None
+        self.longerP = None
         # self.gain = dsp.ExpFilter(np.tile(0.01, config.cfg["frequencyBins"]),
         #                 alpha_decay=0.001, alpha_rise=0.99)
         self.description = {
@@ -22,10 +25,15 @@ class visualize_rotatingEnergyInverted:
         """Effect that expands from the center with increasing sound energy"""
         # global p, p_filt
         if(self.p is None):
+            if "loopCount" in instanceData and instanceData["loopCount"] is not None:
+                self.loopCount = instanceData["itemCount"]
+            else:
+                self.loopCount = random.randint(2,6)
+            self.longerP = stripSize + (stripSize // self.loopCount)
             self.p = np.tile(1.0, (3, stripSize))
-            self.p_filt =  dsp.ExpFilter(np.tile(1, (3, stripSize)),
+            self.p_filt =  dsp.ExpFilter(np.tile(1, (3, self.longerP)),
                         alpha_decay=0.1, alpha_rise=0.99)
-
+            
         y = np.copy(y)
         # gain.update(y)
         y /= gain.value
@@ -63,27 +71,33 @@ class visualize_rotatingEnergyInverted:
         self.p[0, :] = 0.0
         self.p[1, :] = 0.0
         self.p[2, :] = 0.0
-        loopRange = list(range(0,stripSize, int(stripSize/ 3)))
-
+        
+        steps = stripSize // self.loopCount
+        
+        loopRange = list(range(0,stripSize, steps))
         speed = (1.0 - (config.cfg["globalSpeed"] / 100)) * 10
 
         milliseconds = int(round(time.time() * 1000) / speed)
-        offset = (milliseconds % (stripSize * 4)) // 3
+        offset = milliseconds // self.loopCount
         # print(offset)
+       
+        tempP = np.tile(0, (3, self.longerP))
+
         for i in loopRange:
-            i = i - offset
+            i = i + offset
             if i > stripSize:
                 i = i % stripSize
+            i = stripSize - i
             # print(i)
             # print(i,stripSize)
-            self.p[0, i:i+rOff] = 255.0
-            self.p[0, i-rOff:i] = 255.0
+            tempP[0, i:i+rOff] = 255.0
+            tempP[0, i-rOff:i] = 255.0
 
-            self.p[1, i:i+gOff] = 255.0
-            self.p[1, i-gOff:i] = 255.0
+            tempP[1, i:i+gOff] = 255.0
+            tempP[1, i-gOff:i] = 255.0
 
-            self.p[2, i:i+bOff] = 255.0
-            self.p[2, i-bOff:i] = 255.0
+            tempP[2, i:i+bOff] = 255.0
+            tempP[2, i-bOff:i] = 255.0
         # print(self.p[1])
         # print(self.p)
             # np.concatenate((self.p[:, ::-1], self.p), axis=1)
@@ -99,17 +113,22 @@ class visualize_rotatingEnergyInverted:
         # self.p[1, mean:] = 0.0
         # self.p[2, :mean] = rgbColor[2]
         # self.p[2, mean:] = 0.0
-        self.p_filt.update(self.p)
-        self.p = np.round(self.p_filt.value)
+        self.p_filt.update(tempP)
+        tempP = np.round(self.p_filt.value)
         # Apply substantial blur to smooth the edges
-        self.p[0, :] = gaussian_filter1d(self.p[0, :], sigma=4)
-        self.p[1, :] = gaussian_filter1d(self.p[1, :], sigma=4)
-        self.p[2, :] = gaussian_filter1d(self.p[2, :], sigma=4)
+        tempP[0, :] = gaussian_filter1d(tempP[0, :], sigma=4)
+        tempP[1, :] = gaussian_filter1d(tempP[1, :], sigma=4)
+        tempP[2, :] = gaussian_filter1d(tempP[2, :], sigma=4)
         # Set the new pixel value
+        self.p = tempP[:, :stripSize]
+        
 
-        output = np.copy(self.p)
-        output[0] = np.flip(output[0])
-        output[1] = np.flip(output[1])
-        output[2] = np.flip(output[2])
-
-        return output
+        # Add the values from tempP to self.p 
+        for i in range(0,2):
+            self.p[i,0:(stripSize//self.loopCount)] = np.add(self.p[i,0:(stripSize//self.loopCount)], tempP[i,stripSize:])
+        # self.p[:,0:(stripSize//self.loopCount)] = tempP[:,stripSize:]#np.sum([self.p[0,0:(stripSize //self.loopCount)], tempP[0, stripSize:]],axis=1)
+       
+        # print(len(tempP[0]),len(self.p[0]),stripSize,self.loopCount,(stripSize //self.loopCount),self.longerP)
+        # print(self.p)
+        
+        return self.p
