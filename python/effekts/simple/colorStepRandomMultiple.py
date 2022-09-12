@@ -24,15 +24,18 @@ class visualize_colorStepRandomMultiple:
         self.step = 0
         self.stepAmount = random.randint(8,15)
         self.randomSteps = []
-        for i in range(0,random.randint(1,5)):
-            self.randomSteps.append(random.randint(0,self.stepAmount))
+        
 
     def run(self, y,stripSize,gain: dsp.ExpFilter,instanceData: dict = {}):
         if(self.p is None):
             self.p = np.tile(0, (3, stripSize))
-           
+            if "stepAmount" in instanceData:
+                self.stepAmount = instanceData["stepAmount"]
+            for i in range(0,random.randint(1,5)):
+                self.randomSteps.append(random.randint(0,self.stepAmount))
         if "color" in instanceData:
             self.rgbColor = instanceData["color"]
+    
         size = stripSize // self.stepAmount
         if "beatChanged" in instanceData:
             if instanceData["beatChanged"]:

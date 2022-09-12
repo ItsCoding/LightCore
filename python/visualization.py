@@ -144,6 +144,7 @@ class Visualization:
         }
         self.noAudioCount = 0
         self.hasBeatChanged = False
+        self.lastBeatPacket = 0
         #CONFIG VARS
         self.randomEnabled = True
     def frames_per_second(self):
@@ -274,7 +275,8 @@ class Visualization:
                     composer.removeElementByStripIndex(i)
                     composer.addEffekt(randomEffekt(str(uuid.uuid1())),randomFreq,i,0,config.STRIP_LED_COUNTS[i],{
                         "color":randomColor,
-                        "loopCount":randomLoopCount
+                        "loopCount":randomLoopCount,
+                        "stepAmount":random.randint(6,12)
                     })
                     allPartsRange.remove(i)
             for x in allPartsRange:

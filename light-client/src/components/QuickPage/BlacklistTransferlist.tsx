@@ -104,18 +104,19 @@ export const BlacklistTransferlist = ({ blacklisted, availableEffekts, onChange 
         <Card>
             <CardHeader
                 sx={{ px: 2, py: 1 }}
-                avatar={title !== 'Allowed' &&
+                avatar={title !== 'Allowed' ?
                     <Checkbox
                         onClick={handleToggleAll(items)}
                         checked={numberOfChecked(items) === items.length && items.length !== 0}
                         indeterminate={
                             numberOfChecked(items) !== items.length && numberOfChecked(items) !== 0
                         }
+                        size="small"
                         disabled={items.length === 0}
                         inputProps={{
                             'aria-label': 'all items selected',
                         }}
-                    />
+                    /> : <div></div>
                 }
                 title={title}
                 subheader={`${numberOfChecked(items)}/${items.length} selected`}

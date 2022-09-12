@@ -28,9 +28,13 @@ class visualize_colorStepRandom:
     def run(self, y,stripSize,gain: dsp.ExpFilter,instanceData: dict = {}):
         if(self.p is None):
             self.p = np.tile(0, (3, stripSize))
-           
+            if "stepAmount" in instanceData:
+                self.stepAmount = instanceData["stepAmount"]
+            self.randomStep = random.randint(0,self.stepAmount)
+
         if "color" in instanceData:
             self.rgbColor = instanceData["color"]
+
         size = stripSize // self.stepAmount
         if "beatChanged" in instanceData:
             if instanceData["beatChanged"]:

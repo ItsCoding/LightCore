@@ -31,6 +31,8 @@ class visualize_colorStep:
            
         if "color" in instanceData:
             self.rgbColor = instanceData["color"]
+        if "stepAmount" in instanceData:
+            self.stepAmount = instanceData["stepAmount"]
         size = stripSize // self.stepAmount
         if "beatChanged" in instanceData:
             if instanceData["beatChanged"]:
