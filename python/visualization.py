@@ -6,6 +6,7 @@ import random
 import signal
 import sys
 import time
+import uuid
 import numpy as np
 from scipy.ndimage.filters import gaussian_filter1d
 import config
@@ -137,7 +138,9 @@ class Visualization:
         self.OFF_EFFEKT = visualize_Off
         self.ENDABLED_RND_PARTS = {
             0: True,
-            1: True
+            1: True,
+            2: True,
+            3: True,
         }
         self.noAudioCount = 0
         self.hasBeatChanged = False
@@ -197,7 +200,6 @@ class Visualization:
                 self.noAudioCount = 0
                 print('No audio input. Volume below threshold. Volume:', vol, 'Count:', self.noAudioCount)
             self.noAudioCount += 1
-            # led.pixels = np.tile(0, (3, config.N_PIXELS))
             # led.update()
         else:
             # Transform audio input into the frequency domain
@@ -248,41 +250,37 @@ class Visualization:
                 self.prev_fps_update = time.time()
                 print('FPS {:.0f} / {:.0f}'.format(fps, config.FPS))
 
-    def checkIfAllowed(self,rnd1,rnd2):
-        if(rnd1 == visualize_rotatingRainbow and rnd2 == visualize_rotatingRainbow):
-            return False
-        return True
+    # def checkIfAllowed(self,rnd1,rnd2):
+    #     if(rnd1 == visualize_rotatingRainbow and rnd2 == visualize_rotatingRainbow):
+    #         return False
+    #     return True
 
-    def makeRandomComposition(self,parts):
-        triangleRandomFrequencys = [FrequencyRange.all, FrequencyRange.low]
-        middleRandomFrequencys = [FrequencyRange.all, FrequencyRange.high,FrequencyRange.mid]
-        isAllowedCombination = False
+    def makeRandomComposition(self,parts,overrideEnabled = False):
+        allFreqencys = [FrequencyRange.all, FrequencyRange.high,FrequencyRange.mid,FrequencyRange.low]
+        if(parts == "all"):  
+            allPartsRange = list(range(0,config.STRIP_COUNT))
+            for x in config.STRIP_MIRRORS:
+                randomFreq = random.choice(allFreqencys)
+                randomEffekt = random.choice(self.randomEffekts)
+                for i in x:
+                    composer.removeElementByStripIndex(i)
+                    composer.addEffekt(randomEffekt(str(uuid.uuid1())),randomFreq,i,0,config.STRIP_LED_COUNTS[i])
+                    allPartsRange.remove(i)
 
-        while not isAllowedCombination:
-            trf = random.choice(triangleRandomFrequencys)
-            mrf = random.choice(middleRandomFrequencys)
-            reT = random.choice(self.randomEffekts)
-            reM = random.choice(self.randomEffekts)
-            isAllowedCombination = self.checkIfAllowed(reT,reM)
 
-        if(parts == "all"):   
-            if self.ENDABLED_RND_PARTS[1]:
-                composer.removeElementByStripIndex(1)
-                composer.addEffekt(reT(1),trf,1,0,config.STRIP_LED_COUNTS[1])
-            if self.ENDABLED_RND_PARTS[0]:
-                composer.removeElementByStripIndex(0)
-                composer.addEffekt(reM(0),mrf,0,0,config.STRIP_LED_COUNTS[0])
+            for x in allPartsRange:
+                if self.ENDABLED_RND_PARTS[x] or overrideEnabled:
+                    randomFreq = random.choice(allFreqencys)
+                    randomEffekt = random.choice(self.randomEffekts)
+                    composer.removeElementByStripIndex(x)
+                    composer.addEffekt(randomEffekt(str(uuid.uuid1())),randomFreq,x,0,config.STRIP_LED_COUNTS[x])
+            
         else:
-            # if self.ENDABLED_RND_PARTS[parts]:
+            randomFreq = random.choice(allFreqencys)
+            randomEffekt = random.choice(self.randomEffekts)
             composer.removeElementByStripIndex(parts)
-            composer.addEffekt(reM(parts),mrf,parts,0,config.STRIP_LED_COUNTS[parts])
+            composer.addEffekt(randomEffekt(str(uuid.uuid1())),randomFreq,parts,0,config.STRIP_LED_COUNTS[parts])
         queueHandler.reportEffekts(self, self.queue2Parent)
-        # self.queue2Parent.put(json.dumps({"type": "notification.random.effektChanged", "message": {
-        #     "effektTriangle": reT.__name__,
-        #     "effektMiddle": reM.__name__,
-        #     "frequencyTriangle": trf,
-        #     "frequencyMiddle": mrf
-        # }}))
         
 
     def checkIfDrop(self): 

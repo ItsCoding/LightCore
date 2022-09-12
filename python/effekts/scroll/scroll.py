@@ -21,8 +21,6 @@ class visualize_scroll:
         
         if(self.p is None):
             self.p = np.tile(1.0, (3, stripSize // 2))
-
-        # self.p = np.tile(1.0, (3, config.N_PIXELS // 2))
         # print(y)
         y = y**(3 * config.cfg["globalIntensity"])
         # gain.update(y)

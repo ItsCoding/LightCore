@@ -64,8 +64,6 @@ appear "sluggish" or out of sync with the audio being played if it is too low.
 The FPS should not exceed the maximum refresh rate of the LED strip, which
 depends on how long the LED strip is.
 """
-_max_led_FPS = int(((N_PIXELS * 30e-6) + 50e-6)**-1.0)
-# assert FPS <= _max_led_FPS, 'FPS must be <= {}'.format(_max_led_FPS)
 
 MIN_FREQUENCY = 0
 """Frequencies below this value will be removed during audio processing"""
@@ -95,8 +93,9 @@ MIN_VOLUME_THRESHOLD = 1e-7
 """No music visualization displayed if recorded audio volume below threshold"""
 
 
-STRIP_COUNT = 2
-STRIP_LED_COUNTS = [300,540]
+STRIP_COUNT = 4
+STRIP_LED_COUNTS = [300,540,50,50]
+STRIP_MIRRORS = [[2,3]]
 
 RANDOM_MAX_WAIT = 8
 RANDOM_MIN_WAIT = 4

@@ -314,7 +314,7 @@ export const EffektsPage = ({ availableEffekts, isRandomizerActive, setRandomize
                     })}
                 </CardContent>
             </Card>
-            <Grid container spacing={2}>
+            <Grid container columnSpacing={2} rowSpacing={1}>
                 {stripConfig.map(strip => {
                     return (
                         <Grid item xs={12} md={6}>
