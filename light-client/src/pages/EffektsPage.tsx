@@ -231,6 +231,9 @@ export const EffektsPage = ({ availableEffekts, isRandomizerActive, setRandomize
             ),
             confirm: () => {
                 if (newComposition) {
+                    stripConfig.forEach((strip) => {
+                        wsClient.lightClear(strip.index);
+                    });
                     newComposition.activate(() => { }, inPreviewMode);
                     setActiveEffekts(newComposition.activeEffekts);
                     setConfirmDialogOpen(0);

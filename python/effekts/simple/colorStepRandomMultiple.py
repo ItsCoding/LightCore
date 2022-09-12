@@ -5,24 +5,14 @@ import numpy as np
 import dsp
 from scipy.ndimage.filters import gaussian_filter1d
 
-colorPalette = [
-    [0,0,255],
-    [0,255,0],
-    [255,0,0],
-    [0,255,255],
-    [255,0,255],
-    [255,255,0],
-    [255,255,255],
-    [34,166,179],
-    [190,46,221]
-]
+
 
 class visualize_colorStepRandomMultiple:
     def __init__(self,id):
         self.id = id
         self.p = None
         self.p_filt = None
-        self.rgbColor = random.choice(colorPalette)
+        self.rgbColor = random.choice(config.COLOR_DICT)
         self.description = {
             "name": "Color step random multiple",
             "description": "A effekt that changes the color on each beat step but random in position and multiple times",
@@ -53,7 +43,7 @@ class visualize_colorStepRandomMultiple:
                 if self.step >= self.stepAmount:
                     self.step = 0
                     if not "color" in instanceData:
-                        self.rgbColor = random.choice(colorPalette)
+                        self.rgbColor = random.choice(config.COLOR_DICT)
         
         for idx,i in enumerate(range(0,stripSize,size)):
             if idx in self.randomSteps:

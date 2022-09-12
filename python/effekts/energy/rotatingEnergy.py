@@ -28,7 +28,10 @@ class visualize_rotatingEnergy:
             if "loopCount" in instanceData and instanceData["loopCount"] is not None:
                 self.loopCount = instanceData["itemCount"]
             else:
-                self.loopCount = random.randint(2,6)
+                if(stripSize >50):
+                    self.loopCount = random.randint(2,6)
+                else:  
+                    self.loopCount = random.randint(1,3)
             self.longerP = stripSize + (stripSize // self.loopCount)
             self.p = np.tile(1.0, (3, stripSize))
             self.p_filt =  dsp.ExpFilter(np.tile(1, (3, self.longerP)),

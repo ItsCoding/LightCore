@@ -5,24 +5,14 @@ import numpy as np
 import dsp
 from scipy.ndimage.filters import gaussian_filter1d
 
-colorPalette = [
-    [0,0,255],
-    [0,255,0],
-    [255,0,0],
-    [0,255,255],
-    [255,0,255],
-    [255,255,0],
-    [255,255,255],
-    [34,166,179],
-    [190,46,221]
-]
+
 
 class visualize_flashSectionMirrored:
     def __init__(self,id):
         self.id = id
         self.p = None
         self.p_filt = None
-        self.rgbColor = random.choice(colorPalette)
+        self.rgbColor = random.choice(config.COLOR_DICT)
         self.lastFlash = 0
         self.description = {
             "name": "Flash section mirrord",

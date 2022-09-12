@@ -81,10 +81,10 @@ export const RandomizerSettings = () => {
             <Button fullWidth variant="contained" color={randomizerEnabled ? "secondary" : "primary"} size="small" onClick={() => toggleRandomizer()}>Toggle randomizer</Button>
         </div>
         <div style={{ marginTop: "20px", marginBottom: "20px" }}>
-            <Grid container columnSpacing={2} >
+            <Grid container columnSpacing={2} rowSpacing={2} >
                 {strips.map(strip => (
                     <Grid md={6} item>
-                        <Button variant="contained" color={isSpecificEnabled(strip.index) ? "secondary" : "primary"} size="small" style={{
+                        <Button variant="contained" color={isSpecificEnabled(strip.index) ? "secondary" : "primary"} size="medium" style={{
                             width: "100%",
                         }} onClick={() => {
                             toggleRandoSpecific(strip.index);
@@ -99,11 +99,11 @@ export const RandomizerSettings = () => {
                 <Grid md={12} item>
                     <Button style={{
                         width: "100%",
-                    }} variant="contained" onClick={() => wsClient.lightRandomNext()}>{strips.map(s => s.symbol).join(" ")}</Button>
+                    }} variant="contained" size="large" onClick={() => wsClient.lightRandomNext()}>{strips.map(s => s.symbol).join(" ")}</Button>
                 </Grid>
                 {strips.map(strip => (
                     <Grid md={6} item>
-                        <Button variant="contained" style={{
+                        <Button variant="contained" size="large" style={{
                             width: "100%",
                         }} onClick={() => wsClient.lightRandomNextSpecific(strip.index)}>{strip.symbol}</Button>
                     </Grid>

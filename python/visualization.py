@@ -260,21 +260,21 @@ class Visualization:
         if(parts == "all"):  
             allPartsRange = list(range(0,config.STRIP_COUNT))
             for x in config.STRIP_MIRRORS:
+                randomColor = random.choice(config.COLOR_DICT)
                 randomFreq = random.choice(allFreqencys)
                 randomEffekt = random.choice(self.randomEffekts)
                 for i in x:
                     composer.removeElementByStripIndex(i)
-                    composer.addEffekt(randomEffekt(str(uuid.uuid1())),randomFreq,i,0,config.STRIP_LED_COUNTS[i])
+                    composer.addEffekt(randomEffekt(str(uuid.uuid1())),randomFreq,i,0,config.STRIP_LED_COUNTS[i],{
+                        "color":randomColor
+                    })
                     allPartsRange.remove(i)
-
-
             for x in allPartsRange:
                 if self.ENDABLED_RND_PARTS[x] or overrideEnabled:
                     randomFreq = random.choice(allFreqencys)
                     randomEffekt = random.choice(self.randomEffekts)
                     composer.removeElementByStripIndex(x)
                     composer.addEffekt(randomEffekt(str(uuid.uuid1())),randomFreq,x,0,config.STRIP_LED_COUNTS[x])
-            
         else:
             randomFreq = random.choice(allFreqencys)
             randomEffekt = random.choice(self.randomEffekts)

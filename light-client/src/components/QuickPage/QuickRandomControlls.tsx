@@ -1,4 +1,4 @@
-import { Button, Card, CardContent, CardHeader, Slider, Typography } from "@mui/material"
+import { Button, Card, CardContent, CardHeader, Divider, Slider, Typography } from "@mui/material"
 import Grid from '@mui/material/Grid';
 import { Box } from "@mui/system";
 import React, { useEffect } from "react";
@@ -43,7 +43,7 @@ export const QuickRandomControlls = ({ randomEnabled, randomSpecific, lightConfi
         if (!Array.isArray(time)) {
             return;
         }
-        if(time[0] === time[1]) {
+        if (time[0] === time[1]) {
             time[1] += 1;
         }
         lightConfig.randomMinWait = time[0];
@@ -57,7 +57,7 @@ export const QuickRandomControlls = ({ randomEnabled, randomSpecific, lightConfi
         if (!Array.isArray(time)) {
             return;
         }
-        if(time[0] === time[1]) {
+        if (time[0] === time[1]) {
             time[1] += 1;
         }
         lightConfig.dropRandomMinWait = time[0];
@@ -104,11 +104,18 @@ export const QuickRandomControlls = ({ randomEnabled, randomSpecific, lightConfi
                             }}>RND {strip.position} toggle</TouchButton>
                         </Grid>
                     ))}
+
+                </Grid>
+                <Divider style={{ borderColor: "rgba(255, 255, 255, 0.12)",marginTop:"20px" }} />
+                <Grid container rowSpacing={2} columnSpacing={2} style={{
+                    minHeight: "100px",
+                    marginTop: "10px",
+                }} justifyContent="center">
                     <Grid xs={6} md={2} item>
                         <TouchButton style={{
                             width: "100%",
                             height: "100%",
-                        }} variant="contained" onInteract={() => wsClient.lightRandomNext()}>Next Random Comp</TouchButton>
+                        }} variant="contained" onInteract={() => wsClient.lightRandomNext()}>Next rnd.</TouchButton>
                     </Grid>
                     {strips.map(strip => (
                         <Grid xs={6} md={2} item>
@@ -116,7 +123,7 @@ export const QuickRandomControlls = ({ randomEnabled, randomSpecific, lightConfi
                                 width: "100%",
                                 height: "100%",
                             }}
-                            onInteract={() => wsClient.lightRandomNextSpecific(strip.index)}>Next Comp {strip.position}</TouchButton>
+                                onInteract={() => wsClient.lightRandomNextSpecific(strip.index)}>Next Comp {strip.symbol}</TouchButton>
                         </Grid>
                     ))}
                 </Grid>

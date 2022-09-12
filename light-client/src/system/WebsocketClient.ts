@@ -201,6 +201,7 @@ export class WebSocketClient {
 
     public async lightSetOff(stripIndex: number) {
         if (this.socket || this.inTransaction) {
+            console.log("Set Off: ", stripIndex);
             this.send("light.setOff", { stripIndex: stripIndex });
         }
     }

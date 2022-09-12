@@ -27,11 +27,11 @@ export const strips: LedStrip[] = [
         index: 2,
         length: 50,
         marks: generateMarks(50, 5),
-        symbol: "⎮ 1",
+        symbol: "⎮¹",
     },{
         position: "Side 2",
         index: 3,
         length: 50,
         marks: generateMarks(50, 5),
-        symbol: "⎮ 2",
+        symbol: "⎮²",
     }]

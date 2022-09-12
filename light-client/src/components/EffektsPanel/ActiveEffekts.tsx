@@ -37,7 +37,7 @@ export const ActiveEffekts = ({ activeEffekts, availableEffekts }: ActiveEffekts
         { field: 'effektName', headerName: 'Name', width: 200, type: "singleSelect", valueOptions: getAvailableEffekts(), editable: true, },
         {
             field: 'stripIndex', headerName: 'Part',
-            width: 100,
+            width: 200,
             editable: true,
             type: "singleSelect", valueOptions: getAvailableStrips(),
             valueGetter: (params: GridValueGetterParams) =>

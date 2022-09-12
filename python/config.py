@@ -107,6 +107,18 @@ GLOBAL_SPEED = 50
 GLOBAL_INTENSITY = 1.0
 DETECT_BEAT = True
 
+COLOR_DICT = [
+    [0,0,255],
+    [0,255,0],
+    [255,0,0],
+    [0,255,255],
+    [255,0,255],
+    [255,255,0],
+    [255,255,255],
+    [34,166,179],
+    [190,46,221]
+]
+
 cfg = {
     "device": DEVICE,
     "brightness": BRIGHTNESS,

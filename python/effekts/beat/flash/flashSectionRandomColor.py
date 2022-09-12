@@ -5,24 +5,14 @@ import numpy as np
 import dsp
 from scipy.ndimage.filters import gaussian_filter1d
 
-colorPalette = [
-    [0,0,255],
-    [0,255,0],
-    [255,0,0],
-    [0,255,255],
-    [255,0,255],
-    [255,255,0],
-    [255,255,255],
-    [34,166,179],
-    [190,46,221]
-]
+
 
 class visualize_flashSectionRandomColor:
     def __init__(self,id):
         self.id = id
         self.p = None
         self.p_filt = None
-        self.rgbColor = random.choice(colorPalette)
+        self.rgbColor = random.choice(config.COLOR_DICT)
         self.lastFlash = 0
         self.description = {
             "name": "Flash section random color",
@@ -59,7 +49,7 @@ class visualize_flashSectionRandomColor:
                 randPos = random.randint(0,randSize)
                 randStart = int((stripSize / randSize) * randPos)
                 randEnd = int((stripSize / randSize) * (randPos + 1))
-                self.rgbColor = random.choice(colorPalette)
+                self.rgbColor = random.choice(config.COLOR_DICT)
                 self.p[0][randStart: randEnd] = self.rgbColor[0]
                 self.p[1][randStart: randEnd] = self.rgbColor[1]
                 self.p[2][randStart: randEnd] = self.rgbColor[2]
