@@ -1,4 +1,4 @@
-import { expectNumber, expectString, objectMapper } from "@daniel-faber/json-ts";
+import { arrayMapper, expectNumber, expectString, mapObjectMapper, objectMapper } from "@daniel-faber/json-ts";
 
 export class LightCoreConfig {
     constructor(
@@ -12,7 +12,9 @@ export class LightCoreConfig {
         public dropRandomMaxWait: number,
         public dropRandomMinWait: number,
         public globalSpeed: number,
-        public globalIntensity: number
+        public globalIntensity: number,
+        public stripBrightness: number[],
+        public blacklistedEffects: { [key: string]: string[] },
     ) { }
 
     public static readonly fromJSON = objectMapper(accessor => new LightCoreConfig(
@@ -26,6 +28,10 @@ export class LightCoreConfig {
         accessor.get("dropRandomMaxWait", expectNumber),
         accessor.get("dropRandomMinWait", expectNumber),
         accessor.get("globalSpeed", expectNumber),
-        accessor.get("globalIntensity", expectNumber)
+        accessor.get("globalIntensity", expectNumber),
+        accessor.get("stripBrightness", arrayMapper(expectNumber)),
+        accessor.get("blacklistedEffects", mapObjectMapper(accessor => {
+            return accessor as string[]
+        })),
     ));
 }

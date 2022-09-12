@@ -166,6 +166,7 @@ function App() {
                     }}>
                       <Route path="home" element={<HomePage />} />
                       <Route path="quick" element={<QuickPage
+                        availableEffekts={availableEffekts}
                         randomEnabled={randomEnabled}
                         randomSpecific={randomSpecific}
                         setRandomEnabled={setRandomEnabled}

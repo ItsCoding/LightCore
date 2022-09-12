@@ -257,27 +257,37 @@ class Visualization:
 
     def makeRandomComposition(self,parts,overrideEnabled = False):
         allFreqencys = [FrequencyRange.all, FrequencyRange.high,FrequencyRange.mid,FrequencyRange.low]
+        rndEffekts = list(filter(lambda eff: eff.__name__ not in config.cfg["blacklistedEffects"]["all"], self.randomEffekts))
         if(parts == "all"):  
             allPartsRange = list(range(0,config.STRIP_COUNT))
             for x in config.STRIP_MIRRORS:
                 randomColor = random.choice(config.COLOR_DICT)
                 randomFreq = random.choice(allFreqencys)
-                randomEffekt = random.choice(self.randomEffekts)
+                rndEffektsStrip = list(filter(lambda eff: eff.__name__ not in config.cfg["blacklistedEffects"][str(x[0])], rndEffekts))
+                randomEffekt = random.choice(rndEffektsStrip)
+                randomLoopCount = 0
+                if(config.STRIP_LED_COUNTS[x[0]] >50):
+                   randomLoopCount = random.randint(2,6)
+                else:  
+                    randomLoopCount = random.randint(1,3)
                 for i in x:
                     composer.removeElementByStripIndex(i)
                     composer.addEffekt(randomEffekt(str(uuid.uuid1())),randomFreq,i,0,config.STRIP_LED_COUNTS[i],{
-                        "color":randomColor
+                        "color":randomColor,
+                        "loopCount":randomLoopCount
                     })
                     allPartsRange.remove(i)
             for x in allPartsRange:
                 if self.ENDABLED_RND_PARTS[x] or overrideEnabled:
                     randomFreq = random.choice(allFreqencys)
-                    randomEffekt = random.choice(self.randomEffekts)
+                    rndEffektsStrip = list(filter(lambda eff: eff.__name__ not in config.cfg["blacklistedEffects"][str(x)], rndEffekts))
+                    randomEffekt = random.choice(rndEffektsStrip)
                     composer.removeElementByStripIndex(x)
                     composer.addEffekt(randomEffekt(str(uuid.uuid1())),randomFreq,x,0,config.STRIP_LED_COUNTS[x])
         else:
+            rndEffektsStrip = list(filter(lambda eff: eff.__name__ not in config.cfg["blacklistedEffects"][str(parts)], rndEffekts))
             randomFreq = random.choice(allFreqencys)
-            randomEffekt = random.choice(self.randomEffekts)
+            randomEffekt = random.choice(rndEffektsStrip)
             composer.removeElementByStripIndex(parts)
             composer.addEffekt(randomEffekt(str(uuid.uuid1())),randomFreq,parts,0,config.STRIP_LED_COUNTS[parts])
         queueHandler.reportEffekts(self, self.queue2Parent)

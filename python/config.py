@@ -106,6 +106,16 @@ DROP_RANDOM_MIN_WAIT = 5
 GLOBAL_SPEED = 50
 GLOBAL_INTENSITY = 1.0
 DETECT_BEAT = True
+STRIP_BRIGHTNESS = []
+for i in range(STRIP_COUNT):
+    STRIP_BRIGHTNESS.append(100)
+
+BLACKLISTED_EFFECTS = {
+    "all":[]
+}
+for i in range(STRIP_COUNT):
+    BLACKLISTED_EFFECTS[str(i)] = []
+
 
 COLOR_DICT = [
     [0,0,255],
@@ -132,4 +142,6 @@ cfg = {
     "globalSpeed": GLOBAL_SPEED,
     "globalIntensity": GLOBAL_INTENSITY,
     "beatDetection": DETECT_BEAT,
+    "stripBrightness": STRIP_BRIGHTNESS,
+    "blacklistedEffects": BLACKLISTED_EFFECTS,
 }

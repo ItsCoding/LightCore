@@ -81,7 +81,6 @@ def handleQueue(queue2Thread,queue2Parent,vis):
                 print("Changed Enabled to: ", vis.ENDABLED_RND_PARTS)
             elif topicType == "system.config.change":
                 config.cfg[data["key"]] = data["value"]
-                print(config.cfg)
                 print("Changing Config")
             elif topicType == "system.config.get":
                 print("Pushing Config in Queue")

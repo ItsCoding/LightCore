@@ -1,4 +1,5 @@
-import { Card, CardContent, CardHeader, Slider, Typography } from "@mui/material"
+import { Card, CardContent, CardHeader, Divider, Slider, Typography } from "@mui/material"
+import { strips } from "../../system/StripConfig";
 import { WebSocketClient } from "../../system/WebsocketClient";
 import { LightCoreConfig } from "../../types/LightCoreConfig"
 
@@ -9,10 +10,10 @@ type QuickSystemControllsProps = {
 
 const marks = [
     {
-      value: 1,
-      label: 'Normal',
+        value: 1,
+        label: 'Normal',
     }
-  ];
+];
 
 export const QuickSystemControlls = ({ lightConfig, setLCConfig }: QuickSystemControllsProps) => {
     const wsClient = WebSocketClient.getInstance();
@@ -23,6 +24,15 @@ export const QuickSystemControlls = ({ lightConfig, setLCConfig }: QuickSystemCo
         }
         lightConfig.brightness = brightness;
         wsClient.changeConfigProperty("brightness", brightness);
+        setLCConfig(lightConfig);
+    }
+
+    const setBrightnessStrip = (brightness: number | number[], index: number) => {
+        if (Array.isArray(brightness)) {
+            return;
+        }
+        lightConfig.stripBrightness[index] = brightness;
+        wsClient.changeConfigProperty("stripBrightness", lightConfig.stripBrightness);
         setLCConfig(lightConfig);
     }
 
@@ -43,7 +53,7 @@ export const QuickSystemControlls = ({ lightConfig, setLCConfig }: QuickSystemCo
         wsClient.changeConfigProperty("globalIntensity", intiensity);
         setLCConfig(lightConfig);
     }
-    
+
 
     return (<>
         <Card variant="outlined" style={{
@@ -55,7 +65,7 @@ export const QuickSystemControlls = ({ lightConfig, setLCConfig }: QuickSystemCo
                 marginLeft: "10px",
                 marginRight: "10px",
             }}>
-                <Typography gutterBottom>Brightness</Typography>
+                <Typography gutterBottom>Brightness global</Typography>
                 <Slider
                     min={0}
                     max={100}
@@ -65,6 +75,22 @@ export const QuickSystemControlls = ({ lightConfig, setLCConfig }: QuickSystemCo
                     valueLabelDisplay="auto"
                     getAriaValueText={(value) => `${value}%`}
                 />
+                {strips.map((strip, index) => (
+                    <>
+                        <Typography gutterBottom>Brightness {strip.position}</Typography>
+                        <Slider
+                            min={0}
+                            max={100}
+                            getAriaLabel={() => `Brightness ${strip.symbol}`}
+                            defaultValue={lightConfig.stripBrightness[strip.index]}
+                            onChange={(e, value) => setBrightnessStrip(value, strip.index)}
+                            valueLabelDisplay="auto"
+                            getAriaValueText={(value) => `${value}%`}
+                        />
+                    </>
+
+                ))}
+                <Divider />
                 <Typography gutterBottom>Speed</Typography>
                 <Slider
                     min={1}

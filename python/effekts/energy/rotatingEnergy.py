@@ -26,7 +26,7 @@ class visualize_rotatingEnergy:
         # global p, p_filt
         if(self.p is None):
             if "loopCount" in instanceData and instanceData["loopCount"] is not None:
-                self.loopCount = instanceData["itemCount"]
+                self.loopCount = instanceData["loopCount"]
             else:
                 if(stripSize >50):
                     self.loopCount = random.randint(2,6)
