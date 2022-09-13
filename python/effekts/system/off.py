@@ -15,6 +15,7 @@ class visualize_OFF:
             "effektSystemName": "visualize_OFF",
             "group": "system",
             "groupColor": "black",
+            "supports": []
         }
 
     def run(self, y,stripSize,gain,additionalData):

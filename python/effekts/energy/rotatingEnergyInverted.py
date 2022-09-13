@@ -20,6 +20,7 @@ class visualize_rotatingEnergyInverted:
             "effektSystemName": "visualize_rotatingEnergyInverted",
             "group": "moving",
             "groupColor": "#44bd32",
+            "supports": ["intensity"]
         }
     def run(self, y,stripSize,gain: dsp.ExpFilter,instanceData: dict = {}):
         """Effect that expands from the center with increasing sound energy"""

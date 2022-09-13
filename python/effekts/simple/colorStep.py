@@ -20,6 +20,7 @@ class visualize_colorStep:
             "group": "simple-step",
             "groupColor": "#FFFEE",
             "bpmSensitive": True,
+            "supports": ["color","stepAmount"]
         }
         self.step = 0
         self.stepAmount = random.randint(5,10)

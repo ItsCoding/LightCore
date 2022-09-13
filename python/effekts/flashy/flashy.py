@@ -19,6 +19,7 @@ class visualize_flashy:
             "effektSystemName": "visualize_flashy",
             "group": "spicy",
             "groupColor": "coral",
+            "supports": ["intensity"]
         }
 
     def run(self, y,stripSize,gain: dsp.ExpFilter,instanceData: dict = {}):

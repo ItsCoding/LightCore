@@ -20,6 +20,7 @@ class visualize_flashyBPM:
                 "group": "spicy",
                 "groupColor": "coral",
                 "bpmSensitive": True,
+                "supports": ["intensity"]
             }
 
     

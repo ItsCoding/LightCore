@@ -16,6 +16,7 @@ class visualize_energyInverted:
             "effektSystemName": "visualize_energyInverted",
             "group": "energy",
             "groupColor": "#5b82ec",
+            "supports": ["intensity"]
         }
     
 

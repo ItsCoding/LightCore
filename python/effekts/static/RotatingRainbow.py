@@ -15,6 +15,7 @@ class visualize_rotatingRainbow:
             "effektSystemName": "visualize_rotatingRainbow",
             "group": "Static moving",
             "groupColor": "#44bd32",
+            "supports": ["speed"]
         }
     def run(self, y,stripSize,gain: dsp.ExpFilter,instanceData: dict = {}):
         """Effect that expands from the center with increasing sound energy"""

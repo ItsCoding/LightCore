@@ -19,6 +19,7 @@ class visualize_rushUpwards:
             "group": "beat-rush",
             "groupColor": "#FFFEE",
             "bpmSensitive": True,
+            "supports": ["color"]
         }
 
     def run(self, y,stripSize,gain: dsp.ExpFilter,instanceData: dict = {}):

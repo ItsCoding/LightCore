@@ -15,6 +15,7 @@ class visualize_scroll:
             "effektSystemName": "visualize_scroll",
             "group": "scroll",
             "groupColor": "#ff00d7",
+            "supports": ["intensity"]
         }
     def run(self, y,stripSize,gain: dsp.ExpFilter,instanceData: dict = {}):
         """Effect that originates in the center and scrolls outwards"""

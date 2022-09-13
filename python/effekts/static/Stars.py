@@ -15,6 +15,7 @@ class visualize_stars:
             "effektSystemName": "visualize_stars",
             "group": "Static moving",
             "groupColor": "#44bd32",
+            "supports": ["color"]
         }
         self.activeStars = {}
         self.fallingStars = {}

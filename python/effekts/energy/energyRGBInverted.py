@@ -21,6 +21,7 @@ class visualize_energyRGBInverted:
             "effektSystemName": "visualize_energyRGBInverted",
             "group": "energy",
             "groupColor": "#5b82ec",
+            "supports": ["color","intensity"]
         }
     def run(self, y,stripSize,gain: dsp.ExpFilter,instanceData: dict = {}):
         """Effect that expands from the center with increasing sound energy"""

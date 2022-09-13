@@ -16,6 +16,7 @@ class visualize_multipleEnergy:
             "effektSystemName": "visualize_multipleEnergy",
             "group": "moving",
             "groupColor": "#44bd32",
+            "supports": ["intensity"]
         }
     def run(self, y,stripSize,gain: dsp.ExpFilter,instanceData: dict = {}):
         """Effect that expands from the center with increasing sound energy"""

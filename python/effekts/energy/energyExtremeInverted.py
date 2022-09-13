@@ -16,6 +16,7 @@ class visualize_energyExtremeInverted:
             "effektSystemName": "visualize_energyExtremeInverted",
             "group": "energy",
             "groupColor": "#5b82ec",
+            "supports": ["intensity"]
         }
     def run(self, y,stripSize,gain: dsp.ExpFilter,instanceData: dict = {}):
         """Effect that expands from the center with increasing sound energy"""

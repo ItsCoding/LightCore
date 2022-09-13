@@ -18,6 +18,7 @@ class visualize_random:
             "effektSystemName": "visualize_random",
             "group": "spicy",
             "groupColor": "coral",
+            "supports": ["intensity"]
         }
     def run(self, y,stripSize,gain: dsp.ExpFilter,instanceData: dict = {}):
         if (self.p is None):

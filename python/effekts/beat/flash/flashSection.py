@@ -21,6 +21,7 @@ class visualize_flashSection:
             "group": "beat-flash",
             "groupColor": "#FFFEE",
             "bpmSensitive": True,
+            "supports": ["color","speed"]
         }
 
 

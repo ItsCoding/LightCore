@@ -15,6 +15,7 @@ class visualize_scrollExtreme:
             "effektSystemName": "visualize_scrollExtreme",
             "group": "scroll",
             "groupColor": "#ff00d7",
+            "supports": ["intensity"]
         }
         
     def run(self, y,stripSize,gain: dsp.ExpFilter,instanceData: dict = {}):

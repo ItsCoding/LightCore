@@ -14,6 +14,7 @@ class visualize_energyExtreme:
             "effektSystemName": "visualize_energyExtreme",
             "group": "energy",
             "groupColor": "#5b82ec",
+            "supports": ["intensity"]
         }
         # self.gain = dsp.ExpFilter(np.tile(0.01, config.cfg["frequencyBins"]),
         #                 alpha_decay=0.001, alpha_rise=0.99)
