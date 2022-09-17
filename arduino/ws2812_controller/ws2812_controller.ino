@@ -16,7 +16,7 @@
 #define PIN D1
 
 // Set to the number of LEDs in your LED strip
-#define NUM_LEDS 300
+#define NUM_LEDS 540
 // Maximum number of packets to hold in the buffer. Don't change this.
 #define BUFFER_LEN 1024
 // Toggles FPS output (1 = print FPS over serial, 0 = disable output)
@@ -24,8 +24,8 @@
 
 //NeoPixelBus settings
 // Wifi and socket settings
-const char* ssid     = "FakeGigabit";
-const char* password = "Schreib was rein.";
+const char* ssid     = "S21";
+const char* password = "Alexander2413";
 unsigned int localPort = 7777;
 char packetBuffer[BUFFER_LEN];
 
@@ -35,7 +35,8 @@ uint8_t offset = 0;
 WiFiUDP port;
 // Network information
 // IP must match the IP in config.py
-IPAddress ip(10, 40, 0, 185);
+//IPAddress ip(10, 40, 0, 186);
+IPAddress ip(192, 168, 62, 137);
 // Set gateway to your router's gateway
 IPAddress gateway(10, 40, 0, 1);
 IPAddress subnet(255, 255, 255, 0);
@@ -82,7 +83,7 @@ void loop() {
             packetBuffer[len] = 0;
             offset = packetBuffer[i];
             N = packetBuffer[i+1];      
-            NC = (uint32_t)N + (uint32_t)offset * (uint32_t)256; 
+            NC = (uint32_t)N + (uint32_t)1 + (uint32_t)offset * (uint32_t)256; 
             strip.setPixelColor(NC, (uint8_t)packetBuffer[i+2],(uint8_t)packetBuffer[i+3], (uint8_t)packetBuffer[i+4]);
         } 
         strip.show();

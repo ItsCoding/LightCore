@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { ButtonGrid } from "../components/StagePage/ButtonGrid";
 import { StageToolbar } from "../components/StagePage/StageToolbar";
 import { RandomizerSettings } from "../components/StagePage/Toolbar/RandomizerSettings";
+import { BrightnessSettings } from "../components/StagePage/Toolbar/BrightnessSettings";
 import { initEvents } from "../system/StageSystem/WebsocketHelper";
 import { Board } from "../types/Board";
 
@@ -22,17 +23,19 @@ export const StagePage = ({ setActiveRoute }: StagePageProps) => {
         switch (activeWidget) {
             case "randomizer":
                 return <RandomizerSettings />
+            case "system":
+                return <BrightnessSettings />
             default:
                 return <Alert variant="filled" severity="error" sx={{
                     marginLeft: "5px",
                     marginRight: "auto",
-                    marginTop:"40vh"
+                    marginTop: "40vh"
                 }}>Widget "{activeWidget}" is not implemented</Alert>
         }
     }
 
     return (<div style={{
-        padding:"10px"
+        padding: "10px"
     }}>
         <Grid container spacing={2} rowSpacing={2} columnSpacing={2}>
             {activeWidget && <Grid item xs={3}>

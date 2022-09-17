@@ -61,7 +61,8 @@ def _update_esp8266():
     MAX_PIXELS_PER_PACKET = 540
     # Pixel indices
     idx = range(pixels.shape[1])
-    idx = [i for i in idx if not np.array_equal(p[:, i], _prev_pixels[:, i])]
+    # print("Sending: ", len(idx))
+    # idx = [i for i in idx if not np.array_equal(p[:, i], _prev_pixels[:, i])]
     n_packets = len(idx) // MAX_PIXELS_PER_PACKET + 1
     idx = np.array_split(idx, n_packets)
     # print(len(idx),len(idx[0]))
