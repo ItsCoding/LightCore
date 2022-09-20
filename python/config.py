@@ -4,9 +4,8 @@ from __future__ import division
 import os
 
 
-
-#DEVICE = 'esp8266'
-DEVICE = 'espv'
+# DEVICE = 'esp8266'
+DEVICE = "espv"
 """Device used to control LED strip. Must be 'esp' or 'virtual'
 
 'esp8266' means that you are using an ESP8266 module to control the LED strip
@@ -19,8 +18,20 @@ audio input and control the LED strip directly.
 to control the leds connected to it.
 """
 
-if DEVICE == 'esp' or DEVICE == 'espv':
-    UDP_IP = '192.168.62.3' #'10.40.0.186'
+if DEVICE == "esp" or DEVICE == "espv":
+    UDP_IPS = {
+        0: "10.40.0.185",
+        # 1: "192.168.62.11",
+        1: "GROUP",
+        2: "10.40.0.188",
+        3: "10.40.0.189",
+    }  #'192.168.62.3' #'10.40.0.186'
+    UDP_GROUPS = {
+        1: [
+            {"from": 0, "to": 270, "IP": "192.168.62.3"},
+            {"from": 270, "to": 540, "IP": "192.168.62.11","offset": 270},
+        ]
+    }
     """IP address of the ESP8266. Must match IP in ws2812_controller.ino"""
     UDP_PORT = 7777
     """Port number used for socket communication between Python and ESP8266"""
@@ -38,11 +49,10 @@ DISPLAY_FPS = True
 DISPLAY_BPM = False
 """Whether to display the FPS when running (can reduce performance)"""
 
-#ToDo: This need to be replaced
-N_PIXELS = 300
+# ToDo: This need to be replaced
 """Number of pixels in the LED strip (must match ESP8266 firmware)"""
 
-GAMMA_TABLE_PATH = os.path.join(os.path.dirname(__file__), 'gamma_table.npy')
+GAMMA_TABLE_PATH = os.path.join(os.path.dirname(__file__), "gamma_table.npy")
 """Location of the gamma correction table"""
 
 MIC_RATE = 44100
@@ -94,8 +104,8 @@ MIN_VOLUME_THRESHOLD = 1e-7
 
 
 STRIP_COUNT = 4
-STRIP_LED_COUNTS = [300,540,50,50]
-STRIP_MIRRORS = [[2,3]]
+STRIP_LED_COUNTS = [300, 540, 50, 50]
+STRIP_MIRRORS = [[2, 3]]
 
 RANDOM_MAX_WAIT = 8
 RANDOM_MIN_WAIT = 4
@@ -110,23 +120,21 @@ STRIP_BRIGHTNESS = []
 for i in range(STRIP_COUNT):
     STRIP_BRIGHTNESS.append(100)
 
-BLACKLISTED_EFFECTS = {
-    "all":[]
-}
+BLACKLISTED_EFFECTS = {"all": []}
 for i in range(STRIP_COUNT):
     BLACKLISTED_EFFECTS[str(i)] = []
 
 
 COLOR_DICT = [
-    [0,0,255],
-    [0,255,0],
-    [255,0,0],
-    [0,255,255],
-    [255,0,255],
-    [255,255,0],
-    [255,255,255],
-    [34,166,179],
-    [190,46,221]
+    [0, 0, 255],
+    [0, 255, 0],
+    [255, 0, 0],
+    [0, 255, 255],
+    [255, 0, 255],
+    [255, 255, 0],
+    [255, 255, 255],
+    [34, 166, 179],
+    [190, 46, 221],
 ]
 
 cfg = {

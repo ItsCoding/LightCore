@@ -16,14 +16,15 @@
 #define PIN D1
 
 // Set to the number of LEDs in your LED strip
-#define NUM_LEDS 540
+#define NUM_LEDS 270
 // Maximum number of packets to hold in the buffer. Don't change this.
-#define BUFFER_LEN 1024
+#define BUFFER_LEN 1350
 // Toggles FPS output (1 = print FPS over serial, 0 = disable output)
 #define PRINT_FPS 1
 
 //NeoPixelBus settings
 // Wifi and socket settings
+String nodeName = "Triangle-1";
 const char* ssid     = "S21";
 const char* password = "Alexander2413";
 unsigned int localPort = 7777;
@@ -45,6 +46,7 @@ Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUM_LEDS, PIN, NEO_GRB + NEO_KHZ800)
 void setup() {
     Serial.begin(115200);
     WiFi.mode(WIFI_STA);
+    WiFi.hostname(nodeName.c_str());
     WiFi.config(ip, gateway, subnet);
     WiFi.begin(ssid, password);
     Serial.println("");
@@ -78,12 +80,14 @@ void loop() {
     int packetSize = port.parsePacket();
     // If packets have been received, interpret the command
     if (packetSize) {
+        //Serial.println(packetSize);
         int len = port.read(packetBuffer, BUFFER_LEN);
         for(int i = 0; i < len; i+=5) {
             packetBuffer[len] = 0;
             offset = packetBuffer[i];
             N = packetBuffer[i+1];      
-            NC = (uint32_t)N + (uint32_t)1 + (uint32_t)offset * (uint32_t)256; 
+            NC = (uint32_t)N + (uint32_t)1 + (uint32_t)offset * (uint32_t)256;
+            //Serial.println(NC); 
             strip.setPixelColor(NC, (uint8_t)packetBuffer[i+2],(uint8_t)packetBuffer[i+3], (uint8_t)packetBuffer[i+4]);
         } 
         strip.show();
