@@ -23,7 +23,10 @@ class StripFrame:
                 self.leds[i, startIndex:endIndex], frame[i]
             )
             brightness = config.cfg["brightness"] / 100
-            stripBrightness = config.cfg["stripBrightness"][self.stripIndex] / 100
+            if self.stripIndex >= 0:
+                stripBrightness = config.cfg["stripBrightness"][self.stripIndex] / 100
+            else:
+                stripBrightness = 1
             self.leds[0, startIndex:endIndex] = [int(i * brightness * stripBrightness) for i in self.leds[0, startIndex:endIndex]]
             self.leds[1, startIndex:endIndex] = [int(i * brightness * stripBrightness) for i in self.leds[1, startIndex:endIndex]]
             self.leds[2, startIndex:endIndex] = [int(i * brightness * stripBrightness) for i in self.leds[2, startIndex:endIndex]]

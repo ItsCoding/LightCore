@@ -194,7 +194,8 @@ class Visualization:
         self.y_roll[:-1] = self.y_roll[1:]
         self.y_roll[-1, :] = np.copy(y)
         y_data = np.concatenate(self.y_roll, axis=0).astype(np.float32)
-        
+        mel = np.tile(0,config.N_FFT_BINS)
+
         vol = np.max(np.abs(y_data))
         if vol < config.MIN_VOLUME_THRESHOLD:
             if self.noAudioCount > 50:
@@ -222,26 +223,26 @@ class Visualization:
             mel = self.mel_smoothing.update(mel)
             # Map filterbank output onto LED strip
             # try:
-            if self.randomEnabled:
-                self.changeEffekt(self.hasBeatChanged)
-            # mel = np.concatenate((mel[:6],np.full(26,0)),axis=0)
-            composerOutput = composer.getComposition(mel,self,self.hasBeatChanged)
-            if(len(composerOutput) > 0 and 0 in composerOutput and "getLEDS" in dir(composerOutput[0])):
-                self.output = composerOutput[0].getLEDS()
-            # print(output)
-            # output = visualization_effect(mel)
-            # output += visualize_energy(mel)
-            
-            led.pixels = self.output
-            led.update(composerOutput,self.queue2Parent)
-            if config.USE_GUI:
-                # Plot filterbank output
-                x = np.linspace(config.MIN_FREQUENCY, config.MAX_FREQUENCY, len(mel))
-                self.mel_curve.setData(x=x, y=self.fft_plot_filter.update(mel))
-                # Plot the color channels
-                self.r_curve.setData(y=led.pixels[0])
-                self.g_curve.setData(y=led.pixels[1])
-                self.b_curve.setData(y=led.pixels[2])
+        if self.randomEnabled:
+            self.changeEffekt(self.hasBeatChanged)
+        # mel = np.concatenate((mel[:6],np.full(26,0)),axis=0)
+        composerOutput = composer.getComposition(mel,self,self.hasBeatChanged)
+        if(len(composerOutput) > 0 and 0 in composerOutput and "getLEDS" in dir(composerOutput[0])):
+            self.output = composerOutput[0].getLEDS()
+        # print(output)
+        # output = visualization_effect(mel)
+        # output += visualize_energy(mel)
+        
+        led.pixels = self.output
+        led.update(composerOutput,self.queue2Parent)
+        if config.USE_GUI:
+            # Plot filterbank output
+            x = np.linspace(config.MIN_FREQUENCY, config.MAX_FREQUENCY, len(mel))
+            self.mel_curve.setData(x=x, y=self.fft_plot_filter.update(mel))
+            # Plot the color channels
+            self.r_curve.setData(y=led.pixels[0])
+            self.g_curve.setData(y=led.pixels[1])
+            self.b_curve.setData(y=led.pixels[2])
         if config.USE_GUI:
             self.app.processEvents()
         

@@ -89,6 +89,42 @@ export const PreviewCanvas = () => {
         }
     }
 
+    const drawFirstStrip = (frameDict: FrameDict, stripIndex: number, from: number, to: number, ctx: CanvasRenderingContext2D) => {
+        for (let x = from; x < to; x++) {
+            const y = x * 3;
+            if (ctx) {
+                const r = frameDict[stripIndex][0][x] ?? 255;
+                const g = frameDict[stripIndex][1][x] ?? 255;
+                const b = frameDict[stripIndex][2][x] ?? 255;
+                // console.log(r,g,b)
+                ctx.fillStyle = `rgb(${r},${g},${b})`;
+                // const color = `rgb(255,255,255)`;
+                // ctx.fillStyle = color;
+                // console.log(y)
+                ctx.fillRect(10, y, 1, 3);
+            }
+
+        }
+    }
+
+
+    const drawSecondStrip = (frameDict: FrameDict, stripIndex: number, from: number, to: number, ctx: CanvasRenderingContext2D) => {
+        for (let x = from; x < to; x++) {
+            const y = x * 3;
+            if (ctx) {
+                const r = frameDict[stripIndex][0][x] ?? 255;
+                const g = frameDict[stripIndex][1][x] ?? 255;
+                const b = frameDict[stripIndex][2][x] ?? 255;
+                // console.log(r,g,b)
+                ctx.fillStyle = `rgb(${r},${g},${b})`;
+                // const color = `rgb(255,255,255)`;
+                // ctx.fillStyle = color;
+                // console.log(y)
+                ctx.fillRect(290, y, 1, 3);
+            }
+
+        }
+    }
 
     const drawFrame = (frameDict: FrameDict) => {
         // console.log(frameDict)
@@ -105,6 +141,13 @@ export const PreviewCanvas = () => {
             drawTopLED(frameDict, 1, 180, 360, ctx);
             drawLeftTriangleLED(frameDict, 1, 0, 180, ctx);
             drawRightTriangleLED(frameDict, 1, 360, 540, ctx);
+            
+        }
+        if(2 in frameDict && ctx) {
+            drawFirstStrip(frameDict, 2, 0, 50, ctx);
+        }
+        if(3 in frameDict && ctx) {
+            drawSecondStrip(frameDict, 3, 0, 50, ctx);
         }
         if (0 in frameDict && ctx) {
             // console.log("Drawing frame 0");

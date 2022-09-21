@@ -97,7 +97,7 @@ def _update_esp8266(composing):
             for grp in config.UDP_GROUPS[compIndex]:
                 m = []
                 # print(idx)
-                idxPart = range(grp["from"] , grp["to"])
+                idxPart = range(grp["from"] , grp["to"] + 1)
                 # print(idxPart)
                 for i in idxPart:
                     newI = i
