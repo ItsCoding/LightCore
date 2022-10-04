@@ -46,6 +46,7 @@ class visualize_flashSection:
         randSize = random.randint(2,10)
         if "beatChanged" in instanceData:
             if instanceData["beatChanged"]:
+                self.p = np.tile(0, (3, stripSize))
                 self.lastFlash = int(round(time.time() * 1000))
                 randPos = random.randint(0,randSize)
                 randStart = int((stripSize / randSize) * randPos)
@@ -56,6 +57,6 @@ class visualize_flashSection:
                 self.p[0, :] = gaussian_filter1d(self.p[0, :], sigma=4.0)
                 self.p[1, :] = gaussian_filter1d(self.p[1, :], sigma=4.0)
                 self.p[2, :] = gaussian_filter1d(self.p[2, :], sigma=4.0)
-        if self.lastFlash + 200 * config.cfg["globalIntensity"] < int(round(time.time() * 1000)):
+        if self.lastFlash + (60000/(instanceData["bpm"]+1)) - 150 < int(round(time.time() * 1000)):
             self.p = np.tile(0, (3, stripSize))
         return self.p

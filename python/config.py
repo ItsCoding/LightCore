@@ -6,7 +6,7 @@ import os
 
 # DEVICE = 'esp8266'
 DEVICE = "virtual"
-"""Device used to control LED strip. Must be 'esp' or 'virtual'
+"""Device used to control LED strip. Must be 'esp', 'espv' or 'virtual'
 
 'esp8266' means that you are using an ESP8266 module to control the LED strip
 and commands will be sent to the ESP8266 over WiFi.
@@ -23,8 +23,8 @@ if DEVICE == "esp" or DEVICE == "espv":
         0: "10.40.0.185",
         # 1: "192.168.62.11",
         1: "GROUP",
-        2: "10.40.0.188",
-        3: "10.40.0.189",
+        2: "192.168.62.237",
+        3: "192.168.62.101",
     }  #'192.168.62.3' #'10.40.0.186'
     UDP_GROUPS = {
         1: [

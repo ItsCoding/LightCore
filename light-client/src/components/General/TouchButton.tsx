@@ -13,10 +13,9 @@ export const TouchButton = (props: TouchButtonProps) => {
     useEffect(() => {
         setIsTouching(window.touchToggle)
     },[window.touchToggle])
+    
     const onInteract = props.onInteract;
     const onInteractionEnd = props.onInteractionEnd;
-    // if(props.onInteract) delete props.onInteract;
-    // if(props.onInteractionEnd) delete props.onInteractionEnd;
     if (isTouching) {
         return (
             <Button

@@ -74,7 +74,10 @@ def handleQueue(queue2Thread,queue2Parent,vis):
                 reportEffekts(vis,queue2Parent)
             elif topicType == "light.setOff":
                 composer.removeElementById(data["stripIndex"])
-                composer.addEffekt(vis.OFF_EFFEKT(data["stripIndex"]), [0,64], data["stripIndex"], 0, config.STRIP_LED_COUNTS[data["stripIndex"]],{},99999999)
+                realIndex = data["stripIndex"]
+                if(realIndex < 0):
+                    realIndex = (realIndex * -1 ) - 5
+                composer.addEffekt(vis.OFF_EFFEKT(data["stripIndex"]), [0,64], data["stripIndex"], 0, config.STRIP_LED_COUNTS[realIndex],{},99999999)
                 reportEffekts(vis,queue2Parent)
             elif topicType == "light.random.setEnabled.specific":
                 vis.ENDABLED_RND_PARTS[data["stripIndex"]] = data["enabled"]

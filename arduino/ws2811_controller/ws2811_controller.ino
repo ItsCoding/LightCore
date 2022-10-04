@@ -41,7 +41,7 @@ IPAddress ip(192, 168, 62, 137);
 // Set gateway to your router's gateway
 IPAddress gateway(10, 40, 0, 1);
 IPAddress subnet(255, 255, 255, 0);
-Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUM_LEDS, PIN, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUM_LEDS, PIN, NEO_RGB + NEO_KHZ800);
 
 void setup() {
     Serial.begin(115200);
@@ -86,7 +86,7 @@ void loop() {
             packetBuffer[len] = 0;
             offset = packetBuffer[i];
             N = packetBuffer[i+1];      
-            NC = (uint32_t)N + (uint32_t)1 + (uint32_t)offset * (uint32_t)256;
+            NC = (uint32_t)N + (uint32_t)offset * (uint32_t)256;
             //Serial.println(NC); 
             strip.setPixelColor(NC, (uint8_t)packetBuffer[i+2],(uint8_t)packetBuffer[i+3], (uint8_t)packetBuffer[i+4]);
         } 

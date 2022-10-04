@@ -80,7 +80,7 @@ class visualize_flashRotating:
         #         self.p[0, :] = gaussian_filter1d(self.p[0, :], sigma=4.0)
         #         self.p[1, :] = gaussian_filter1d(self.p[1, :], sigma=4.0)
         #         self.p[2, :] = gaussian_filter1d(self.p[2, :], sigma=4.0)
-        # if self.lastFlash + 200 * config.cfg["globalIntensity"] < int(round(time.time() * 1000)):
+        # if self.lastFlash +(60000/(instanceData["bpm"]+1)) - 150 < int(round(time.time() * 1000)):
         #     self.p = np.tile(0, (3, stripSize))
         self.p_filt.update(self.p)
         self.p = np.round(self.p_filt.value)

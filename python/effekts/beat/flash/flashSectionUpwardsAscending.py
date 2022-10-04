@@ -39,6 +39,7 @@ class visualize_flashSectionUpwardsAscending:
 
         if "beatChanged" in instanceData:
             if instanceData["beatChanged"]:
+                self.p = np.tile(0, (3, stripSize//2))
                 self.lastFlash = int(round(time.time() * 1000))
                 randPos = self.position
                 randEnd = int(((stripSize // 2) / 8) * randPos)
@@ -52,7 +53,7 @@ class visualize_flashSectionUpwardsAscending:
                 if(self.position > 8):
                     self.position = 0
                 # print(self.p)
-        if self.lastFlash + 200 * config.cfg["globalIntensity"] < int(round(time.time() * 1000)):
+        if self.lastFlash + (60000/((instanceData["bpm"]+1))) - 150 < int(round(time.time() * 1000)):
             self.p = np.tile(0, (3, stripSize//2))
         output = np.concatenate((self.p,self.p[:, ::-1]), axis=1)
         return output
