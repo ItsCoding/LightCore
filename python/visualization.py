@@ -174,7 +174,7 @@ class Visualization:
 
 
     def microphone_update(self,audio_samples):
-        time.sleep(0.007)
+        # time.sleep(0.01)
         self.hasBeatChanged = False
         self.hasBeatChangedManual = False
         queueHandler.handleQueue(self.queue2Thread,self.queue2Parent,self)

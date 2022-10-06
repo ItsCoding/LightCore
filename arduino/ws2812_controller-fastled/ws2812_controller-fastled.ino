@@ -1,7 +1,4 @@
-#include <NeoPixelSegmentBus.h>
-#include <NeoPixelBrightnessBus.h>
-#include <NeoPixelBus.h>
-#include <NeoPixelAnimator.h>
+#include <FastLED.h>
 
 /*
 * This example works for ESP8266 & ESP32 and uses the NeoPixelBus library instead of the one bundle
@@ -17,10 +14,10 @@
 #else
 #error "This is not a ESP8266 or ESP32!"
 #endif
-#define PIN D1
+#define PIN D4
 
 // Set to the number of LEDs in your LED strip
-#define NUM_LEDS 270
+#define NUM_LEDS 300
 // Maximum number of packets to hold in the buffer. Don't change this.
 #define BUFFER_LEN 1024
 // Toggles FPS output (1 = print FPS over serial, 0 = disable output)
@@ -28,7 +25,7 @@
 
 //NeoPixelBus settings
 // Wifi and socket settings
-String nodeName = "triangle-2";
+String nodeName = "middle";
 const char* ssid     = "FakeGigabit";
 const char* password = "Schreib was rein.";
 unsigned int localPort = 7777;
@@ -38,16 +35,18 @@ uint8_t N = 0;
 uint32_t NC = 0;
 uint8_t offset = 0;
 uint32_t packetArraySize = 0;
+CRGB leds[NUM_LEDS];
+
 WiFiUDP port;
 // Network information
 // IP must match the IP in config.py
-//IPAddress ip(10, 40, 0, 188);
+IPAddress ip(10, 40, 0, 188);
 //IPAddress ip(192, 168, 62, 137);
 // Set gateway to your router's gateway
-//IPAddress gateway(10, 40, 0, 1);
-//IPAddress subnet(255, 255, 255, 0);
+IPAddress gateway(10, 40, 0, 1);
+IPAddress subnet(255, 255, 255, 0);
 //Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUM_LEDS, PIN, NEO_GRB + NEO_KHZ800);
-NeoPixelBus<NeoGrbFeature, NeoEsp8266Uart1800KbpsMethod> strip(NUM_LEDS, PIN);
+//NeoPixelBus<NeoGrbFeature, NeoEsp8266Uart1800KbpsMethod> strip(NUM_LEDS, PIN);
 
 void setup() {
     Serial.begin(115200);
@@ -67,10 +66,12 @@ void setup() {
     Serial.println(ssid);
     Serial.print("IP address: ");
     Serial.println(WiFi.localIP());
+
+    FastLED.addLeds<NEOPIXEL, PIN>(leds, NUM_LEDS);
     
     port.begin(localPort);
     
-    strip.Begin();
+    //strip.Begin();
 }
 
 #if PRINT_FPS
@@ -89,12 +90,13 @@ void loop() {
             offset = packetBuffer[i];
             N = packetBuffer[i+1];      
             NC = (uint32_t)N + (uint32_t)1 + (uint32_t)offset * (uint32_t)256;
+            leds[NC] = CRGB((uint8_t)packetBuffer[i+2],(uint8_t)packetBuffer[i+3], (uint8_t)packetBuffer[i+4]);
             //Serial.print(4);
-            strip.SetPixelColor(NC, RgbColor((uint8_t)packetBuffer[i+2],(uint8_t)packetBuffer[i+3], (uint8_t)packetBuffer[i+4]));
+            //strip.SetPixelColor(NC, RgbColor((uint8_t)packetBuffer[i+2],(uint8_t)packetBuffer[i+3], (uint8_t)packetBuffer[i+4]));
             //Serial.print(5);
         }
         //Serial.print("1");
-        strip.Show();
+        FastLED.show();
         //Serial.print("6 \n");
         #if PRINT_FPS
             fpsCounter++;

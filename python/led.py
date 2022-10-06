@@ -24,7 +24,7 @@ _gamma = np.load(config.GAMMA_TABLE_PATH)
 pixels = np.tile(1, (3, config.STRIP_LED_COUNTS[0]))
 """Pixel values for the LED strip"""
 lastEspError = None
-
+frameCounter = {}
 
 def _update_virtual(composing):
 
@@ -64,66 +64,79 @@ def _update_esp8266(composing):
             if config.SOFTWARE_GAMMA_CORRECTION
             else np.copy(pixelsComp)
         )
-        MAX_PIXELS_PER_PACKET = 270
+        MAX_PIXELS_PER_PACKET = 100
         # Pixel indices
         idx = range(pixelsComp.shape[1])
         # print("Sending: ", len(idx))
         # idx = [i for i in idx if not np.array_equal(p[:, i], _prev_pixels[:, i])]
         n_packets = len(idx) // MAX_PIXELS_PER_PACKET + 1
         # print(len(idx),len(idx[0]))
-        if config.UDP_IPS[compIndex] != "GROUP":
-            idx = np.array_split(idx, n_packets)
-            for packet_indices in idx:
-                m = []
-                for i in packet_indices:
-                    offset = i // 256
-                    newI = i % 256
-                    m.append(offset)
-                    m.append(newI)  # Index of pixel to change
-                    m.append(p[0][i])  # Pixel red value
-                    m.append(p[1][i])  # Pixel green value
-                    m.append(p[2][i])  # Pixel blue value
-                # print(len(m))
-                try:
-                    mx = bytearray(m)
-                    _sock.sendto(mx, (config.UDP_IPS[compIndex], config.UDP_PORT))
-                except Exception as e:
-                    if e != lastEspError:
-                        lastEspError = str(e)
-                        print(e)
-                        print("There is something with the ESP connection....")
-        # _prev_pixels = np.copy(p)
-        else:
-            for grp in config.UDP_GROUPS[compIndex]:
-                m = []
-                # print(idx)
-                idxPart = range(grp["from"] , grp["to"])
-                # print(idxPart)
-                for i in idxPart:
-                    newI = i
-                        # print(i)
-                    if "offset" in grp:
-                        newI = newI - grp["offset"]
-                    offset = newI // 256
-                    newI = newI % 256
-                   
-                    m.append(offset)
-                    m.append(newI)  # Index of pixel to change
-                    # print(offset,newI)
-                    m.append(p[0][i])  # Pixel red value
-                    m.append(p[1][i])  # Pixel green value
-                    m.append(p[2][i])  # Pixel blue value
-                # print(len(m))
-                try:
-                    # if grp["from"] == 270:
-                        # print(m)
-                    mx = bytearray(m)
-                    _sock.sendto(mx, (grp["IP"], config.UDP_PORT))
-                except Exception as e:
-                    if e != lastEspError:
-                        lastEspError = str(e)
-                        print(e)
-                        print("There is something with the ESP connection....")
+        skipFrame = False
+
+        if compIndex in config.UDP_FRAMEDIVIDER:
+            if compIndex not in frameCounter:
+                frameCounter[compIndex] = 0
+            else:
+                if frameCounter[compIndex] >= config.UDP_FRAMEDIVIDER[compIndex]:
+                    frameCounter[compIndex] = 0
+                else:
+                    frameCounter[compIndex] += 1
+                    skipFrame = True
+
+        if not skipFrame:
+            if config.UDP_IPS[compIndex] != "GROUP":
+                idx = np.array_split(idx, n_packets)
+                for packet_indices in idx:
+                    m = []
+                    for i in packet_indices:
+                        offset = i // 256
+                        newI = i % 256
+                        m.append(offset)
+                        m.append(newI)  # Index of pixel to change
+                        m.append(p[0][i])  # Pixel red value
+                        m.append(p[1][i])  # Pixel green value
+                        m.append(p[2][i])  # Pixel blue value
+                    # print(len(m))
+                    try:
+                        mx = bytearray(m)
+                        _sock.sendto(mx, (config.UDP_IPS[compIndex], config.UDP_PORT))
+                    except Exception as e:
+                        if e != lastEspError:
+                            lastEspError = str(e)
+                            print(e)
+                            print("There is something with the ESP connection....")
+            # _prev_pixels = np.copy(p)
+            else:
+                for grp in config.UDP_GROUPS[compIndex]:
+                    m = []
+                    # print(idx)
+                    idxPart = range(grp["from"] , grp["to"])
+                    # print(idxPart)
+                    for i in idxPart:
+                        newI = i
+                            # print(i)
+                        if "offset" in grp:
+                            newI = newI - grp["offset"]
+                        offset = newI // 256
+                        newI = newI % 256
+                    
+                        m.append(offset)
+                        m.append(newI)  # Index of pixel to change
+                        # print(offset,newI)
+                        m.append(p[0][i])  # Pixel red value
+                        m.append(p[1][i])  # Pixel green value
+                        m.append(p[2][i])  # Pixel blue value
+                    # print(len(m))
+                    try:
+                        # if grp["from"] == 270:
+                            # print(m)
+                        mx = bytearray(m)
+                        _sock.sendto(mx, (grp["IP"], config.UDP_PORT))
+                    except Exception as e:
+                        if e != lastEspError:
+                            lastEspError = str(e)
+                            print(e)
+                            print("There is something with the ESP connection....")
 
 
 def _updateClient(composing, queue2Parent):
