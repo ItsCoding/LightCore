@@ -28,7 +28,7 @@
 
 //NeoPixelBus settings
 // Wifi and socket settings
-String nodeName = "strip1";
+String nodeName = "strip2";
 const char* ssid     = "FakeGigabit";
 const char* password = "Schreib was rein.";
 unsigned int localPort = 7777;
@@ -43,10 +43,10 @@ WiFiUDP port;
 //IPAddress ip(10, 40, 0, 188);
 //IPAddress ip(192, 168, 62, 137);
 // Set gateway to your router's gateway
-IPAddress gateway(10, 40, 0, 1);
-IPAddress subnet(255, 255, 255, 0);
+//IPAddress gateway(10, 40, 0, 1);
+//IPAddress subnet(255, 255, 255, 0);
 //Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUM_LEDS, PIN, NEO_RGB + NEO_KHZ800);
-NeoPixelBus<NeoRgbFeature, NeoEsp8266Dma800KbpsMethod> strip(NUM_LEDS, PIN);
+NeoPixelBus<NeoRgbFeature, NeoEsp8266Uart1800KbpsMethod> strip(NUM_LEDS, PIN);
 
 void setup() {
     Serial.begin(115200);

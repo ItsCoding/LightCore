@@ -22,7 +22,7 @@
 // Set to the number of LEDs in your LED strip
 #define NUM_LEDS 270
 // Maximum number of packets to hold in the buffer. Don't change this.
-#define BUFFER_LEN 1024
+#define BUFFER_LEN 1350
 // Toggles FPS output (1 = print FPS over serial, 0 = disable output)
 #define PRINT_FPS 0
 
@@ -37,7 +37,6 @@ char packetBuffer[BUFFER_LEN];
 uint8_t N = 0;
 uint32_t NC = 0;
 uint8_t offset = 0;
-uint32_t packetArraySize = 0;
 WiFiUDP port;
 // Network information
 // IP must match the IP in config.py
@@ -82,20 +81,16 @@ void loop() {
     int packetSize = port.parsePacket();
     if (packetSize) {
         int len = port.read(packetBuffer, BUFFER_LEN);
-        packetArraySize = sizeof(packetBuffer);
+        //Serial.println(len);
         for(int i = 0; i < len; i+=5) {
             packetBuffer[len] = 0;
-            //Serial.print(3);
             offset = packetBuffer[i];
             N = packetBuffer[i+1];      
             NC = (uint32_t)N + (uint32_t)1 + (uint32_t)offset * (uint32_t)256;
-            //Serial.print(4);
             strip.SetPixelColor(NC, RgbColor((uint8_t)packetBuffer[i+2],(uint8_t)packetBuffer[i+3], (uint8_t)packetBuffer[i+4]));
-            //Serial.print(5);
+
         }
-        //Serial.print("1");
         strip.Show();
-        //Serial.print("6 \n");
         #if PRINT_FPS
             fpsCounter++;
             Serial.print("/");//Monitors connection(shows jumps/jitters in packets)

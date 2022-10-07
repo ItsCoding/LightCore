@@ -201,7 +201,8 @@ class Visualization:
         if vol < config.MIN_VOLUME_THRESHOLD:
             if self.noAudioCount > 50:
                 self.noAudioCount = 0
-                print('No audio input. Volume below threshold. Volume:', vol, 'Count:', self.noAudioCount)
+                if config.DEBUG_LOG:
+                    print('No audio input. Volume below threshold. Volume:', vol, 'Count:', self.noAudioCount)
             self.noAudioCount += 1
             # led.update()
         else:
@@ -251,7 +252,8 @@ class Visualization:
             fps = self.frames_per_second()
             if time.time() - 1 > self.prev_fps_update:
                 self.prev_fps_update = time.time()
-                print('FPS {:.0f} / {:.0f}'.format(fps, config.FPS))
+                if config.DEBUG_LOG:
+                    print('FPS {:.0f} / {:.0f}'.format(fps, config.FPS))
 
     # def checkIfAllowed(self,rnd1,rnd2):
     #     if(rnd1 == visualize_rotatingRainbow and rnd2 == visualize_rotatingRainbow):

@@ -103,40 +103,50 @@ def _update_esp8266(composing):
                     except Exception as e:
                         if e != lastEspError:
                             lastEspError = str(e)
-                            print(e)
-                            print("There is something with the ESP connection....")
+                            if config.DEBUG_LOG:
+                                print(e)
+                                print("There is something with the ESP connection....")
             # _prev_pixels = np.copy(p)
             else:
                 for grp in config.UDP_GROUPS[compIndex]:
                     m = []
                     # print(idx)
-                    idxPart = range(grp["from"] , grp["to"])
+                    idxPart = []
+                    if "invert" in grp:
+                        idxPart = range(grp["to"], grp["from"])
+                    else:
+                        idxPart = range(grp["from"], grp["to"])
+                    n_packets = len(idx) // MAX_PIXELS_PER_PACKET + 1
+                    idxPart = np.array_split(idxPart, n_packets)
                     # print(idxPart)
-                    for i in idxPart:
-                        newI = i
-                            # print(i)
-                        if "offset" in grp:
-                            newI = newI - grp["offset"]
-                        offset = newI // 256
-                        newI = newI % 256
-                    
-                        m.append(offset)
-                        m.append(newI)  # Index of pixel to change
-                        # print(offset,newI)
-                        m.append(p[0][i])  # Pixel red value
-                        m.append(p[1][i])  # Pixel green value
-                        m.append(p[2][i])  # Pixel blue value
-                    # print(len(m))
-                    try:
-                        # if grp["from"] == 270:
-                            # print(m)
-                        mx = bytearray(m)
-                        _sock.sendto(mx, (grp["IP"], config.UDP_PORT))
-                    except Exception as e:
-                        if e != lastEspError:
-                            lastEspError = str(e)
-                            print(e)
-                            print("There is something with the ESP connection....")
+                    for packet_indices in idxPart:
+                        for i in packet_indices:
+                            # i = packet_indices[i]
+                            newI = i
+                                # print(i)
+                            if "offset" in grp:
+                                newI = newI - grp["offset"]
+                            offset = newI // 256
+                            newI = newI % 256
+
+                            m.append(offset)
+                            m.append(newI)  # Index of pixel to change
+                            # print(offset,newI)
+                            m.append(p[0][i])  # Pixel red value
+                            m.append(p[1][i])  # Pixel green value
+                            m.append(p[2][i])  # Pixel blue value
+                        # print(len(m))
+                        try:
+                            # if grp["from"] == 270:
+                                # print(m)
+                            mx = bytearray(m)
+                            _sock.sendto(mx, (grp["IP"], config.UDP_PORT))
+                        except Exception as e:
+                            if e != lastEspError:
+                                lastEspError = str(e)
+                                if config.DEBUG_LOG:
+                                    print(e)
+                                    print("[GROUP] There is something with the ESP connection....")
 
 
 def _updateClient(composing, queue2Parent):
