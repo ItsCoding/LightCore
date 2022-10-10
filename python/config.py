@@ -1,11 +1,12 @@
 """Settings for audio reactive LED strip"""
 from __future__ import print_function
 from __future__ import division
+from operator import invert
 import os
 
 
 # DEVICE = 'esp8266'
-DEVICE = "espv"
+DEVICE = "esp"
 """Device used to control LED strip. Must be 'esp', 'espv' or 'virtual'
 
 'esp8266' means that you are using an ESP8266 module to control the LED strip
@@ -15,27 +16,28 @@ and commands will be sent to the ESP8266 over WiFi.
 audio input and control the LED strip directly.
 
 'blinkstick' means that a BlinkstickPro is connected to this PC which will be used
-to control the leds connected to it.
+to control the leds connected to it.1
 """
 DEBUG_LOG = True
 
 if DEVICE == "esp" or DEVICE == "espv":
     UDP_IPS = {
-        0: "10.40.0.142",
+        0: "10.40.0.11",
         # 0: "127.0.0.1", 
         # 1: "127.0.0.1",
-        2: "10.40.0.63",
+        2: "127.0.0.1",
         # 2: "192.168.62.107"
         # 2: "10.40.0.63",
-        3: "10.40.0.182",
+        # 3: "10.40.0.182",
+        3: "127.0.0.1",
         # 1: "192.168.62.11",
         1: "GROUP",
         # 3: "192.168.62.101",
     }  #'192.168.62.3' #'10.40.0.186'
     UDP_GROUPS = {
         1: [
-            {"from": 0, "to": 270, "IP": "10.40.0.69"},
-            {"from": 270, "to": 540, "IP": "10.40.0.225","offset": 270, "invert": True},
+            {"from": 0, "to": 270, "IP": "10.40.0.12"},
+            {"from": 270, "to": 540, "IP": "10.40.0.13","offset": 270,"invert": True},
         ]
     }
     UDP_FRAMEDIVIDER = {

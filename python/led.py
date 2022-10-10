@@ -26,6 +26,7 @@ pixels = np.tile(1, (3, config.STRIP_LED_COUNTS[0]))
 lastEspError = None
 frameCounter = {}
 
+
 def _update_virtual(composing):
 
     global pixels, _prev_pixels, _vsock
@@ -45,7 +46,7 @@ def _update_virtual(composing):
     # Optional gamma correction
     # _prev_pixels = np.copy(sumPixels)
     # print(p)
-    # print("===========================")
+    # ("===========================")
     _vsock.send(json.dumps(frameDict).encode())
     # strip.show()
 
@@ -94,8 +95,8 @@ def _update_esp8266(composing):
                         m.append(offset)
                         m.append(newI)  # Index of pixel to change
                         m.append(p[0][i])  # Pixel red value
-                        m.append(p[1][i])  # Pixel green value
-                        m.append(p[2][i])  # Pixel blue value
+                        m.append(int(p[1][i] ))   # Pixel green value
+                        m.append(int(p[2][i] ))  # Pixel blue value
                     # print(len(m))
                     try:
                         mx = bytearray(m)
@@ -111,34 +112,32 @@ def _update_esp8266(composing):
                 for grp in config.UDP_GROUPS[compIndex]:
                     m = []
                     # print(idx)
-                    idxPart = []
-                    if "invert" in grp:
-                        idxPart = range(grp["to"], grp["from"])
-                    else:
-                        idxPart = range(grp["from"], grp["to"])
+                    idxPart = range(grp["from"], grp["to"])
+                    # if "invert" in grp:
+                    # idxPart = range(grp["to"], grp["from"],1)
+                    # print("Reversed:")
+                    # print(idxPart)
+
                     n_packets = len(idx) // MAX_PIXELS_PER_PACKET + 1
                     idxPart = np.array_split(idxPart, n_packets)
                     # print(idxPart)
                     for packet_indices in idxPart:
                         for i in packet_indices:
                             # i = packet_indices[i]
-                            newI = i
-                                # print(i)
-                            if "offset" in grp:
-                                newI = newI - grp["offset"]
+                            newI = i - grp["from"]
+                            if "invert" in grp:
+                                newI = grp["to"] - i
+                            # print(newI)
                             offset = newI // 256
                             newI = newI % 256
-
                             m.append(offset)
                             m.append(newI)  # Index of pixel to change
                             # print(offset,newI)
-                            m.append(p[0][i])  # Pixel red value
-                            m.append(p[1][i])  # Pixel green value
-                            m.append(p[2][i])  # Pixel blue value
+                            m.append(int(p[0][i]))  # Pixel red value
+                            m.append(int(p[1][i]))  # Pixel green value
+                            m.append(int(p[2][i]))  # Pixel blue value
                         # print(len(m))
                         try:
-                            # if grp["from"] == 270:
-                                # print(m)
                             mx = bytearray(m)
                             _sock.sendto(mx, (grp["IP"], config.UDP_PORT))
                         except Exception as e:
@@ -146,7 +145,9 @@ def _update_esp8266(composing):
                                 lastEspError = str(e)
                                 if config.DEBUG_LOG:
                                     print(e)
-                                    print("[GROUP] There is something with the ESP connection....")
+                                    print(
+                                        "[GROUP] There is something with the ESP connection...."
+                                    )
 
 
 def _updateClient(composing, queue2Parent):
