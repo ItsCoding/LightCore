@@ -41,7 +41,7 @@ export const BlacklistTransferlist = ({ blacklisted, availableEffekts, onChange 
     React.useEffect(() => {
         const convleft: Effekt[] = [];
         const convright: Effekt[] = [];
-        console.log("Init BlacklistTransferlist", blacklisted, availableEffekts);
+        // console.log("Init BlacklistTransferlist", blacklisted, availableEffekts);
         availableEffekts.forEach((effekt) => {
             if (blacklisted.includes(effekt.effektSystemName)) {
                 convright.push(effekt);

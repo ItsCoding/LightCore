@@ -1,25 +1,54 @@
-import { Button, Card, CardContent, CircularProgress, Divider, Grid, Paper, Slider, Typography } from "@mui/material";
+import { Button, Card, CardContent, CircularProgress, Divider, FormControlLabel, FormGroup, Grid, Paper, Slider, Switch, Typography } from "@mui/material";
 import React, { useEffect } from "react";
 import { strips } from "../../../system/StripConfig";
 import { WebSocketClient } from "../../../system/WebsocketClient";
 import { LightCoreConfig } from "../../../types/LightCoreConfig";
 import { ReturnType } from "../../../types/TopicReturnType";
 
+const marksBeat = [
+    {
+        value: 4,
+        label: '4',
+    }
+];
+
+const marksBars = [
+    {
+        value: 2,
+        label: '2',
+    },
+    {
+        value: 4,
+        label: '4',
+    },
+    {
+        value: 8,
+        label: '8',
+    },
+    {
+        value: 16,
+        label: '16',
+    }
+];
+
 export const RandomizerSettings = () => {
     const wsClient = WebSocketClient.getInstance();
     const [randomizerEnabled, setRandomizerEnabled] = React.useState<boolean>(false);
     const [randomizerSpecific, setRandomizerSpecific] = React.useState<{ [key: number]: boolean }>({});
-    const [waitTime, setWaitTime] = React.useState<number[]>([]);
-    const [dropWaitTime, setDropWaitTime] = React.useState<number[]>([]);
+    const [beatDetection, setBeatDetection] = React.useState(true);
+    const [randomizerBar, setRandomizerBar] = React.useState(1);
+    const [beat, setBeat] = React.useState(1);
+
     const [loading, setLoading] = React.useState<boolean>(true);
     useEffect(() => {
         const handlerID = wsClient.addEventHandler(ReturnType.SYSTEM.STATUS, topic => {
             const data = topic.message;
-            const config: LightCoreConfig = data.config;
+            const config: LightCoreConfig = LightCoreConfig.fromJSON(data.config);
             setRandomizerEnabled(data.mainRandomizerEnabled);
             setRandomizerSpecific(data.ENDABLED_RND_PARTS);
-            setWaitTime([data.config.randomMinWait, data.config.randomMaxWait]);
-            setDropWaitTime([data.config.dropRandomMinWait, data.config.dropRandomMaxWait]);
+            setRandomizerBar(config.randomizerBar);
+            setBeat(config.musicBeatsBar);
+            setBeatDetection(config.beatDetection);
             console.log("Got Data", data);
             setLoading(false);
         })
@@ -41,35 +70,22 @@ export const RandomizerSettings = () => {
         setRandomizerSpecific(newSpecific);
     }
 
-    const setRandomWait = (time: number[] | number) => {
-        if (!Array.isArray(time)) {
-            return;
-        }
-        if (time[0] === time[1]) {
-            time[1] += 1;
-        }
-        wsClient.changeConfigProperty("randomMinWait", time[0]);
-        wsClient.changeConfigProperty("randomMaxWait", time[1]);
-        setWaitTime(time);
-    }
-
-    const setDropRandomWait = (time: number[] | number) => {
-        if (!Array.isArray(time)) {
-            return;
-        }
-        if (time[0] === time[1]) {
-            time[1] += 1;
-        }
-        wsClient.changeConfigProperty("dropRandomMinWait", time[0]);
-        wsClient.changeConfigProperty("dropRandomMaxWait", time[1]);
-        setDropWaitTime(time);
-    }
 
     const isSpecificEnabled = (index: number) => {
         if (!randomizerSpecific || randomizerSpecific[index] === undefined) {
             return true;
         }
         return randomizerSpecific[index];
+    }
+
+    const setMusicBeatsSetting = (beats: number) => {
+        wsClient.changeConfigProperty("musicBeatsBar", beats);
+        setBeat(beats);
+    }
+
+    const setRandomizerBarSetting = (bar: number) => {
+        wsClient.changeConfigProperty("randomizerBar", bar);
+        setRandomizerBar(bar)
     }
 
     const CardBody = () => (<>
@@ -115,24 +131,47 @@ export const RandomizerSettings = () => {
             <Typography gutterBottom>Randomizer wait time</Typography>
             <Slider
                 min={1}
-                max={120}
-                getAriaLabel={() => 'Randomizer wait time'}
-                defaultValue={waitTime}
-                onChangeCommitted={(e, value) => setRandomWait(value)}
+                max={32}
+                marks={marksBars}
+                getAriaLabel={() => 'bars'}
+                defaultValue={randomizerBar}
+                onChange={(e, value) => setRandomizerBarSetting(value as number)}
                 valueLabelDisplay="auto"
-                getAriaValueText={(value) => `${value}s`}
+                getAriaValueText={(value) => `${value} bars`}
             />
-            <Typography gutterBottom>Drop Randomizer wait time</Typography>
+            <Typography gutterBottom>Beats/Bar</Typography>
             <Slider
                 min={1}
-                max={120}
-                getAriaLabel={() => 'Drop Randomizer wait time'}
-                defaultValue={dropWaitTime}
-                onChangeCommitted={(e, value) => setDropRandomWait(value)}
+                max={8}
+                marks={marksBeat}
+                getAriaLabel={() => 'beats'}
+                defaultValue={beat}
+                onChange={(e, value) => setMusicBeatsSetting(value as number)}
                 valueLabelDisplay="auto"
-                getAriaValueText={(value) => `${value}s`}
+                getAriaValueText={(value) => `${value} beats`}
             />
         </div>
+        <Divider sx={{ borderColor: "rgba(255, 255, 255, 0.12)" }} />
+        <Grid container justifyItems={"center"}>
+            <Grid item xs={12}>
+                <Button fullWidth variant="contained" color="primary" style={{
+                    marginTop: "10px",
+                }} onClick={() => {
+                    wsClient.send("beat.reset");
+                }}>Reset Beat</Button>
+            </Grid>
+            <Grid item xs={4}>
+                <FormGroup style={{
+                    marginTop: "10px",
+                    marginLeft: "20px",
+                }}>
+                    <FormControlLabel control={<Switch checked={beatDetection} onChange={(e, checked) => {
+                        wsClient.changeConfigProperty("beatDetection", checked);
+                        setBeatDetection(checked)
+                    }} />} label="Beatdetection" />
+                </FormGroup>
+            </Grid>
+        </Grid>
     </>)
 
     const Loader = () => (<Grid container columnSpacing={2}>

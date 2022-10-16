@@ -185,17 +185,22 @@ class Visualization:
         self.hasBeatChanged = False
         self.hasBeatChangedManual = False
         queueHandler.handleQueue(self.queue2Thread,self.queue2Parent,self)
-        while not self.bpmQueue.empty() and config.cfg["beatDetection"]:
-            message = self.bpmQueue.get()
-            self.beat = message["beat"]
-            self.avg_Bpm = message["bpm"]
-            self.hasBeatChanged = True
-            self.randomizerBeatCount += 1
-            if(config.DISPLAY_BPM):
-                if(self.beat):
-                    print("- BPM: " + str(self.avg_Bpm) + " => " + str(self.randomizerBeatCount % config.cfg["musicBeatsBar"]))
-                else:
-                    print("| BPM: " + str(self.avg_Bpm)+ " => " + str(self.randomizerBeatCount % config.cfg["musicBeatsBar"]))
+        if config.cfg["beatDetection"]:
+            while not self.bpmQueue.empty():
+                message = self.bpmQueue.get()
+                self.beat = message["beat"]
+                self.avg_Bpm = message["bpm"]
+                self.hasBeatChanged = True
+                self.randomizerBeatCount += 1
+                if(config.DISPLAY_BPM):
+                    if(self.beat):
+                        print("- BPM: " + str(self.avg_Bpm) + " => " + str(self.randomizerBeatCount % config.cfg["musicBeatsBar"]))
+                    else:
+                        print("| BPM: " + str(self.avg_Bpm)+ " => " + str(self.randomizerBeatCount % config.cfg["musicBeatsBar"]))
+        else:
+            #throw all packets away so they dont stack up
+             while not self.bpmQueue.empty():
+                message = self.bpmQueue.get()
         self.hasBeatChanged = (self.hasBeatChanged or self.hasBeatChangedManual)
         # Normalize samples between 0 and 1
         y = audio_samples / 2.0**15

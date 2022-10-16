@@ -1,4 +1,4 @@
-import { arrayMapper, expectNumber, expectString, mapObjectMapper, objectMapper } from "@daniel-faber/json-ts";
+import { arrayMapper, expectBoolean, expectNumber, expectString, mapObjectMapper, objectMapper } from "@daniel-faber/json-ts";
 
 export class LightCoreConfig {
     constructor(
@@ -20,6 +20,7 @@ export class LightCoreConfig {
         public colorDict: Array<number[]>,
         public musicBeatsBar: number,
         public randomizerBar: number,
+        public beatDetection: boolean,
     ) { }
 
     public static readonly fromJSON = objectMapper(accessor => new LightCoreConfig(
@@ -47,5 +48,6 @@ export class LightCoreConfig {
         accessor.get("colorDict", arrayMapper(arrayMapper(expectNumber))),
         accessor.get("musicBeatsBar", expectNumber),
         accessor.get("randomizerBar", expectNumber),
+        accessor.get("beatDetection", expectBoolean),
     ))
 }

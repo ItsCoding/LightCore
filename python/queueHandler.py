@@ -103,4 +103,6 @@ def handleQueue(queue2Thread,queue2Parent,vis):
                 reportEffekts(vis,queue2Parent)
             elif topicType == "beat.tap":
                 vis.hasBeatChangedManual = True
+            elif topicType == "beat.reset":
+                vis.randomizerBeatCount = 1
 

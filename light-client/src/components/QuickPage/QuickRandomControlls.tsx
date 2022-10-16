@@ -1,4 +1,4 @@
-import { Button, Card, CardContent, CardHeader, Divider, Slider, Typography } from "@mui/material"
+import { Button, Card, CardContent, CardHeader, Divider, FormControlLabel, FormGroup, Slider, Switch, Typography } from "@mui/material"
 import Grid from '@mui/material/Grid';
 import { Box } from "@mui/system";
 import React, { useEffect } from "react";
@@ -47,7 +47,7 @@ const marksBars = [
 
 export const QuickRandomControlls = ({ randomEnabled, randomSpecific, lightConfig, setRandomEnabled, setRandomSpecific, setLCConfig }: QuickRandomControllsProps) => {
     const wsClient = WebSocketClient.getInstance();
-
+    const [beatDetection, setBeatDetection] = React.useState(lightConfig.beatDetection);
 
     useEffect(() => {
         if (Object.keys(randomSpecific).length < 1) {
@@ -145,7 +145,7 @@ export const QuickRandomControlls = ({ randomEnabled, randomSpecific, lightConfi
                     ))}
 
                 </Grid>
-                <Divider style={{ borderColor: "rgba(255, 255, 255, 0.12)",marginTop:"20px" }} />
+                <Divider style={{ borderColor: "rgba(255, 255, 255, 0.12)", marginTop: "20px" }} />
                 <Grid container rowSpacing={2} columnSpacing={2} style={{
                     minHeight: "100px",
                     marginTop: "10px",
@@ -211,6 +211,29 @@ export const QuickRandomControlls = ({ randomEnabled, randomSpecific, lightConfi
                         getAriaValueText={(value) => `${value}s`}
                     /> */}
                 </div>
+                <Grid container>
+                    <Grid item xs={8}>
+                        <Button fullWidth variant="contained" color="primary" style={{
+                            marginTop: "10px",
+                        }} onClick={() => {
+                            wsClient.send("beat.reset");
+                        }}>Reset Beat</Button>
+                    </Grid>
+                    <Grid item xs={4}>
+                        <FormGroup style={{
+                            marginTop: "10px",
+                            marginLeft: "20px",
+                        }}>
+                            <FormControlLabel control={<Switch checked={beatDetection} onChange={(e,checked) => {
+                                wsClient.changeConfigProperty("beatDetection", checked);
+                                lightConfig.beatDetection = checked;
+                                setBeatDetection(checked)
+                                setLCConfig(lightConfig);
+                            }} />} label="Beatdetection" />
+                        </FormGroup>
+                    </Grid>
+                </Grid>
+
                 {/* <BarView /> */}
             </CardContent>
 
