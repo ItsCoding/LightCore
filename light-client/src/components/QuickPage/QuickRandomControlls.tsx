@@ -5,6 +5,7 @@ import React, { useEffect } from "react";
 import { strips } from "../../system/StripConfig";
 import { WebSocketClient } from "../../system/WebsocketClient";
 import { LightCoreConfig } from "../../types/LightCoreConfig";
+import { BarView } from "../General/BarView";
 import { TouchButton } from "../General/TouchButton";
 
 
@@ -17,6 +18,32 @@ type QuickRandomControllsProps = {
     setRandomSpecific: (specific: { [key: number]: boolean }) => void,
     setLCConfig: (config: LightCoreConfig) => void,
 }
+
+const marksBeat = [
+    {
+        value: 4,
+        label: '4',
+    }
+];
+
+const marksBars = [
+    {
+        value: 2,
+        label: '2',
+    },
+    {
+        value: 4,
+        label: '4',
+    },
+    {
+        value: 8,
+        label: '8',
+    },
+    {
+        value: 16,
+        label: '16',
+    }
+];
 
 export const QuickRandomControlls = ({ randomEnabled, randomSpecific, lightConfig, setRandomEnabled, setRandomSpecific, setLCConfig }: QuickRandomControllsProps) => {
     const wsClient = WebSocketClient.getInstance();
@@ -39,31 +66,43 @@ export const QuickRandomControlls = ({ randomEnabled, randomSpecific, lightConfi
         setRandomSpecific(newSpecific);
     }
 
-    const setRandomWait = (time: number[] | number) => {
-        if (!Array.isArray(time)) {
-            return;
-        }
-        if (time[0] === time[1]) {
-            time[1] += 1;
-        }
-        lightConfig.randomMinWait = time[0];
-        lightConfig.randomMaxWait = time[1];
-        wsClient.changeConfigProperty("randomMinWait", time[0]);
-        wsClient.changeConfigProperty("randomMaxWait", time[1]);
+    // const setRandomWait = (time: number[] | number) => {
+    //     if (!Array.isArray(time)) {
+    //         return;
+    //     }
+    //     if (time[0] === time[1]) {
+    //         time[1] += 1;
+    //     }
+    //     lightConfig.randomMinWait = time[0];
+    //     lightConfig.randomMaxWait = time[1];
+    //     wsClient.changeConfigProperty("randomMinWait", time[0]);
+    //     wsClient.changeConfigProperty("randomMaxWait", time[1]);
+    //     setLCConfig(lightConfig);
+    // }
+
+    // const setDropRandomWait = (time: number[] | number) => {
+    //     if (!Array.isArray(time)) {
+    //         return;
+    //     }
+    //     if (time[0] === time[1]) {
+    //         time[1] += 1;
+    //     }
+    //     lightConfig.dropRandomMinWait = time[0];
+    //     lightConfig.dropRandomMaxWait = time[1];
+    //     wsClient.changeConfigProperty("dropRandomMinWait", time[0]);
+    //     wsClient.changeConfigProperty("dropRandomMaxWait", time[1]);
+    //     setLCConfig(lightConfig);
+    // }
+
+    const setMusicBeats = (beats: number) => {
+        lightConfig.musicBeatsBar = beats;
+        wsClient.changeConfigProperty("musicBeatsBar", beats);
         setLCConfig(lightConfig);
     }
 
-    const setDropRandomWait = (time: number[] | number) => {
-        if (!Array.isArray(time)) {
-            return;
-        }
-        if (time[0] === time[1]) {
-            time[1] += 1;
-        }
-        lightConfig.dropRandomMinWait = time[0];
-        lightConfig.dropRandomMaxWait = time[1];
-        wsClient.changeConfigProperty("dropRandomMinWait", time[0]);
-        wsClient.changeConfigProperty("dropRandomMaxWait", time[1]);
+    const randomizerBar = (bar: number) => {
+        lightConfig.randomizerBar = bar;
+        wsClient.changeConfigProperty("randomizerBar", bar);
         setLCConfig(lightConfig);
     }
 
@@ -130,8 +169,29 @@ export const QuickRandomControlls = ({ randomEnabled, randomSpecific, lightConfi
                 <div style={{
                     paddingTop: "20px",
                 }}>
-                    <Typography gutterBottom>Randomizer wait time</Typography>
+                    <Typography gutterBottom>Randomizer Bars</Typography>
                     <Slider
+                        min={1}
+                        max={32}
+                        marks={marksBars}
+                        getAriaLabel={() => 'bars'}
+                        defaultValue={lightConfig.randomizerBar}
+                        onChange={(e, value) => randomizerBar(value as number)}
+                        valueLabelDisplay="auto"
+                        getAriaValueText={(value) => `${value} bars`}
+                    />
+                    <Typography gutterBottom>Beats/Bar</Typography>
+                    <Slider
+                        min={1}
+                        max={8}
+                        marks={marksBeat}
+                        getAriaLabel={() => 'beats'}
+                        defaultValue={lightConfig.musicBeatsBar}
+                        onChange={(e, value) => setMusicBeats(value as number)}
+                        valueLabelDisplay="auto"
+                        getAriaValueText={(value) => `${value} beats`}
+                    />
+                    {/* <Slider
                         min={1}
                         max={120}
                         getAriaLabel={() => 'Randomizer wait time'}
@@ -149,9 +209,9 @@ export const QuickRandomControlls = ({ randomEnabled, randomSpecific, lightConfi
                         onChange={(e, value) => setDropRandomWait(value)}
                         valueLabelDisplay="auto"
                         getAriaValueText={(value) => `${value}s`}
-                    />
+                    /> */}
                 </div>
-
+                {/* <BarView /> */}
             </CardContent>
 
         </Card>)

@@ -6,7 +6,7 @@ import os
 
 
 # DEVICE = 'esp8266'
-DEVICE = "espv"
+DEVICE = "virtual"
 """Device used to control LED strip. Must be 'esp', 'espv' or 'virtual'
 
 'esp8266' means that you are using an ESP8266 module to control the LED strip
@@ -24,26 +24,24 @@ if DEVICE == "esp" or DEVICE == "espv":
     UDP_IPS = {
        
         # 0: "127.0.0.1", 
-        1: "127.0.0.1",
+        # 1: "127.0.0.1",
         2: "127.0.0.1",
         3: "127.0.0.1",
+        #--------------------
         0: "10.40.0.142",
-        # 2: "192.168.62.107"
+        1: "GROUP",
         # 2: "10.40.0.63",
-        # 3: "10.40.0.182",
-        # 1: "192.168.62.11",
-        # 1: "GROUP",
         # 3: "192.168.62.101",
     }  #'192.168.62.3' #'10.40.0.186'
     UDP_GROUPS = {
         1: [
-            {"from": 0, "to": 270, "IP": "10.40.0.12"},
-            {"from": 270, "to": 540, "IP": "10.40.0.13","offset": 270,"invert": True},
+            {"from": 0, "to": 270, "IP": "10.40.0.69"},
+            {"from": 270, "to": 540, "IP": "10.40.0.225","offset": 270,"invert": True},
         ]
     }
     UDP_FRAMEDIVIDER = {
         0: 2,
-        1: 4,
+        1: 2,
     }
     """IP address of the ESP8266. Must match IP in ws2812_controller.ino"""
     UDP_PORT = 7777

@@ -79,7 +79,11 @@ function App() {
     wsClient.addEventHandler(ReturnType.SYSTEM.CONFIG, topic => {
       const conf = LightCoreConfig.fromJSON(topic.message);
       console.log("System Config: ", conf);
-      setLcConfig(conf);
+      setLcConfig((prev) => {
+        if(prev === undefined){
+          return conf;
+        }
+      });
     })
 
     wsClient.addEventHandler(ReturnType.WSAPI.GET_KEY_VALUE, topic => {

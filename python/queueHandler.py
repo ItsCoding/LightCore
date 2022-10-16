@@ -3,7 +3,7 @@ import json
 from tracemalloc import start
 import composer
 import config
-
+import randomizer
 
 def setSpecificEffekt(vis,effektName,stripIndex,frequencyRange,instanceData,instanceUUID,zIndex):
     print("Adding Effekt: ", effektName, " to strip: ", stripIndex, instanceUUID)
@@ -48,9 +48,9 @@ def handleQueue(queue2Thread,queue2Parent,vis):
             data = msg["message"]
             # print("Got QueueTask: ", msg)
             if topicType == "light.random.next":
-                vis.makeRandomComposition("all")
+                randomizer.makeRandomComposition("all")
             elif topicType == "light.random.next.specific":
-                vis.makeRandomComposition(data["stripIndex"])
+                randomizer.makeRandomComposition(data["stripIndex"])
             elif topicType == "light.random.setEnabled":
                 vis.randomEnabled = data["enabled"]
                 print("Changed Enabled to: ", vis.randomEnabled)
