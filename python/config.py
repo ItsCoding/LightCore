@@ -42,7 +42,7 @@ if DEVICE == "esp" or DEVICE == "espv":
         ]
     }
     UDP_FRAMEDIVIDER = {
-        0: 1,
+        0: 2,
         1: 4,
     }
     """IP address of the ESP8266. Must match IP in ws2812_controller.ino"""
@@ -54,7 +54,7 @@ if DEVICE == "esp" or DEVICE == "espv":
 if DEVICE == "virtual" or DEVICE == "espv":
     SOFTWARE_GAMMA_CORRECTION = True
 
-BRIGHTNESS = 100
+BRIGHTNESS = 85
 USE_GUI = False
 """Whether or not to display a PyQtGraph GUI plot of visualization"""
 
@@ -71,7 +71,7 @@ GAMMA_TABLE_PATH = os.path.join(os.path.dirname(__file__), "gamma_table.npy")
 MIC_RATE = 44100
 """Sampling frequency of the microphone in Hz"""
 
-FPS = 90
+FPS = 120
 """Desired refresh rate of the visualization (frames per second)
 
 FPS indicates the desired refresh rate, or frames-per-second, of the audio

@@ -19,7 +19,7 @@ _gamma = np.load(config.GAMMA_TABLE_PATH)
 """Gamma lookup table used for nonlinear brightness correction"""
 _prev_pixels = {}
 
-for i in range(0,len(config.STRIP_LED_COUNTS)):
+for i in range(0, len(config.STRIP_LED_COUNTS)):
     _prev_pixels[i] = np.zeros((3, config.STRIP_LED_COUNTS[i]))
 
 
@@ -30,6 +30,16 @@ pixels = np.tile(1, (3, config.STRIP_LED_COUNTS[0]))
 """Pixel values for the LED strip"""
 lastEspError = None
 frameCounter = {}
+
+
+def differentColor(pixels, prev_pixels, i):
+    if pixels[0][i] != prev_pixels[0][i]:
+        return True
+    if pixels[1][i] != prev_pixels[1][i]:
+        return True
+    if pixels[2][i] != prev_pixels[2][i]:
+        return True
+    return False
 
 
 def _update_virtual(composing):
@@ -73,12 +83,14 @@ def _update_esp8266(composing):
         MAX_PIXELS_PER_PACKET = 300
 
         ledStripType = config.COLOR_CALIBRATION_ASSIGNMENTS[stripIndex]
-        ledCalibration = config.cfg["colorCalibration"][ledStripType];
+        ledCalibration = config.cfg["colorCalibration"][ledStripType]
         # print(ledCalibration)
         # Pixel indices
-        idx = range(pixelsComp.shape[1])
+        idx = range(0,config.STRIP_LED_COUNTS[stripIndex])
         # print("Sending: ", len(idx))
-        # idx = [i for i in idx if not np.array_equal(p[:, i], _prev_pixels[:, i])]
+        # idx = [i for i in idx if differentColor(p, _prev_pixels[stripIndex], i)]
+        # if stripIndex == 0:
+            # print(len(idx))
         n_packets = len(idx) // MAX_PIXELS_PER_PACKET + 1
         # print(len(idx),len(idx[0]))
         skipFrame = False
@@ -104,7 +116,7 @@ def _update_esp8266(composing):
                         m.append(offset)
                         m.append(newI)  # Index of pixel to change
                         m.append(int(p[0][i] * ledCalibration[0]))  # Pixel red value
-                        m.append(int(p[1][i] * ledCalibration[1]))   # Pixel green value
+                        m.append(int(p[1][i] * ledCalibration[1]))  # Pixel green value
                         m.append(int(p[2][i] * ledCalibration[2]))  # Pixel blue value
                     # print(len(m))
                     try:
@@ -143,9 +155,15 @@ def _update_esp8266(composing):
                             m.append(offset)
                             m.append(newI)  # Index of pixel to change
                             # print(offset,newI)
-                            m.append(int(p[0][i] * ledCalibration[0]))  # Pixel red value
-                            m.append(int(p[1][i] * ledCalibration[1]))   # Pixel green value
-                            m.append(int(p[2][i] * ledCalibration[2]))  # Pixel blue value
+                            m.append(
+                                int(p[0][i] * ledCalibration[0])
+                            )  # Pixel red value
+                            m.append(
+                                int(p[1][i] * ledCalibration[1])
+                            )  # Pixel green value
+                            m.append(
+                                int(p[2][i] * ledCalibration[2])
+                            )  # Pixel blue value
                         # print(len(m))
                         try:
                             mx = bytearray(m)

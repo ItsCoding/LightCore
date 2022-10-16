@@ -324,7 +324,7 @@ class Visualization:
         if(dropDetected and hasBeatChanged):
             print("DROOOOOOOP!!!")
         if(timeToChange or dropDetected and hasBeatChanged):
-            print("Change Effekt \n")
+            # print("Change Effekt \n")
             #print(output)
             self._lastTime = time.time()
             self._randomWait = 0
@@ -332,7 +332,7 @@ class Visualization:
                 self._randomWait = random.randrange(config.cfg["dropRandomMinWait"], config.cfg["dropRandomMaxWait"], 1)
             else:
                 self._randomWait = random.randrange(config.cfg["randomMinWait"], config.cfg["randomMaxWait"], 1)
-            print(self._randomWait)
+            # print(self._randomWait)
             # copyArray = elements.copy()
             # copyArray.remove(visualization_effect)
             # visualization_effect = random.choice(copyArray)
