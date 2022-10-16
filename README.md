@@ -43,7 +43,7 @@ pip3 install zmq
 
 Running the visualization can be done using the command below.
 
-`python3 visualization.py /tmp`
+`python3 pipeline.py`
 
 # Installation for Raspberry Pi
 If you encounter any problems running the visualization on a Raspberry Pi, please [open a new issue](https://github.com/scottlawsonbc/audio-reactive-led-strip/issues). Also, please consider opening an issue if you have any questions or suggestions for improving the installation process.
@@ -123,5 +123,11 @@ python ./pipeline.py
 ```
 cd light-client
 yarn 
+yarn start
+```
+
+### Run everything
+```
+cd controller
 yarn start
 ```

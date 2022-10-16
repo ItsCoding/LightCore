@@ -31,7 +31,7 @@ import effekts.energy.energyRGBInverted as energyRGBInvertedEffekt
 import effekts.energy.energyExtremeInverted as energyExtremeInvertedEffekt
 import effekts.scroll.scrollInverted as scrollInvertedEffekt
 import effekts.flashy.flashyBpm as flashyBpmEffekt
-
+import effekts.beat.zoop.zoop as zoopEffekt
 
 import effekts.system.off as OffEffekt
 import effekts.system.abbaulicht as AbbaulichtEffekt
@@ -89,6 +89,7 @@ visualize_colorStep = colorStepEffekt.visualize_colorStep
 visualize_colorStepRandom = colorStepRandomEffekt.visualize_colorStepRandom
 visualize_colorStepRandomMultiple = colorStepRandomMultipleEffekt.visualize_colorStepRandomMultiple
 visualize_Abbau = AbbaulichtEffekt.visualize_Abbau
+visualize_Zoop = zoopEffekt.visualize_Zoop
 # composer.addEffekt(visualize_scroll,FrequencyRange.ALL,0,75,100)
 
 
@@ -299,7 +300,7 @@ class Visualization:
                             visualize_flashyBpm,visualize_flashSection,visualize_flashSectionUpwards,visualize_rushUpwards,
                             visualize_flashRotating,visualize_flashSectionMirrored,visualize_rotatingEnergyInverted,visualize_flashSectionUpwardsAscending,
                             visualize_flashSectionRandomColor,visualize_flashSectionMirroredRandomColor,visualize_rotatingRainbow,visualize_stars,
-                            visualize_colorStep,visualize_colorStepRandom,visualize_colorStepRandomMultiple]
+                            visualize_colorStep,visualize_colorStepRandom,visualize_colorStepRandomMultiple,visualize_Zoop]
         self.allEffekts = self.randomEffekts + [visualize_Off,visualize_Abbau]
         randomizer.initRandomizer(queueHandler,self)
         if config.USE_GUI:

@@ -49,6 +49,11 @@ def _update_virtual(composing):
     # sumPixels = np.array([[],[],[]])
     for key in composing:
         frame = composing[key].getLEDS()
+        ledStripType = config.COLOR_CALIBRATION_ASSIGNMENTS[key]
+        ledCalibration = config.cfg["colorCalibration"][ledStripType]
+        frame[0] = frame[0] * ledCalibration[0]
+        frame[1] = frame[1] * ledCalibration[1]
+        frame[2] = frame[2] * ledCalibration[2]
         frame = np.clip(frame, 0, 255).astype(int)
         # frame = _gamma[frame] if config.SOFTWARE_GAMMA_CORRECTION else
         frame = np.copy(frame)

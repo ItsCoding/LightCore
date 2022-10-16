@@ -10,7 +10,7 @@ const logHandler = (moduleType: string, data: string, level: LogLevel) => {
             console.log(`[${moduleType}] ${data}`);
             break;
         case LogLevel.ERROR:
-            console.log(chalk.bgYellow(`[${moduleType}] ${data}`));
+            console.log(chalk.yellow(`[${moduleType}] ${data}`));
             break;
         case LogLevel.DEBUG:
             break;
