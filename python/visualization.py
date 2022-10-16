@@ -55,6 +55,7 @@ import effekts.simple.colorStepRandomMultiple as colorStepRandomMultipleEffekt
 import queueHandler
 # import wsServer as wsServer
 import composer
+import randomizer
 from customTypes.frequencyRange import FrequencyRange
 # Import our visualization effect functions
 visualize_scroll = scrollEffekt.visualize_scroll
@@ -152,6 +153,7 @@ class Visualization:
         self.lastBeatPacket = 0
         #CONFIG VARS
         self.randomEnabled = True
+        self.randomizerBeatCount = 0
     def frames_per_second(self):
         """Return the estimated frames per second
 
@@ -188,11 +190,12 @@ class Visualization:
             self.beat = message["beat"]
             self.avg_Bpm = message["bpm"]
             self.hasBeatChanged = True
+            self.randomizerBeatCount += 1
             if(config.DISPLAY_BPM):
                 if(self.beat):
-                    print("- BPM: " + str(self.avg_Bpm))
+                    print("- BPM: " + str(self.avg_Bpm) + " => " + str(self.randomizerBeatCount % config.cfg["musicBeatsBar"]))
                 else:
-                    print("| BPM: " + str(self.avg_Bpm))
+                    print("| BPM: " + str(self.avg_Bpm)+ " => " + str(self.randomizerBeatCount % config.cfg["musicBeatsBar"]))
         self.hasBeatChanged = (self.hasBeatChanged or self.hasBeatChangedManual)
         # Normalize samples between 0 and 1
         y = audio_samples / 2.0**15
@@ -231,7 +234,7 @@ class Visualization:
             # Map filterbank output onto LED strip
             # try:
         if self.randomEnabled:
-            self.changeEffekt(self.hasBeatChanged)
+            randomizer.changeEffekt(self.hasBeatChanged)
         # mel = np.concatenate((mel[:6],np.full(26,0)),axis=0)
         composerOutput = composer.getComposition(mel,self,self.hasBeatChanged)
         if(len(composerOutput) > 0 and 0 in composerOutput and "getLEDS" in dir(composerOutput[0])):
@@ -265,43 +268,7 @@ class Visualization:
     #         return False
     #     return True
 
-    def makeRandomComposition(self,parts,overrideEnabled = False):
-        allFreqencys = [FrequencyRange.all, FrequencyRange.high,FrequencyRange.mid,FrequencyRange.low]
-        rndEffekts = list(filter(lambda eff: eff.__name__ not in config.cfg["blacklistedEffects"]["all"], self.randomEffekts))
-        if(parts == "all"):  
-            allPartsRange = list(range(0,config.STRIP_COUNT))
-            for x in config.STRIP_MIRRORS:
-                randomColor = random.choice(config.cfg["colorDict"])
-                randomFreq = random.choice(allFreqencys)
-                rndEffektsStrip = list(filter(lambda eff: eff.__name__ not in config.cfg["blacklistedEffects"][str(x[0])], rndEffekts))
-                randomEffekt = random.choice(rndEffektsStrip)
-                randomLoopCount = 0
-                if(config.STRIP_LED_COUNTS[x[0]] >50):
-                   randomLoopCount = random.randint(2,6)
-                else:  
-                    randomLoopCount = random.randint(1,3)
-                for i in x:
-                    composer.removeElementByStripIndex(i)
-                    composer.addEffekt(randomEffekt(str(uuid.uuid1())),randomFreq,i,0,config.STRIP_LED_COUNTS[i],{
-                        "color":randomColor,
-                        "loopCount":randomLoopCount,
-                        "stepAmount":random.randint(6,12)
-                    })
-                    allPartsRange.remove(i)
-            for x in allPartsRange:
-                if self.ENDABLED_RND_PARTS[x] or overrideEnabled:
-                    randomFreq = random.choice(allFreqencys)
-                    rndEffektsStrip = list(filter(lambda eff: eff.__name__ not in config.cfg["blacklistedEffects"][str(x)], rndEffekts))
-                    randomEffekt = random.choice(rndEffektsStrip)
-                    composer.removeElementByStripIndex(x)
-                    composer.addEffekt(randomEffekt(str(uuid.uuid1())),randomFreq,x,0,config.STRIP_LED_COUNTS[x])
-        else:
-            rndEffektsStrip = list(filter(lambda eff: eff.__name__ not in config.cfg["blacklistedEffects"][str(parts)], rndEffekts))
-            randomFreq = random.choice(allFreqencys)
-            randomEffekt = random.choice(rndEffektsStrip)
-            composer.removeElementByStripIndex(parts)
-            composer.addEffekt(randomEffekt(str(uuid.uuid1())),randomFreq,parts,0,config.STRIP_LED_COUNTS[parts])
-        queueHandler.reportEffekts(self, self.queue2Parent)
+    
         
 
     def checkIfDrop(self): 
@@ -313,30 +280,7 @@ class Visualization:
     def minute_passed(self):
         return time.time() - self._lastTime >= self._randomWait
 
-    def changeEffekt(self,hasBeatChanged):
-        elements = [visualize_spectrum,visualize_energy,visualize_scroll]
-        timeToChange = self.minute_passed()
-        dropDetected = self.checkIfDrop()
-        #print(led.pixels[0])
-        #print(led.pixels[1])
-        #print(led.pixels[2])
-
-        if(dropDetected and hasBeatChanged):
-            print("DROOOOOOOP!!!")
-        if(timeToChange or dropDetected and hasBeatChanged):
-            # print("Change Effekt \n")
-            #print(output)
-            self._lastTime = time.time()
-            self._randomWait = 0
-            if(dropDetected):
-                self._randomWait = random.randrange(config.cfg["dropRandomMinWait"], config.cfg["dropRandomMaxWait"], 1)
-            else:
-                self._randomWait = random.randrange(config.cfg["randomMinWait"], config.cfg["randomMaxWait"], 1)
-            # print(self._randomWait)
-            # copyArray = elements.copy()
-            # copyArray.remove(visualization_effect)
-            # visualization_effect = random.choice(copyArray)
-            self.makeRandomComposition("all")
+   
 
 
 
@@ -352,6 +296,7 @@ class Visualization:
                             visualize_flashSectionRandomColor,visualize_flashSectionMirroredRandomColor,visualize_rotatingRainbow,visualize_stars,
                             visualize_colorStep,visualize_colorStepRandom,visualize_colorStepRandomMultiple]
         self.allEffekts = self.randomEffekts + [visualize_Off,visualize_Abbau]
+        randomizer.initRandomizer(queueHandler,self)
         if config.USE_GUI:
             import pyqtgraph as pg
             from pyqtgraph.Qt import QtGui, QtCore

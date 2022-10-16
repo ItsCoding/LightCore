@@ -58,8 +58,8 @@ BRIGHTNESS = 85
 USE_GUI = False
 """Whether or not to display a PyQtGraph GUI plot of visualization"""
 
-DISPLAY_FPS = True
-DISPLAY_BPM = False
+DISPLAY_FPS = False
+DISPLAY_BPM = True
 """Whether to display the FPS when running (can reduce performance)"""
 
 # ToDo: This need to be replaced
@@ -161,6 +161,12 @@ COLOR_CALIBRATION_ASSIGNMENTS = {
     2: "ws2811",
     3: "ws2811",
 }
+
+# How many beats are one bar
+MUSIC_BEATS_BAR = 4
+# How many bars to wait before changin randomizer
+RANDOMIZER_BAR = 4
+
 cfg = {
     "device": DEVICE,
     "brightness": BRIGHTNESS,
@@ -179,4 +185,6 @@ cfg = {
     "colorDict": COLOR_DICT,
     "colorCalibration": COLOR_CALIBRATION,
     "colorCalibrationAssignments": COLOR_CALIBRATION_ASSIGNMENTS,
+    "musicBeatsBar": MUSIC_BEATS_BAR,
+    "randomizerBar": RANDOMIZER_BAR,
 }
