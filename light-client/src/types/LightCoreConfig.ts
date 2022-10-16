@@ -15,6 +15,9 @@ export class LightCoreConfig {
         public globalIntensity: number,
         public stripBrightness: number[],
         public blacklistedEffects: { [key: string]: string[] },
+        public colorCalibration: { [key: string]: number[] },
+        public colorCalibrationAssignments: { [key: string]: string },
+        public colorDict: Array<number[]>
     ) { }
 
     public static readonly fromJSON = objectMapper(accessor => new LightCoreConfig(
@@ -33,5 +36,12 @@ export class LightCoreConfig {
         accessor.get("blacklistedEffects", mapObjectMapper(accessor => {
             return accessor as string[]
         })),
-    ));
+        accessor.get("colorCalibration", mapObjectMapper(accessor => {
+            return accessor as number[]
+        })),
+        accessor.get("colorCalibrationAssignments", mapObjectMapper(accessor => {
+            return accessor as string
+        })),
+        accessor.get("colorDict", arrayMapper(arrayMapper(expectNumber)))
+    ))
 }

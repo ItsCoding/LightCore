@@ -11,7 +11,7 @@ class visualize_rushUpwards:
     def __init__(self,id):
         self.id = id
         self.p = None
-        self.rgbColor = random.choice(config.COLOR_DICT)
+        self.rgbColor = random.choice(config.cfg["colorDict"])
         self.description = {
             "name": "Rush upwards",
             "description": "A effekt that rushes upwards when beat changes",

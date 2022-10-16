@@ -17,7 +17,12 @@ if config.DEVICE == "esp" or config.DEVICE == "espv":
 
 _gamma = np.load(config.GAMMA_TABLE_PATH)
 """Gamma lookup table used for nonlinear brightness correction"""
-# _prev_pixels = {}
+_prev_pixels = {}
+
+for i in range(0,len(config.STRIP_LED_COUNTS)):
+    _prev_pixels[i] = np.zeros((3, config.STRIP_LED_COUNTS[i]))
+
+
 # _prev_pixels = np.tile(253, (3, config.N_PIXELS))
 """Pixel values that were most recently displayed on the LED strip"""
 
@@ -53,10 +58,10 @@ def _update_virtual(composing):
 
 def _update_esp8266(composing):
     """Sends TCP packets to c# virtualizer"""
-    # global pixels, _prev_pixels
+    global _prev_pixels
     global lastEspError
-    for compIndex in composing:
-        pixelsComp = composing[compIndex].getLEDS()
+    for stripIndex in composing:
+        pixelsComp = composing[stripIndex].getLEDS()
         # Truncate values and cast to integer
         pixelsComp = np.clip(pixelsComp, 0, 255).astype(int)
         # Optionally apply gamma correc tio
@@ -65,7 +70,11 @@ def _update_esp8266(composing):
             if config.SOFTWARE_GAMMA_CORRECTION
             else np.copy(pixelsComp)
         )
-        MAX_PIXELS_PER_PACKET = 100
+        MAX_PIXELS_PER_PACKET = 300
+
+        ledStripType = config.COLOR_CALIBRATION_ASSIGNMENTS[stripIndex]
+        ledCalibration = config.cfg["colorCalibration"][ledStripType];
+        # print(ledCalibration)
         # Pixel indices
         idx = range(pixelsComp.shape[1])
         # print("Sending: ", len(idx))
@@ -73,19 +82,19 @@ def _update_esp8266(composing):
         n_packets = len(idx) // MAX_PIXELS_PER_PACKET + 1
         # print(len(idx),len(idx[0]))
         skipFrame = False
-
-        if compIndex in config.UDP_FRAMEDIVIDER:
-            if compIndex not in frameCounter:
-                frameCounter[compIndex] = 0
+        _prev_pixels[stripIndex] = np.copy(p)
+        if stripIndex in config.UDP_FRAMEDIVIDER:
+            if stripIndex not in frameCounter:
+                frameCounter[stripIndex] = 0
             else:
-                if frameCounter[compIndex] >= config.UDP_FRAMEDIVIDER[compIndex]:
-                    frameCounter[compIndex] = 0
+                if frameCounter[stripIndex] >= config.UDP_FRAMEDIVIDER[stripIndex]:
+                    frameCounter[stripIndex] = 0
                 else:
-                    frameCounter[compIndex] += 1
+                    frameCounter[stripIndex] += 1
                     skipFrame = True
 
         if not skipFrame:
-            if config.UDP_IPS[compIndex] != "GROUP":
+            if config.UDP_IPS[stripIndex] != "GROUP":
                 idx = np.array_split(idx, n_packets)
                 for packet_indices in idx:
                     m = []
@@ -94,13 +103,14 @@ def _update_esp8266(composing):
                         newI = i % 256
                         m.append(offset)
                         m.append(newI)  # Index of pixel to change
-                        m.append(p[0][i])  # Pixel red value
-                        m.append(int(p[1][i] ))   # Pixel green value
-                        m.append(int(p[2][i] ))  # Pixel blue value
+                        m.append(int(p[0][i] * ledCalibration[0]))  # Pixel red value
+                        m.append(int(p[1][i] * ledCalibration[1]))   # Pixel green value
+                        m.append(int(p[2][i] * ledCalibration[2]))  # Pixel blue value
                     # print(len(m))
                     try:
+                        # print(m)
                         mx = bytearray(m)
-                        _sock.sendto(mx, (config.UDP_IPS[compIndex], config.UDP_PORT))
+                        _sock.sendto(mx, (config.UDP_IPS[stripIndex], config.UDP_PORT))
                     except Exception as e:
                         if e != lastEspError:
                             lastEspError = str(e)
@@ -109,7 +119,7 @@ def _update_esp8266(composing):
                                 print("There is something with the ESP connection....")
             # _prev_pixels = np.copy(p)
             else:
-                for grp in config.UDP_GROUPS[compIndex]:
+                for grp in config.UDP_GROUPS[stripIndex]:
                     m = []
                     # print(idx)
                     idxPart = range(grp["from"], grp["to"])
@@ -133,9 +143,9 @@ def _update_esp8266(composing):
                             m.append(offset)
                             m.append(newI)  # Index of pixel to change
                             # print(offset,newI)
-                            m.append(int(p[0][i]))  # Pixel red value
-                            m.append(int(p[1][i]))  # Pixel green value
-                            m.append(int(p[2][i]))  # Pixel blue value
+                            m.append(int(p[0][i] * ledCalibration[0]))  # Pixel red value
+                            m.append(int(p[1][i] * ledCalibration[1]))   # Pixel green value
+                            m.append(int(p[2][i] * ledCalibration[2]))  # Pixel blue value
                         # print(len(m))
                         try:
                             mx = bytearray(m)

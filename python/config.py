@@ -6,7 +6,7 @@ import os
 
 
 # DEVICE = 'esp8266'
-DEVICE = "esp"
+DEVICE = "espv"
 """Device used to control LED strip. Must be 'esp', 'espv' or 'virtual'
 
 'esp8266' means that you are using an ESP8266 module to control the LED strip
@@ -22,16 +22,17 @@ DEBUG_LOG = True
 
 if DEVICE == "esp" or DEVICE == "espv":
     UDP_IPS = {
-        0: "10.40.0.11",
+       
         # 0: "127.0.0.1", 
-        # 1: "127.0.0.1",
+        1: "127.0.0.1",
         2: "127.0.0.1",
+        3: "127.0.0.1",
+        0: "10.40.0.142",
         # 2: "192.168.62.107"
         # 2: "10.40.0.63",
         # 3: "10.40.0.182",
-        3: "127.0.0.1",
         # 1: "192.168.62.11",
-        1: "GROUP",
+        # 1: "GROUP",
         # 3: "192.168.62.101",
     }  #'192.168.62.3' #'10.40.0.186'
     UDP_GROUPS = {
@@ -41,7 +42,7 @@ if DEVICE == "esp" or DEVICE == "espv":
         ]
     }
     UDP_FRAMEDIVIDER = {
-        0: 4,
+        0: 1,
         1: 4,
     }
     """IP address of the ESP8266. Must match IP in ws2812_controller.ino"""
@@ -116,6 +117,7 @@ MIN_VOLUME_THRESHOLD = 1e-7
 
 
 STRIP_COUNT = 4
+# STRIP_LED_COUNTS = [300, 540, 50, 50]
 STRIP_LED_COUNTS = [300, 540, 50, 50]
 STRIP_MIRRORS = [[2, 3]]
 
@@ -148,7 +150,17 @@ COLOR_DICT = [
     [34, 166, 179],
     [190, 46, 221],
 ]
+COLOR_CALIBRATION = {
+    "ws2813": [1.0,1.0,1.0],
+    "ws2811": [1.0,1.0,1.0],
+}
 
+COLOR_CALIBRATION_ASSIGNMENTS = {
+    0: "ws2813",
+    1: "ws2813",
+    2: "ws2811",
+    3: "ws2811",
+}
 cfg = {
     "device": DEVICE,
     "brightness": BRIGHTNESS,
@@ -164,4 +176,7 @@ cfg = {
     "beatDetection": DETECT_BEAT,
     "stripBrightness": STRIP_BRIGHTNESS,
     "blacklistedEffects": BLACKLISTED_EFFECTS,
+    "colorDict": COLOR_DICT,
+    "colorCalibration": COLOR_CALIBRATION,
+    "colorCalibrationAssignments": COLOR_CALIBRATION_ASSIGNMENTS,
 }

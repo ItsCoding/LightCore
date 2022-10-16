@@ -1,3 +1,4 @@
+import { ThirtyFpsSelect } from "@mui/icons-material";
 import { ServerTopic } from "../types/ServerTopic";
 
 export type WebSocketEvent = {
@@ -202,6 +203,7 @@ export class WebSocketClient {
     public async lightSetOff(stripIndex: number) {
         if (this.socket || this.inTransaction) {
             console.log("Set Off: ", stripIndex);
+            this.send("light.clearStrip", { stripIndex: stripIndex });
             this.send("light.setOff", { stripIndex: stripIndex });
         }
     }

@@ -12,7 +12,7 @@ class visualize_colorStepRandom:
         self.id = id
         self.p = None
         self.p_filt = None
-        self.rgbColor = random.choice(config.COLOR_DICT)
+        self.rgbColor = random.choice(config.cfg["colorDict"])
         self.description = {
             "name": "Color step random",
             "description": "A effekt that changes the color on each beat step but random in position",
@@ -44,7 +44,7 @@ class visualize_colorStepRandom:
                 if self.step >= self.stepAmount:
                     self.step = 0
                     if not "color" in instanceData:
-                        self.rgbColor = random.choice(config.COLOR_DICT)
+                        self.rgbColor = random.choice(config.cfg["colorDict"])
         
         for idx,i in enumerate(range(0,stripSize,size)):
             if self.randomStep == idx:

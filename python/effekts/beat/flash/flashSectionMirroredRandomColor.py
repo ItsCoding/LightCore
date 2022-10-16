@@ -12,7 +12,7 @@ class visualize_flashSectionMirroredRandomColor:
         self.id = id
         self.p = None
         self.p_filt = None
-        self.rgbColor = random.choice(config.COLOR_DICT)
+        self.rgbColor = random.choice(config.cfg["colorDict"])
         self.lastFlash = 0
         self.description = {
             "name": "Flash section mirrord random color",
@@ -50,7 +50,7 @@ class visualize_flashSectionMirroredRandomColor:
                 randPos = random.randint(0,8)
                 randStart = int(((stripSize // 2) / 8) * randPos)
                 randEnd = int(((stripSize // 2) / 8) * (randPos + 1))
-                self.rgbColor = random.choice(config.COLOR_DICT)
+                self.rgbColor = random.choice(config.cfg["colorDict"])
                 self.p[0][randStart: randEnd] = self.rgbColor[0]
                 self.p[1][randStart: randEnd] = self.rgbColor[1]
                 self.p[2][randStart: randEnd] = self.rgbColor[2]

@@ -8,6 +8,7 @@ import sys
 import time
 import uuid
 import numpy as np
+from effekts.system.abbaulicht import visualize_Abbau
 from scipy.ndimage.filters import gaussian_filter1d
 import config
 import microphone
@@ -30,7 +31,11 @@ import effekts.energy.energyRGBInverted as energyRGBInvertedEffekt
 import effekts.energy.energyExtremeInverted as energyExtremeInvertedEffekt
 import effekts.scroll.scrollInverted as scrollInvertedEffekt
 import effekts.flashy.flashyBpm as flashyBpmEffekt
+
+
 import effekts.system.off as OffEffekt
+import effekts.system.abbaulicht as AbbaulichtEffekt
+
 import effekts.beat.flash.flashSection as flashSectionEffekt
 import effekts.beat.flash.flashSectionUpwards as flashSectionUpwardsEffekt
 import effekts.beat.rush.rushUpwards as rushUpwardsEffekt
@@ -82,7 +87,7 @@ visualize_stars = StarsEffekt.visualize_stars
 visualize_colorStep = colorStepEffekt.visualize_colorStep
 visualize_colorStepRandom = colorStepRandomEffekt.visualize_colorStepRandom
 visualize_colorStepRandomMultiple = colorStepRandomMultipleEffekt.visualize_colorStepRandomMultiple
-
+visualize_Abbau = AbbaulichtEffekt.visualize_Abbau
 # composer.addEffekt(visualize_scroll,FrequencyRange.ALL,0,75,100)
 
 
@@ -266,7 +271,7 @@ class Visualization:
         if(parts == "all"):  
             allPartsRange = list(range(0,config.STRIP_COUNT))
             for x in config.STRIP_MIRRORS:
-                randomColor = random.choice(config.COLOR_DICT)
+                randomColor = random.choice(config.cfg["colorDict"])
                 randomFreq = random.choice(allFreqencys)
                 rndEffektsStrip = list(filter(lambda eff: eff.__name__ not in config.cfg["blacklistedEffects"][str(x[0])], rndEffekts))
                 randomEffekt = random.choice(rndEffektsStrip)
@@ -346,7 +351,7 @@ class Visualization:
                             visualize_flashRotating,visualize_flashSectionMirrored,visualize_rotatingEnergyInverted,visualize_flashSectionUpwardsAscending,
                             visualize_flashSectionRandomColor,visualize_flashSectionMirroredRandomColor,visualize_rotatingRainbow,visualize_stars,
                             visualize_colorStep,visualize_colorStepRandom,visualize_colorStepRandomMultiple]
-        self.allEffekts = self.randomEffekts + [visualize_Off]
+        self.allEffekts = self.randomEffekts + [visualize_Off,visualize_Abbau]
         if config.USE_GUI:
             import pyqtgraph as pg
             from pyqtgraph.Qt import QtGui, QtCore

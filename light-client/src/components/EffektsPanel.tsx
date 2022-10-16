@@ -63,6 +63,20 @@ export const EffektsPanel = ({ availableEffekts, strip, colorDict, inPreviewMode
         wsClient.lightAddEffekt(selectedEffekt.effektSystemName, stripIndex, freq.range, additionalData, position[0], position[1],createShortID(),zIndex);
     }
 
+    const setAbbau = () => {
+        const stripLenght = strip.length;
+        const rgb = colorDict[strip.index] ? colorDict[strip.index].rgb : undefined
+        console.log(rgb)
+        let additionalData: EffektAdditionalData = {}
+        if (rgb) {
+            additionalData.color = [rgb.r, rgb.g, rgb.b]
+        }
+        console.log("AdditionalData", additionalData)
+        const stripIndex = inPreviewMode ? (strip.index + 5) * -1 : strip.index
+        wsClient.lightClear(stripIndex);
+        wsClient.lightAddEffekt("visualize_Abbau", stripIndex, [0,64], additionalData, 0, stripLenght,createShortID(),99999999);
+    }
+
 
     // const groupEffekts = (effekts: Array<Effekt>) => {
     //     const groups: { [index: string]: Array<Effekt> } = {}
@@ -127,7 +141,7 @@ export const EffektsPanel = ({ availableEffekts, strip, colorDict, inPreviewMode
             <Grid style={{
                 marginTop: "0px"
             }} container spacing={2}>
-                <Grid item xs={12} md={6}>
+                <Grid item xs={12} md={4}>
                     <Select
                         style={{
                             minWidth: "100%",
@@ -147,6 +161,9 @@ export const EffektsPanel = ({ availableEffekts, strip, colorDict, inPreviewMode
                 </Grid>
                 <Grid item xs={4} md={2}>
                     <Button variant="contained" style={{ height: "100%" }} fullWidth onClick={() => changeEffekt()}>Set</Button>
+                </Grid>
+                <Grid item xs={4} md={2}>
+                    <Button variant="contained" color="warning" onClick={() => setAbbau()} style={{ height: "100%", width: "100%" }}>ABB</Button>
                 </Grid>
                 <Grid item xs={4} md={2}>
                     <Button variant="contained" color="error" onClick={() => wsClient.lightSetOff(inPreviewMode ? (strip.index + 5) * -1 : strip.index)} style={{ height: "100%", width: "100%" }}>Off</Button>

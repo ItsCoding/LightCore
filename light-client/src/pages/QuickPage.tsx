@@ -1,4 +1,5 @@
 import { Grid } from "@mui/material"
+import { ColorCalibration } from "../components/QuickPage/ColorCalibration"
 import { QuickRandomControlls } from "../components/QuickPage/QuickRandomControlls"
 import { QuickSystemControlls } from "../components/QuickPage/QuickSystemControlls"
 import { RandomizerBlacklist } from "../components/QuickPage/RandomizerBlacklist"
@@ -19,8 +20,10 @@ type QuickPageProps = {
 export const QuickPage = ({ randomEnabled, randomSpecific, lightConfig, setRandomEnabled, setRandomSpecific, setLCConfig, availableEffekts }: QuickPageProps) => {
     return (<>
         <Grid container spacing={2} rowSpacing={2} columnSpacing={2}>
+
             <Grid item xs={12} md={6}>
-                <QuickSystemControlls
+                <RandomizerBlacklist
+                    availableEffekts={availableEffekts}
                     lightConfig={lightConfig}
                     setLCConfig={setLCConfig}
                 />
@@ -36,8 +39,13 @@ export const QuickPage = ({ randomEnabled, randomSpecific, lightConfig, setRando
                 />
             </Grid>
             <Grid item xs={12} md={6}>
-                <RandomizerBlacklist
-                    availableEffekts={availableEffekts}
+                <QuickSystemControlls
+                    lightConfig={lightConfig}
+                    setLCConfig={setLCConfig}
+                />
+            </Grid>
+            <Grid item xs={12} md={6}>
+                <ColorCalibration
                     lightConfig={lightConfig}
                     setLCConfig={setLCConfig}
                 />

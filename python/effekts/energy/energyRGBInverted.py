@@ -12,7 +12,7 @@ class visualize_energyRGBInverted:
         self.id = id
         self.p = None
         self.p_filt = None
-        self.rgbColor = random.choice(config.COLOR_DICT)
+        self.rgbColor = random.choice(config.cfg["colorDict"])
         # self.gain = dsp.ExpFilter(np.tile(0.01, config.cfg["frequencyBins"]),
         #                 alpha_decay=0.001, alpha_rise=0.99)#
         self.description = {
