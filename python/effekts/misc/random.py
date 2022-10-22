@@ -13,7 +13,7 @@ class visualize_random:
         # self.gain = dsp.ExpFilter(np.tile(0.01, config.cfg["frequencyBins"]),
         #              alpha_decay=0.001, alpha_rise=0.99)
         self.description = {
-            "name": "Random",
+            "name": "Energy Random",
             "description": "Ingrids random energy effekt",
             "effektSystemName": "visualize_random",
             "group": "spicy",

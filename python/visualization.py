@@ -17,6 +17,8 @@ import led
 import effekts.misc.random as randomEffekt
 import os
 import effekts.scroll.scroll as scrollEffekt
+from effekts.scroll.scrollExtremeColor import visualize_scrollExtremeColor
+from effekts.scroll.scrollExtremeColorInverted import visualize_scrollExtremeColorInverted
 import effekts.energy.energy as energyEffekt
 import effekts.misc.spectrum as spectrumEffekt
 import effekts.scroll.scrollExtreme as scrollExtremeEffekt
@@ -31,6 +33,9 @@ import effekts.energy.energyRGBInverted as energyRGBInvertedEffekt
 import effekts.energy.energyExtremeInverted as energyExtremeInvertedEffekt
 import effekts.energy.energyExtremeColor as energyExtremeColorEffekt
 import effekts.energy.energyExtremeColorInverted as energyExtremeColorInvertedEffekt
+from effekts.energy.rotatingEnergyColor import visualize_rotatingEnergyColor
+from effekts.energy.rotatingEnergyInvertedColor import visualize_rotatingEnergyInvertedColor
+from effekts.energy.multipleEnergyColor import visualize_multipleEnergyColor
 
 import effekts.scroll.scrollInverted as scrollInvertedEffekt
 import effekts.flashy.flashyBpm as flashyBpmEffekt
@@ -304,7 +309,8 @@ class Visualization:
                             visualize_flashRotating,visualize_flashSectionMirrored,visualize_rotatingEnergyInverted,visualize_flashSectionUpwardsAscending,
                             visualize_flashSectionRandomColor,visualize_flashSectionMirroredRandomColor,visualize_rotatingRainbow,visualize_stars,
                             visualize_colorStep,visualize_colorStepRandom,visualize_colorStepRandomMultiple,visualize_Zoop,visualize_energyExtremeColor,
-                            visualize_energyExtremeColorInverted]
+                            visualize_energyExtremeColorInverted,visualize_rotatingEnergyColor,visualize_rotatingEnergyInvertedColor,visualize_multipleEnergyColor,
+                            visualize_scrollExtremeColor,visualize_scrollExtremeColorInverted]
         self.allEffekts = self.randomEffekts + [visualize_Off,visualize_Abbau]
         randomizer.initRandomizer(queueHandler,self)
         if config.USE_GUI:

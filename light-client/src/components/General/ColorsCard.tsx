@@ -31,10 +31,11 @@ export const ColorsCard = () => {
     }, [])
 
     const savePalette = () => {
-        if (colorSet.length === 0) {
-            enqueueSnackbar("Palette must have at least one color", { variant: "error"});
+        if (colorSet.length < 3) {
+            enqueueSnackbar("Palette must have at least thre colors", { variant: "error"});
             return;
         }
+
         if (!selectedPalette) {
             enqueueSnackbar("Please enter a name", { variant: "error"});
             return;

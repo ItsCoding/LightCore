@@ -70,6 +70,10 @@ def _update_virtual(composing):
     _vsock.send(json.dumps(frameDict).encode())
     # strip.show()
 
+def capAt255(x):
+    if x > 255:
+        return 255
+    return x
 
 def _update_esp8266(composing):
     """Sends TCP packets to c# virtualizer"""
@@ -120,9 +124,9 @@ def _update_esp8266(composing):
                         newI = i % 256
                         m.append(offset)
                         m.append(newI)  # Index of pixel to change
-                        m.append(int(p[0][i] * ledCalibration[0]))  # Pixel red value
-                        m.append(int(p[1][i] * ledCalibration[1]))  # Pixel green value
-                        m.append(int(p[2][i] * ledCalibration[2]))  # Pixel blue value
+                        m.append(int(capAt255(p[0][i] * ledCalibration[0])))  # Pixel red value
+                        m.append(int(capAt255(p[1][i] * ledCalibration[1])))  # Pixel green value
+                        m.append(int(capAt255(p[2][i] * ledCalibration[2])))  # Pixel blue value
                     # print(len(m))
                     try:
                         # print(m)
@@ -160,15 +164,9 @@ def _update_esp8266(composing):
                             m.append(offset)
                             m.append(newI)  # Index of pixel to change
                             # print(offset,newI)
-                            m.append(
-                                int(p[0][i] * ledCalibration[0])
-                            )  # Pixel red value
-                            m.append(
-                                int(p[1][i] * ledCalibration[1])
-                            )  # Pixel green value
-                            m.append(
-                                int(p[2][i] * ledCalibration[2])
-                            )  # Pixel blue value
+                            m.append(int(capAt255(p[0][i] * ledCalibration[0])))  # Pixel red value
+                            m.append(int(capAt255(p[1][i] * ledCalibration[1])))  # Pixel green value
+                            m.append(int(capAt255(p[2][i] * ledCalibration[2])))
                         # print(len(m))
                         try:
                             mx = bytearray(m)
