@@ -154,9 +154,9 @@ export const EffektsPage = ({ availableEffekts, isRandomizerActive, setRandomize
             setNewCompositionName(null)
             setSelectedTags([])
             setAllCompositions(newStore)
-            enqueueSnackbar(`Saved composition: ${newComp.compositionName}!`, { variant: 'success', anchorOrigin: { vertical: "top", horizontal: "right" } });
+            enqueueSnackbar(`Saved composition: ${newComp.compositionName}!`, { variant: 'success'});
         } else {
-            enqueueSnackbar(`No composition to save!`, { variant: 'error', anchorOrigin: { vertical: "top", horizontal: "right" } });
+            enqueueSnackbar(`No composition to save!`, { variant: 'error'});
         }
         setConfirmDialogOpen(0);
     }
@@ -218,7 +218,7 @@ export const EffektsPage = ({ availableEffekts, isRandomizerActive, setRandomize
                 setNewCompositionName(null)
                 setSelectedTags([])
                 setConfirmDialogOpen(0);
-                enqueueSnackbar(`Deleted composition: ${newComposition?.compositionName}!`, { variant: 'success', anchorOrigin: { vertical: "top", horizontal: "right" } });
+                enqueueSnackbar(`Deleted composition: ${newComposition?.compositionName}!`, { variant: 'success'});
             },
             confirmText: "Delete"
         },
@@ -237,7 +237,7 @@ export const EffektsPage = ({ availableEffekts, isRandomizerActive, setRandomize
                     newComposition.activate(() => { }, inPreviewMode);
                     setActiveEffekts(newComposition.activeEffekts);
                     setConfirmDialogOpen(0);
-                    enqueueSnackbar(`Loaded composition: ${newComposition?.compositionName}!`, { variant: 'success', anchorOrigin: { vertical: "top", horizontal: "right" } });
+                    enqueueSnackbar(`Loaded composition: ${newComposition?.compositionName}!`, { variant: 'success'});
                 }
             },
             confirmText: "Load"

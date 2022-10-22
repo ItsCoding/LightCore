@@ -86,7 +86,7 @@ export const BlacklistTransferlist = ({ blacklisted, availableEffekts, onChange 
     const handleCheckedRight = () => {
         const notLeft = not(left, leftChecked);
         if (notLeft.length === 0) {
-            enqueueSnackbar(`There needs to be at least one effekt left! Otherwise deactivate the randomizer.`, { variant: 'error', anchorOrigin: { vertical: "top", horizontal: "right" } });
+            enqueueSnackbar(`There needs to be at least one effekt left! Otherwise deactivate the randomizer.`, { variant: 'error'});
             return;
         };
         setRight(right.concat(leftChecked));

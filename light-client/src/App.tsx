@@ -80,7 +80,7 @@ function App() {
       const conf = LightCoreConfig.fromJSON(topic.message);
       console.log("System Config: ", conf);
       setLcConfig((prev) => {
-        if(prev === undefined){
+        if (prev === undefined) {
           return conf;
         }
       });
@@ -155,7 +155,7 @@ function App() {
 
   return (
     <ThemeProvider theme={themeOptions}>
-      <SnackbarProvider maxSnack={8}>
+      <SnackbarProvider anchorOrigin={{ vertical: "top", horizontal: "right" }} maxSnack={8}>
         {connectionError ? <ConnectionError /> :
 
           <div>

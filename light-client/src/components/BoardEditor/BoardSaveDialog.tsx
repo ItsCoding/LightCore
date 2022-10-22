@@ -32,7 +32,7 @@ export const BoardSaveDialog = ({ availableBoards, board, setAvailableBoards, se
     const { enqueueSnackbar } = useSnackbar();
     const onSaveBoard = () => {
         if ((!board.name || board.name.length === 0) && !selectedBoard) {
-            enqueueSnackbar(`Board needs a name!`, { variant: 'error', anchorOrigin: { vertical: "top", horizontal: "right" } });
+            enqueueSnackbar(`Board needs a name!`, { variant: 'error'});
             return
         }
         let newAavailableBoards = []
@@ -45,7 +45,7 @@ export const BoardSaveDialog = ({ availableBoards, board, setAvailableBoards, se
             console.log("NEW BOARD ", newBoard)
             newAavailableBoards = [...availableBoards, newBoard]
         }
-        enqueueSnackbar(`Board saved!`, { variant: 'success', anchorOrigin: { vertical: "top", horizontal: "right" } });
+        enqueueSnackbar(`Board saved!`, { variant: 'success'});
         console.log("BOARDS", newAavailableBoards)
         wsClient.issueKeySet("boards", JSON.stringify(newAavailableBoards.map(b => Board2JSON(b))))
         setConfirmDialog(0)
@@ -67,7 +67,7 @@ export const BoardSaveDialog = ({ availableBoards, board, setAvailableBoards, se
             const b = availableBoards.find(b => b.id === selectedBoard.id)!
             const bCoppy = JSON2Board(Board2JSON(b))
             setBoard(bCoppy)
-            enqueueSnackbar(`Loaded board: ${selectedBoard?.name}!`, { variant: 'success', anchorOrigin: { vertical: "top", horizontal: "right" } });
+            enqueueSnackbar(`Loaded board: ${selectedBoard?.name}!`, { variant: 'success'});
             setConfirmDialog(0)
         }
     }
@@ -121,7 +121,7 @@ export const BoardSaveDialog = ({ availableBoards, board, setAvailableBoards, se
             ),
             confirm: () => {
                 setAvailableBoards(availableBoards.filter(b => b.id !== selectedBoard?.id))
-                enqueueSnackbar(`Deleted board: ${selectedBoard?.name}!`, { variant: 'success', anchorOrigin: { vertical: "top", horizontal: "right" } });
+                enqueueSnackbar(`Deleted board: ${selectedBoard?.name}!`, { variant: 'success'});
                 setConfirmDialog(0)
             },
             confirmText: "Delete"

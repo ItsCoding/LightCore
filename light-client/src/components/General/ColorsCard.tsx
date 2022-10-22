@@ -32,11 +32,11 @@ export const ColorsCard = () => {
 
     const savePalette = () => {
         if (colorSet.length === 0) {
-            enqueueSnackbar("Palette must have at least one color", { variant: "error" });
+            enqueueSnackbar("Palette must have at least one color", { variant: "error"});
             return;
         }
         if (!selectedPalette) {
-            enqueueSnackbar("Please enter a name", { variant: "error" });
+            enqueueSnackbar("Please enter a name", { variant: "error"});
             return;
         }
         if (selectedPalette.id !== "") {
@@ -46,9 +46,11 @@ export const ColorsCard = () => {
             }
             newPalette.colors = colorSet;
             if (index !== -1) {
-                colorPalettes[index] = selectedPalette;
+                colorPalettes[index] = newPalette;
+                wsClient.issueKeySet("colorPalettes", JSON.stringify(colorPalettes));
+                enqueueSnackbar("Palette saved", { variant: "success"});
             } else {
-                enqueueSnackbar("Palette not found", { variant: "error" });
+                enqueueSnackbar("Palette not found", { variant: "error"});
                 return
             }
         } else {
@@ -58,7 +60,9 @@ export const ColorsCard = () => {
                 colors: colorSet
             }
             setColorPalettes([...colorPalettes, newPalette])
+            setSelectedPalette(newPalette);
             wsClient.issueKeySet("colorPalettes", JSON.stringify([...colorPalettes, newPalette]))
+            enqueueSnackbar("Palette saved", { variant: "success"});
         }
 
     }
@@ -88,7 +92,7 @@ export const ColorsCard = () => {
                 const newStore = colorPalettes.filter(a => a.id !== selectedPalette?.id)
                 setColorPalettes(newStore);
                 wsClient.issueKeySet("colorPalettes", JSON.stringify(newStore))
-                enqueueSnackbar(`Deleted Colorpalette: ${selectedPalette?.name}!`, { variant: 'success', anchorOrigin: { vertical: "top", horizontal: "right" } });
+                enqueueSnackbar(`Deleted Colorpalette: ${selectedPalette?.name}!`, { variant: 'success'});
                 exit();
             },
             confirmText: "Delete"
@@ -103,7 +107,7 @@ export const ColorsCard = () => {
             confirm: (exit) => {
                 if (selectedPalette) {
                     setColorSet(selectedPalette.colors);
-                    enqueueSnackbar(`Loaded composition: ${selectedPalette?.name}!`, { variant: 'success', anchorOrigin: { vertical: "top", horizontal: "right" } });
+                    enqueueSnackbar(`Loaded composition: ${selectedPalette?.name}!`, { variant: 'success'});
                     exit();
                 }
             },
@@ -134,83 +138,88 @@ export const ColorsCard = () => {
     return (<>
         {/* <Grid container columnSpacing={2}>
             <Grid item xs={6} md={6}> */}
-                <Card variant="outlined">
-                    <CardHeader title="Colors" />
-                    <CardContent>
-                        <Grid container columnSpacing={2}>
-                            <Grid item xs={5}>
-                                <List sx={{
-                                    overflow: "scroll",
-                                    maxHeight: "30vh"
-                                }}>
-                                    {colorSet.map((co, index) => (
-                                        <ListItem sx={{
-                                            marginBottom: "15px"
-                                        }} key={co} disablePadding>
-                                            <Chip
-                                                style={{
-                                                    width: "100%",
-                                                    backgroundColor: co,
-                                                }}
-                                                deleteIcon={<HighlightOffIcon sx={{
-                                                    position: "absolute",
-                                                    right: "0.5rem",
-                                                }} />}
-                                                label={co}
-                                                onDelete={() => removeColor(index)}
-                                            />
-                                        </ListItem>
-                                    ))}
-                                </List>
-                            </Grid>
-                            <Grid item xs={7}>
-                                <PhotoshopPicker
-                                    onAccept={() => {
-                                        addColor(color);
-                                    }}
-                                    color={color}
-                                    onChange={(co) => setColor(co.hex)}
-                                />
-                            </Grid>
-                        </Grid>
-                        <Grid container sx={{
-                            marginTop: "20px"
-                        }} columnSpacing={3}>
-                            <Grid item xs={10}>
-                                <SaveBar
-                                    confirmDict={confirmDict}
-                                    onSave={savePalette}
-                                    autocompleteOptions={colorPalettes}
-                                    getOptionLabel={(option) => typeof option === 'string' ? option : option.name}
-                                    label="Colorpalettes"
-                                    onAutocompleteChange={(event, newValue) => {
-                                        if (!newValue) return;
-                                        if (typeof newValue === "string") {
-                                            setSelectedPalette({
-                                                id: "",
-                                                name: newValue,
-                                                colors: []
-                                            });
-                                        } else {
-                                            setSelectedPalette(newValue);
-                                        }
-                                    }}
-                                    placeholder="Select a colorpalette"
-                                    selectedExists={isIdInSet(selectedPalette?.id)}
-                                    key="colorPalette-savebar"
-                                />
-                            </Grid>
-                            <Grid item xs={2}>
-                                <Button variant="contained" color="warning" fullWidth onClick={() => { 
-                                   wsClient.setColorPalette(colorSet);
-                                }}>Activate</Button>
-                            </Grid>
-                        </Grid>
+        <Card variant="outlined">
+            <CardHeader title="Colors" />
+            <CardContent>
+                <Grid container columnSpacing={2}>
+                    <Grid item xs={5}>
+                        <List sx={{
+                            overflow: "scroll",
+                            maxHeight: "30vh"
+                        }}>
+                            {colorSet.map((co, index) => (
+                                <ListItem sx={{
+                                    marginBottom: "15px"
+                                }} key={co} disablePadding>
+                                    <Chip
+                                        style={{
+                                            width: "100%",
+                                            backgroundColor: co,
+                                        }}
+                                        deleteIcon={<HighlightOffIcon sx={{
+                                            position: "absolute",
+                                            right: "0.5rem",
+                                        }} />}
+                                        label={co}
+                                        onDelete={() => removeColor(index)}
+                                    />
+                                </ListItem>
+                            ))}
+                        </List>
+                    </Grid>
+                    <Grid item xs={7}>
+                        <PhotoshopPicker
+                            onAccept={() => {
+                                addColor(color);
+                            }}
+                            color={color}
+                            onChange={(co) => setColor(co.hex)}
+                        />
+                    </Grid>
+                </Grid>
+                <Grid container sx={{
+                    marginTop: "20px"
+                }} columnSpacing={3}>
+                    <Grid item xs={10}>
+                        <SaveBar
+                            confirmDict={confirmDict}
+                            onSave={savePalette}
+                            autocompleteOptions={colorPalettes}
+                            getOptionLabel={(option) => typeof option === 'string' ? option : option.name}
+                            label="Colorpalettes"
+                            onAutocompleteChange={(event, newValue) => {
+                                if (!newValue) return;
+                                if (typeof newValue === "string") {
+                                    setSelectedPalette({
+                                        id: "",
+                                        name: newValue,
+                                        colors: []
+                                    });
+                                } else {
+                                    setSelectedPalette(newValue);
+                                }
+                            }}
+                            placeholder="Select a colorpalette"
+                            selectedExists={isIdInSet(selectedPalette?.id)}
+                            key="colorPalette-savebar"
+                        />
+                    </Grid>
+                    <Grid item xs={2}>
+                        <Button variant="contained" color="warning" fullWidth onClick={() => {
+                            if (colorSet.length > 0) {
+                                wsClient.setColorPalette(colorSet);
+                            } else {
+                                enqueueSnackbar("No colors to send, please load a palette", { variant: "warning"});
+                            }
+
+                        }}>Activate</Button>
+                    </Grid>
+                </Grid>
 
 
-                    </CardContent>
-                </Card>
-            {/* </Grid>
+            </CardContent>
+        </Card>
+        {/* </Grid>
         </Grid> */}
     </>)
 }

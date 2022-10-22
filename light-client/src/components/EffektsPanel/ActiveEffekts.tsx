@@ -137,7 +137,7 @@ export const ActiveEffekts = ({ activeEffekts, availableEffekts }: ActiveEffekts
                     if (range.length === 2 && range[0] < range[1] && range[0] >= 0 && range[1] <= 64) {
                         activeEffekt.frequencyRange = range;
                     } else {
-                        enqueueSnackbar(`There is an error with your Frequencyrange. It should be like "[START]-[END] and only be in range between 0 and 64!"`, { variant: 'error', anchorOrigin: { vertical: "top", horizontal: "right" } });
+                        enqueueSnackbar(`There is an error with your Frequencyrange. It should be like "[START]-[END] and only be in range between 0 and 64!"`, { variant: 'error'});
                     }
                     break;
                 case "yColor":
