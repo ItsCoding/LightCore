@@ -1,5 +1,7 @@
 import { ThirtyFpsSelect } from "@mui/icons-material";
+import { ColorPalette } from "../types/ColorPalette";
 import { ServerTopic } from "../types/ServerTopic";
+import { hexToRgb, RgbColor } from "./Utils";
 
 export type WebSocketEvent = {
     eventHandlerID: string,
@@ -16,7 +18,7 @@ export class WebSocketClient {
     private static instance: WebSocketClient;
     private transactionLog: ServerTopic[] = [];
     private socket: WebSocket | undefined = undefined;
-    public mode:ClientMode = ClientMode.EDITOR;
+    public mode: ClientMode = ClientMode.EDITOR;
     public connected: boolean = false;
 
     private constructor(
@@ -168,7 +170,7 @@ export class WebSocketClient {
         }
     }
 
-    public lightSetEffekt(effekt: string, stripIndex: number, frequency: number[], instanceData: object = {},zIndex:number = 0): string {
+    public lightSetEffekt(effekt: string, stripIndex: number, frequency: number[], instanceData: object = {}, zIndex: number = 0): string {
         const instanceUUID = Math.random().toString(36).substring(7);
         if (this.socket || this.inTransaction) {
             this.send("light.setEffekt", {
@@ -183,7 +185,7 @@ export class WebSocketClient {
         return instanceUUID;
     }
 
-    public lightAddEffekt(effekt: string, stripIndex: number, frequency: number[], instanceData: object = {}, startIndex: number, endIndex: number, instanceUUID?: string | number,zIndex: number = 0): string | number {
+    public lightAddEffekt(effekt: string, stripIndex: number, frequency: number[], instanceData: object = {}, startIndex: number, endIndex: number, instanceUUID?: string | number, zIndex: number = 0): string | number {
         if (!instanceUUID) instanceUUID = Math.random().toString(36).substring(7);
         if (this.socket || this.inTransaction) {
             this.send("light.addEffekt", {
@@ -251,15 +253,31 @@ export class WebSocketClient {
         }
     }
 
-    public async beatTap(){
+    public async beatTap() {
         if (this.socket || this.inTransaction) {
             this.send("beat.tap", {});
         }
     }
 
-    public async getSystemStatus(){
+    public async getSystemStatus() {
         if (this.socket || this.inTransaction) {
             this.send("system.status.get", {});
+        }
+    }
+
+    public async setColorPalette(colors: string[]) {
+        if (this.socket || this.inTransaction) {
+            const rgbColors: number[][] = []
+            for (const color of colors) {
+                const rgbColor = hexToRgb(color);
+                if (!rgbColor) {
+                    console.error("Invalid color: ", color);
+                    continue
+                };
+                rgbColors.push([rgbColor.r, rgbColor.g, rgbColor.b]);
+            }
+            console.log("Setting color palette: ", rgbColors);
+            this.send("light.colorPalette.set", { colorPalette: rgbColors });
         }
     }
 }

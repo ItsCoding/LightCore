@@ -6,6 +6,7 @@ import SpeedIcon from '@mui/icons-material/Speed';
 import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
 import StreamIcon from '@mui/icons-material/Stream';
 import BorderInnerIcon from '@mui/icons-material/BorderInner';
+import FormatColorFillIcon from '@mui/icons-material/FormatColorFill';
 type HeaderBarProps = {
     changeTab: (key: string) => void;
     setTouchCapable: (capable: boolean) => void;
@@ -46,7 +47,7 @@ export default function HeaderBar({ changeTab, setTouchCapable }: HeaderBarProps
                             <Tab value={"quick"} icon={<SpeedIcon />} aria-label="quick" />
                             <Tab value={"effekts"} icon={<TipsAndUpdatesIcon />} aria-label="effekts" />
                             <Tab value={"boardeditor"} icon={<BorderInnerIcon />} aria-label="boardeditor" />
-                            {/* <Tab value={"colors"} icon={<ColorLensIcon />} aria-label="colors" /> */}
+                            {/* <Tab value={"colors"} icon={<FormatColorFillIcon />} aria-label="colors" /> */}
                             {/* <Tab icon={<PersonPinIcon />} aria-label="person" /> */}
                         </Tabs>
                         {/* <Toolbar>

@@ -9,7 +9,7 @@ import { EffektsPage } from './pages/EffektsPage';
 import { LightCoreConfig } from './types/LightCoreConfig';
 import { HomePage } from './pages/HomePage';
 import { ReturnType, WSApiKey } from './types/TopicReturnType';
-import { ColorsPage } from './pages/ColorsPage';
+// import { ColorsPage } from './pages/ColorsPage';
 import { Composition } from './types/Composition';
 import { SnackbarProvider } from 'notistack';
 import { StagePage } from './pages/StagePage';
@@ -190,7 +190,7 @@ function App() {
                         availableBoards={availableBoards}
                         setAvailableBoards={setAvailableBoards}
                       />} />
-                      <Route path="colors" element={<ColorsPage />} />
+                      {/* <Route path="colors" element={<ColorsPage />} /> */}
                     </div>
                   </> : <StagePage setActiveRoute={setActiveRoute} />
               }

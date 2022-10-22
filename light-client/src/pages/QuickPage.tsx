@@ -5,6 +5,7 @@ import { QuickSystemControlls } from "../components/QuickPage/QuickSystemControl
 import { RandomizerBlacklist } from "../components/QuickPage/RandomizerBlacklist"
 import { Effekt } from "../types/Effekt"
 import { LightCoreConfig } from "../types/LightCoreConfig"
+import { ColorsCard } from "../components/General/ColorsCard"
 
 
 type QuickPageProps = {
@@ -21,14 +22,7 @@ export const QuickPage = ({ randomEnabled, randomSpecific, lightConfig, setRando
     return (<>
         <Grid container spacing={2} rowSpacing={2} columnSpacing={2}>
 
-            <Grid item xs={12} md={6}>
-                <RandomizerBlacklist
-                    availableEffekts={availableEffekts}
-                    lightConfig={lightConfig}
-                    setLCConfig={setLCConfig}
-                />
-            </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={12}>
                 <QuickRandomControlls
                     randomEnabled={randomEnabled}
                     randomSpecific={randomSpecific}
@@ -38,6 +32,8 @@ export const QuickPage = ({ randomEnabled, randomSpecific, lightConfig, setRando
                     setLCConfig={setLCConfig}
                 />
             </Grid>
+
+
             <Grid item xs={12} md={6}>
                 <QuickSystemControlls
                     lightConfig={lightConfig}
@@ -49,6 +45,16 @@ export const QuickPage = ({ randomEnabled, randomSpecific, lightConfig, setRando
                     lightConfig={lightConfig}
                     setLCConfig={setLCConfig}
                 />
+            </Grid>
+            <Grid item xs={12} md={6}>
+                <RandomizerBlacklist
+                    availableEffekts={availableEffekts}
+                    lightConfig={lightConfig}
+                    setLCConfig={setLCConfig}
+                />
+            </Grid>
+            <Grid item xs={12} md={6}>
+                <ColorsCard />
             </Grid>
         </Grid>
     </>)
