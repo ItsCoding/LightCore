@@ -57,7 +57,7 @@ class visualize_flashSectionMirroredRandomColor:
                 self.p[0, :] = gaussian_filter1d(self.p[0, :], sigma=4.0)
                 self.p[1, :] = gaussian_filter1d(self.p[1, :], sigma=4.0)
                 self.p[2, :] = gaussian_filter1d(self.p[2, :], sigma=4.0)
-        if self.lastFlash +(60000/(instanceData["bpm"]+1)) - 150 < int(round(time.time() * 1000)):
+        if self.lastFlash +(60000/(instanceData["bpm"]+1)) - 250 < int(round(time.time() * 1000)):
             self.p = np.tile(0, (3, stripSize // 2))
         output = np.concatenate((self.p,self.p[:, ::-1]), axis=1)
         return output

@@ -53,7 +53,7 @@ class visualize_flashSectionUpwardsAscending:
                 if(self.position > 8):
                     self.position = 0
                 # print(self.p)
-        if self.lastFlash + (60000/((instanceData["bpm"]+1))) - 150 < int(round(time.time() * 1000)):
+        if self.lastFlash + (60000/((instanceData["bpm"]+1))) - 250 < int(round(time.time() * 1000)):
             self.p = np.tile(0, (3, stripSize//2))
         output = np.concatenate((self.p,self.p[:, ::-1]), axis=1)
         return output

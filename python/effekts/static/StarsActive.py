@@ -29,8 +29,8 @@ class visualize_starsActive:
         # Make a rainbow over the complete stripSize
 
         # Get ten random positions between 0 and stripSize
-        if len(self.activeStars) < 15:
-            for i in range(0, random.randint(4, stripSize // 15)):
+        if len(self.activeStars) < 20:
+            for i in range(0, random.randint(4, stripSize // 10)):
                 pos = random.randint(0, stripSize - 1)
                 self.activeStars[pos] = 0
         # Make a star at each position

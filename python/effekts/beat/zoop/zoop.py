@@ -74,6 +74,6 @@ class visualize_Zoop:
                 self.p[2][newCursorPos:newCursorPos + 2] = 0
             self.zoopCursor = self.zoopCursor + 2
 
-        # if self.lastFlash + (60000/(instanceData["bpm"]+1)) - 150 < int(round(time.time() * 1000)):
+        # if self.lastFlash + (60000/(instanceData["bpm"]+1)) - 250 < int(round(time.time() * 1000)):
         #     self.p = np.tile(0, (3, stripSize))
         return self.p

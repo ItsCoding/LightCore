@@ -35,7 +35,7 @@ class visualize_multipleEnergyColor:
         # Scale by the width of the LED strip
         y *= float((stripSize // 2) - 1)
         # Map color channels according to energy in the different freq bands
-        scale = 1 * config.cfg["globalIntensity"]
+        scale = 0.9 * config.cfg["globalIntensity"]
         y = [i for i in y if i > 0.05]
         if len(y) < 3:
             y = np.tile(0.0, config.cfg["frequencyBins"])
@@ -61,7 +61,7 @@ class visualize_multipleEnergyColor:
             b = 255
         rOff = r // 3
         gOff = g // 3
-        bOff = b // 3
+        bOff = b // 4
         self.p[0, :] = 0.0
         self.p[1, :] = 0.0
         self.p[2, :] = 0.0
@@ -69,17 +69,29 @@ class visualize_multipleEnergyColor:
         loopRange.append(stripSize)
         for i in loopRange:
             # print(i,stripSize)
-            self.p[0, i-rOff:i+rOff] =+ self.colors[0][0]
-            self.p[1, i-rOff:i+rOff] =+ self.colors[0][1]
-            self.p[2, i-rOff:i+rOff] =+ self.colors[0][2]
+            self.p[0, i:i+rOff] =+ self.colors[0][0]
+            self.p[1, i:i+rOff] =+ self.colors[0][1]
+            self.p[2, i:i+rOff] =+ self.colors[0][2]
 
-            self.p[0, i-gOff:i+gOff] =+ self.colors[1][0]
-            self.p[1, i-gOff:i+gOff] =+ self.colors[1][1]
-            self.p[2, i-gOff:i+gOff] =+ self.colors[1][2]
+            self.p[0, i:i+gOff] =+ self.colors[1][0]
+            self.p[1, i:i+gOff] =+ self.colors[1][1]
+            self.p[2, i:i+gOff] =+ self.colors[1][2]
 
-            self.p[0, i-bOff:i+bOff] =+ self.colors[2][0]
-            self.p[1, i-bOff:i+bOff] =+ self.colors[2][1]
-            self.p[2, i-bOff:i+bOff] =+ self.colors[2][2]
+            self.p[0, i:i+bOff] =+ self.colors[2][0]
+            self.p[1, i:i+bOff] =+ self.colors[2][1]
+            self.p[2, i:i+bOff] =+ self.colors[2][2]
+
+            self.p[0, i-rOff:i] =+ self.colors[0][0]
+            self.p[1, i-rOff:i] =+ self.colors[0][1]
+            self.p[2, i-rOff:i] =+ self.colors[0][2]
+
+            self.p[0, i-gOff:i] =+ self.colors[1][0]
+            self.p[1, i-gOff:i] =+ self.colors[1][1]
+            self.p[2, i-gOff:i] =+ self.colors[1][2]
+
+            self.p[0, i-bOff:i] =+ self.colors[2][0]
+            self.p[1, i-bOff:i] =+ self.colors[2][1]
+            self.p[2, i-bOff:i] =+ self.colors[2][2]
         # print(self.p)
             # np.concatenate((self.p[:, ::-1], self.p), axis=1)
 
