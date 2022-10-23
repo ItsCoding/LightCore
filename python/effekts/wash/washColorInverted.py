@@ -5,7 +5,7 @@ import numpy as np
 import dsp
 from scipy.ndimage.filters import gaussian_filter1d
 
-class visualize_rotatingEnergyInverted:
+class visualize_washColorInverted:
     def __init__(self,id):
         self.id = id
         self.p = None
@@ -15,13 +15,15 @@ class visualize_rotatingEnergyInverted:
         # self.gain = dsp.ExpFilter(np.tile(0.01, config.cfg["frequencyBins"]),
         #                 alpha_decay=0.001, alpha_rise=0.99)
         self.description = {
-            "name": "Rotating Energy Inverted",
-            "description": "Energy effekt that moves around the strip",
-            "effektSystemName": "visualize_rotatingEnergyInverted",
+            "name": "Wash Color Inverted",
+            "description": "Washes an RGB color across the strip",
+            "effektSystemName": "visualize_washColorInverted",
             "group": "moving",
             "groupColor": "#44bd32",
             "supports": ["intensity"]
         }
+        self.colors = random.sample(config.cfg["colorDict"], 2)
+        self.offset = 0
     def run(self, y,stripSize,gain: dsp.ExpFilter,instanceData: dict = {}):
         """Effect that expands from the center with increasing sound energy"""
         # global p, p_filt
@@ -59,64 +61,43 @@ class visualize_rotatingEnergyInverted:
 
         # print(r,g,b)
         # Assign color to different frequency regions
-        r = int(np.mean(y[:len(y) // 3]**scale))
-        g = int(np.mean(y[len(y) // 3: 2 * len(y) // 3]**scale))
-        b = int(np.mean(y[2 * len(y) // 3:]**scale))
+        yMean = int(np.average(y[:]**scale))
         # Assign color to different frequency regions
-        if r > 255:
-            r = 255
-        if g > 255:
-            g = 255
-        if b > 255:
-            b = 255
-        rOff = r // 4
-        gOff = g // 4
-        bOff = b // 3
-        self.p[0, :] = 0.0
-        self.p[1, :] = 0.0
-        self.p[2, :] = 0.0
+        if yMean > 255:
+            yMean = 255
+        
+        yOff = yMean // 4
+        self.p[0, :] = self.colors[0][0] * 0.4
+        self.p[1, :] = self.colors[0][1] * 0.4
+        self.p[2, :] = self.colors[0][2] * 0.4
         
         steps = stripSize // self.loopCount
         
         loopRange = list(range(0,stripSize, steps))
-        speed = (1.0 - (config.cfg["globalSpeed"] / 100)) * 10
+        # speed = (1.0 - (yMean / 255)) * 10
+        # if speed < 0.1:
+        #     speed = 0.1
 
-        milliseconds = int(round(time.time() * 1000) / speed)
-        offset = milliseconds // self.loopCount
+        # milliseconds = int(round(time.time() * 1000) / speed)
+        # nOff = milliseconds // self.loopCount
+        self.offset += int(1 + (20 * (yMean / 255)))
         # print(offset)
        
         tempP = np.tile(0, (3, self.longerP))
-
+        tempP[0, :] = self.colors[0][0] * 0.3
+        tempP[1, :] = self.colors[0][1] * 0.3
+        tempP[2, :] = self.colors[0][2] * 0.3
         for i in loopRange:
-            i = i + offset
+            i = i + self.offset
             if i > stripSize:
                 i = i % stripSize
             i = stripSize - i
-            # print(i)
-            # print(i,stripSize)
-            tempP[0, i:i+rOff] = 255.0
-            tempP[0, i-rOff:i] = 255.0
+            
+            tempP[0, i-yOff:i+yOff] = self.colors[1][0] 
+            tempP[1, i-yOff:i+yOff] = self.colors[1][1] 
+            tempP[2, i-yOff:i+yOff] = self.colors[1][2] 
 
-            tempP[1, i:i+gOff] = 255.0
-            tempP[1, i-gOff:i] = 255.0
 
-            tempP[2, i:i+bOff] = 255.0
-            tempP[2, i-bOff:i] = 255.0
-        # print(self.p[1])
-        # print(self.p)
-            # np.concatenate((self.p[:, ::-1], self.p), axis=1)
-
-        #     self.p[0, i:i+10] = int(np.mean(y[:len(y) // 3]**scale) * 50) #int(rgbColor[0] * mean)
-        #     self.p[1, i:i+10] = int(np.mean(y[len(y) // 3: 2 * len(y) // 3]**scale) * 50)#int(rgbColor[1] * mean)
-        #     self.p[2, i:i+10] = int(np.mean(y[2 * len(y) // 3:]**scale) * 50)#int(rgbColor[2] * mean)
-
-        # print( np.mean(y[:len(y) // 3]**scale) * 50, np.mean(y[:len(y) // 3]**scale))
-        # self.p[0, :mean] = rgbColor[0]
-        # self.p[0, mean:] = 0.0
-        # self.p[1, :mean] = rgbColor[1]
-        # self.p[1, mean:] = 0.0
-        # self.p[2, :mean] = rgbColor[2]
-        # self.p[2, mean:] = 0.0
         self.p_filt.update(tempP)
         tempP = np.round(self.p_filt.value)
         # Apply substantial blur to smooth the edges
@@ -128,8 +109,9 @@ class visualize_rotatingEnergyInverted:
         
 
         # Add the values from tempP to self.p 
-        for i in range(0,2):
-            self.p[i,0:(stripSize//self.loopCount)] = np.add(self.p[i,0:(stripSize//self.loopCount)], tempP[i,stripSize:])
+        # for i in range(0,2):
+        #     self.p[i,0:(stripSize//self.loopCount)] = np.add(self.p[i,0:(stripSize//self.loopCount)], tempP[i,stripSize:])
+             
         # self.p[:,0:(stripSize//self.loopCount)] = tempP[:,stripSize:]#np.sum([self.p[0,0:(stripSize //self.loopCount)], tempP[0, stripSize:]],axis=1)
        
         # print(len(tempP[0]),len(self.p[0]),stripSize,self.loopCount,(stripSize //self.loopCount),self.longerP)

@@ -29,7 +29,7 @@ def makeRandomComposition(parts,overrideEnabled = False, noBeat = False):
             randomEffekt = random.choice(rndEffektsStrip)
             randomLoopCount = 0
             if(config.STRIP_LED_COUNTS[x[0]] >50):
-                randomLoopCount = random.randint(2,6)
+                randomLoopCount = random.randint(3,5)
             else:  
                 randomLoopCount = random.randint(1,3)
             for i in x:

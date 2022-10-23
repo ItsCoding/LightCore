@@ -61,7 +61,7 @@ class visualize_washColor:
 
         # print(r,g,b)
         # Assign color to different frequency regions
-        yMean = int(np.mean(y[:]**scale))
+        yMean = int(np.average(y[:]**scale))
         # Assign color to different frequency regions
         if yMean > 255:
             yMean = 255
@@ -92,9 +92,9 @@ class visualize_washColor:
             if i > stripSize:
                 i = i % stripSize
             
-            tempP[0, i-yOff:i+yOff] =+ self.colors[1][0] 
-            tempP[1, i-yOff:i+yOff] =+ self.colors[1][1] 
-            tempP[2, i-yOff:i+yOff] =+ self.colors[1][2] 
+            tempP[0, i-yOff:i+yOff] = self.colors[1][0] 
+            tempP[1, i-yOff:i+yOff] = self.colors[1][1] 
+            tempP[2, i-yOff:i+yOff] = self.colors[1][2] 
 
 
         self.p_filt.update(tempP)

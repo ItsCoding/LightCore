@@ -30,7 +30,7 @@ class visualize_rotatingEnergy:
                 self.loopCount = instanceData["loopCount"]
             else:
                 if(stripSize >50):
-                    self.loopCount = random.randint(2,6)
+                    self.loopCount = random.randint(3,5)
                 else:  
                     self.loopCount = random.randint(1,3)
             self.longerP = stripSize + (stripSize // self.loopCount)
