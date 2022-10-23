@@ -1,69 +1,69 @@
-from __future__ import print_function
-from __future__ import division
+from __future__ import division, print_function
+
 import json
 import multiprocessing
+import os
 import random
 import signal
 import sys
 import time
 import uuid
+
 import numpy as np
-from effekts.system.abbaulicht import visualize_Abbau
 from scipy.ndimage.filters import gaussian_filter1d
+
+# import wsServer as wsServer
+import composer
 import config
-import microphone
 import dsp
-import led
-import effekts.misc.random as randomEffekt
-import os
-import effekts.scroll.scroll as scrollEffekt
-from effekts.scroll.scrollExtremeColor import visualize_scrollExtremeColor
-from effekts.scroll.scrollExtremeColorInverted import visualize_scrollExtremeColorInverted
+import effekts.beat.flash.flashRotating as flashRotatingEffekt
+import effekts.beat.flash.flashSection as flashSectionEffekt
+import effekts.beat.flash.flashSectionMirrored as flashSectionMirroredEffekt
+import effekts.beat.flash.flashSectionMirroredRandomColor as flashSectionMirroredRandomColorEffekt
+import effekts.beat.flash.flashSectionRandomColor as flashSectionRandomColorEffekt
+import effekts.beat.flash.flashSectionUpwards as flashSectionUpwardsEffekt
+import effekts.beat.flash.flashSectionUpwardsAscending as flashSectionUpwardsAscendingEffekt
+import effekts.beat.rush.rushUpwards as rushUpwardsEffekt
+import effekts.beat.zoop.zoop as zoopEffekt
 import effekts.energy.energy as energyEffekt
-import effekts.misc.spectrum as spectrumEffekt
-import effekts.scroll.scrollExtreme as scrollExtremeEffekt
 import effekts.energy.energyExtreme as energyExtremeEffekt
-import effekts.flashy.flashy as flashyEffekt
+import effekts.energy.energyExtremeColor as energyExtremeColorEffekt
+import effekts.energy.energyExtremeColorInverted as energyExtremeColorInvertedEffekt
+import effekts.energy.energyExtremeInverted as energyExtremeInvertedEffekt
+import effekts.energy.energyInverted as energyInvertedEffekt
 import effekts.energy.energyRGB as energyRGBEffekt
+import effekts.energy.energyRGBInverted as energyRGBInvertedEffekt
 import effekts.energy.multipleEnergy as multipleEnergyEffekt
 import effekts.energy.rotatingEnergy as rotatingEnergyEffekt
 import effekts.energy.rotatingEnergyInverted as rotatingEnergyInvertedEffekt
-import effekts.energy.energyInverted as energyInvertedEffekt
-import effekts.energy.energyRGBInverted as energyRGBInvertedEffekt
-import effekts.energy.energyExtremeInverted as energyExtremeInvertedEffekt
-import effekts.energy.energyExtremeColor as energyExtremeColorEffekt
-import effekts.energy.energyExtremeColorInverted as energyExtremeColorInvertedEffekt
-from effekts.energy.rotatingEnergyColor import visualize_rotatingEnergyColor
-from effekts.energy.rotatingEnergyInvertedColor import visualize_rotatingEnergyInvertedColor
-from effekts.energy.multipleEnergyColor import visualize_multipleEnergyColor
-
-import effekts.scroll.scrollInverted as scrollInvertedEffekt
+import effekts.flashy.flashy as flashyEffekt
 import effekts.flashy.flashyBpm as flashyBpmEffekt
-import effekts.beat.zoop.zoop as zoopEffekt
-
-import effekts.system.off as OffEffekt
-
-import effekts.beat.flash.flashSection as flashSectionEffekt
-import effekts.beat.flash.flashSectionUpwards as flashSectionUpwardsEffekt
-import effekts.beat.rush.rushUpwards as rushUpwardsEffekt
-import effekts.beat.flash.flashRotating as flashRotatingEffekt
-import effekts.beat.flash.flashSectionMirrored as flashSectionMirroredEffekt
-import effekts.beat.flash.flashSectionUpwardsAscending as flashSectionUpwardsAscendingEffekt
-import effekts.beat.flash.flashSectionRandomColor as flashSectionRandomColorEffekt
-import effekts.beat.flash.flashSectionMirroredRandomColor as flashSectionMirroredRandomColorEffekt
-
-import effekts.static.RotatingRainbow as RotatingRainbowEffekt
-import effekts.static.Stars as StarsEffekt
-
+import effekts.misc.random as randomEffekt
+import effekts.misc.spectrum as spectrumEffekt
+import effekts.scroll.scroll as scrollEffekt
+import effekts.scroll.scrollExtreme as scrollExtremeEffekt
+import effekts.scroll.scrollInverted as scrollInvertedEffekt
 import effekts.simple.colorStep as colorStepEffekt
 import effekts.simple.colorStepRandom as colorStepRandomEffekt
 import effekts.simple.colorStepRandomMultiple as colorStepRandomMultipleEffekt
-
+import effekts.static.RotatingRainbow as RotatingRainbowEffekt
+import effekts.static.Stars as StarsEffekt
+import effekts.system.off as OffEffekt
+import led
+import microphone
 import queueHandler
-# import wsServer as wsServer
-import composer
 import randomizer
 from customTypes.frequencyRange import FrequencyRange
+from effekts.energy.multipleEnergyColor import visualize_multipleEnergyColor
+from effekts.energy.rotatingEnergyColor import visualize_rotatingEnergyColor
+from effekts.energy.rotatingEnergyInvertedColor import \
+    visualize_rotatingEnergyInvertedColor
+from effekts.scroll.scrollExtremeColor import visualize_scrollExtremeColor
+from effekts.scroll.scrollExtremeColorInverted import \
+    visualize_scrollExtremeColorInverted
+from effekts.system.abbaulicht import visualize_Abbau
+from effekts.wash.washColor import visualize_washColor
+
 # Import our visualization effect functions
 visualize_scroll = scrollEffekt.visualize_scroll
 visualize_energy = energyEffekt.visualize_energy
@@ -161,7 +161,7 @@ class Visualization:
         self.hasBeatChanged = False
         self.lastBeatPacket = 0
         #CONFIG VARS
-        self.randomEnabled = True
+        self.randomEnabled = False
         self.randomizerBeatCount = 0
     def frames_per_second(self):
         """Return the estimated frames per second
@@ -310,12 +310,13 @@ class Visualization:
                             visualize_flashSectionRandomColor,visualize_flashSectionMirroredRandomColor,visualize_rotatingRainbow,visualize_stars,
                             visualize_colorStep,visualize_colorStepRandom,visualize_colorStepRandomMultiple,visualize_Zoop,visualize_energyExtremeColor,
                             visualize_energyExtremeColorInverted,visualize_rotatingEnergyColor,visualize_rotatingEnergyInvertedColor,visualize_multipleEnergyColor,
-                            visualize_scrollExtremeColor,visualize_scrollExtremeColorInverted]
+                            visualize_scrollExtremeColor,visualize_scrollExtremeColorInverted,visualize_washColor]
         self.allEffekts = self.randomEffekts + [visualize_Off,visualize_Abbau]
         randomizer.initRandomizer(queueHandler,self)
         if config.USE_GUI:
             import pyqtgraph as pg
-            from pyqtgraph.Qt import QtGui, QtCore
+            from pyqtgraph.Qt import QtCore, QtGui
+
             # Create GUI window
             self.app = QtGui.QApplication([])
             view = pg.GraphicsView()
@@ -421,8 +422,8 @@ class Visualization:
         # wsServer.initServer()
         # for i in range(0,config.STRIP_COUNT - 1):
             # self.DISABLED_RND_PARTS[i] = True
-        composer.addEffekt(visualize_energy(0),FrequencyRange.all,0,0,180)
-        composer.addEffekt(visualize_energy(1),FrequencyRange.all,1,0,100)
+        composer.addEffekt(visualize_energy(0),FrequencyRange.all,0,0,300)
+        composer.addEffekt(visualize_washColor(1),FrequencyRange.all,1,0,540)
         microphone.start_stream(self.microphone_update)
 
 
