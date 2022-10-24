@@ -12,6 +12,8 @@ import uuid
 import numpy as np
 from effekts.static.StarsActive import visualize_starsActive
 from effekts.wash.washColorInverted import visualize_washColorInverted
+from effekts.beat.run.run import visualize_run
+from effekts.beat.run.runMirrored import visualize_runMirrored
 from scipy.ndimage.filters import gaussian_filter1d
 
 # import wsServer as wsServer
@@ -313,7 +315,8 @@ class Visualization:
                             visualize_flashSectionRandomColor,visualize_flashSectionMirroredRandomColor,visualize_rotatingRainbow,visualize_stars,
                             visualize_colorStep,visualize_colorStepRandom,visualize_colorStepRandomMultiple,visualize_Zoop,visualize_energyExtremeColor,
                             visualize_energyExtremeColorInverted,visualize_rotatingEnergyColor,visualize_rotatingEnergyInvertedColor,visualize_multipleEnergyColor,
-                            visualize_scrollExtremeColor,visualize_scrollExtremeColorInverted,visualize_washColor,visualize_starsActive]
+                            visualize_scrollExtremeColor,visualize_scrollExtremeColorInverted,visualize_washColor,visualize_starsActive,visualize_run,
+                            visualize_runMirrored]
         self.allEffekts = self.randomEffekts + [visualize_Off,visualize_Abbau]
         randomizer.initRandomizer(queueHandler,self)
         if config.USE_GUI:
@@ -425,8 +428,8 @@ class Visualization:
         # wsServer.initServer()
         # for i in range(0,config.STRIP_COUNT - 1):
             # self.DISABLED_RND_PARTS[i] = True
-        composer.addEffekt(visualize_washColorInverted(0),FrequencyRange.all,0,0,300)
-        composer.addEffekt(visualize_washColorInverted(1),FrequencyRange.all,1,0,540)
+        composer.addEffekt(visualize_runMirrored(0),FrequencyRange.all,0,0,300)
+        composer.addEffekt(visualize_runMirrored(1),FrequencyRange.all,1,0,540)
         microphone.start_stream(self.microphone_update)
 
 

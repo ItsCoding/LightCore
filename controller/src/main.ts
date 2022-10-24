@@ -26,7 +26,7 @@ const run = async () => {
     messageBroker.run((data) => logHandler("MessageBroker", data, LogLevel.INFO), (code) => {
         console.log(chalk.bgRed(`[☠️]MessageBroker exited with code ${code}`));
     });
-    await sleep(8*1000);
+    // await sleep(8*1000);
 
 
     console.log(chalk.green("[SYS] 🚀 Starting Visualizer..."));
@@ -34,21 +34,21 @@ const run = async () => {
     visualizer.run((data) => logHandler("Visualizer", data, LogLevel.DEBUG), (code) => {
         console.log(chalk.bgRed(`[☠️]Visualizer exited with code ${code}`));
     });
-    await sleep(10*1000);
+    // await sleep(10*1000);
 
     console.log(chalk.green("[SYS] 🚀 Starting Light-Client..."));
     const lightClient = new Process(`cd ${workingDir}/../light-client && yarn start`);
     lightClient.run((data) => logHandler("Light-Client", data, LogLevel.DEBUG), (code) => {
         console.log(chalk.bgRed(`[☠️]Light-Client exited with code ${code}`));
     });
-    await sleep(15*1000);
+    await sleep(10*1000);
 
     console.log(chalk.green("[SYS] 🚀 Starting Light-Core..."));
     const lightCore = new Process(`cd ${workingDir}/../python && python pipeline.py`);
     lightCore.run((data,level) => logHandler("LightCore", data, level), (code) => {
         console.log(chalk.bgRed(`[☠️]LightCore exited with code ${code}`));
     });
-    await sleep(5*1000);
+    // await sleep(5*1000);
     console.log(chalk.cyan("[SYS] ✅ All components started!"));
 }
 
