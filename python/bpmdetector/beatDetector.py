@@ -95,6 +95,7 @@ def plot_audio_and_detect_beats():
 
     # reset song data if the song has stopped
     if y_avg < 10:
+        # print("Lost beat")
         bpm_list = []
         low_freq_avg_list = []
         # uiplot.btnD.setText(_fromUtf8("BPM"))

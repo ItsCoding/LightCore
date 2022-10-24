@@ -61,7 +61,7 @@ def changeEffekt(hasBeatChanged):
         lastDetectedBeat = time.time()
 
     #check if last beat is older than 2 seconds
-    if time.time() - lastDetectedBeat > 2 and not cleardBeatEffekts:
+    if (time.time() - lastDetectedBeat > 1.5 or engine.avg_Bpm < 1) and not cleardBeatEffekts:
         cleardBeatEffekts = True
         print("Clearing beat effekts")
         makeRandomComposition("all",False,True)

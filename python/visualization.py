@@ -199,10 +199,11 @@ class Visualization:
         if config.cfg["beatDetection"]:
             while not self.bpmQueue.empty():
                 message = self.bpmQueue.get()
-                self.beat = message["beat"]
                 self.avg_Bpm = message["bpm"]
-                self.hasBeatChanged = True
-                self.randomizerBeatCount += 1
+                if self.beat != message["beat"]:
+                    self.beat = message["beat"]
+                    self.hasBeatChanged = True
+                    self.randomizerBeatCount += 1
                 if(config.DISPLAY_BPM):
                     if(self.beat):
                         print("- BPM: " + str(self.avg_Bpm) + " => " + str(self.randomizerBeatCount % config.cfg["musicBeatsBar"]))
