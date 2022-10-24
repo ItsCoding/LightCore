@@ -25,8 +25,6 @@ for i in range(0, len(config.STRIP_LED_COUNTS)):
 
 # _prev_pixels = np.tile(253, (3, config.N_PIXELS))
 """Pixel values that were most recently displayed on the LED strip"""
-
-pixels = np.tile(1, (3, config.STRIP_LED_COUNTS[0]))
 """Pixel values for the LED strip"""
 lastEspError = None
 frameCounter = {}

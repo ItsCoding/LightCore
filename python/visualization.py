@@ -1,13 +1,7 @@
 from __future__ import division, print_function
 
-import json
 import multiprocessing
-import os
-import random
-import signal
-import sys
 import time
-import uuid
 
 import numpy as np
 from effekts.static.StarsActive import visualize_starsActive
@@ -118,11 +112,6 @@ class Visualization:
         """The previous time that the frames_per_second() function was called"""
         self._fps = dsp.ExpFilter(val=config.FPS, alpha_decay=0.2, alpha_rise=0.2)
         """The low-pass filter used to estimate frames-per-second"""
-        self._lastTime = time.time()
-        self._randomWait = 0
-        self.output = []
-        self.fft_plot_filter = dsp.ExpFilter(np.tile(1e-1, config.cfg["frequencyBins"]),
-                                alpha_decay=0.5, alpha_rise=0.99)
 
         self.mel_gain = dsp.ExpFilter(np.tile(1e-1, config.cfg["frequencyBins"]),
                                 alpha_decay=0.01, alpha_rise=0.99)
@@ -130,26 +119,15 @@ class Visualization:
         self.mel_smoothing = dsp.ExpFilter(np.tile(1e-1, config.cfg["frequencyBins"]),
                                 alpha_decay=0.5, alpha_rise=0.99)
 
-        self.volume = dsp.ExpFilter(config.MIN_VOLUME_THRESHOLD,
-                            alpha_decay=0.02, alpha_rise=0.02)
-
-        self.fft_window = np.hamming(int(config.MIC_RATE / config.FPS) * config.N_ROLLING_HISTORY)
+        self.fft_window = np.hamming(config.FRAMES_PER_BUFFER * config.N_ROLLING_HISTORY)
         self.prev_fps_update = time.time()
         # Set the visualization effect to be used
-        self.visualization_effect = visualize_scroll
         # Number of audio samples to read every time frame
-        self.samples_per_frame = int(config.MIC_RATE / config.FPS)
         # Array containing the rolling audio sample window
-        self.y_roll = np.random.rand(config.N_ROLLING_HISTORY, self.samples_per_frame) / 1e16
-        self.app = None
+        self.y_roll = np.random.rand(config.N_ROLLING_HISTORY, config.FRAMES_PER_BUFFER) / 1e16
         self.queue2Thread = None
         self.queue2Parent = None
         self.bpmQueue = None
-        self.fft_plot = None
-        self.mel_curve = None
-        self.r_curve = None
-        self.g_curve = None
-        self.b_curve = None
         self.avg_Bpm = 0
         self.beat = False
         self.randomEffekts = None
@@ -163,7 +141,6 @@ class Visualization:
         }
         self.noAudioCount = 0
         self.hasBeatChanged = False
-        self.lastBeatPacket = 0
         #CONFIG VARS
         self.randomEnabled = False
         self.randomizerBeatCount = 0
@@ -254,53 +231,14 @@ class Visualization:
             # try:
         if self.randomEnabled:
             randomizer.changeEffekt(self.hasBeatChanged)
-        # mel = np.concatenate((mel[:6],np.full(26,0)),axis=0)
         composerOutput = composer.getComposition(mel,self,self.hasBeatChanged)
-        if(len(composerOutput) > 0 and 0 in composerOutput and "getLEDS" in dir(composerOutput[0])):
-            self.output = composerOutput[0].getLEDS()
-        # print(output)
-        # output = visualization_effect(mel)
-        # output += visualize_energy(mel)
-        
-        led.pixels = self.output
         led.update(composerOutput,self.queue2Parent)
-        if config.USE_GUI:
-            # Plot filterbank output
-            x = np.linspace(config.MIN_FREQUENCY, config.MAX_FREQUENCY, len(mel))
-            self.mel_curve.setData(x=x, y=self.fft_plot_filter.update(mel))
-            # Plot the color channels
-            self.r_curve.setData(y=led.pixels[0])
-            self.g_curve.setData(y=led.pixels[1])
-            self.b_curve.setData(y=led.pixels[2])
-        if config.USE_GUI:
-            self.app.processEvents()
-        
         if config.DISPLAY_FPS:
             fps = self.frames_per_second()
             if time.time() - 1 > self.prev_fps_update:
                 self.prev_fps_update = time.time()
                 if config.DEBUG_LOG:
                     print('FPS {:.0f} / {:.0f}'.format(fps, config.FPS))
-
-    # def checkIfAllowed(self,rnd1,rnd2):
-    #     if(rnd1 == visualize_rotatingRainbow and rnd2 == visualize_rotatingRainbow):
-    #         return False
-    #     return True
-
-    
-        
-
-    def checkIfDrop(self): 
-        rCheck = all(v == 0 for v in led.pixels[0])
-        gCheck = all(v == 0 for v in led.pixels[1])
-        bCheck = all(v == 0 for v in led.pixels[2])
-        return (rCheck and gCheck and bCheck and (time.time() - self._lastTime >= 10))
-
-    def minute_passed(self):
-        return time.time() - self._lastTime >= self._randomWait
-
-   
-
 
 
     def start(self, q2t, q2p, bpmQ):
@@ -316,125 +254,22 @@ class Visualization:
                             visualize_colorStep,visualize_colorStepRandom,visualize_colorStepRandomMultiple,visualize_Zoop,visualize_energyExtremeColor,
                             visualize_energyExtremeColorInverted,visualize_rotatingEnergyColor,visualize_rotatingEnergyInvertedColor,visualize_multipleEnergyColor,
                             visualize_scrollExtremeColor,visualize_scrollExtremeColorInverted,visualize_washColor,visualize_starsActive,visualize_run,
-                            visualize_runMirrored]
+                            visualize_runMirrored,visualize_washColorInverted]
         self.allEffekts = self.randomEffekts + [visualize_Off,visualize_Abbau]
         randomizer.initRandomizer(queueHandler,self)
-        if config.USE_GUI:
-            import pyqtgraph as pg
-            from pyqtgraph.Qt import QtCore, QtGui
 
-            # Create GUI window
-            self.app = QtGui.QApplication([])
-            view = pg.GraphicsView()
-            layout = pg.GraphicsLayout(border=(100,100,100))
-            view.setCentralItem(layout)
-            view.show()
-            view.setWindowTitle('Visualization')
-            view.resize(800,600)
-            # Mel filterbank plot
-            self.fft_plot = layout.addPlot(title='Filterbank Output', colspan=3)
-            self.fft_plot.setRange(yRange=[-0.1, 1.2])
-            self.fft_plot.disableAutoRange(axis=pg.ViewBox.YAxis)
-            x_data = np.array(range(1, config.cfg["frequencyBins"] + 1))
-            self.mel_curve = pg.PlotCurveItem()
-            self.mel_curve.setData(x=x_data, y=x_data*0)
-            self.fft_plot.addItem(self.mel_curve)
-            # Visualization plotself.
-            layout.nextRow()
-            led_plot = layout.addPlot(title='Visualization Output', colspan=3)
-            led_plot.setRange(yRange=[-5, 260])
-            led_plot.disableAutoRange(axis=pg.ViewBox.YAxis)
-            # Pen for each of the color channel curves
-            r_pen = pg.mkPen((255, 30, 30, 200), width=4)
-            g_pen = pg.mkPen((30, 255, 30, 200), width=4)
-            b_pen = pg.mkPen((30, 30, 255, 200), width=4)
-            # Color channel curves
-            self.r_curve = pg.PlotCurveItem(pen=r_pen)
-            self.g_curve = pg.PlotCurveItem(pen=g_pen)
-            self.b_curve = pg.PlotCurveItem(pen=b_pen)
-            # Define x data
-            x_data = np.array(range(1, config.STRIP_LED_COUNTS[0] + 1))
-            self.r_curve.setData(x=x_data, y=x_data*0)
-            self.g_curve.setData(x=x_data, y=x_data*0)
-            self.b_curve.setData(x=x_data, y=x_data*0)
-            # Add curves to plot
-            led_plot.addItem(self.r_curve)
-            led_plot.addItem(self.g_curve)
-            led_plot.addItem(self.b_curve)
-            # Frequency range label
-            freq_label = pg.LabelItem('')
-            # Frequency slider
-            def freq_slider_change(tick):
-                minf = freq_slider.tickValue(0)**2.0 * (config.MIC_RATE / 2.0)
-                maxf = freq_slider.tickValue(1)**2.0 * (config.MIC_RATE / 2.0)
-                t = 'Frequency range: {:.0f} - {:.0f} Hz'.format(minf, maxf)
-                freq_label.setText(t)
-                config.cfg["minFrequency"] = minf
-                config.cfg["maxFrequency"] = maxf
-                dsp.create_mel_bank()
-            freq_slider = pg.TickSliderItem(orientation='bottom', allowAdd=False)
-            freq_slider.tickMoveFinished = freq_slider_change
-            freq_slider.addTick((config.MIN_FREQUENCY / (config.MIC_RATE / 2.0))**0.5)
-            freq_slider.addTick((config.MAX_FREQUENCY / (config.MIC_RATE / 2.0))**0.5)
-            freq_label.setText('Frequency range: {} - {} Hz'.format(
-                config.cfg["minFrequency"],
-                config.cfg["maxFrequency"]))
-            # Effect selection
-            active_color = '#16dbeb'
-            inactive_color = '#FFFFFF'
-            def energy_click(x):
-                # visualization_effect = visualize_energy
-                composer.clear()
-                composer.addEffekt(visualize_energyRGB(1),FrequencyRange.low,1,0,180)
-                composer.addEffekt(visualize_energyExtreme(0),FrequencyRange.midHigh,0,0,100)
-                energy_label.setText('Energy', color=active_color)
-                scroll_label.setText('Scroll', color=inactive_color)
-                spectrum_label.setText('Spectrum', color=inactive_color)
-            def scroll_click(x):
-                composer.clear()
-                composer.addEffekt(visualize_scroll(1),FrequencyRange.low,1,0,180)
-                composer.addEffekt(visualize_scrollExtreme(0),FrequencyRange.midHigh,0,0,100)
-                # visualization_effect = visualize_scroll
-                energy_label.setText('Energy', color=inactive_color)
-                scroll_label.setText('Scroll', color=active_color)
-                spectrum_label.setText('Spectrum', color=inactive_color)
-            def spectrum_click(x):
-                composer.clear()
-                composer.addEffekt(visualize_random(1),FrequencyRange.low,1,0,180)
-                composer.addEffekt(visualize_flashy(0),FrequencyRange.all,0,0,100)
-                energy_label.setText('Energy', color=inactive_color)
-                scroll_label.setText('Scroll', color=inactive_color)
-                spectrum_label.setText('Spectrum', color=active_color)
-            # Create effect "buttons" (labels with click event)
-            energy_label = pg.LabelItem('Energy')
-            scroll_label = pg.LabelItem('Scroll')
-            spectrum_label = pg.LabelItem('Spectrum')
-            energy_label.mousePressEvent = energy_click
-            scroll_label.mousePressEvent = scroll_click
-            spectrum_label.mousePressEvent = spectrum_click
-            # energy_click(0)
-            # Layout
-            layout.nextRow()
-            layout.addItem(freq_label, colspan=3)
-            layout.nextRow()
-            layout.addItem(freq_slider, colspan=3)
-            layout.nextRow()
-            layout.addItem(energy_label)
-            layout.addItem(scroll_label)
-            layout.addItem(spectrum_label)
-        # Initialize LEDs
-        # led.update()
-        # Start listening to live audio stream
-        # wsServer.initServer()
-        # for i in range(0,config.STRIP_COUNT - 1):
-            # self.DISABLED_RND_PARTS[i] = True
         composer.addEffekt(visualize_runMirrored(0),FrequencyRange.all,0,0,300)
         composer.addEffekt(visualize_runMirrored(1),FrequencyRange.all,1,0,540)
         microphone.start_stream(self.microphone_update)
 
-
-
-if __name__ == '__main__':
+def exec_vis() :
     vis = Visualization()
     queue = multiprocessing.SimpleQueue()
-    vis.start(queue)
+    queue1 = multiprocessing.SimpleQueue()
+    queue2 = multiprocessing.SimpleQueue()
+    vis.start(queue,queue1,queue2)
+
+if __name__ == '__main__':
+    import cProfile
+    cProfile.run(statement='exec_vis()',sort="cumtime")
+   
