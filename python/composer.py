@@ -56,6 +56,7 @@ def getComposition(frequencyBins,vis,beatChanged):
         effekt.instanceData["bpm"] = vis.avg_Bpm
         effekt.instanceData["beat"] = vis.beat
         effekt.instanceData["beatChanged"] = beatChanged
+        effekt.instanceData["beatCount"] = vis.randomizerBeatCount
         effektResult = effekt.effekt.run(tempBins,stipLength,gain,effekt.instanceData)
 
         # Adjust brightness

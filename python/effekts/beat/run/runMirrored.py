@@ -12,7 +12,7 @@ class visualize_runMirrored:
         self.id = id
         self.p = None
         self.p_filt = None
-        self.rgbColor = random.choice(config.cfg["colorDict"])
+        self.colors = random.sample(config.cfg["colorDict"], 2)
         self.lastFlash = 0
         self.description = {
             "name": "Running light mirrored",
@@ -23,59 +23,110 @@ class visualize_runMirrored:
             "bpmSensitive": True,
             "supports": ["color","speed"]
         }
+      
         self.runPosition = 0
+        self.startRunPosition = 0
         self.offP = None
         self.incrementPosition = True
         self.steps = 1
+        self.unlockColor = False
+        self.offset = 0
     def run(self, y,stripSize,gain: dsp.ExpFilter,instanceData: dict = {}):
         """Effect that expands from the center with increasing sound energy"""
         # global p, p_filt
-        
+        stripSize = stripSize // 2
         if(self.p is None):
-            self.p = np.tile(0, (3, stripSize // 2))
-            self.p_filt =  dsp.ExpFilter(np.tile(1, (3, stripSize // 2)),
+            
+            if "loopCount" in instanceData and instanceData["loopCount"] is not None:
+                self.loopCount = instanceData["loopCount"]
+            else:
+                if(stripSize >50):
+                    self.loopCount = random.randint(3,5)
+                else:  
+                    self.loopCount = random.randint(1,3)
+            self.longerP = stripSize + (stripSize // self.loopCount)
+            self.p_filt =  dsp.ExpFilter(np.tile(1, (3, self.longerP)),
                         alpha_decay=0.1, alpha_rise=0.99)
             if stripSize > 50:
                 self.steps = 3
+        scale = 1 * config.cfg["globalIntensity"]
+        y /= gain.value
+        y *= float((stripSize // 2) - 1)
+        y = [i for i in y if i > 0.05]
+        if len(y) < 3:
+            y = np.tile(0.0, config.cfg["frequencyBins"])
+        y = np.copy(y)
+        
+        ySc = y ** scale
+        yMean = int(np.average(ySc[:]**scale))     
 
-        # y = np.copy(y)
-        # # gain.update(y)
-        # y /= gain.value
-        # # Scale by the width of the LED strip
-        # y *= float((stripSize) - 1)
-        # # Map color channels according to energy in the different freq bands
-        # scale = 1.1 * config.cfg["globalIntensity"]
-        if "color" in instanceData:
-            self.rgbColor = instanceData["color"]
-        if "beatChanged" in instanceData:
-            if instanceData["beatChanged"]:
-                self.rgbColor = random.choice(config.cfg["colorDict"])
-                self.offP = np.copy(self.p)
-                self.p = np.tile(0, (3, stripSize // 2))
-                self.lastFlash = int(round(time.time() * 1000))
+
+
+
+        if yMean > 255:
+            yMean = 255
+        yOff = yMean // 4
+        self.p = np.tile(0, (3, stripSize))
+
+        # self.p[0, self.startRunPosition:self.runPosition] = self.colors[0][0] * 0.4
+        # self.p[1, self.startRunPosition:self.runPosition] = self.colors[0][1] * 0.4
+        # self.p[2, self.startRunPosition:self.runPosition] = self.colors[0][2] * 0.4
+        steps = stripSize // self.loopCount
+        
+        loopRange = list(range(0,stripSize, steps))
+        self.offset += int(1 + (20 * (yMean / 255)))
+
+        tempP = np.tile(0, (3, self.longerP))
+        if self.runPosition == 0 and self.startRunPosition == 0:
+            tempP[:,:] = 0
+        else:
+            tempP[0, self.startRunPosition:self.runPosition] = int(self.colors[0][0] * 0.3)
+            tempP[1, self.startRunPosition:self.runPosition] = int(self.colors[0][1] * 0.3)
+            tempP[2, self.startRunPosition:self.runPosition] = int(self.colors[0][2] * 0.3)
+
+        for i in loopRange:
+            i = i + self.offset
+            if i > stripSize:
+                i = i % stripSize
+            
+            tempP[0, i-yOff:i+yOff] = self.colors[1][0] 
+            tempP[1, i-yOff:i+yOff] = self.colors[1][1] 
+            tempP[2, i-yOff:i+yOff] = self.colors[1][2] 
+        self.p_filt.update(tempP)
+        tempP = np.round(self.p_filt.value)
+        # Apply substantial blur to smooth the edges
+        tempP[0, :] = gaussian_filter1d(tempP[0, :], sigma=4)
+        tempP[1, :] = gaussian_filter1d(tempP[1, :], sigma=4)
+        tempP[2, :] = gaussian_filter1d(tempP[2, :], sigma=4)
+
+        if "beatCount" in instanceData:
+            if instanceData["beatCount"] % config.cfg["musicBeatsBar"] == 0:
+                if self.unlockColor:
+                    self.colors = random.sample(config.cfg["colorDict"], 2)
+                    self.offP = np.copy(self.p)
+                    self.p = np.tile(0, (3, stripSize))
+                    self.lastFlash = int(round(time.time() * 1000))
+                    self.unlockColor = False
+            else:
+                self.unlockColor = True
         if self.lastFlash + (60000/(instanceData["bpm"]+1)) - 250 < int(round(time.time() * 1000)) and self.offP is not None:
                 self.p = np.copy(self.offP)
                 self.offP = None
         else:
-            # self.p[0][:self.runPosition] = self.rgbColor[0]
-            # self.p[1][:self.runPosition] = self.rgbColor[1]
-            # self.p[2][:self.runPosition] = self.rgbColor[2]
-            for i in range(0,self.runPosition):
+            # for i in range(self.startRunPosition,self.runPosition):
+            self.p[0][self.startRunPosition:self.runPosition] = tempP[0][self.startRunPosition:self.runPosition]
+            self.p[1][self.startRunPosition:self.runPosition] = tempP[1][self.startRunPosition:self.runPosition]
+            self.p[2][self.startRunPosition:self.runPosition] = tempP[2][self.startRunPosition:self.runPosition]
 
-                # get random float between 1.0 and 0.9
-                r = random.uniform(0.4, 1.0)
-                self.p[0][i] = int(self.rgbColor[0] * r)
-                self.p[1][i] = int(self.rgbColor[1] * r)
-                self.p[2][i] = int(self.rgbColor[2] * r)
             if self.incrementPosition:
                 self.runPosition += self.steps
             else:
-                self.runPosition -= self.steps
-            if self.runPosition + 1 >= stripSize // 2:
+                self.startRunPosition += self.steps
+
+            if self.runPosition + 1 >= stripSize:
                 self.incrementPosition = False
-            if self.runPosition == 0:
+            if self.startRunPosition + 1 >= stripSize:
                 self.incrementPosition = True
-        self.p[0][self.runPosition:] = 0
-        self.p[1][self.runPosition:] = 0
-        self.p[2][self.runPosition:] = 0
+                self.startRunPosition = 0
+                self.runPosition = 0
         return np.concatenate((self.p, self.p[:, ::-1]), axis=1)

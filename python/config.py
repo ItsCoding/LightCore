@@ -52,7 +52,7 @@ if DEVICE == "esp" or DEVICE == "espv":
 if DEVICE == "virtual" or DEVICE == "espv":
     SOFTWARE_GAMMA_CORRECTION = True
 
-BRIGHTNESS = 85
+BRIGHTNESS = 100
 USE_GUI = False
 """Whether or not to display a PyQtGraph GUI plot of visualization"""
 

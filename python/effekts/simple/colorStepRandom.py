@@ -23,19 +23,17 @@ class visualize_colorStepRandom:
             "supports": ["color","stepAmount"]
         }
         self.step = 0
-        self.stepAmount = random.randint(5,10)
+        self.stepAmount = config.cfg["musicBeatsBar"]
         self.randomStep = random.randint(0,self.stepAmount)
 
     def run(self, y,stripSize,gain: dsp.ExpFilter,instanceData: dict = {}):
         if(self.p is None):
             self.p = np.tile(0, (3, stripSize))
-            if "stepAmount" in instanceData:
-                self.stepAmount = instanceData["stepAmount"]
             self.randomStep = random.randint(0,self.stepAmount)
 
         if "color" in instanceData:
             self.rgbColor = instanceData["color"]
-
+        self.stepAmount = config.cfg["musicBeatsBar"]
         size = stripSize // self.stepAmount
         if "beatChanged" in instanceData:
             if instanceData["beatChanged"]:
