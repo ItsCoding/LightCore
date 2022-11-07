@@ -61,17 +61,10 @@ class visualize_run:
         ySc = y ** scale
         yMean = int(np.average(ySc[:]**scale))     
 
-
-
-
         if yMean > 255:
             yMean = 255
         yOff = yMean // 4
         self.p = np.tile(0, (3, stripSize))
-
-        # self.p[0, self.startRunPosition:self.runPosition] = self.colors[0][0] * 0.4
-        # self.p[1, self.startRunPosition:self.runPosition] = self.colors[0][1] * 0.4
-        # self.p[2, self.startRunPosition:self.runPosition] = self.colors[0][2] * 0.4
         steps = stripSize // self.loopCount
         
         loopRange = list(range(0,stripSize, steps))
@@ -100,34 +93,35 @@ class visualize_run:
         tempP[1, :] = gaussian_filter1d(tempP[1, :], sigma=4)
         tempP[2, :] = gaussian_filter1d(tempP[2, :], sigma=4)
 
-        if "beatCount" in instanceData:
-            if instanceData["beatCount"] % config.cfg["musicBeatsBar"] == 0:
-                if self.unlockColor:
-                    self.colors = random.sample(config.cfg["colorDict"], 2)
-                    self.offP = np.copy(self.p)
-                    self.p = np.tile(0, (3, stripSize))
-                    self.lastFlash = int(round(time.time() * 1000))
-                    self.unlockColor = False
-            else:
-                self.unlockColor = True
-        if self.lastFlash + (60000/(instanceData["bpm"]+1)) - 250 < int(round(time.time() * 1000)) and self.offP is not None:
-                self.p = np.copy(self.offP)
-                self.offP = None
-        else:
+        # if "beatCount" in instanceData:
+        #     if instanceData["beatCount"] % config.cfg["musicBeatsBar"] == 0:
+        #         if self.unlockColor:
+        #             self.colors = random.sample(config.cfg["colorDict"], 2)
+        #             self.offP = np.copy(self.p)
+        #             self.p = np.tile(0, (3, stripSize))
+        #             self.lastFlash = int(round(time.time() * 1000))
+        #             self.unlockColor = False
+        #     else:
+        #         self.unlockColor = True
+        # if self.lastFlash + (60000/(instanceData["bpm"]+1)) - 250 < int(round(time.time() * 1000)) and self.offP is not None:
+        #         self.p = np.copy(self.offP)
+        #         self.offP = None
+        # else:
             # for i in range(self.startRunPosition,self.runPosition):
-            self.p[0][self.startRunPosition:self.runPosition] = tempP[0][self.startRunPosition:self.runPosition]
-            self.p[1][self.startRunPosition:self.runPosition] = tempP[1][self.startRunPosition:self.runPosition]
-            self.p[2][self.startRunPosition:self.runPosition] = tempP[2][self.startRunPosition:self.runPosition]
+        self.p[0][self.startRunPosition:self.runPosition] = tempP[0][self.startRunPosition:self.runPosition]
+        self.p[1][self.startRunPosition:self.runPosition] = tempP[1][self.startRunPosition:self.runPosition]
+        self.p[2][self.startRunPosition:self.runPosition] = tempP[2][self.startRunPosition:self.runPosition]
 
-            if self.incrementPosition:
-                self.runPosition += self.steps
-            else:
-                self.startRunPosition += self.steps
+        if self.incrementPosition:
+            self.runPosition += self.steps
+        else:
+            self.startRunPosition += self.steps
 
-            if self.runPosition + 1 >= stripSize:
-                self.incrementPosition = False
-            if self.startRunPosition + 1 >= stripSize:
-                self.incrementPosition = True
-                self.startRunPosition = 0
-                self.runPosition = 0
+        if self.runPosition + 1 >= stripSize:
+            self.incrementPosition = False
+        if self.startRunPosition + 1 >= stripSize:
+            self.incrementPosition = True
+            self.colors = random.sample(config.cfg["colorDict"], 2)
+            self.startRunPosition = 0
+            self.runPosition = 0
         return self.p
