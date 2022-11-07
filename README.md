@@ -1,8 +1,8 @@
 # LightCore
 Real-time LED strip music visualization using Python and the ESP8266 or Raspberry Pi.
 ##Special thanks to ❤
-- Scott Lawson for the base [project|https://github.com/scottlawsonbc/audio-reactive-led-strip]
-- shunfu for the beat detection [project|https://github.com/shunfu/python-beat-detector]
+- Scott Lawson for the base [project](https://github.com/scottlawsonbc/audio-reactive-led-strip)
+- shunfu for the beat detection [project](https://github.com/shunfu/python-beat-detector)
 
 ## Python Dependencies
 Visualization code is compatible with Python 3.9. A few Python dependencies must also be installed:
@@ -46,11 +46,6 @@ pip3 install websocket-client
 Running the visualization can be done using the command below.
 
 `python3 pipeline.py`
-
-# Installation for Raspberry Pi
-If you encounter any problems running the visualization on a Raspberry Pi, please [open a new issue](https://github.com/scottlawsonbc/audio-reactive-led-strip/issues). Also, please consider opening an issue if you have any questions or suggestions for improving the installation process.
-
-Download and extract all of the files in this repository onto your pi to begin.
 
 ## Installing the Python dependencies
 Install python dependencies using apt-get
