@@ -19,6 +19,7 @@ pip install pyqtgraph
 pip install pyaudio
 pip install matplotlib
 pip install zmq
+pip install websocket-client
 
 ```
 If `pip` is not found try using `python -m pip install` instead.
@@ -38,6 +39,7 @@ pip3 install pyqtgraph
 pip3 install pyaudio
 pip3 install matplotlib
 pip3 install zmq
+pip3 install websocket-client
 
 ```
 
