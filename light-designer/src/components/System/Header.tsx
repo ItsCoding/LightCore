@@ -40,7 +40,7 @@ export const Header = ({ strips, setStrips }: HeaderProps) => (<Box sx={{ flexGr
     <AppBar position="static" >
         <Toolbar >
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                LightGrid
+                Light-Designer
             </Typography>
             <Button color="inherit" onClick={async () => {
                 const data = await openJsonFile();
