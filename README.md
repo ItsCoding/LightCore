@@ -1,8 +1,8 @@
 # LightCore
 Real-time LED strip music visualization using Python and the ESP8266 or Raspberry Pi.
-##Special thanks to ❤
-- Scott Lawson for the base [project|https://github.com/scottlawsonbc/audio-reactive-led-strip]
-- shunfu for the beat detection [project|https://github.com/shunfu/python-beat-detector]
+## Special thanks to ❤
+- Scott Lawson for the base [project](https://github.com/scottlawsonbc/audio-reactive-led-strip)
+- shunfu for the beat detection [project](https://github.com/shunfu/python-beat-detector)
 
 ## Python Dependencies
 Visualization code is compatible with Python 3.9. A few Python dependencies must also be installed:
@@ -19,6 +19,7 @@ pip install pyqtgraph
 pip install pyaudio
 pip install matplotlib
 pip install zmq
+pip install websocket-client
 
 ```
 If `pip` is not found try using `python -m pip install` instead.
@@ -38,17 +39,13 @@ pip3 install pyqtgraph
 pip3 install pyaudio
 pip3 install matplotlib
 pip3 install zmq
+pip3 install websocket-client
 
 ```
 
 Running the visualization can be done using the command below.
 
 `python3 pipeline.py`
-
-# Installation for Raspberry Pi
-If you encounter any problems running the visualization on a Raspberry Pi, please [open a new issue](https://github.com/scottlawsonbc/audio-reactive-led-strip/issues). Also, please consider opening an issue if you have any questions or suggestions for improving the installation process.
-
-Download and extract all of the files in this repository onto your pi to begin.
 
 ## Installing the Python dependencies
 Install python dependencies using apt-get
@@ -91,39 +88,24 @@ defaults.ctl.card 1
 defaults.pcm.card 1
 ```
 
-## Test the LED strip
-1. cd rpi_ws281x/python/examples
-2. sudo nano strandtest.py
-3. Configure the options at the top of the file. Enable logic inverting if you are using an inverting logic-level converter. Set the correct GPIO pin and number of pixels for the LED strip. You will likely need a logic-level converter to convert the Raspberry Pi's 3.3V logic to the 5V logic used by the ws2812b LED strip.
-4. Run example with 'sudo python strandtest.py'
-
 ## Running this project
 
-#### Starting MessageBroker 
+#### Install MessageBroker 
 ```
 cd messageBroker 
 yarn 
-yarn start
 ```
 
-#### Starting Virtualization, this is only needed if you set your DEVICE to "virtual"
+#### Install Virtualization, this is only needed if you set your DEVICE to "virtual" or "espv"
 ```
-cd [INTO LightCore-Visualization Repo] 
+cd light-designer
 yarn 
-yarn start
 ```
 
-#### Starting the render pipeline
-```
-cd python
-python ./pipeline.py
-```
-
-#### Starting the WebClient
+#### Install the WebClient
 ```
 cd light-client
 yarn 
-yarn start
 ```
 
 ### Run everything

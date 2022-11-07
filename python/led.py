@@ -5,12 +5,14 @@ import numpy as np
 import config
 import json
 import socket
+from websocket import create_connection
 
 # ESP8266 uses WiFi communication
 if config.DEVICE == "virtual" or config.DEVICE == "espv":
-    _vsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_address = ("127.0.0.1", 8080)
-    _vsock.connect(server_address)
+    ws = create_connection("ws://127.0.0.1:8080/")
+    # _vsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    # server_address = ("127.0.0.1", 8080)
+    # _vsock.connect(server_address)
 
 if config.DEVICE == "esp" or config.DEVICE == "espv":
     _sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -42,9 +44,8 @@ def differentColor(pixels, prev_pixels, i):
 
 def _update_virtual(composing):
 
-    global pixels, _prev_pixels, _vsock
+    global pixels, _prev_pixels, ws
     frameDict = {}
-    # sumPixels = np.array([[],[],[]])
     for key in composing:
         frame = composing[key].getLEDS()
         ledStripType = config.COLOR_CALIBRATION_ASSIGNMENTS[key]
@@ -53,10 +54,8 @@ def _update_virtual(composing):
         frame[1] = frame[1] * ledCalibration[1]
         frame[2] = frame[2] * ledCalibration[2]
         frame = np.clip(frame, 0, 255).astype(int)
-        # frame = _gamma[frame] if config.SOFTWARE_GAMMA_CORRECTION else
+        # frame = _gamma[frame] if config.SOFTWARE_GAMMA_CORRECTION
         frame = np.copy(frame)
-        # sumPixels += frame
-        frameString = ""
         frameDict[key] = frame.tolist()
 
     # Truncate values and cast to integer
@@ -65,7 +64,7 @@ def _update_virtual(composing):
     # _prev_pixels = np.copy(sumPixels)
     # print(p)
     # ("===========================")
-    _vsock.send(json.dumps(frameDict).encode())
+    ws.send(json.dumps(frameDict).encode())
     # strip.show()
 
 def capAt255(x):
