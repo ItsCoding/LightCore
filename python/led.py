@@ -54,7 +54,7 @@ def _update_virtual(composing):
         frame[1] = frame[1] * ledCalibration[1]
         frame[2] = frame[2] * ledCalibration[2]
         frame = np.clip(frame, 0, 255).astype(int)
-
+        # frame = _gamma[frame] if config.SOFTWARE_GAMMA_CORRECTION
         frame = np.copy(frame)
         frameDict[key] = frame.tolist()
 
