@@ -1,6 +1,6 @@
 # LightCore
 Real-time LED strip music visualization using Python and the ESP8266 or Raspberry Pi.
-##Special thanks to ❤
+## Special thanks to ❤
 - Scott Lawson for the base [project](https://github.com/scottlawsonbc/audio-reactive-led-strip)
 - shunfu for the beat detection [project](https://github.com/shunfu/python-beat-detector)
 
