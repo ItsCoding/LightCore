@@ -95,19 +95,19 @@ defaults.pcm.card 1
 
 ## Running this project
 
-#### Starting MessageBroker 
+#### Install MessageBroker 
 ```
 cd messageBroker 
 yarn 
 ```
 
-#### Starting Virtualization, this is only needed if you set your DEVICE to "virtual"
+#### Install Virtualization, this is only needed if you set your DEVICE to "virtual" or "espv"
 ```
 cd light-designer
 yarn 
 ```
 
-#### Starting the WebClient
+#### Install the WebClient
 ```
 cd light-client
 yarn 
