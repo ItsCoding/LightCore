@@ -29,8 +29,8 @@ const run = async () => {
     // await sleep(8*1000);
 
 
-    console.log(chalk.green("[SYS] 🚀 Starting Visualizer..."));
-    const visualizer = new Process(`cd ${workingDir}/../../LightCore-Virtualization/LightCore-Virtualization-Electron && yarn start`);
+    console.log(chalk.green("[SYS] 🚀 Starting Light-Designer..."));
+    const visualizer = new Process(`cd ${workingDir}/..light-designer && yarn start`);
     visualizer.run((data) => logHandler("Visualizer", data, LogLevel.DEBUG), (code) => {
         console.log(chalk.bgRed(`[☠️]Visualizer exited with code ${code}`));
     });

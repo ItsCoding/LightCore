@@ -93,39 +93,24 @@ defaults.ctl.card 1
 defaults.pcm.card 1
 ```
 
-## Test the LED strip
-1. cd rpi_ws281x/python/examples
-2. sudo nano strandtest.py
-3. Configure the options at the top of the file. Enable logic inverting if you are using an inverting logic-level converter. Set the correct GPIO pin and number of pixels for the LED strip. You will likely need a logic-level converter to convert the Raspberry Pi's 3.3V logic to the 5V logic used by the ws2812b LED strip.
-4. Run example with 'sudo python strandtest.py'
-
 ## Running this project
 
 #### Starting MessageBroker 
 ```
 cd messageBroker 
 yarn 
-yarn start
 ```
 
 #### Starting Virtualization, this is only needed if you set your DEVICE to "virtual"
 ```
-cd [INTO LightCore-Visualization Repo] 
+cd light-designer
 yarn 
-yarn start
-```
-
-#### Starting the render pipeline
-```
-cd python
-python ./pipeline.py
 ```
 
 #### Starting the WebClient
 ```
 cd light-client
 yarn 
-yarn start
 ```
 
 ### Run everything
