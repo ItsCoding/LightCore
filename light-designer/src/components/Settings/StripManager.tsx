@@ -1,5 +1,5 @@
 import { Button, Divider, Paper, Typography } from "@mui/material";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, GridCellEditCommitParams, GridColDef } from "@mui/x-data-grid";
 import { Strip } from "../../classes/Strips/Strip";
 import { useSnackbar } from "notistack";
 import { StraightStrip } from "../../classes/Strips/StraightStrip";
@@ -51,14 +51,50 @@ const columns: GridColDef[] = [
         editable: true,
         type: "number",
     },
+    {
+        field: 'stripIP',
+        headerName: 'IP',
+        width: 150,
+        editable: true,
+        type: "string",
+    },
+    {
+        field: 'stripMac',
+        headerName: 'MAC',
+        width: 150,
+        editable: true,
+        type: "string",
+    },
+    {
+        field: "stripSymbol",
+        headerName: "Symbol",
+        width: 100,
+        editable: true,
+        type: "string",
+    },
+    {
+        field: "stripControllerStart",
+        headerName: "V-Start",
+        width: 100,
+        editable: true,
+        type: "number",
+    },
+    {
+        field: "stripControllerEnd",
+        headerName: "V-End",
+        width: 100,
+        editable: true,
+        type: "number",
+    },
+    {
+        field: "computingGroup",
+        headerName: "Comp. Group",
+        width: 100,
+        editable: true,
+        type: "number",
+    },
 ];
 
-const randomString = (length: number) => {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let result = '';
-    for (let i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
-    return result;
-}
 
 export const StripManager = ({ strips, setStrips, setSelectedStrip, selectedStrip }: StripManagerProps) => {
     const { enqueueSnackbar } = useSnackbar();
@@ -90,6 +126,31 @@ export const StripManager = ({ strips, setStrips, setSelectedStrip, selectedStri
         enqueueSnackbar(`Strips Removed`, { variant: "success" });
     }
 
+    const cellEditCommit = (params: GridCellEditCommitParams) => {
+        //Get index of the strip that was edited
+        const index = strips.findIndex(strip => strip.id === params.id);
+        const newStrips = [...strips];
+        const strip = newStrips[index];
+        if (params.field === "ledCount") {
+            strip.ledCount = parseInt(params.value as string);
+        }
+        else if (params.field === "getPhysicalLength") {
+            strip.setPhysicalLength(parseInt(params.value as string));
+        }
+        else if (params.field === "lcid") {
+            strip.lcid = params.value as string;
+        }
+        else if (params.field === "offset") {
+            strip.offset = params.value as number;
+        }
+        else if (params.field === "stripName") {
+            strip.stripName = params.value as string;
+        }
+        else if (params.field === "zIndex") {
+            strip.zIndex = params.value as number;
+        }
+        setStrips(newStrips);
+    }
 
 
     return (<>
@@ -124,31 +185,7 @@ export const StripManager = ({ strips, setStrips, setSelectedStrip, selectedStri
                     }
                 }}
                 onProcessRowUpdateError={(params) => console.log(params)}
-                onCellEditCommit={(params) => {
-                    //Get index of the strip that was edited
-                    const index = strips.findIndex(strip => strip.id === params.id);
-                    const newStrips = [...strips];
-                    const strip = newStrips[index];
-                    if (params.field === "ledCount") {
-                        strip.ledCount = parseInt(params.value as string);
-                    }
-                    else if (params.field === "getPhysicalLength") {
-                        strip.setPhysicalLength(parseInt(params.value as string));
-                    }
-                    else if (params.field === "lcid") {
-                        strip.lcid = params.value as string;
-                    }
-                    else if (params.field === "offset") {
-                        strip.offset = params.value as number;
-                    }
-                    else if (params.field === "stripName") {
-                        strip.stripName = params.value as string;
-                    }
-                    else if (params.field === "zIndex") {
-                        strip.zIndex = params.value as number;
-                    }
-                    setStrips(newStrips);
-                }}
+                onCellEditCommit={cellEditCommit}
             />
             <div style={{
                 paddingTop: "10px",

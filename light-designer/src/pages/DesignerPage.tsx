@@ -13,7 +13,7 @@ export const DesignerPage = () => {
     const [strips, setStrips] = useState<Strip[]>([]);
     const [selectedStripIndex, setSelectedStrip] = useState<number>(-1);
     const [globalScaling, setGlobalScalingState] = useState(2)
-    const [enableSidebar, setEnableSidebar] = useState(true);
+    const [enableSidebar, setEnableSidebar] = useState(3);
     useEffect(() => {
         const startPoint = new Point(0, 0);
         const startPoint2 = new Point(0, 100);
@@ -44,14 +44,33 @@ export const DesignerPage = () => {
         setStrips(newStrips);
     }
 
+    const gridState = () => {
+        if (enableSidebar === 0) {
+            return 9;
+        } else if (enableSidebar === 1) {
+            return 12;
+        } else {
+            return 0;
+        }
+    }
 
+    const sidebarState = () => {
+        if (enableSidebar === 0) {
+            return 3;
+        } else if (enableSidebar === 1) {
+            return 0;
+        } else {
+            return 12;
+        }
+    }
 
+    console.log("SIDEBAR", enableSidebar,sidebarState(),gridState());
     return (<>
-        <Header strips={strips} setStrips={setStrips} enableSidebar={enableSidebar} setEnableSidebar={setEnableSidebar}/>
+        <Header strips={strips} setStrips={setStrips} enableSidebar={enableSidebar} setEnableSidebar={setEnableSidebar} />
         <Grid container sx={{
             minHeight: "95vh",
         }}>
-            <Grid item xs={enableSidebar ? 9 : 12} sx={{
+            {enableSidebar != 2 && <Grid item xs={gridState()} sx={{
                 overflow: "auto",
             }}>
                 <div style={{
@@ -63,9 +82,9 @@ export const DesignerPage = () => {
                         setSelectedStrip(index);
                     }} strips={strips} selectedStrip={selectedStripIndex} globalScaling={globalScaling} setStrips={setStrips} />
                 </div>
-            </Grid>
-            {enableSidebar &&
-                <Grid item xs={3}>
+            </Grid>}
+            {enableSidebar != 1 &&
+                <Grid item xs={sidebarState()}>
                     <GlobalSettings strips={strips} setStrips={setStrips} globalScaling={globalScaling} setGlobalScalingState={setGlobalScalingState} />
                     <StripSettings changeSelectedStrip={changeSelectedStrip} selectedStrip={selectedStripIndex >= 0 ? strips[selectedStripIndex] : null} />
                     <StripManager selectedStrip={selectedStripIndex} setSelectedStrip={(index) => setSelectedStrip(index)} strips={strips} setStrips={setStrips} />

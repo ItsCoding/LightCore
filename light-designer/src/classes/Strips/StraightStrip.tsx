@@ -1,12 +1,13 @@
 import { Point } from "../Point";
 import { StripBase } from "./StripBase";
 import { v4 } from "uuid"
-import { getGlobalMaxStripDensity } from "../../components/System/Globals";
-export class StraightStrip implements StripBase {
+import { extend } from "lodash";
+export class StraightStrip extends StripBase {
     private end: Point;
     public id: string;
     public offset = 0;
     constructor(public lcid: string, private start: Point, private leds: number, private physicalLength: number) {
+        super();
         this.end = new Point(start.x + physicalLength, start.y);
         this.id = v4();
     }
@@ -116,6 +117,47 @@ export class StraightStrip implements StripBase {
         return positions;
     }
 
+    public getPhysicalPositionsAt(index: number): Point {
+        const ledSize = this.getPhysicalLedSize();
+        const angle = this.getStripAngle;
+        const x = this.start.x + (index * ledSize * Math.cos(angle * Math.PI / 180));
+        const y = this.start.y + (index * ledSize * Math.sin(angle * Math.PI / 180));
+        return new Point(x, y)
+    }
+
+    public getExportLEDsAt(i: number): Point[] {
+        const angle = this.getStripAngle;
+        const ledSize = this.physicalLength / this.leds;
+        console.log("LED Size: " + ledSize);
+        const points: Point[] = []
+        for (let iX = 0; iX < ledSize; iX++) {
+            const x = this.start.x + (i * ledSize * Math.cos(angle * Math.PI / 180));
+            const y = this.start.y + (i * ledSize * Math.sin(angle * Math.PI / 180));
+            points.push(new Point(x, y));
+        }
+        return points;
+    }
+
+    public getExportLEDs(): Point[][] {
+        const positions: Point[][] = [];
+        for (let i = 0; i < this.leds; i++) {
+            positions.push(this.getExportLEDsAt(i));
+        }
+        return positions;
+    }
+
+    public getExportConfig() {
+        return extend(super.getExportConfig(), {
+            start: this.start,
+            end: this.end,
+            leds: this.leds,
+            physicalLength: this.physicalLength,
+            lcid: this.lcid,
+            offset: this.offset,
+            name: this.stripName,
+        });
+    }
+
     public toJson(): string {
         return JSON.stringify(this);
     }
@@ -134,5 +176,6 @@ export class StraightStrip implements StripBase {
         });
         return initializedStrips;
     }
+
 
 }

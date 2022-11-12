@@ -7,4 +7,8 @@ export class Point {
 
         return new Point(rotatedX, rotatedY);
     }
+
+    public toString(): string {
+        return `(${this.x}, ${this.y})`;
+    }
 }
