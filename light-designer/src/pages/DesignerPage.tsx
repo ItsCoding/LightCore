@@ -13,6 +13,7 @@ export const DesignerPage = () => {
     const [strips, setStrips] = useState<Strip[]>([]);
     const [selectedStripIndex, setSelectedStrip] = useState<number>(-1);
     const [globalScaling, setGlobalScalingState] = useState(2)
+    const [enableSidebar, setEnableSidebar] = useState(true);
     useEffect(() => {
         const startPoint = new Point(0, 0);
         const startPoint2 = new Point(0, 100);
@@ -46,11 +47,11 @@ export const DesignerPage = () => {
 
 
     return (<>
-        <Header strips={strips} setStrips={setStrips} />
+        <Header strips={strips} setStrips={setStrips} enableSidebar={enableSidebar} setEnableSidebar={setEnableSidebar}/>
         <Grid container sx={{
             minHeight: "95vh",
         }}>
-            <Grid item xs={9} sx={{
+            <Grid item xs={enableSidebar ? 9 : 12} sx={{
                 overflow: "auto",
             }}>
                 <div style={{
@@ -63,12 +64,13 @@ export const DesignerPage = () => {
                     }} strips={strips} selectedStrip={selectedStripIndex} globalScaling={globalScaling} setStrips={setStrips} />
                 </div>
             </Grid>
-            <Grid item xs={3}>
-                <GlobalSettings strips={strips} setStrips={setStrips} globalScaling={globalScaling} setGlobalScalingState={setGlobalScalingState} />
-                <StripSettings changeSelectedStrip={changeSelectedStrip} selectedStrip={selectedStripIndex >= 0 ? strips[selectedStripIndex] : null} />
-                <StripManager selectedStrip={selectedStripIndex} setSelectedStrip={(index) => setSelectedStrip(index)} strips={strips} setStrips={setStrips} />
+            {enableSidebar &&
+                <Grid item xs={3}>
+                    <GlobalSettings strips={strips} setStrips={setStrips} globalScaling={globalScaling} setGlobalScalingState={setGlobalScalingState} />
+                    <StripSettings changeSelectedStrip={changeSelectedStrip} selectedStrip={selectedStripIndex >= 0 ? strips[selectedStripIndex] : null} />
+                    <StripManager selectedStrip={selectedStripIndex} setSelectedStrip={(index) => setSelectedStrip(index)} strips={strips} setStrips={setStrips} />
+                </Grid>}
 
-            </Grid>
         </Grid>
 
     </>);

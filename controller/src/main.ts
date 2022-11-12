@@ -30,9 +30,9 @@ const run = async () => {
 
 
     console.log(chalk.green("[SYS] 🚀 Starting Light-Designer..."));
-    const visualizer = new Process(`cd ${workingDir}/..light-designer && yarn start`);
-    visualizer.run((data) => logHandler("Visualizer", data, LogLevel.DEBUG), (code) => {
-        console.log(chalk.bgRed(`[☠️]Visualizer exited with code ${code}`));
+    const visualizer = new Process(`cd ${workingDir}/../light-designer && yarn start`);
+    visualizer.run((data) => logHandler("Light-Designer", data, LogLevel.INFO), (code) => {
+        console.log(chalk.bgRed(`[☠️]Light-Designer exited with code ${code}`));
     });
     // await sleep(10*1000);
 
@@ -41,7 +41,7 @@ const run = async () => {
     lightClient.run((data) => logHandler("Light-Client", data, LogLevel.DEBUG), (code) => {
         console.log(chalk.bgRed(`[☠️]Light-Client exited with code ${code}`));
     });
-    await sleep(8*1000);
+    await sleep(30*1000);
 
     console.log(chalk.green("[SYS] 🚀 Starting Light-Core..."));
     const lightCore = new Process(`cd ${workingDir}/../python && python pipeline.py`);
