@@ -1,10 +1,9 @@
-import matplotlib
-matplotlib.use('TkAgg') # <-- THIS MAKES IT FAST!
+# import matplotlib
+# matplotlib.use('TkAgg') # <-- THIS MAKES IT FAST!
 import numpy
-import scipy
+# import scipy
 import pyaudio
 import threading
-import pylab
 
 class InputRecorder:
     """Simple, cross-platform class to record from the default input device."""
@@ -88,7 +87,7 @@ class InputRecorder:
     
     ### VISUALIZATION ###
     
-    def plot_sound_wave(self):
-        """open a matplotlib popup window showing audio data."""
-        pylab.plot(self.audio.flatten())
-        pylab.show()
+    # def plot_sound_wave(self):
+    #     """open a matplotlib popup window showing audio data."""
+    #     pylab.plot(self.audio.flatten())
+    #     pylab.show()

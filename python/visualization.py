@@ -270,6 +270,7 @@ def exec_vis() :
     vis.start(queue,queue1,queue2)
 
 if __name__ == '__main__':
-    import cProfile
-    cProfile.run(statement='exec_vis()',sort="cumtime")
+    # import cProfile
+    # cProfile.run(statement='exec_vis()',sort="cumtime")
+    exec_vis()
    

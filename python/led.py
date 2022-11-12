@@ -214,6 +214,8 @@ def update(composing, queue2Parent):
     elif config.DEVICE == "espv":
         _update_virtual(positiveComp)
         _update_esp8266(positiveComp)
+    elif config.DEVICE == "null":
+        pass
     else:
         raise ValueError("Invalid device selected")
 

@@ -6,7 +6,6 @@ import dsp
 from scipy.ndimage.filters import gaussian_filter1d
 
 
-
 class visualize_runMirrored:
     def __init__(self,id):
         self.id = id
@@ -31,6 +30,7 @@ class visualize_runMirrored:
         self.steps = 1
         self.unlockColor = False
         self.offset = 0
+
     def run(self, y,stripSize,gain: dsp.ExpFilter,instanceData: dict = {}):
         """Effect that expands from the center with increasing sound energy"""
         # global p, p_filt
@@ -113,7 +113,8 @@ class visualize_runMirrored:
                 self.p = np.copy(self.offP)
                 self.offP = None
         else:
-            # for i in range(self.startRunPosition,self.runPosition):
+            if(self.runPosition - self.startRunPosition > stripSize):
+                self.runPosition -= 1
             self.p[0][self.startRunPosition:self.runPosition] = tempP[0][self.startRunPosition:self.runPosition]
             self.p[1][self.startRunPosition:self.runPosition] = tempP[1][self.startRunPosition:self.runPosition]
             self.p[2][self.startRunPosition:self.runPosition] = tempP[2][self.startRunPosition:self.runPosition]

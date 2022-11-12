@@ -1,0 +1,13 @@
+{
+  "name": "pipeline",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "build": "python -m nuitka --follow-imports pipeline.py",
+    "start": "python pipeline.py",
+    "profile": "python -m cProfile -o profile visualization.py",
+    "line-profile": "kernprof -l -v visualization.py",
+    "profile-view": "python -m gprof2dot --colour-nodes-by-selftime -f pstats output.pstats | dot -Tpng -o output.png"
+  },
+  "author": "Alexander Quadt"
+}
