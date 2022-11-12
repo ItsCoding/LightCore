@@ -4,6 +4,7 @@ import * as fs from 'fs';
 import { StraightStrip } from "../../classes/Strips/StraightStrip";
 import { Strip } from "../../classes/Strips/Strip";
 import * as remote from '@electron/remote';
+import MenuIcon from '@mui/icons-material/Menu';
 const dialog = remote.dialog;
 const openJsonFile = async () => {
     const result = await dialog.showOpenDialog({
@@ -34,9 +35,11 @@ const saveJsonFile = async (data: any) => {
 export type HeaderProps = {
     strips: Strip[];
     setStrips: (newStrips: Strip[]) => void;
+    enableSidebar: boolean;
+    setEnableSidebar: (newState: boolean) => void;
 }
 
-export const Header = ({ strips, setStrips }: HeaderProps) => (<Box sx={{ flexGrow: 1 }} >
+export const Header = ({ strips, setStrips, enableSidebar, setEnableSidebar }: HeaderProps) => (<Box sx={{ flexGrow: 1 }} >
     <AppBar position="static" >
         <Toolbar >
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
@@ -49,6 +52,9 @@ export const Header = ({ strips, setStrips }: HeaderProps) => (<Box sx={{ flexGr
                 }
             }}>Load</Button>
             <Button color="secondary" onClick={() => saveJsonFile(strips)}>Save</Button>
+            <Button color="inherit" onClick={() => setEnableSidebar(!enableSidebar)}>
+                <MenuIcon />
+            </Button>
         </Toolbar>
     </AppBar>
 </Box>)
