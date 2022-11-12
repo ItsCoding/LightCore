@@ -6,7 +6,7 @@ import os
 
 
 # DEVICE = 'esp8266'
-DEVICE = "virtual"
+DEVICE = "espv"
 """Device used to control LED strip. Must be 'esp', 'espv' or 'virtual'
 
 'esp8266' means that you are using an ESP8266 module to control the LED strip
@@ -28,20 +28,42 @@ if DEVICE == "esp" or DEVICE == "espv":
         # 2: "127.0.0.1",
         # 3: "127.0.0.1",
         #--------------------
-        0: "10.40.0.14",
+        # 10=side   
+
+        0: "10.40.0.17", #11
         1: "GROUP",
-        2: "10.40.0.11",
-        3: "10.40.0.10",
+        2: "10.40.0.10",
+        3: "10.40.0.14",
+        4:"10.40.0.17",
+        5:"10.40.0.17",
+        6:"10.40.0.17",
+        7:"10.40.0.17",
+        8:"10.40.0.17",
+        9:"10.40.0.17",
     }  #'192.168.62.3' #'10.40.0.186'
     UDP_GROUPS = {
         1: [
             {"from": 0, "to": 270, "IP": "10.40.0.12"},
             {"from": 270, "to": 540, "IP": "10.40.0.13","offset": 270,"invert": True},
-        ]
+        ],
+        # 5:[{"from": 0, "to": 113, "IP": "10.40.0.17"}],
+        # 6:[{"from": 113, "to": 113 * 2, "IP": "10.40.0.17"}],
+        # 7:[{"from": 113 * 2, "to": 113 * 3, "IP": "10.40.0.17"}],
+        # 8:[{"from": 113 * 3, "to": 113 * 4, "IP": "10.40.0.17"}],
+        # 9:[{"from": 113 * 4, "to": 113 * 5, "IP": "10.40.0.17"}],
+        # 10:[{"from": 113 * 5, "to": 113 * 5 + 35, "IP": "10.40.0.17"}]
     }
     UDP_FRAMEDIVIDER = {
-        0: 2,
-        1: 2,
+        0: 5,
+        1: 3,
+    }
+
+    UDP_INDEX_OFFSET = {
+        5: 113,
+        6: 113*2,
+        7: 113*3,
+        8: 113*4,
+        9: 113*5
     }
     """IP address of the ESP8266. Must match IP in ws2812_controller.ino"""
     UDP_PORT = 7777
@@ -69,7 +91,7 @@ GAMMA_TABLE_PATH = os.path.join(os.path.dirname(__file__), "gamma_table.npy")
 MIC_RATE = 44100
 """Sampling frequency of the microphone in Hz"""
 
-FPS = 180
+FPS = 120
 FRAMES_PER_BUFFER = int(MIC_RATE / FPS)
 """Desired refresh rate of the visualization (frames per second)
 
@@ -117,7 +139,7 @@ MIN_VOLUME_THRESHOLD = 1e-7
 
 STRIP_COUNT = 4
 # STRIP_LED_COUNTS = [300, 540, 50, 50]
-STRIP_LED_COUNTS = [300, 540, 50, 50]
+STRIP_LED_COUNTS = [600, 540, 50, 50]
 STRIP_MIRRORS = [[2, 3]]
 
 RANDOM_MAX_WAIT = 8
@@ -159,6 +181,12 @@ COLOR_CALIBRATION_ASSIGNMENTS = {
     1: "ws2813",
     2: "ws2811",
     3: "ws2811",
+    4: "ws2811",
+    5: "ws2811",
+    6: "ws2811",
+    7: "ws2811",
+    8: "ws2811",
+    9: "ws2811",
 }
 
 # How many beats are one bar

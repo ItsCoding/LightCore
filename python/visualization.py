@@ -138,6 +138,12 @@ class Visualization:
             1: True,
             2: True,
             3: True,
+            4: True,
+            5: True,
+            6: True,
+            7: True,
+            8: True,
+            9: True
         }
         self.noAudioCount = 0
         self.hasBeatChanged = False
@@ -260,6 +266,8 @@ class Visualization:
 
         composer.addEffekt(visualize_runMirrored(0),FrequencyRange.all,0,0,300)
         composer.addEffekt(visualize_runMirrored(1),FrequencyRange.all,1,0,540)
+        composer.addEffekt(visualize_runMirrored(2),FrequencyRange.all,2,0,50)
+        composer.addEffekt(visualize_runMirrored(3),FrequencyRange.all,3,0,50)
         microphone.start_stream(self.microphone_update)
 
 def exec_vis() :
