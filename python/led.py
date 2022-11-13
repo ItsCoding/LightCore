@@ -101,6 +101,11 @@ def _update_esp8266(composing):
         # print(len(idx),len(idx[0]))
         skipFrame = False
         _prev_pixels[stripIndex] = np.copy(p)
+        brightness = config.cfg["brightness"] / 100
+        if stripIndex >= 0:
+            stripBrightness = config.cfg["stripBrightness"][stripIndex] / 100
+        else:
+            stripBrightness = 1
         if stripIndex in config.UDP_FRAMEDIVIDER:
             if stripIndex not in frameCounter:
                 frameCounter[stripIndex] = 0
@@ -121,9 +126,9 @@ def _update_esp8266(composing):
                         newI = i % 256
                         m.append(offset)
                         m.append(newI)  # Index of pixel to change
-                        m.append(int(capAt255(p[0][i] * ledCalibration[0])))  # Pixel red value
-                        m.append(int(capAt255(p[1][i] * ledCalibration[1])))  # Pixel green value
-                        m.append(int(capAt255(p[2][i] * ledCalibration[2])))  # Pixel blue value
+                        m.append(int(capAt255(p[0][i] * ledCalibration[0] * brightness * stripBrightness)))  # Pixel red value
+                        m.append(int(capAt255(p[1][i] * ledCalibration[1] * brightness * stripBrightness)))  # Pixel green value
+                        m.append(int(capAt255(p[2][i] * ledCalibration[2] * brightness * stripBrightness)))  # Pixel blue value
                     # print(len(m))
                     try:
                         # print(m)
@@ -161,9 +166,9 @@ def _update_esp8266(composing):
                             m.append(offset)
                             m.append(newI)  # Index of pixel to change
                             # print(offset,newI)
-                            m.append(int(capAt255(p[0][i] * ledCalibration[0])))  # Pixel red value
-                            m.append(int(capAt255(p[1][i] * ledCalibration[1])))  # Pixel green value
-                            m.append(int(capAt255(p[2][i] * ledCalibration[2])))
+                            m.append(int(capAt255(p[0][i] * ledCalibration[0] * brightness * stripBrightness)))  # Pixel red value
+                            m.append(int(capAt255(p[1][i] * ledCalibration[1] * brightness * stripBrightness)))  # Pixel green value
+                            m.append(int(capAt255(p[2][i] * ledCalibration[2] * brightness * stripBrightness)))
                         # print(len(m))
                         try:
                             mx = bytearray(m)

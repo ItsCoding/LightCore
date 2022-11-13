@@ -3,6 +3,7 @@ import config
 from customTypes.activeEffekt import ActiveEffekt
 import numpy as np
 import dsp
+import time
 
 
 from customTypes.frequencyRange import FrequencyRange
@@ -37,6 +38,8 @@ def getComposition(frequencyBins,vis,beatChanged):
     frameDict = {}
     effekt: ActiveEffekt
     gain.update(frequencyBins)
+    timeDict = {}
+
     for effekt in runningEffekts:
         stipLength = effekt.ledEndIndex - effekt.ledStartIndex
         realIndex = effekt.stripIndex
@@ -57,18 +60,21 @@ def getComposition(frequencyBins,vis,beatChanged):
         effekt.instanceData["beat"] = vis.beat
         effekt.instanceData["beatChanged"] = beatChanged
         effekt.instanceData["beatCount"] = vis.randomizerBeatCount
+        startTime = time.time()
         effektResult = effekt.effekt.run(tempBins,stipLength,gain,effekt.instanceData)
-
+        endTime = time.time()
+      
         # Adjust brightness
         # effektResult[0] = [int(i * brightness) for i in effektResult[0]]
         # effektResult[1] = [int(i * brightness) for i in effektResult[1]]
         # effektResult[2] = [int(i * brightness) for i in effektResult[2]]
-
+        startFrameTime = time.time()
         frameDict[effekt.stripIndex].addFrame(effektResult, effekt.ledStartIndex, effekt.ledEndIndex)
+        endFrameTime = time.time()
 
-
+        timeDict[str(effekt.stripIndex) + "-" + str(config.STRIP_LED_COUNTS[realIndex])] = [endTime - startTime, endFrameTime - startFrameTime]
     # if(len(frameDict) == 0):
     #     return {
     #         0: np.tile(0, (3, config.STRIP_LED_COUNTS[0]))
     #     }
-    return frameDict
+    return frameDict, timeDict

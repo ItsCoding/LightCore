@@ -17,10 +17,15 @@ def start_stream(callback):
     prev_ovf_time = time.time()
     while True:
         try:
+            startTime = time.time()
             y = np.fromstring(stream.read(frames_per_buffer, exception_on_overflow=False), dtype=np.int16)
             y = y.astype(np.float32)
+            # print(stream.get_read_available())
+
+            # crank fps here
             stream.read(stream.get_read_available(), exception_on_overflow=False)
-            callback(y)
+            endTime = time.time()
+            callback(y, endTime - startTime)
         except IOError as e:
             overflows += 1
             if time.time() > prev_ovf_time + 1:

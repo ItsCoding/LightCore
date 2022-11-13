@@ -176,7 +176,7 @@ class Visualization:
         return self._fps.update(1000.0 / dt)
 
 
-    def microphone_update(self,audio_samples):
+    def microphone_update(self,audio_samples,recordTime):
         # time.sleep(0.01)
         self.hasBeatChanged = False
         self.hasBeatChangedManual = False
@@ -237,16 +237,27 @@ class Visualization:
             # try:
         if self.randomEnabled:
             randomizer.changeEffekt(self.hasBeatChanged)
-        composerOutput = composer.getComposition(mel,self,self.hasBeatChanged)
+        # measure time of effekt
+        start = time.time()
+        composerOutput, timeDict = composer.getComposition(mel,self,self.hasBeatChanged)
+        end = time.time()
+       
+
+        startLed = time.time()
         led.update(composerOutput,self.queue2Parent)
+        endLed = time.time()
+        
+
         if config.DISPLAY_FPS:
             fps = self.frames_per_second()
             if time.time() - 1 > self.prev_fps_update:
                 self.prev_fps_update = time.time()
                 if config.DEBUG_LOG:
-                    print('FPS {:.0f} / {:.0f}'.format(fps, config.FPS))
+                    print("Led time: " + str(round((endLed - startLed) * 1000,2)) + "ms | Effekt time: " + str(round((endLed - start) * 1000,2)) + "ms | Record Time: " + str(round(recordTime * 1000)) + "ms | FPS: " + str(round(1 / (endLed - startLed + end - start + recordTime),2)) + ' | Real FPS {:.0f} / {:.0f}'.format(fps, config.FPS))
+                    # for key, value in timeDict.items():
+                    #     print(key + ": " + str(round(value[0] * 1000,2)) + "ms | " + str(round(value[1] * 1000,2)) + "ms")
 
-
+        
     def start(self, q2t, q2p, bpmQ):
         self.queue2Thread = q2t
         self.bpmQueue = bpmQ
@@ -264,7 +275,7 @@ class Visualization:
         self.allEffekts = self.randomEffekts + [visualize_Off,visualize_Abbau]
         randomizer.initRandomizer(queueHandler,self)
 
-        composer.addEffekt(visualize_runMirrored(0),FrequencyRange.all,0,0,300)
+        composer.addEffekt(visualize_runMirrored(0),FrequencyRange.all,0,0,1000)
         composer.addEffekt(visualize_runMirrored(1),FrequencyRange.all,1,0,540)
         composer.addEffekt(visualize_runMirrored(2),FrequencyRange.all,2,0,50)
         composer.addEffekt(visualize_runMirrored(3),FrequencyRange.all,3,0,50)

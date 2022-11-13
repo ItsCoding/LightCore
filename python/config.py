@@ -6,7 +6,7 @@ import os
 
 
 # DEVICE = 'esp8266'
-DEVICE = "espv"
+DEVICE = "virtual"
 """Device used to control LED strip. Must be 'esp', 'espv' or 'virtual'
 
 'esp8266' means that you are using an ESP8266 module to control the LED strip
@@ -23,23 +23,23 @@ DEBUG_LOG = True
 if DEVICE == "esp" or DEVICE == "espv":
     UDP_IPS = {
        
-        # 0: "127.0.0.1", 
-        # 1: "127.0.0.1",
-        # 2: "127.0.0.1",
-        # 3: "127.0.0.1",
+        0: "127.0.0.1", 
+        1: "127.0.0.1",
+        2: "127.0.0.1",
+        3: "127.0.0.1",
         #--------------------
         # 10=side   
 
-        0: "10.40.0.17", #11
-        1: "GROUP",
-        2: "10.40.0.10",
-        3: "10.40.0.14",
-        4:"10.40.0.17",
-        5:"10.40.0.17",
-        6:"10.40.0.17",
-        7:"10.40.0.17",
-        8:"10.40.0.17",
-        9:"10.40.0.17",
+        # 0: "10.40.0.17", #11
+        # 1: "GROUP",
+        # 2: "10.40.0.10",
+        # 3: "10.40.0.14",
+        # 4:"10.40.0.17",
+        # 5:"10.40.0.17",
+        # 6:"10.40.0.17",
+        # 7:"10.40.0.17",
+        # 8:"10.40.0.17",
+        # 9:"10.40.0.17",
     }  #'192.168.62.3' #'10.40.0.186'
     UDP_GROUPS = {
         1: [
@@ -139,7 +139,7 @@ MIN_VOLUME_THRESHOLD = 1e-7
 
 STRIP_COUNT = 4
 # STRIP_LED_COUNTS = [300, 540, 50, 50]
-STRIP_LED_COUNTS = [600, 540, 50, 50]
+STRIP_LED_COUNTS = [1000, 540, 50, 50]
 STRIP_MIRRORS = [[2, 3]]
 
 RANDOM_MAX_WAIT = 8

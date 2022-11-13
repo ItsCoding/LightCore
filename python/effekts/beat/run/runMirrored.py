@@ -114,6 +114,8 @@ class visualize_runMirrored:
         #         self.offP = None
         # else:
             # for i in range(self.startRunPosition,self.runPosition):
+        if self.runPosition > stripSize:
+            self.runPosition = stripSize
         self.p[0][self.startRunPosition:self.runPosition] = tempP[0][self.startRunPosition:self.runPosition]
         self.p[1][self.startRunPosition:self.runPosition] = tempP[1][self.startRunPosition:self.runPosition]
         self.p[2][self.startRunPosition:self.runPosition] = tempP[2][self.startRunPosition:self.runPosition]
