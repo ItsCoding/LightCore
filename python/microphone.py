@@ -22,8 +22,8 @@ def start_stream(callback):
             y = y.astype(np.float32)
             # print(stream.get_read_available())
 
-            # crank fps here
-            stream.read(stream.get_read_available(), exception_on_overflow=False)
+            # crank fps here, runs with 400-600fps on windows
+            # stream.read(800, exception_on_overflow=False)
             endTime = time.time()
             callback(y, endTime - startTime)
         except IOError as e:

@@ -7,7 +7,7 @@ export class ZeroMQServerOUT {
 
     public start(): void {
         this.server.bindSync('tcp://127.0.0.1:7123');
-        console.log('ZeroMQ-OUT queue bound to port 7123');
+        console.log('➡  ZeroMQ-OUT queue bound to port 7123');
     }
 
     public sendMessage(message: string | Object | Array<any>): void {

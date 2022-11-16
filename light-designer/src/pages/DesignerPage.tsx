@@ -8,12 +8,15 @@ import { StripSettings } from "../components/Settings/StripSettings";
 import { StripManager } from "../components/Settings/StripManager";
 import { Header } from "../components/System/Header";
 import { GlobalSettings } from "../components/Settings/GlobalSettings";
+import { useSnackbar } from "notistack";
+import { WebSocketClient } from "../../../light-client/src/system/WebsocketClient";
 
 export const DesignerPage = () => {
     const [strips, setStrips] = useState<Strip[]>([]);
     const [selectedStripIndex, setSelectedStrip] = useState<number>(-1);
     const [globalScaling, setGlobalScalingState] = useState(2)
-    const [enableSidebar, setEnableSidebar] = useState(3);
+    const [enableSidebar, setEnableSidebar] = useState(0);
+    const { enqueueSnackbar } = useSnackbar();
     useEffect(() => {
         const startPoint = new Point(0, 0);
         const startPoint2 = new Point(0, 100);
@@ -33,6 +36,16 @@ export const DesignerPage = () => {
                 setSelectedStrip(-1);
             }
         }
+
+
+        const wsClient = WebSocketClient.getInstance()
+        wsClient.connect("ws://localhost:8000").then(() => {
+            console.log("Connected to websocket server")
+        }).catch((err) => {
+            enqueueSnackbar("Could not connect to websocket server", { variant: "error" })
+            console.log(err)
+        });
+
         return () => {
             window.onkeydown = null;
         };
@@ -64,7 +77,7 @@ export const DesignerPage = () => {
         }
     }
 
-    console.log("SIDEBAR", enableSidebar,sidebarState(),gridState());
+    console.log("SIDEBAR", enableSidebar, sidebarState(), gridState());
     return (<>
         <Header strips={strips} setStrips={setStrips} enableSidebar={enableSidebar} setEnableSidebar={setEnableSidebar} />
         <Grid container sx={{

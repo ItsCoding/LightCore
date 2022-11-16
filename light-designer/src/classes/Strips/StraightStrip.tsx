@@ -172,6 +172,13 @@ export class StraightStrip extends StripBase {
             nStrip.id = obj.id;
             nStrip.stripName = obj.stripName;
             nStrip.setEndPoint(obj.end.x, obj.end.y);
+            nStrip.stripControllerEnd = obj.stripControllerEnd;
+            nStrip.stripControllerStart = obj.stripControllerStart;
+            nStrip.stripIP = obj.stripIP;
+            nStrip.stripMac = obj.stripMac;
+            nStrip.stripSymbol = obj.stripSymbol;
+            nStrip.zIndex = obj.zIndex;
+            nStrip.computingGroup = obj.computingGroup;
             initializedStrips.push(nStrip);
         });
         return initializedStrips;

@@ -1,5 +1,6 @@
-import { WebsocketServer } from "./system/wsServer";
+
 import "reflect-metadata"
+import { WebsocketServer } from "./system/wsServer";
 const wsServer = new WebsocketServer();
 
 wsServer.start();

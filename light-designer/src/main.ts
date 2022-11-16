@@ -20,6 +20,7 @@ const createWindow = (): void => {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
       nodeIntegration: true,
       contextIsolation: false,
+      allowRunningInsecureContent: true,
     },
   });
   enableRemote(mainWindow.webContents);

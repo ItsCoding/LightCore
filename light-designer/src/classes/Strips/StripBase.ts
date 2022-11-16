@@ -5,7 +5,7 @@ export class StripBase {
     public stripMac: string;
     public stripSymbol: string;
     public stripControllerStart?: number;
-    public stripCotrollerEnd?: number;
+    public stripControllerEnd?: number;
     public computingGroup: number;
 
     public getExportConfig() {
@@ -14,7 +14,7 @@ export class StripBase {
             stripMac: this.stripMac,
             stripSymbol: this.stripSymbol,
             stripControllerStart: this.stripControllerStart,
-            stripCotrollerEnd: this.stripCotrollerEnd,
+            stripCotrollerEnd: this.stripControllerEnd,
             computingGroup: this.computingGroup
         };
     }

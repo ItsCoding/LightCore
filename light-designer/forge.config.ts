@@ -28,6 +28,7 @@ const config: ForgeConfig = {
           },
         ],
       },
+      devContentSecurityPolicy: `default-src *  data: blob: filesystem: about: ws: wss: 'unsafe-inline' 'unsafe-eval';`
     }),
   ],
 };

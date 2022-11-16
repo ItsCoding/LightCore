@@ -1,5 +1,6 @@
 import WebSocket, { WebSocketServer } from 'ws';
 import { DataAPI } from './DataAPI';
+import { findIPsByMac, initializeStageData, setStageData } from './StageStorrage';
 import { ZeroMQServerIN } from './zeromqServerIN';
 import { ZeroMQServerOUT } from './zeromqServerOUT';
 
@@ -15,19 +16,22 @@ export class WebsocketServer {
         this.zeroMQServerIN = new ZeroMQServerIN((message: string) => {
             self.sendMessage(message);
         });
-        this.dataAPI = new DataAPI();
     }
 
-    public start(): void {
+    public async start(): Promise<void> {
         const self = this;
+        this.dataAPI = new DataAPI();
+        await this.dataAPI.connect();
+        await initializeStageData(this.dataAPI);
+        await findIPsByMac();
         this.zeroMQServerIN.start();
         this.zeroMQServerOUT.start();
         this.wss.on('connection', function connection(ws) {
             self.clients.push(ws);
-            ws.on('message', function message(data) {
+            ws.on('message', async function message(data) {
                 // console.log('received-client: %s', data);
                 // self.zeroMQServerOUT.sendMessage(data.toString());
-                self.messageHandler(data.toString());
+                await self.messageHandler(data.toString());
             });
             ws.on('close', function () {
                 self.clients.splice(self.clients.indexOf(ws), 1);
@@ -37,7 +41,7 @@ export class WebsocketServer {
                 console.log(error);
             });
         });
-        console.log("Websocket server bound to port 8000");
+        console.log("📢 Websocket server bound to port 8000");
     }
 
     public sendMessage(message: string): void {
@@ -47,7 +51,7 @@ export class WebsocketServer {
     }
 
 
-    public messageHandler(message: string): void {
+    public async messageHandler(message: string): Promise<void> {
         let messageObject: { type: string, message: any } = JSON.parse(message);
         if (messageObject.type.startsWith("wsapi")) {
             switch (messageObject.type) {
@@ -70,6 +74,16 @@ export class WebsocketServer {
                     batch.forEach(ele => {
                         this.zeroMQServerOUT.sendMessage(JSON.stringify(ele));
                     })
+                    break;
+                case "wsapi.syncStage":
+                    let stage = messageObject.message;
+                    await this.dataAPI.setKeyValue("stageData", JSON.stringify(stage));
+                    setStageData(stage);
+                    console.log("🏗  Stage data updated");
+                    await findIPsByMac();
+                    break;
+                case "wsapi.reloadIPs":
+                    await findIPsByMac();
                     break;
             }
         } else {

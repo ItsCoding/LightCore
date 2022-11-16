@@ -149,6 +149,24 @@ export const StripManager = ({ strips, setStrips, setSelectedStrip, selectedStri
         else if (params.field === "zIndex") {
             strip.zIndex = params.value as number;
         }
+        else if (params.field === "stripIP") {
+            strip.stripIP = params.value as string;
+        }
+        else if (params.field === "stripMac") {
+            strip.stripMac = params.value as string;
+        }
+        else if (params.field === "stripSymbol") {
+            strip.stripSymbol = params.value as string;
+        }
+        else if (params.field === "stripControllerStart") {
+            strip.stripControllerStart = params.value as number;
+        }
+        else if (params.field === "stripControllerEnd") {
+            strip.stripControllerEnd = params.value as number;
+        }
+        else if (params.field === "computingGroup") {
+            strip.computingGroup = params.value as number;
+        }
         setStrips(newStrips);
     }
 

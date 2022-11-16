@@ -148,7 +148,7 @@ class Visualization:
         self.noAudioCount = 0
         self.hasBeatChanged = False
         #CONFIG VARS
-        self.randomEnabled = False
+        self.randomEnabled = True
         self.randomizerBeatCount = 0
     def frames_per_second(self):
         """Return the estimated frames per second
@@ -253,7 +253,12 @@ class Visualization:
             if time.time() - 1 > self.prev_fps_update:
                 self.prev_fps_update = time.time()
                 if config.DEBUG_LOG:
-                    print("Led time: " + str(round((endLed - startLed) * 1000,2)) + "ms | Effekt time: " + str(round((endLed - start) * 1000,2)) + "ms | Record Time: " + str(round(recordTime * 1000)) + "ms | FPS: " + str(round(1 / (endLed - startLed + end - start + recordTime),2)) + ' | Real FPS {:.0f} / {:.0f}'.format(fps, config.FPS))
+                    try:
+                        print("Led time: " + str(round((endLed - startLed) * 1000,2)) + "ms | Effekt time: " + str(round((endLed - start) * 1000,2)) + "ms | Record Time: " + str(round(recordTime * 1000)) + "ms | FPS: " + str(round(1 / (endLed - startLed + end - start + recordTime),2)) + ' | Real FPS {:.0f} / {:.0f}'.format(fps, config.FPS))
+                    except:
+                        # continue
+                        print("Kein debug, weil ging nicht")
+
                     # for key, value in timeDict.items():
                     #     print(key + ": " + str(round(value[0] * 1000,2)) + "ms | " + str(round(value[1] * 1000,2)) + "ms")
 

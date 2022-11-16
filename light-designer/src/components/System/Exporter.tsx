@@ -1,34 +1,17 @@
-import { Divider, Grid, Typography } from "@mui/material";
+import { Button, Divider, Grid, Typography } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import { Point } from "../../classes/Point";
 import { Strip } from "../../classes/Strips/Strip";
 import * as path from "path"
+import { GeneratedConfig } from "../../classes/ExportConfig";
+import { WebSocketClient } from "../../../../light-client/src/system/WebsocketClient";
+import { useSnackbar } from "notistack";
 
 
 export type ExporterProps = {
     strips: Strip[];
 }
 
-export type GeneratedStripConfig = {
-    stripIP: string;
-    stripMac: string;
-    stripSymbol: string;
-    stripControllerStart: number;
-    stripCotrollerEnd: number;
-    computingGroup: number;
-    start: Point;
-    end: Point;
-    leds: number;
-    physicalLength: number;
-    lcid: string;
-    offset: number;
-    name: string;
-}
-
-
-export type GeneratedConfig = {
-    strips: { [key: string]: GeneratedStripConfig }
-}
 
 export const Exporter = ({ strips }: ExporterProps) => {
 
@@ -36,6 +19,9 @@ export const Exporter = ({ strips }: ExporterProps) => {
     const [imageBase64, setImageBase64] = useState<string>("");
     const [canvasSize, setCanvasSize] = useState<Point>(new Point(0, 0));
     const [pixelAmount, setPixelAmount] = useState(0);
+    const [exportConfig, setExportConfig] = useState<GeneratedConfig>();
+    const { enqueueSnackbar } = useSnackbar();
+
     const getCanvasSize = () => {
         let largestX = 0;
         let largestY = 0;
@@ -88,9 +74,9 @@ export const Exporter = ({ strips }: ExporterProps) => {
         const config: GeneratedConfig = {
             strips: {}
         }
-        strips.forEach(strip => {
+        strips.forEach((strip, index) => {
             const stripConfig = strip.getExportConfig();
-            config.strips[strip.lcid] = stripConfig;
+            config.strips[strip.lcid + "-" + index] = stripConfig;
         })
 
         return config;
@@ -121,10 +107,23 @@ export const Exporter = ({ strips }: ExporterProps) => {
             setPixelAmount(pointCount)
             setImageBase64(cvs.toDataURL());
             setCanvasSize(new Point(cvs.width, cvs.height));
-            console.log("Config:::: ", generateConfig());
+            const exportCfg = generateConfig();
+            console.log("Config:::: ", exportCfg);
+            setExportConfig(exportCfg)
         }
 
     }, [])
+
+    const syncToMessageBroker = async () => {
+        try {
+            const wsClient = WebSocketClient.getInstance()
+            wsClient.send("wsapi.syncStage", exportConfig);
+            enqueueSnackbar("Synced to message broker", { variant: "success" })
+        } catch (error) {
+            enqueueSnackbar("Failed to sync to message broker", { variant: "error" })
+            console.warn(error);
+        }
+    }
 
     return (
         <Grid container>
@@ -144,8 +143,14 @@ export const Exporter = ({ strips }: ExporterProps) => {
                     }} />
                 </div>
             </Grid>
-            <Grid item xs={4}>
-
+            <Grid item xs={4} >
+                <Button sx={{
+                    marginTop: "20px",
+                    marginBottom: "20px",
+                    position: "absolute",
+                    right: "20px"
+                }} variant="contained" onClick={() => syncToMessageBroker()}>Sync to MessageBroker</Button>
+                <pre>{exportConfig && JSON.stringify(exportConfig, null, 2)}</pre>
             </Grid>
         </Grid>
     )

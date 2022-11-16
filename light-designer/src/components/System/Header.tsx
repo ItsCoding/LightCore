@@ -42,7 +42,7 @@ export type HeaderProps = {
 }
 
 export const Header = ({ strips, setStrips, enableSidebar, setEnableSidebar }: HeaderProps) => {
-    const [openExportDialog, setOpenExportDialog] = React.useState(true);
+    const [openExportDialog, setOpenExportDialog] = React.useState(false);
     const incrementSidebar = () => {
         setEnableSidebar((enableSidebar + 1) % 3);
     }

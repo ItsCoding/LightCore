@@ -11,9 +11,11 @@ export class DataAPI {
             entities: [KeyValue],
             synchronize: true
         });
-        this.db.initialize().then(() => {
-            console.log("Database initialized");
-        });
+    }
+
+    public async connect() {
+       await this.db.initialize()
+       console.log("💾 Database connected");
     }
 
     public async getKeyValue(key: string) {

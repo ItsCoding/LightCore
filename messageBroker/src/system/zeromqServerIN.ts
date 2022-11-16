@@ -18,6 +18,6 @@ export class ZeroMQServerIN {
                 self.onMessageHandler(msg.toString());
             }
         });
-        console.log('ZeroMQ-IN queue bound to port 7321');
+        console.log('⬅  ZeroMQ-IN queue bound to port 7321');
     }
 }
