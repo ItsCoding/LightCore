@@ -1,15 +1,7 @@
-import { LedStrip, StripMarks } from "../types/Strip";
+import { LedStrip } from "../types/Strip";
+import { generateMarks } from "./Utils";
 
-const generateMarks = (length: number, step: number): StripMarks[] => {
-    const marks: StripMarks[] = [];
-    for (let i = 0; i < length; i = i + step) {
-        marks.push({ value: i, label: i.toString() });
-    }
-    marks.push({ value: length, label: length.toString() });
-    return marks;
-}
-
-export const strips: LedStrip[] = [
+export const stripsLegacy: LedStrip[] = [
     {
         position: "[TR] Middle",
         index: 0,

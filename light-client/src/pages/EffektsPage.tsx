@@ -7,7 +7,7 @@ import { ActiveEffekts } from "../components/EffektsPanel/ActiveEffekts"
 import { EffektColor } from "../components/EffektsPanel/EffektColor"
 import { EditComposition } from "../components/General/Compositions/EditComposition"
 import { PreviewCanvas } from "../components/General/PreviewCanvas"
-import { strips } from "../system/StripConfig"
+// import { strips } from "../system/StripConfig"
 import { createUUID, getFontColorByBgColor, ModalTransition, randomColor } from "../system/Utils"
 import { WebSocketClient } from "../system/WebsocketClient"
 import { ActiveEffekt } from "../types/ActiveEffekt"
@@ -15,9 +15,10 @@ import { setAllCompositions } from "../types/Board"
 import { Composition } from "../types/Composition"
 import { CompositionTag } from "../types/CompositionTag"
 import { Effekt } from "../types/Effekt"
+import { LedStrip } from "../types/Strip"
 import { ReturnType } from "../types/TopicReturnType"
 
-const stripConfig = strips
+
 
 type EffektsPageProps = {
     availableEffekts: Array<Effekt>,
@@ -25,6 +26,8 @@ type EffektsPageProps = {
     setRandomizerActive: (active: boolean) => void,
     compositionStore: Array<Composition>,
     setCompositionStore: (store: Array<Composition>) => void,
+    stripConfig: Array<LedStrip>;
+    activeRoute: string;
 }
 
 interface TabPanelProps {
@@ -62,7 +65,7 @@ type ConfirmDictType = {
 }
 
 
-export const EffektsPage = ({ availableEffekts, isRandomizerActive, setRandomizerActive, compositionStore, setCompositionStore }: EffektsPageProps) => {
+export const EffektsPage = ({ availableEffekts, activeRoute, isRandomizerActive, setRandomizerActive, compositionStore, setCompositionStore, stripConfig }: EffektsPageProps) => {
     const wsClient = WebSocketClient.getInstance()
     const [activeColorPanel, setActiveColorPanel] = React.useState<number>(0)
     const [colorDict, setColorDict] = React.useState<ColorDict>({})
@@ -154,28 +157,31 @@ export const EffektsPage = ({ availableEffekts, isRandomizerActive, setRandomize
             setNewCompositionName(null)
             setSelectedTags([])
             setAllCompositions(newStore)
-            enqueueSnackbar(`Saved composition: ${newComp.compositionName}!`, { variant: 'success'});
+            enqueueSnackbar(`Saved composition: ${newComp.compositionName}!`, { variant: 'success' });
         } else {
-            enqueueSnackbar(`No composition to save!`, { variant: 'error'});
+            enqueueSnackbar(`No composition to save!`, { variant: 'error' });
         }
         setConfirmDialogOpen(0);
     }
 
 
     useEffect(() => {
-        const eventID = wsClient.addEventHandler(ReturnType.DATA.ACTIVE_EFFEKTS, (topic => {
-            const incommingEffekts = ActiveEffekt.fromJSONArray(topic.message);
-            if (inPreviewMode) {
-                setActiveEffekts(incommingEffekts.filter((effekt) => effekt.stripIndex < 0))
-            } else {
-                setActiveEffekts(incommingEffekts.filter((effekt) => effekt.stripIndex >= 0))
+        if (activeRoute === "effekts") {
+            console.log("Set effekts")
+            const eventID = wsClient.addEventHandler(ReturnType.DATA.ACTIVE_EFFEKTS, (topic => {
+                const incommingEffekts = ActiveEffekt.fromJSONArray(topic.message);
+                if (inPreviewMode) {
+                    setActiveEffekts(incommingEffekts.filter((effekt) => effekt.stripIndex < 0))
+                } else {
+                    setActiveEffekts(incommingEffekts.filter((effekt) => effekt.stripIndex >= 0))
+                }
+            }))
+            wsClient.lightReport();
+            return () => {
+                wsClient.removeEventHandler(eventID)
             }
-        }))
-        wsClient.lightReport();
-        return () => {
-            wsClient.removeEventHandler(eventID)
         }
-    }, [inPreviewMode])
+    }, [inPreviewMode, activeRoute])
 
     const changePreviewMode = (chk: boolean) => {
         console.log("Change preview mode to: ", chk)
@@ -218,7 +224,7 @@ export const EffektsPage = ({ availableEffekts, isRandomizerActive, setRandomize
                 setNewCompositionName(null)
                 setSelectedTags([])
                 setConfirmDialogOpen(0);
-                enqueueSnackbar(`Deleted composition: ${newComposition?.compositionName}!`, { variant: 'success'});
+                enqueueSnackbar(`Deleted composition: ${newComposition?.compositionName}!`, { variant: 'success' });
             },
             confirmText: "Delete"
         },
@@ -237,7 +243,7 @@ export const EffektsPage = ({ availableEffekts, isRandomizerActive, setRandomize
                     newComposition.activate(() => { }, inPreviewMode);
                     setActiveEffekts(newComposition.activeEffekts);
                     setConfirmDialogOpen(0);
-                    enqueueSnackbar(`Loaded composition: ${newComposition?.compositionName}!`, { variant: 'success'});
+                    enqueueSnackbar(`Loaded composition: ${newComposition?.compositionName}!`, { variant: 'success' });
                 }
             },
             confirmText: "Load"
@@ -339,7 +345,7 @@ export const EffektsPage = ({ availableEffekts, isRandomizerActive, setRandomize
                     </Toolbar>
                     )} />
                     <CardContent>
-                        <ActiveEffekts activeEffekts={activeEffekts} availableEffekts={availableEffekts} />
+                        <ActiveEffekts strips={stripConfig} activeEffekts={activeEffekts} availableEffekts={availableEffekts} />
                     </CardContent>
                     <CardActions style={{
                         margin: 10

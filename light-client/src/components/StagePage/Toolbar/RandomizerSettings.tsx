@@ -1,8 +1,9 @@
 import { Button, Card, CardContent, CircularProgress, Divider, FormControlLabel, FormGroup, Grid, Paper, Slider, Switch, Typography } from "@mui/material";
 import React, { useEffect } from "react";
-import { strips } from "../../../system/StripConfig";
+// import { strips } from "../../../system/StripConfig";
 import { WebSocketClient } from "../../../system/WebsocketClient";
 import { LightCoreConfig } from "../../../types/LightCoreConfig";
+import { LedStrip } from "../../../types/Strip";
 import { ReturnType } from "../../../types/TopicReturnType";
 
 const marksBeat = [
@@ -31,14 +32,13 @@ const marksBars = [
     }
 ];
 
-export const RandomizerSettings = () => {
+export const RandomizerSettings = ({strips}: {strips: LedStrip[]}) => {
     const wsClient = WebSocketClient.getInstance();
     const [randomizerEnabled, setRandomizerEnabled] = React.useState<boolean>(false);
     const [randomizerSpecific, setRandomizerSpecific] = React.useState<{ [key: number]: boolean }>({});
     const [beatDetection, setBeatDetection] = React.useState(true);
     const [randomizerBar, setRandomizerBar] = React.useState(1);
     const [beat, setBeat] = React.useState(1);
-
     const [loading, setLoading] = React.useState<boolean>(true);
     useEffect(() => {
         const handlerID = wsClient.addEventHandler(ReturnType.SYSTEM.STATUS, topic => {
@@ -52,6 +52,7 @@ export const RandomizerSettings = () => {
             console.log("Got Data", data);
             setLoading(false);
         })
+        
         wsClient.getSystemStatus();
         return () => {
             wsClient.removeEventHandler(handlerID)
@@ -115,13 +116,13 @@ export const RandomizerSettings = () => {
                 <Grid md={12} item>
                     <Button style={{
                         width: "100%",
-                    }} variant="contained" size="large" onClick={() => wsClient.lightRandomNext()}>{strips.map(s => s.symbol).join(" ")}</Button>
+                    }} variant="contained" size="large" onClick={() => wsClient.lightRandomNext()}>Next all</Button>
                 </Grid>
                 {strips.map(strip => (
                     <Grid md={6} item>
                         <Button variant="contained" size="large" style={{
                             width: "100%",
-                        }} onClick={() => wsClient.lightRandomNextSpecific(strip.index)}>{strip.symbol}</Button>
+                        }} onClick={() => wsClient.lightRandomNextSpecific(strip.index)}>{strip.symbol ?? strip.position}</Button>
                     </Grid>
                 ))}
             </Grid>

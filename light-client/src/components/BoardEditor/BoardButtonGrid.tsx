@@ -7,12 +7,14 @@ import { Board, BoardElement } from "../../types/Board";
 import { BoardButtonInfos } from "./BoardButtonInfos";
 import React from "react";
 import ClearIcon from '@mui/icons-material/Clear';
+import { LedStrip } from "../../types/Strip";
 type BoardButtonGridProps = {
     board: Board;
     setBoard: React.Dispatch<React.SetStateAction<Board>>;
     setActiveIndex: React.Dispatch<React.SetStateAction<number>>;
     setReRender: React.Dispatch<React.SetStateAction<boolean>>;
-    reRender: boolean
+    reRender: boolean;
+    strips: Array<LedStrip>;
 }
 
 type DropButtonProps = {
@@ -25,9 +27,10 @@ type DropButtonProps = {
     myElement: BoardElement | undefined;
     setReRender: React.Dispatch<React.SetStateAction<boolean>>;
     reRender: boolean
+    strips: Array<LedStrip>;
 }
 
-const DropButton = ({ positionIndex, matches, board, setBoard, matchesPC, setActiveIndex, myElement, setReRender, reRender }: DropButtonProps) => {
+const DropButton = ({ positionIndex, matches, board, setBoard, matchesPC, setActiveIndex, myElement, setReRender, reRender,strips }: DropButtonProps) => {
     const changeElementInBoard = (index: number, data: Composition) => {
         const newBoard = board
         console.log("Board before change: ", newBoard)
@@ -68,7 +71,7 @@ const DropButton = ({ positionIndex, matches, board, setBoard, matchesPC, setAct
             isOver: monitor.isOver(),
             canDrop: monitor.canDrop(),
         }),
-    }), [board,reRender])
+    }), [board, reRender])
 
     return (<Paper ref={drop}
         style={{
@@ -77,10 +80,10 @@ const DropButton = ({ positionIndex, matches, board, setBoard, matchesPC, setAct
             position: "relative",
         }}>
         {myElement && <>
-            <div  onClick={() => myElement.data.activate(() => {})} style={{
+            <div onClick={() => myElement.data.activate(() => { })} style={{
                 height: "100%",
             }}>
-                <BoardButtonInfos composition={myElement.data} />
+                <BoardButtonInfos strips={strips} composition={myElement.data} />
             </div>
 
             <IconButton aria-label="delete" size="small"
@@ -97,13 +100,13 @@ const DropButton = ({ positionIndex, matches, board, setBoard, matchesPC, setAct
     </Paper>)
 }
 
-export const BoardButtonGrid = ({ board, setBoard, setActiveIndex,reRender,setReRender }: BoardButtonGridProps) => {
+export const BoardButtonGrid = ({ board, setBoard, setActiveIndex, reRender, setReRender, strips }: BoardButtonGridProps) => {
 
     const amountButtons = Array.from(Array(41).keys())
     const theme = useTheme();
     const matches = useMediaQuery(theme.breakpoints.only('xs'));
     const matchesPC = useMediaQuery(theme.breakpoints.only('xl'));
-   
+
     const getButtonHeigth = () => {
         if (matches) {
             return "6vh"
@@ -119,7 +122,7 @@ export const BoardButtonGrid = ({ board, setBoard, setActiveIndex,reRender,setRe
                 amountButtons.map((btn, i) => {
                     return (
                         <Grid item xs={4} md={2}>
-                            <DropButton reRender={reRender} setReRender={setReRender} positionIndex={i} matches={matches} matchesPC={matchesPC} board={board} setBoard={setBoard} setActiveIndex={setActiveIndex} myElement={board.elements[i]} />
+                            <DropButton strips={strips} reRender={reRender} setReRender={setReRender} positionIndex={i} matches={matches} matchesPC={matchesPC} board={board} setBoard={setBoard} setActiveIndex={setActiveIndex} myElement={board.elements[i]} />
                         </Grid>
                     )
                 })

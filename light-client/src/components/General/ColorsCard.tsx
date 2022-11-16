@@ -14,30 +14,32 @@ export const ColorsCard = () => {
     const [colorSet, setColorSet] = React.useState<string[]>([]);
     const [color, setColor] = React.useState<string>("#000000");
     const [colorPalettes, setColorPalettes] = React.useState<ColorPalette[]>([]);
+    const [requestedColorPalettes, setRequestedColorPalettes] = React.useState<boolean>(false);
     const [selectedPalette, setSelectedPalette] = React.useState<ColorPalette>();
     const { enqueueSnackbar } = useSnackbar();
     useEffect(() => {
-        const handlerID = wsClient.addEventHandler(ReturnType.WSAPI.GET_KEY_VALUE, (topic) => {
-            if (topic.message.key === "colorPalettes") {
-                console.log("Got color palettes", topic);
-                console.log(JSON.parse(topic.message.value))
-                setColorPalettes(JSON.parse(topic.message.value));
-            }
-        })
-        wsClient.issueKeyGet("colorPalettes");
-        return () => {
-            wsClient.removeEventHandler(handlerID)
+        if (!requestedColorPalettes) {
+            const handlerID = wsClient.addEventHandler(ReturnType.WSAPI.GET_KEY_VALUE, (topic) => {
+                if (topic.message.key === "colorPalettes") {
+                    console.log("Got color palettes", topic);
+                    console.log(JSON.parse(topic.message.value))
+                    setColorPalettes(JSON.parse(topic.message.value));
+                    wsClient.removeEventHandler(handlerID)
+                }
+            })
+            wsClient.issueKeyGet("colorPalettes");
+            setRequestedColorPalettes(true);
         }
     }, [])
 
     const savePalette = () => {
         if (colorSet.length < 3) {
-            enqueueSnackbar("Palette must have at least thre colors", { variant: "error"});
+            enqueueSnackbar("Palette must have at least thre colors", { variant: "error" });
             return;
         }
 
         if (!selectedPalette) {
-            enqueueSnackbar("Please enter a name", { variant: "error"});
+            enqueueSnackbar("Please enter a name", { variant: "error" });
             return;
         }
         if (selectedPalette.id !== "") {
@@ -49,9 +51,9 @@ export const ColorsCard = () => {
             if (index !== -1) {
                 colorPalettes[index] = newPalette;
                 wsClient.issueKeySet("colorPalettes", JSON.stringify(colorPalettes));
-                enqueueSnackbar("Palette saved", { variant: "success"});
+                enqueueSnackbar("Palette saved", { variant: "success" });
             } else {
-                enqueueSnackbar("Palette not found", { variant: "error"});
+                enqueueSnackbar("Palette not found", { variant: "error" });
                 return
             }
         } else {
@@ -63,7 +65,7 @@ export const ColorsCard = () => {
             setColorPalettes([...colorPalettes, newPalette])
             setSelectedPalette(newPalette);
             wsClient.issueKeySet("colorPalettes", JSON.stringify([...colorPalettes, newPalette]))
-            enqueueSnackbar("Palette saved", { variant: "success"});
+            enqueueSnackbar("Palette saved", { variant: "success" });
         }
 
     }
@@ -93,7 +95,7 @@ export const ColorsCard = () => {
                 const newStore = colorPalettes.filter(a => a.id !== selectedPalette?.id)
                 setColorPalettes(newStore);
                 wsClient.issueKeySet("colorPalettes", JSON.stringify(newStore))
-                enqueueSnackbar(`Deleted Colorpalette: ${selectedPalette?.name}!`, { variant: 'success'});
+                enqueueSnackbar(`Deleted Colorpalette: ${selectedPalette?.name}!`, { variant: 'success' });
                 exit();
             },
             confirmText: "Delete"
@@ -108,7 +110,7 @@ export const ColorsCard = () => {
             confirm: (exit) => {
                 if (selectedPalette) {
                     setColorSet(selectedPalette.colors);
-                    enqueueSnackbar(`Loaded composition: ${selectedPalette?.name}!`, { variant: 'success'});
+                    enqueueSnackbar(`Loaded composition: ${selectedPalette?.name}!`, { variant: 'success' });
                     exit();
                 }
             },
@@ -210,7 +212,7 @@ export const ColorsCard = () => {
                             if (colorSet.length > 0) {
                                 wsClient.setColorPalette(colorSet);
                             } else {
-                                enqueueSnackbar("No colors to send, please load a palette", { variant: "warning"});
+                                enqueueSnackbar("No colors to send, please load a palette", { variant: "warning" });
                             }
 
                         }}>Activate</Button>

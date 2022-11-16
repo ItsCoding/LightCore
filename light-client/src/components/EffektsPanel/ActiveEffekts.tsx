@@ -1,6 +1,6 @@
 import { ActiveEffekt } from "../../types/ActiveEffekt"
 import { DataGrid, GridColDef, GridRenderCellParams, GridToolbarContainer, GridValueGetterParams } from '@mui/x-data-grid';
-import { strips } from "../../system/StripConfig";
+// import { strips } from "../../system/StripConfig";
 import { WebSocketClient } from "../../system/WebsocketClient";
 import { Button, IconButton } from "@mui/material";
 import ReplayIcon from '@mui/icons-material/Replay';
@@ -8,15 +8,16 @@ import { getBackgroundColor, getHoverBackgroundColor } from "../../system/Utils"
 import { Effekt } from "../../types/Effekt";
 import { useSnackbar } from "notistack";
 import { ActiveEffektsColorPicker } from "./ActiveEffektsColorPicker";
+import { LedStrip } from "../../types/Strip";
 type ActiveEffektsProps = {
     activeEffekts: Array<ActiveEffekt>,
     availableEffekts: Array<Effekt>,
-
+    strips: Array<LedStrip>;
 }
 
 
 
-export const ActiveEffekts = ({ activeEffekts, availableEffekts }: ActiveEffektsProps) => {
+export const ActiveEffekts = ({ activeEffekts, availableEffekts, strips }: ActiveEffektsProps) => {
     const wsClient = WebSocketClient.getInstance();
     const { enqueueSnackbar } = useSnackbar();
     const getAvailableStrips = () => {
@@ -90,7 +91,7 @@ export const ActiveEffekts = ({ activeEffekts, availableEffekts }: ActiveEffekts
         );
     }
 
-    const checkStripIndex = (value: number,id:string | number) => {
+    const checkStripIndex = (value: number, id: string | number) => {
         const rowData = activeEffekts.find(ae => ae.id === id);
         if (rowData) {
             const strip = strips.find(s => s.index === rowData.stripIndex);
@@ -116,16 +117,16 @@ export const ActiveEffekts = ({ activeEffekts, availableEffekts }: ActiveEffekts
                     activeEffekt.stripIndex = value;
                     break;
                 case "startIndex":
-                    if(activeEffekt.endIndex < value){
+                    if (activeEffekt.endIndex < value) {
                         enqueueSnackbar(`Startindex must be smaller than endindex`, { variant: "error" });
-                    }else if(checkStripIndex(value,id)){
+                    } else if (checkStripIndex(value, id)) {
                         activeEffekt.startIndex = value;
                     }
                     break;
                 case "endIndex":
-                    if(activeEffekt.startIndex > value){
+                    if (activeEffekt.startIndex > value) {
                         enqueueSnackbar(`Endindex must be greater than startindex`, { variant: "error" });
-                    }else if(checkStripIndex(value,id)){
+                    } else if (checkStripIndex(value, id)) {
                         activeEffekt.endIndex = value;
                     }
                     break;
@@ -137,7 +138,7 @@ export const ActiveEffekts = ({ activeEffekts, availableEffekts }: ActiveEffekts
                     if (range.length === 2 && range[0] < range[1] && range[0] >= 0 && range[1] <= 64) {
                         activeEffekt.frequencyRange = range;
                     } else {
-                        enqueueSnackbar(`There is an error with your Frequencyrange. It should be like "[START]-[END] and only be in range between 0 and 64!"`, { variant: 'error'});
+                        enqueueSnackbar(`There is an error with your Frequencyrange. It should be like "[START]-[END] and only be in range between 0 and 64!"`, { variant: 'error' });
                     }
                     break;
                 case "yColor":

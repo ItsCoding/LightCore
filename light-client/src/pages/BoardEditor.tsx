@@ -7,14 +7,16 @@ import { TabPanel } from "../components/General/TabPanel";
 import { createUUID } from "../system/Utils";
 import { Board } from "../types/Board";
 import { Composition } from "../types/Composition";
+import { LedStrip } from "../types/Strip";
 
 export type BoardEditorProps = {
     compositions: Array<Composition>;
     availableBoards: Array<Board>;
     setAvailableBoards: React.Dispatch<React.SetStateAction<Array<Board>>>;
+    strips: Array<LedStrip>;
 }
 
-export const BoardEditor = ({ compositions, availableBoards, setAvailableBoards }: BoardEditorProps) => {
+export const BoardEditor = ({ compositions, availableBoards, setAvailableBoards, strips }: BoardEditorProps) => {
     const [reRender, setReRender] = useState(false)
     const [board, setBoard] = useState<Board>({ elements: {} })
     const [activeIndex, setActiveIndex] = useState<number>(-1)
@@ -24,7 +26,7 @@ export const BoardEditor = ({ compositions, availableBoards, setAvailableBoards 
         <div>
             <Grid container columnSpacing={2}>
                 <Grid item md={8}>
-                    <BoardButtonGrid setReRender={setReRender} reRender={reRender} setActiveIndex={setActiveIndex} board={board} setBoard={setBoard} />
+                    <BoardButtonGrid strips={strips} setReRender={setReRender} reRender={reRender} setActiveIndex={setActiveIndex} board={board} setBoard={setBoard} />
                 </Grid>
                 <Grid item md={4}>
                     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>

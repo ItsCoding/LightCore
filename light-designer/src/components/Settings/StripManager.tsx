@@ -38,6 +38,13 @@ const columns: GridColDef[] = [
         editable: true,
     },
     {
+        field: 'uiMarks',
+        headerName: 'UI Marks',
+        width: 100,
+        type: "number",
+        editable: true,
+    },
+    {
         field: 'getPhysicalLength',
         headerName: 'Physical Length',
         width: 130,
@@ -121,7 +128,7 @@ const columns: GridColDef[] = [
 const colGroup = [
     {
         groupId: "General",
-        children: [{ field: "lcid" }, { field: "stripName" }, { field: "stripSymbol" }, { field: "ledCount" }, { field: "getPhysicalLength" }, { field: "offset" },{ field: "stripInverted" }],
+        children: [{ field: "lcid" }, { field: "uiMarks" }, { field: "stripName" }, { field: "stripSymbol" }, { field: "ledCount" }, { field: "getPhysicalLength" }, { field: "offset" }, { field: "stripInverted" }],
     },
     {
         groupId: "Rendering",
@@ -219,7 +226,9 @@ export const StripManager = ({ strips, setStrips, setSelectedStrip, selectedStri
         else if (params.field === "stripInverted") {
             strip.stripInverted = params.value as boolean;
         }
-
+        else if (params.field === "uiMarks") {
+            strip.uiMarks = params.value as number;
+        }
 
         setStrips(newStrips);
     }

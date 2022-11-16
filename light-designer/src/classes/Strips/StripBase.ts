@@ -11,6 +11,7 @@ export class StripBase {
     public mirrorGroup: number;
     public stripInverted: boolean;
     public ledType: "WS2811" | "WS2813"
+    public uiMarks: number;
 
     public getExportConfig() {
         return {
@@ -23,7 +24,8 @@ export class StripBase {
             frameDivider: this.frameDivider,
             mirrorGroup: this.mirrorGroup,
             ledType: this.ledType,
-            stripInverted: this.stripInverted
+            stripInverted: this.stripInverted,
+            uiMarks: this.uiMarks,
         };
     }
 }

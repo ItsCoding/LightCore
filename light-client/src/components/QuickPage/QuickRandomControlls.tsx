@@ -2,9 +2,10 @@ import { Button, Card, CardContent, CardHeader, Divider, FormControlLabel, FormG
 import Grid from '@mui/material/Grid';
 import { Box } from "@mui/system";
 import React, { useEffect } from "react";
-import { strips } from "../../system/StripConfig";
+// import { strips } from "../../system/StripConfig";
 import { WebSocketClient } from "../../system/WebsocketClient";
 import { LightCoreConfig } from "../../types/LightCoreConfig";
+import { LedStrip } from "../../types/Strip";
 import { BarView } from "../General/BarView";
 import { TouchButton } from "../General/TouchButton";
 
@@ -17,6 +18,7 @@ type QuickRandomControllsProps = {
     setRandomEnabled: (enabled: boolean) => void,
     setRandomSpecific: (specific: { [key: number]: boolean }) => void,
     setLCConfig: (config: LightCoreConfig) => void,
+    strips: Array<LedStrip>;
 }
 
 const marksBeat = [
@@ -45,7 +47,7 @@ const marksBars = [
     }
 ];
 
-export const QuickRandomControlls = ({ randomEnabled, randomSpecific, lightConfig, setRandomEnabled, setRandomSpecific, setLCConfig }: QuickRandomControllsProps) => {
+export const QuickRandomControlls = ({ randomEnabled, randomSpecific, lightConfig, setRandomEnabled, setRandomSpecific, setLCConfig,strips }: QuickRandomControllsProps) => {
     const wsClient = WebSocketClient.getInstance();
     const [beatDetection, setBeatDetection] = React.useState(lightConfig.beatDetection);
 

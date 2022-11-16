@@ -1,5 +1,5 @@
-import { Alert, AlertTitle, createTheme, Grid, LinearProgress, ThemeProvider, Typography } from '@mui/material';
-import React, { useEffect } from 'react';
+import { Alert, AlertTitle, createTheme, Grid, LinearProgress, ThemeProvider } from '@mui/material';
+import React, { useEffect, useState } from 'react';
 import { QuickPage } from './pages/QuickPage';
 import { ClientMode, WebSocketClient } from './system/WebsocketClient';
 import { Effekt } from './types/Effekt';
@@ -15,6 +15,8 @@ import { SnackbarProvider } from 'notistack';
 import { StagePage } from './pages/StagePage';
 import { BoardEditor } from './pages/BoardEditor';
 import { Board, JSON2Board, setAllCompositions } from './types/Board';
+import { LedStrip } from './types/Strip';
+import { parseStrips } from './system/Utils';
 
 export const themeOptions = createTheme({
   palette: {
@@ -51,6 +53,9 @@ function App() {
   const connectedToWs = React.useRef(false);
   const [touchCapable, setTouchCapable] = React.useState<Boolean>(window.touchToggle);
   const [availableBoards, setAvailableBoards] = React.useState<Array<Board>>([]);
+  const [stripConfig, setStripConfig] = useState<LedStrip[]>([]);
+
+  const [loadedInfos, setLoadedInfos] = useState<{ [key: string]: boolean }>({})
 
   //System
   const [lcConfig, setLcConfig] = React.useState<LightCoreConfig>();
@@ -70,42 +75,92 @@ function App() {
   }
 
   const initEventHandler = () => {
-    wsClient.addEventHandler(ReturnType.DATA.AVAILABLE_EFFEKTS, topic => {
-      const effekts = Effekt.fromJSONArray(topic.message);
-      console.log("Available Effekts: ", effekts);
-      setAvailableEffekts(effekts);
-    })
 
-    wsClient.addEventHandler(ReturnType.SYSTEM.CONFIG, topic => {
-      const conf = LightCoreConfig.fromJSON(topic.message);
-      console.log("System Config: ", conf);
-      setLcConfig((prev) => {
-        if (prev === undefined) {
-          return conf;
+    if (!loadedInfos["AVAILABLE_EFFEKTS"]) {
+      console.log("Requesting AVAILABLE_EFFEKTS");
+      wsClient.addEventHandler(ReturnType.DATA.AVAILABLE_EFFEKTS, topic => {
+        const effekts = Effekt.fromJSONArray(topic.message);
+        console.log("Available Effekts: ", effekts);
+        setAvailableEffekts(effekts);
+        setLoadedInfos((prev) => {
+          return {
+            ...prev,
+            "AVAILABLE_EFFEKTS": true
+          }
+        });
+      })
+      wsClient.send("data.get.availableEffekts");
+    }
+    if (!loadedInfos["stripConfig"]) {
+      const handlerIDConfig = wsClient.addEventHandler("return.wsapi.ledconfig", topic => {
+        const data = topic.message;
+        console.log("Got strip data", data);
+        const strips = parseStrips(data);
+        console.log("Got Strips", strips);
+        setStripConfig(strips)
+        setLoadedInfos((prev) => {
+          return {
+            ...prev,
+            "stripConfig": true
+          }
+        });
+        wsClient.removeEventHandler(handlerIDConfig);
+      })
+      console.log("Requesting strips")
+      wsClient.send("wsapi.requestConfig", {});
+    }
+    if (!loadedInfos["SYSTEM_CONFIG"]) {
+      console.log("Requesting System config");
+      wsClient.addEventHandler(ReturnType.SYSTEM.CONFIG, topic => {
+        const conf = LightCoreConfig.fromJSON(topic.message);
+        console.log("System Config: ", conf);
+        setLcConfig((prev) => {
+          if (prev === undefined) {
+            return conf;
+          }
+        });
+        setLoadedInfos((prev) => {
+          return {
+            ...prev,
+            "SYSTEM_CONFIG": true
+          }
+        });
+      })
+      wsClient.send("system.config.get")
+    }
+
+    if (!loadedInfos["compositionStore"] || !loadedInfos["boards"]) {
+      console.log("Requesting Composition Store");
+      wsClient.addEventHandler(ReturnType.WSAPI.GET_KEY_VALUE, topic => {
+        console.log("Got Key Value: ", topic);
+        if (topic.message === null) return;
+        const msg: WSApiKey = topic.message;
+        if (msg.key === "compositionStore" && msg.value) {
+          const comps = Composition.fromJSONArray(JSON.parse(msg.value));
+          setAllCompositions(comps)
+          setCompositionStore(comps);
+          setLoadedInfos((prev) => {
+            return {
+              ...prev,
+              "compositionStore": true
+            }
+          });
+        } else if (msg.key === "boards" && msg.value) {
+          const boards: Board[] = JSON.parse(msg.value).map((b: any) => JSON2Board(b));
+          setAvailableBoards(boards);
+          setLoadedInfos((prev) => {
+            return {
+              ...prev,
+              "boards": true
+            }
+          });
         }
       });
-    })
-
-    wsClient.addEventHandler(ReturnType.WSAPI.GET_KEY_VALUE, topic => {
-      console.log("Got Key Value: ", topic);
-      if (topic.message === null) return;
-      const msg: WSApiKey = topic.message;
-      if (msg.key === "compositionStore" && msg.value) {
-        const comps = Composition.fromJSONArray(JSON.parse(msg.value));
-        setAllCompositions(comps)
-        setCompositionStore(comps);
-      } else if (msg.key === "boards" && msg.value) {
-        const boards: Board[] = JSON.parse(msg.value).map((b: any) => JSON2Board(b));
-        setAvailableBoards(boards);
-      }
-    });
+      wsClient.issueKeyGet("compositionStore");
+      wsClient.issueKeyGet("boards");
+    }
     console.log("Get available effekts");
-    wsClient.send("data.get.availableEffekts");
-    wsClient.send("system.config.get")
-    wsClient.issueKeyGet("compositionStore");
-    wsClient.issueKeyGet("boards");
   }
-
   const connectWS = async () => {
     if (connectedToWs.current) return;
     try {
@@ -122,7 +177,7 @@ function App() {
   useEffect(() => {
     connectWS();
   }, [])
-
+  // console.log("Reload")
   useEffect(() => {
     if (activeRoute !== "stage" && wsClient.mode === ClientMode.STAGE && wsClient.connected) {
       wsClient.mode = ClientMode.EDITOR;
@@ -159,7 +214,7 @@ function App() {
         {connectionError ? <ConnectionError /> :
 
           <div>
-            {lcConfig ? <>
+            {lcConfig && stripConfig.length > 0 ? <>
               {
                 activeRoute !== "stage" ?
                   <>
@@ -170,6 +225,7 @@ function App() {
                     }}>
                       <Route path="home" element={<HomePage />} />
                       <Route path="quick" element={<QuickPage
+                        strips={stripConfig}
                         availableEffekts={availableEffekts}
                         randomEnabled={randomEnabled}
                         randomSpecific={randomSpecific}
@@ -179,6 +235,8 @@ function App() {
                         setLCConfig={setLcConfig}
                       />} />
                       <Route path="effekts" element={<EffektsPage
+                        activeRoute={activeRoute}
+                        stripConfig={stripConfig}
                         availableEffekts={availableEffekts}
                         isRandomizerActive={randomEnabled}
                         setRandomizerActive={setRandomEnabled}
@@ -186,6 +244,7 @@ function App() {
                         setCompositionStore={changeCompositionStore}
                       />} />
                       <Route path="boardeditor" element={<BoardEditor
+                        strips={stripConfig}
                         compositions={compositionStore}
                         availableBoards={availableBoards}
                         setAvailableBoards={setAvailableBoards}

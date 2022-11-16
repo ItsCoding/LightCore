@@ -16,7 +16,7 @@ export const DesignerPage = () => {
     const [strips, setStrips] = useState<Strip[]>([]);
     const [selectedStripIndex, setSelectedStrip] = useState<number>(-1);
     const [globalScaling, setGlobalScalingState] = useState(2)
-    const [enableSidebar, setEnableSidebar] = useState(2);
+    const [enableSidebar, setEnableSidebar] = useState(0);
     const { enqueueSnackbar } = useSnackbar();
     useEffect(() => {
         const startPoint = new Point(0, 0);

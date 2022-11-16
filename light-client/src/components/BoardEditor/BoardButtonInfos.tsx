@@ -2,14 +2,16 @@
 import { Avatar, AvatarGroup, Grid, Typography, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { Box } from "@mui/system";
-import { strips } from "../../system/StripConfig";
+// import { strips } from "../../system/StripConfig";
 import { Composition } from "../../types/Composition";
+import { LedStrip } from "../../types/Strip";
 
 export type BoardButtonInfosProps = {
     composition: Composition;
+    strips: Array<LedStrip>;
 }
 
-export const BoardButtonInfos = ({ composition }: BoardButtonInfosProps) => {
+export const BoardButtonInfos = ({ composition, strips }: BoardButtonInfosProps) => {
 
 
     const theme = useTheme();

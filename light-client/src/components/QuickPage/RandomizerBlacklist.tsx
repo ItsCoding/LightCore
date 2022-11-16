@@ -1,7 +1,7 @@
 import { Button, Card, CardContent, CardHeader, Divider, Slider, Tab, Tabs, Typography } from "@mui/material"
 import Grid from '@mui/material/Grid';
 import React from "react";
-import { strips } from "../../system/StripConfig";
+// import { strips } from "../../system/StripConfig";
 import { WebSocketClient } from "../../system/WebsocketClient";
 import { Effekt } from "../../types/Effekt";
 import { LightCoreConfig } from "../../types/LightCoreConfig";
@@ -12,10 +12,11 @@ type RandomizerBlacklistProps = {
     lightConfig: LightCoreConfig,
     setLCConfig: (config: LightCoreConfig) => void,
     availableEffekts: Effekt[],
+    strips: Array<LedStrip>;
 }
 
 
-export const RandomizerBlacklist = ({ lightConfig, setLCConfig, availableEffekts }: RandomizerBlacklistProps) => {
+export const RandomizerBlacklist = ({ lightConfig, setLCConfig, availableEffekts, strips }: RandomizerBlacklistProps) => {
     const wsClient = WebSocketClient.getInstance();
     const [selectedStrip, setSelectedStrip] = React.useState<string>("all");
 

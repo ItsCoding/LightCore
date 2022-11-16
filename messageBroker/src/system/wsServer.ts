@@ -97,6 +97,10 @@ export class WebsocketServer {
                     await findIPsByMac();
                     this.zeroMQServerOUT.sendMessage(JSON.stringify({ type: "system.config.sync", message: getStageData() }));
                     break;
+                case "wsapi.requestConfig":
+                    console.log("📡  Client requested config");
+                    this.sendMessage(JSON.stringify({ type: "return.wsapi.ledconfig", message: getStageData() }));
+                    break;
             }
         } else {
             this.zeroMQServerOUT.sendMessage(message);

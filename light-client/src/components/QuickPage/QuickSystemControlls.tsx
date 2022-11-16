@@ -1,11 +1,13 @@
 import { Card, CardContent, CardHeader, Divider, Slider, Typography } from "@mui/material"
-import { strips } from "../../system/StripConfig";
+// import { strips } from "../../system/StripConfig";
 import { WebSocketClient } from "../../system/WebsocketClient";
 import { LightCoreConfig } from "../../types/LightCoreConfig"
+import { LedStrip } from "../../types/Strip";
 
 type QuickSystemControllsProps = {
     lightConfig: LightCoreConfig,
     setLCConfig: (config: LightCoreConfig) => void,
+    strips: Array<LedStrip>;
 }
 
 const marks = [
@@ -15,7 +17,7 @@ const marks = [
     }
 ];
 
-export const QuickSystemControlls = ({ lightConfig, setLCConfig }: QuickSystemControllsProps) => {
+export const QuickSystemControlls = ({ lightConfig, setLCConfig,strips }: QuickSystemControllsProps) => {
     const wsClient = WebSocketClient.getInstance();
 
     const setBrightness = (brightness: number | number[]) => {

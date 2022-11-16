@@ -7,18 +7,21 @@ import { useEffect, useState } from "react";
 import { Composition } from "../../types/Composition";
 import { WebSocketClient } from "../../system/WebsocketClient";
 import { ReturnType } from "../../types/TopicReturnType";
+import { LedStrip } from "../../types/Strip";
 
 type ButtonGridProsp = {
     board: Board;
+    strips: Array<LedStrip>
 }
 
 type InnerButtonProps = {
     composition: Composition
     matches: boolean
+    strips: Array<LedStrip>
 }
 
 
-const InnerButton = ({ composition, matches }: InnerButtonProps) => {
+const InnerButton = ({ composition, matches, strips }: InnerButtonProps) => {
     const [active, setActive] = useState(false)
     const onDeactivateHandler = () => {
         setActive(false)
@@ -37,7 +40,7 @@ const InnerButton = ({ composition, matches }: InnerButtonProps) => {
                 size="medium"
                 onInteract={() => { composition.activate(() => onDeactivateHandler()); setActive(true); console.log("Set Active") }}>
                 {
-                    composition ? <BoardButtonInfos composition={composition} /> : null
+                    composition ? <BoardButtonInfos strips={strips} composition={composition} /> : null
                 }
             </TouchButton>
         </Grid>
@@ -45,7 +48,7 @@ const InnerButton = ({ composition, matches }: InnerButtonProps) => {
 }
 
 
-export const ButtonGrid = ({ board }: ButtonGridProsp) => {
+export const ButtonGrid = ({ board,strips }: ButtonGridProsp) => {
     const wsClient = WebSocketClient.getInstance()
     const amountButtons = Array.from(Array(41).keys())
     const theme = useTheme();
@@ -70,7 +73,7 @@ export const ButtonGrid = ({ board }: ButtonGridProsp) => {
                 amountButtons.map((btn, i) => {
                     const composition = board.elements[i]?.data
                     return (
-                        <InnerButton key={i} composition={composition} matches={matches} />
+                        <InnerButton strips={strips} key={i} composition={composition} matches={matches} />
                     )
                 })
             }

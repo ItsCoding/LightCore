@@ -1,6 +1,7 @@
 import { darken, lighten, Slide } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
 import React from "react";
+import { LedStrip, StripMarks } from "../types/Strip";
 
 export const createUUID = () => {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
@@ -52,4 +53,35 @@ export const hexToRgb = (hex: string) => {
         g: parseInt(result[2], 16),
         b: parseInt(result[3], 16)
     } as RgbColor : null;
+}
+
+export const generateMarks = (length: number, step: number): StripMarks[] => {
+    const marks: StripMarks[] = [];
+    for (let i = 0; i < length; i = i + step) {
+        marks.push({ value: i, label: i.toString() });
+    }
+    marks.push({ value: length, label: length.toString() });
+    return marks;
+}
+
+
+export const parseStrips = (stripConfig: any) => {
+    const strips: LedStrip[] = []
+    let doneLCIDS: number[] = []
+    for (const [keys, stripData] of Object.entries(stripConfig.strips)) {
+        const strip: any = stripData;
+        if (!doneLCIDS.includes(strip.lcid)) {
+            strips.push({
+                position: strip.name,
+                index: parseInt(strip.lcid),
+                length: parseInt(strip.leds),
+                marks: strip.uiMarks ? generateMarks(parseInt(strip.leds), strip.uiMarks) : [],
+                symbol: strip.stripSymbol,
+            })
+            doneLCIDS.push(strip.lcid)
+        }else{
+            console.log("Got Strip Duplicate LCID found in config, skipping",doneLCIDS)
+        }
+    }
+    return strips;
 }
