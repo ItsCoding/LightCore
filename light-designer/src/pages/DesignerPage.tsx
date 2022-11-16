@@ -10,12 +10,13 @@ import { Header } from "../components/System/Header";
 import { GlobalSettings } from "../components/Settings/GlobalSettings";
 import { useSnackbar } from "notistack";
 import { WebSocketClient } from "../../../light-client/src/system/WebsocketClient";
+import { PipelineSettings } from "../components/Settings/PipelineSettings";
 
 export const DesignerPage = () => {
     const [strips, setStrips] = useState<Strip[]>([]);
     const [selectedStripIndex, setSelectedStrip] = useState<number>(-1);
     const [globalScaling, setGlobalScalingState] = useState(2)
-    const [enableSidebar, setEnableSidebar] = useState(0);
+    const [enableSidebar, setEnableSidebar] = useState(2);
     const { enqueueSnackbar } = useSnackbar();
     useEffect(() => {
         const startPoint = new Point(0, 0);
@@ -101,6 +102,7 @@ export const DesignerPage = () => {
                     <GlobalSettings strips={strips} setStrips={setStrips} globalScaling={globalScaling} setGlobalScalingState={setGlobalScalingState} />
                     <StripSettings changeSelectedStrip={changeSelectedStrip} selectedStrip={selectedStripIndex >= 0 ? strips[selectedStripIndex] : null} />
                     <StripManager selectedStrip={selectedStripIndex} setSelectedStrip={(index) => setSelectedStrip(index)} strips={strips} setStrips={setStrips} />
+                    {/* {enableSidebar === 2 && <PipelineSettings />} */}
                 </Grid>}
 
         </Grid>

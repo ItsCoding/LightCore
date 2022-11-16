@@ -9,7 +9,7 @@ from effekts.wash.washColorInverted import visualize_washColorInverted
 from effekts.beat.run.run import visualize_run
 from effekts.beat.run.runMirrored import visualize_runMirrored
 from scipy.ndimage.filters import gaussian_filter1d
-
+import json
 # import wsServer as wsServer
 import composer
 import config
@@ -150,6 +150,7 @@ class Visualization:
         #CONFIG VARS
         self.randomEnabled = True
         self.randomizerBeatCount = 0
+        self.configReady = False
     def frames_per_second(self):
         """Return the estimated frames per second
 
@@ -177,6 +178,7 @@ class Visualization:
 
 
     def microphone_update(self,audio_samples,recordTime):
+       
         # time.sleep(0.01)
         self.hasBeatChanged = False
         self.hasBeatChangedManual = False
@@ -198,7 +200,10 @@ class Visualization:
             #throw all packets away so they dont stack up
              while not self.bpmQueue.empty():
                 message = self.bpmQueue.get()
+        
         self.hasBeatChanged = (self.hasBeatChanged or self.hasBeatChangedManual)
+        if not self.configReady:
+            return
         # Normalize samples between 0 and 1
         y = audio_samples / 2.0**15
         # Construct a rolling window of audio samples
@@ -284,6 +289,8 @@ class Visualization:
         composer.addEffekt(visualize_runMirrored(1),FrequencyRange.all,1,0,540)
         composer.addEffekt(visualize_runMirrored(2),FrequencyRange.all,2,0,50)
         composer.addEffekt(visualize_runMirrored(3),FrequencyRange.all,3,0,50)
+        self.queue2Parent.put(json.dumps({"type": "wsapi.requestConfig", "message": ""}))
+        print("Requesting config...")
         microphone.start_stream(self.microphone_update)
 
 def exec_vis() :

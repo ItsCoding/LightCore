@@ -7,6 +7,10 @@ export class StripBase {
     public stripControllerStart?: number;
     public stripControllerEnd?: number;
     public computingGroup: number;
+    public frameDivider: number;
+    public mirrorGroup: number;
+    public stripInverted: boolean;
+    public ledType: "WS2811" | "WS2813"
 
     public getExportConfig() {
         return {
@@ -15,7 +19,11 @@ export class StripBase {
             stripSymbol: this.stripSymbol,
             stripControllerStart: this.stripControllerStart,
             stripCotrollerEnd: this.stripControllerEnd,
-            computingGroup: this.computingGroup
+            computingGroup: this.computingGroup,
+            frameDivider: this.frameDivider,
+            mirrorGroup: this.mirrorGroup,
+            ledType: this.ledType,
+            stripInverted: this.stripInverted
         };
     }
 }

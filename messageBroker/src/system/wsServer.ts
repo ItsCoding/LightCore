@@ -1,6 +1,6 @@
 import WebSocket, { WebSocketServer } from 'ws';
 import { DataAPI } from './DataAPI';
-import { findIPsByMac, initializeStageData, setStageData } from './StageStorrage';
+import { findIPsByMac, getStageData, initializeStageData, setStageData } from './StageStorrage';
 import { ZeroMQServerIN } from './zeromqServerIN';
 import { ZeroMQServerOUT } from './zeromqServerOUT';
 
@@ -14,7 +14,17 @@ export class WebsocketServer {
     constructor() {
         const self = this;
         this.zeroMQServerIN = new ZeroMQServerIN((message: string) => {
-            self.sendMessage(message);
+            const messageObject: { type: string, message: any } = JSON.parse(message);
+            if (messageObject.type.startsWith("wsapi")) {
+                switch (messageObject.type) {
+                    case "wsapi.requestConfig":
+                        console.log("📡  Pipeline requested config");
+                        this.zeroMQServerOUT.sendMessage(JSON.stringify({ type: "system.config.sync", message: getStageData() }));
+                        break;
+                }
+            } else {
+                self.sendMessage(message);
+            }
         });
     }
 
@@ -81,9 +91,11 @@ export class WebsocketServer {
                     setStageData(stage);
                     console.log("🏗  Stage data updated");
                     await findIPsByMac();
+                    this.zeroMQServerOUT.sendMessage(JSON.stringify({ type: "system.config.sync", message: getStageData() }));
                     break;
                 case "wsapi.reloadIPs":
                     await findIPsByMac();
+                    this.zeroMQServerOUT.sendMessage(JSON.stringify({ type: "system.config.sync", message: getStageData() }));
                     break;
             }
         } else {

@@ -6,7 +6,7 @@ import os
 
 
 # DEVICE = 'esp8266'
-DEVICE = "virtual"
+DEVICE = "virtual" # editable in designer
 """Device used to control LED strip. Must be 'esp', 'espv' or 'virtual'
 
 'esp8266' means that you are using an ESP8266 module to control the LED strip
@@ -21,7 +21,7 @@ to control the leds connected to it.1
 DEBUG_LOG = True
 
 if DEVICE == "esp" or DEVICE == "espv":
-    UDP_IPS = {
+    UDP_IPS = { # editable in designer
        
         0: "127.0.0.1", 
         1: "127.0.0.1",
@@ -41,7 +41,7 @@ if DEVICE == "esp" or DEVICE == "espv":
         # 8:"10.40.0.17",
         # 9:"10.40.0.17",
     }  #'192.168.62.3' #'10.40.0.186'
-    UDP_GROUPS = {
+    UDP_GROUPS = { # editable in designer
         1: [
             {"from": 0, "to": 270, "IP": "10.40.0.12"},
             {"from": 270, "to": 540, "IP": "10.40.0.13","offset": 270,"invert": True},
@@ -53,12 +53,12 @@ if DEVICE == "esp" or DEVICE == "espv":
         # 9:[{"from": 113 * 4, "to": 113 * 5, "IP": "10.40.0.17"}],
         # 10:[{"from": 113 * 5, "to": 113 * 5 + 35, "IP": "10.40.0.17"}]
     }
-    UDP_FRAMEDIVIDER = {
+    UDP_FRAMEDIVIDER = { # editable in designer
         0: 5,
         1: 3,
     }
 
-    UDP_INDEX_OFFSET = {
+    UDP_INDEX_OFFSET = { # editable in designer
         5: 113,
         6: 113*2,
         7: 113*3,
@@ -91,7 +91,7 @@ GAMMA_TABLE_PATH = os.path.join(os.path.dirname(__file__), "gamma_table.npy")
 MIC_RATE = 44100
 """Sampling frequency of the microphone in Hz"""
 
-FPS = 120
+FPS = 120 # editable in designer
 FRAMES_PER_BUFFER = int(MIC_RATE / FPS)
 """Desired refresh rate of the visualization (frames per second)
 
@@ -137,30 +137,30 @@ MIN_VOLUME_THRESHOLD = 1e-7
 """No music visualization displayed if recorded audio volume below threshold"""
 
 
-STRIP_COUNT = 4
+STRIP_COUNT = 4 # editable in designer
 # STRIP_LED_COUNTS = [300, 540, 50, 50]
-STRIP_LED_COUNTS = [1000, 540, 50, 50]
-STRIP_MIRRORS = [[2, 3]]
+STRIP_LED_COUNTS = [1000, 540, 50, 50] # editable in designer 
+STRIP_MIRRORS = [[2, 3]]  # editable in designer
 
-RANDOM_MAX_WAIT = 8
-RANDOM_MIN_WAIT = 4
+RANDOM_MAX_WAIT = 8 # editable in client , deprecated
+RANDOM_MIN_WAIT = 4 # editable in client , deprecated
 
-DROP_RANDOM_MAX_WAIT = 10
-DROP_RANDOM_MIN_WAIT = 5
+DROP_RANDOM_MAX_WAIT = 10 # editable in client , deprecated
+DROP_RANDOM_MIN_WAIT = 5 # editable in client, deprecated
 
-GLOBAL_SPEED = 50
-GLOBAL_INTENSITY = 1.0
-DETECT_BEAT = True
-STRIP_BRIGHTNESS = []
+GLOBAL_SPEED = 50 # editable in client
+GLOBAL_INTENSITY = 1.0 # editable in client
+DETECT_BEAT = True # editable in client
+STRIP_BRIGHTNESS = [] # editable in client
 for i in range(STRIP_COUNT):
     STRIP_BRIGHTNESS.append(100)
 
-BLACKLISTED_EFFECTS = {"all": []}
+BLACKLISTED_EFFECTS = {"all": []}  # editable in client
 for i in range(STRIP_COUNT):
     BLACKLISTED_EFFECTS[str(i)] = []
 
 
-COLOR_DICT = [
+COLOR_DICT = [ # editable in client
     [0, 0, 255],
     [0, 255, 0],
     [255, 0, 0],
@@ -171,12 +171,12 @@ COLOR_DICT = [
     [34, 166, 179],
     [190, 46, 221],
 ]
-COLOR_CALIBRATION = {
+COLOR_CALIBRATION = { # editable in client
     "ws2813": [1.0,1.0,1.0],
     "ws2811": [1.0,1.0,1.0],
 }
 
-COLOR_CALIBRATION_ASSIGNMENTS = {
+COLOR_CALIBRATION_ASSIGNMENTS = { # editable in designer
     0: "ws2813",
     1: "ws2813",
     2: "ws2811",
@@ -190,9 +190,9 @@ COLOR_CALIBRATION_ASSIGNMENTS = {
 }
 
 # How many beats are one bar
-MUSIC_BEATS_BAR = 4
+MUSIC_BEATS_BAR = 4 # editable in client
 # How many bars to wait before changin randomizer
-RANDOMIZER_BAR = 4
+RANDOMIZER_BAR = 4 # editable in client
 
 cfg = {
     "device": DEVICE,

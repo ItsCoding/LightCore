@@ -24,6 +24,13 @@ const columns: GridColDef[] = [
         editable: true,
     },
     {
+        field: "stripSymbol",
+        headerName: "Symbol",
+        width: 100,
+        editable: true,
+        type: "string",
+    },
+    {
         field: 'ledCount',
         headerName: 'LED Count',
         width: 100,
@@ -44,12 +51,35 @@ const columns: GridColDef[] = [
         width: 100,
         editable: true,
         type: "number",
-    }, {
+    },
+    {
+        field: "stripInverted",
+        headerName: "Invertiert",
+        width: 100,
+        editable: true,
+        type: "boolean",
+    },
+    {
         field: 'zIndex',
         headerName: 'zIndex',
         width: 100,
         editable: true,
         type: "number",
+    },
+    {
+        field: "mirrorGroup",
+        headerName: "Mirror Group",
+        width: 100,
+        editable: true,
+        type: "number",
+    },
+    {
+        field: "ledType",
+        headerName: "LED Type",
+        width: 100,
+        editable: true,
+        type: "singleSelect",
+        valueOptions: ["WS2811", "WS2813"],
     },
     {
         field: 'stripIP',
@@ -62,13 +92,6 @@ const columns: GridColDef[] = [
         field: 'stripMac',
         headerName: 'MAC',
         width: 150,
-        editable: true,
-        type: "string",
-    },
-    {
-        field: "stripSymbol",
-        headerName: "Symbol",
-        width: 100,
         editable: true,
         type: "string",
     },
@@ -87,13 +110,28 @@ const columns: GridColDef[] = [
         type: "number",
     },
     {
-        field: "computingGroup",
-        headerName: "Comp. Group",
+        field: "frameDivider",
+        headerName: "Frame Divider",
         width: 100,
         editable: true,
         type: "number",
     },
 ];
+
+const colGroup = [
+    {
+        groupId: "General",
+        children: [{ field: "lcid" }, { field: "stripName" }, { field: "stripSymbol" }, { field: "ledCount" }, { field: "getPhysicalLength" }, { field: "offset" },{ field: "stripInverted" }],
+    },
+    {
+        groupId: "Rendering",
+        children: [{ field: "zIndex" }, { field: "mirrorGroup" }],
+    },
+    {
+        groupId: "Controller",
+        children: [{ field: "ledType" }, { field: "stripIP" }, { field: "stripMac" }, { field: "stripControllerStart" }, { field: "stripControllerEnd" }, { field: "frameDivider" }],
+    }
+]
 
 
 export const StripManager = ({ strips, setStrips, setSelectedStrip, selectedStrip }: StripManagerProps) => {
@@ -167,6 +205,22 @@ export const StripManager = ({ strips, setStrips, setSelectedStrip, selectedStri
         else if (params.field === "computingGroup") {
             strip.computingGroup = params.value as number;
         }
+        else if (params.field === "mirrorGroup") {
+            strip.mirrorGroup = params.value as number;
+        }
+        else if (params.field === "ledType") {
+            if (params.value === "WS2811" || params.value === "WS2813") {
+                strip.ledType = params.value;
+            }
+        }
+        else if (params.field === "frameDivider") {
+            strip.frameDivider = params.value as number;
+        }
+        else if (params.field === "stripInverted") {
+            strip.stripInverted = params.value as boolean;
+        }
+
+
         setStrips(newStrips);
     }
 
@@ -192,6 +246,8 @@ export const StripManager = ({ strips, setStrips, setSelectedStrip, selectedStri
                         setSelectedStrip(index);
                     }
                 }}
+                columnGroupingModel={colGroup}
+                experimentalFeatures={{ columnGrouping: true }}
                 rows={strips}
                 // rows={[]}
                 columns={columns}

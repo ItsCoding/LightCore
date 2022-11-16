@@ -4,7 +4,7 @@ from tracemalloc import start
 import composer
 import config
 import randomizer
-
+import misc.syncConfig as syncConfig
 def setSpecificEffekt(vis,effektName,stripIndex,frequencyRange,instanceData,instanceUUID,zIndex):
     print("Adding Effekt: ", effektName, " to strip: ", stripIndex, instanceUUID)
     effektClass = next(x for x in vis.allEffekts if x.__name__ == effektName)
@@ -108,5 +108,7 @@ def handleQueue(queue2Thread,queue2Parent,vis):
             elif topicType == "light.colorPalette.set":
                 print("ColorDict set to: ", data["colorPalette"])
                 config.cfg["colorDict"] = data["colorPalette"]
+            elif topicType == "system.config.sync":
+                syncConfig.syncConfig(vis,data)
 
 
