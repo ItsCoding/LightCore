@@ -26,7 +26,10 @@ export const DesignerPage = () => {
     const [backgroundInfos, setBackgroundInfos] = useState({
         backgroundBase64: "",
         backgroundScaling: 1,
+        width: 0,
+        height: 0,
     });
+    const [backgroundGreyScale, setBackgroundGreyScale] = useState(35);
     const onGlobalKeyInput = useCallback((e: KeyboardEvent) => {
         const ctrlKey = e.ctrlKey;
         const shiftKey = e.shiftKey;
@@ -67,7 +70,7 @@ export const DesignerPage = () => {
                 break;
             case "s":
                 if (ctrlKey) {
-                    saveJsonFile(strips);
+                    saveJsonFile({ strips, backgroundInfos, globalScaling });
                 }
                 break;
             case "i":
@@ -118,14 +121,27 @@ export const DesignerPage = () => {
 
     const onMouseWheel = useCallback(
         (e: WheelEvent) => {
-            if (e.ctrlKey) {
+            if (e.ctrlKey && !e.shiftKey) {
                 if (e.deltaY < 0) {
                     if (!(globalScaling >= 10)) setGlobalScalingState(globalScaling + 0.1);
                 } else {
                     if (!(globalScaling <= 0.5)) setGlobalScalingState(globalScaling - 0.1);
                 }
+                if (e.deltaY < 0) {
+                    if (!(backgroundInfos.backgroundScaling >= 10)) setBackgroundInfos({ ...backgroundInfos, backgroundScaling: backgroundInfos.backgroundScaling + 0.1 });
+                } else {
+                    if (!(backgroundInfos.backgroundScaling <= 0.1)) setBackgroundInfos({ ...backgroundInfos, backgroundScaling: backgroundInfos.backgroundScaling - 0.1 });
+
+                }
+            } else if (e.shiftKey && e.ctrlKey) {
+                if (e.deltaY < 0) {
+                    if (!(globalScaling >= 10)) setGlobalScalingState(globalScaling + 0.1);
+                } else {
+                    if (!(globalScaling <= 0.5)) setGlobalScalingState(globalScaling - 0.1);
+                }
+                
             }
-        }, [globalScaling]);
+        }, [globalScaling, backgroundInfos]);
 
     useEffect(() => {
         document.addEventListener('keyup', onGlobalKeyInput);
@@ -134,7 +150,7 @@ export const DesignerPage = () => {
             document.removeEventListener('keyup', onGlobalKeyInput);
             document.removeEventListener("mousewheel", onMouseWheel);
         }
-    }, [selectedStripIndex, strips, globalScaling, mouseInViewer]);
+    }, [selectedStripIndex, strips, globalScaling, mouseInViewer, backgroundInfos]);
 
     useEffect(() => {
         const startPoint = new Point(0, 0);
@@ -206,7 +222,7 @@ export const DesignerPage = () => {
         }
     }
     return (<>
-        <Header setBackgroundInfos={setBackgroundInfos} backgroundInfos={backgroundInfos} strips={strips} setStrips={setStrips} enableSidebar={enableSidebar} setEnableSidebar={setEnableSidebar} />
+        <Header globalScaling={globalScaling} setGlobalScalingState={setGlobalScalingState} setBackgroundInfos={setBackgroundInfos} backgroundInfos={backgroundInfos} strips={strips} setStrips={setStrips} enableSidebar={enableSidebar} setEnableSidebar={setEnableSidebar} />
         <Grid container sx={{
             minHeight: "95vh",
         }}>
@@ -220,7 +236,9 @@ export const DesignerPage = () => {
                     position: "relative"
                 }}>
                 <div style={{
-                    position: "relative",
+                    height: "100%",
+                    width: "100%",
+                    position: "absolute",
                     zIndex: 100,
                     transform: `scale(${globalScaling})`,
                     transformOrigin: "0% 0% 0px",
@@ -235,11 +253,13 @@ export const DesignerPage = () => {
                     zIndex: -1000,
                     top: 0,
                     left: 0,
+                    // apply a black filter to the background
+                    filter: `brightness(${backgroundGreyScale / 100})`,
                     backgroundImage: `url(${backgroundInfos.backgroundBase64})`,
                     transform: `scale(${backgroundInfos.backgroundScaling})`,
                     backgroundSize: "cover",
-                    height: "100%",
-                    width: "100%",
+                    height: backgroundInfos.height * backgroundInfos.backgroundScaling,
+                    width: backgroundInfos.width * backgroundInfos.backgroundScaling,
                 }}></div>
             </Grid>}
             {enableSidebar != 1 &&
@@ -249,7 +269,7 @@ export const DesignerPage = () => {
                     <GlobalSettings strips={strips} setStrips={setStrips} globalScaling={globalScaling} setGlobalScalingState={setGlobalScalingState} />
                     <StripSettings changeSelectedStrip={changeSelectedStrip} selectedStrip={selectedStripIndex >= 0 ? strips[selectedStripIndex] : null} />
                     <StripManager selectedStrip={selectedStripIndex} setSelectedStrip={(index) => setSelectedStrip(index)} strips={strips} setStrips={setStrips} />
-                    <BackgroundSettings backgroundInfos={backgroundInfos} setBackgroundInfos={setBackgroundInfos} />
+                    <BackgroundSettings backgroundGreyScale={backgroundGreyScale} setBackgroundGreyScale={setBackgroundGreyScale} backgroundInfos={backgroundInfos} setBackgroundInfos={setBackgroundInfos} />
                 </Grid>}
 
         </Grid>

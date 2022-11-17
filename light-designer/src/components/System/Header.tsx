@@ -18,14 +18,20 @@ export type HeaderProps = {
     backgroundInfos: {
         backgroundBase64: string,
         backgroundScaling: number,
+        width: number,
+        height: number,
     },
     setBackgroundInfos: (newBackgroundInfos: {
         backgroundBase64: string,
         backgroundScaling: number,
+        width: number,
+        height: number,
     }) => void;
+    globalScaling: number;
+    setGlobalScalingState: (newGlobalScaling: number) => void;
 }
 
-export const Header = ({ strips, setStrips, enableSidebar, setEnableSidebar, backgroundInfos, setBackgroundInfos }: HeaderProps) => {
+export const Header = ({ strips, setStrips, enableSidebar, setEnableSidebar, backgroundInfos, setBackgroundInfos, globalScaling, setGlobalScalingState }: HeaderProps) => {
     const [openExportDialog, setOpenExportDialog] = React.useState(false);
     const incrementSidebar = () => {
         setEnableSidebar((enableSidebar + 1) % 3);
@@ -56,11 +62,16 @@ export const Header = ({ strips, setStrips, enableSidebar, setEnableSidebar, bac
                         setBackgroundInfos({
                             backgroundBase64: "",
                             backgroundScaling: 1,
+                            width: 0,
+                            height: 0,
                         })
                     } else {
                         const stripData = projectData.strips;
                         if (stripData) {
                             setStrips(StraightStrip.fromJson(JSON.stringify(stripData)));
+                        }
+                        if (projectData.globalScaling) {
+                            setGlobalScalingState(projectData.globalScaling);
                         }
                         if (projectData.backgroundInfos) {
                             setBackgroundInfos(projectData.backgroundInfos);
@@ -68,12 +79,14 @@ export const Header = ({ strips, setStrips, enableSidebar, setEnableSidebar, bac
                             setBackgroundInfos({
                                 backgroundBase64: "",
                                 backgroundScaling: 1,
+                                width: 0,
+                                height: 0,
                             })
                         }
                     }
 
                 }}>Load</Button>
-                <Button color="secondary" onClick={() => saveJsonFile({ strips, backgroundInfos })}>Save</Button>
+                <Button color="secondary" onClick={() => saveJsonFile({ strips, backgroundInfos, globalScaling })}>Save</Button>
                 <Button color="info" onClick={() => setOpenExportDialog(true)}>Export to Pipeline</Button>
                 <Button color="inherit" onClick={() => incrementSidebar()}>
                     <MenuIcon />
