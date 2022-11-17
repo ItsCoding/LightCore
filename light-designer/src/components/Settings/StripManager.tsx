@@ -5,6 +5,7 @@ import { useSnackbar } from "notistack";
 import { StraightStrip } from "../../classes/Strips/StraightStrip";
 import { Point } from "../../classes/Point";
 import { useState } from "react";
+import { Height } from "@mui/icons-material";
 
 
 export type StripManagerProps = {
@@ -240,8 +241,10 @@ export const StripManager = ({ strips, setStrips, setSelectedStrip, selectedStri
             width: "100%",
             paddingLeft: "10px",
             paddingRight: "10px",
-            paddingBottom: "10px",
-            marginTop: "10px"
+            // paddingBottom: "6vh",
+            marginTop: "10px",
+            height: "50vh",
+            paddingBottom: "80px",
         }}>
             <Typography variant="h6">
                 Strips
@@ -270,9 +273,7 @@ export const StripManager = ({ strips, setStrips, setSelectedStrip, selectedStri
                 onProcessRowUpdateError={(params) => console.log(params)}
                 onCellEditCommit={cellEditCommit}
             />
-            <div style={{
-                paddingTop: "10px",
-            }}>
+            <div>
                 <Button onClick={addNewStrip}>New</Button>
                 <Button color="error" onClick={removeSelectedStrips}>Delete</Button>
             </div>

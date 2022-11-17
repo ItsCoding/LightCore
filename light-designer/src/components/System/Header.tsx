@@ -55,7 +55,7 @@ export const Header = ({ strips, setStrips, enableSidebar, setEnableSidebar }: H
             onClose={() => setOpenExportDialog(false)}
         >
             <div style={{width: "98vw"}}>
-                <Exporter strips={strips}/>
+                <Exporter closeModal={() => setOpenExportDialog(false)} strips={strips}/>
             </div>
         </Drawer>
         <AppBar position="static" >

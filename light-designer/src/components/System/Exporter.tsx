@@ -10,10 +10,11 @@ import { useSnackbar } from "notistack";
 
 export type ExporterProps = {
     strips: Strip[];
+    closeModal: () => void;
 }
 
 
-export const Exporter = ({ strips }: ExporterProps) => {
+export const Exporter = ({ strips, closeModal }: ExporterProps) => {
 
     const canvasRef = useRef(null)
     const [imageBase64, setImageBase64] = useState<string>("");
@@ -149,7 +150,13 @@ export const Exporter = ({ strips }: ExporterProps) => {
                     marginBottom: "20px",
                     position: "absolute",
                     right: "20px"
-                }} variant="contained" onClick={() => syncToMessageBroker()}>Sync to MessageBroker</Button>
+                }} color="warning" variant="contained" onClick={() => syncToMessageBroker()}>Sync to MessageBroker</Button>
+                <Button sx={{
+                    marginTop: "20px",
+                    marginBottom: "20px",
+                    position: "absolute",
+                    right: "250px"
+                }} variant="contained" onClick={() => closeModal()}>Close</Button>
                 <pre>{exportConfig && JSON.stringify(exportConfig, null, 2)}</pre>
             </Grid>
         </Grid>

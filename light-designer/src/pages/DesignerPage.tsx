@@ -31,7 +31,7 @@ export const DesignerPage = () => {
                     const strip = strips[selectedStripIndex];
                     strip.move(0, !shiftKey ? -10 : -1);
                     setStrips([...strips]);
-                }else{
+                } else {
                     console.log("No strip selected");
                 }
                 break;
@@ -59,12 +59,26 @@ export const DesignerPage = () => {
         }
 
     }, [selectedStripIndex, strips]);
+
+    const onMouseWheel = useCallback(
+        (e: WheelEvent) => {
+            if (e.ctrlKey) {
+                if (e.deltaY < 0) {
+                    if (!(globalScaling >= 10)) setGlobalScalingState(globalScaling + 0.1);
+                } else {
+                    if (!(globalScaling <= 0.5)) setGlobalScalingState(globalScaling - 0.1);
+                }
+            }
+        }, [globalScaling]);
+
     useEffect(() => {
         window.onkeydown = onGlobalKeyInput;
+        window.addEventListener("mousewheel", onMouseWheel);
         return () => {
             window.onkeydown = null;
+            window.removeEventListener("mousewheel", onMouseWheel);
         }
-    }, [selectedStripIndex, strips]);
+    }, [selectedStripIndex, strips, globalScaling]);
 
     useEffect(() => {
         const startPoint = new Point(0, 0);
@@ -80,7 +94,7 @@ export const DesignerPage = () => {
         console.table(strip.getPhysicalPositions());
         setStrips([strip, strip2]);
 
-       
+
 
 
         const wsClient = WebSocketClient.getInstance()
@@ -140,7 +154,9 @@ export const DesignerPage = () => {
                 </div>
             </Grid>}
             {enableSidebar != 1 &&
-                <Grid item xs={sidebarState()}>
+                <Grid item xs={sidebarState()} sx={{
+                    overflow: "auto",
+                }}>
                     <GlobalSettings strips={strips} setStrips={setStrips} globalScaling={globalScaling} setGlobalScalingState={setGlobalScalingState} />
                     <StripSettings changeSelectedStrip={changeSelectedStrip} selectedStrip={selectedStripIndex >= 0 ? strips[selectedStripIndex] : null} />
                     <StripManager selectedStrip={selectedStripIndex} setSelectedStrip={(index) => setSelectedStrip(index)} strips={strips} setStrips={setStrips} />

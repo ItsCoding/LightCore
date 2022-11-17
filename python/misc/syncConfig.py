@@ -1,5 +1,5 @@
 import config
-
+import randomizer as rnd
 def syncConfig (vis, incommingConfig):
 
     udpIps = {}
@@ -91,6 +91,7 @@ def syncConfig (vis, incommingConfig):
     if (countOfStrips > 0): 
         print("Successfully loaded config from server, got {} strips".format(countOfStrips))
         vis.configReady = True
+        rnd.makeRandomComposition("all",True)
     else:
         print("ERROR: No strips found in config, deactivating pipeline")
         vis.configReady = False
