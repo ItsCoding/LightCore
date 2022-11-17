@@ -12,6 +12,8 @@ import { useSnackbar } from "notistack";
 import { WebSocketClient } from "../../../light-client/src/system/WebsocketClient";
 import { saveJsonFile } from "../system/SaveDialogs";
 import { BrowserWindow, globalShortcut } from "@electron/remote";
+import { v4 } from "uuid";
+import { BackgroundSettings } from "../components/Settings/BackgroundSettings";
 
 
 export const DesignerPage = () => {
@@ -20,7 +22,11 @@ export const DesignerPage = () => {
     const [globalScaling, setGlobalScalingState] = useState(2)
     const [enableSidebar, setEnableSidebar] = useState(0);
     const { enqueueSnackbar } = useSnackbar();
-
+    const [mouseInViewer, setMouseInViewer] = useState(false);
+    const [backgroundInfos, setBackgroundInfos] = useState({
+        backgroundBase64: "",
+        backgroundScaling: 1,
+    });
     const onGlobalKeyInput = useCallback((e: KeyboardEvent) => {
         const ctrlKey = e.ctrlKey;
         const shiftKey = e.shiftKey;
@@ -72,9 +78,43 @@ export const DesignerPage = () => {
                     }
                 }
                 break;
+            // make a copy and paste of the selected strip
+            case "d":
+                if (ctrlKey && selectedStripIndex !== -1 && mouseInViewer) {
+                    const strip = strips[selectedStripIndex];
+                    const stripString = strip.toJson();
+                    const copy = StraightStrip.fromJson(stripString)[0];
+                    copy.id = v4();
+                    copy.move(100, 10);
+                    setStrips([...strips, copy]);
+                } else {
+                    if (!mouseInViewer) {
+                        enqueueSnackbar("You need to hover over the stage viewer to copy a strip", { variant: "warning" })
+                    }
+                    if (selectedStripIndex === -1) {
+                        enqueueSnackbar("You need to select a strip to copy", { variant: "warning" })
+                    }
+                }
+                break;
+            // rotate the selected strip
+            case "q":
+                if (ctrlKey && selectedStripIndex !== -1 && mouseInViewer) {
+                    const strip = strips[selectedStripIndex];
+                    strip.rotate(strip.getStripAngle + 1);
+                    setStrips([...strips]);
+                }
+                break;
+            case "e":
+                if (ctrlKey && selectedStripIndex !== -1 && mouseInViewer) {
+                    const strip = strips[selectedStripIndex];
+                    strip.rotate(strip.getStripAngle - 1);
+                    setStrips([...strips]);
+                }
+                break;
+
         }
 
-    }, [selectedStripIndex, strips]);
+    }, [selectedStripIndex, strips, mouseInViewer]);
 
     const onMouseWheel = useCallback(
         (e: WheelEvent) => {
@@ -88,13 +128,13 @@ export const DesignerPage = () => {
         }, [globalScaling]);
 
     useEffect(() => {
-        document.addEventListener('keydown', onGlobalKeyInput);
+        document.addEventListener('keyup', onGlobalKeyInput);
         document.addEventListener("mousewheel", onMouseWheel);
         return () => {
-            document.removeEventListener('keydown', onGlobalKeyInput);
+            document.removeEventListener('keyup', onGlobalKeyInput);
             document.removeEventListener("mousewheel", onMouseWheel);
         }
-    }, [selectedStripIndex, strips, globalScaling]);
+    }, [selectedStripIndex, strips, globalScaling, mouseInViewer]);
 
     useEffect(() => {
         const startPoint = new Point(0, 0);
@@ -166,22 +206,41 @@ export const DesignerPage = () => {
         }
     }
     return (<>
-        <Header strips={strips} setStrips={setStrips} enableSidebar={enableSidebar} setEnableSidebar={setEnableSidebar} />
+        <Header setBackgroundInfos={setBackgroundInfos} backgroundInfos={backgroundInfos} strips={strips} setStrips={setStrips} enableSidebar={enableSidebar} setEnableSidebar={setEnableSidebar} />
         <Grid container sx={{
             minHeight: "95vh",
         }}>
-            {enableSidebar != 2 && <Grid item xs={gridState()} sx={{
-                overflow: "auto",
-            }}>
+            {enableSidebar != 2 && <Grid
+                onMouseEnter={() => setMouseInViewer(true)}
+                onMouseLeave={() => setMouseInViewer(false)}
+                item
+                xs={gridState()}
+                sx={{
+                    overflow: "auto",
+                    position: "relative"
+                }}>
                 <div style={{
+                    position: "relative",
+                    zIndex: 100,
                     transform: `scale(${globalScaling})`,
-                    transformOrigin: "0% 0% 0px"
+                    transformOrigin: "0% 0% 0px",
                 }}>
                     <StageViewer onStripClick={(index: number, ledIndex: number) => {
                         console.log(`Strip ${index} led ${ledIndex} clicked`);
                         setSelectedStrip(index);
                     }} strips={strips} selectedStrip={selectedStripIndex} globalScaling={globalScaling} setStrips={setStrips} />
                 </div>
+                <div style={{
+                    position: "absolute",
+                    zIndex: -1000,
+                    top: 0,
+                    left: 0,
+                    backgroundImage: `url(${backgroundInfos.backgroundBase64})`,
+                    transform: `scale(${backgroundInfos.backgroundScaling})`,
+                    backgroundSize: "cover",
+                    height: "100%",
+                    width: "100%",
+                }}></div>
             </Grid>}
             {enableSidebar != 1 &&
                 <Grid item xs={sidebarState()} sx={{
@@ -190,7 +249,7 @@ export const DesignerPage = () => {
                     <GlobalSettings strips={strips} setStrips={setStrips} globalScaling={globalScaling} setGlobalScalingState={setGlobalScalingState} />
                     <StripSettings changeSelectedStrip={changeSelectedStrip} selectedStrip={selectedStripIndex >= 0 ? strips[selectedStripIndex] : null} />
                     <StripManager selectedStrip={selectedStripIndex} setSelectedStrip={(index) => setSelectedStrip(index)} strips={strips} setStrips={setStrips} />
-                    {/* {enableSidebar === 2 && <PipelineSettings />} */}
+                    <BackgroundSettings backgroundInfos={backgroundInfos} setBackgroundInfos={setBackgroundInfos} />
                 </Grid>}
 
         </Grid>

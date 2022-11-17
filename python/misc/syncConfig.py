@@ -34,7 +34,7 @@ def syncConfig (vis, incommingConfig):
             if "mirrorGroup" in strip:
                 if strip["mirrorGroup"] not in stripMirrors:
                     stripMirrors[strip["mirrorGroup"]] = []
-                stripMirrors[strip["mirrorGroup"]].append(lcid)
+                stripMirrors[strip["mirrorGroup"]].append(int(lcid))
             
         else:
             if "stripIP" in strips[0]:
@@ -48,7 +48,7 @@ def syncConfig (vis, incommingConfig):
             if "mirrorGroup" in strips[0]:
                 if strips[0]["mirrorGroup"] not in stripMirrors:
                     stripMirrors[strips[0]["mirrorGroup"]] = []
-                stripMirrors[strips[0]["mirrorGroup"]].append(lcid)
+                stripMirrors[strips[0]["mirrorGroup"]].append(int(lcid))
     
     countOfStrips = len(udpIps)
     mirrorArray = []
@@ -68,7 +68,7 @@ def syncConfig (vis, incommingConfig):
             stripLedCountsArray.append(stripLedCount[i])
         else:
             print("ERROR: stripLedCount not found for strip", i)
-
+    config.STRIP_MIRRORS = mirrorArray
     config.STRIP_LED_COUNTS = stripLedCountsArray
     config.STRIP_COUNT = countOfStrips
     for i in range(countOfStrips):

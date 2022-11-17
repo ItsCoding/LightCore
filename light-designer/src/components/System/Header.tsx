@@ -15,9 +15,17 @@ export type HeaderProps = {
     setStrips: (newStrips: Strip[]) => void;
     enableSidebar: number;
     setEnableSidebar: (newState: number) => void;
+    backgroundInfos: {
+        backgroundBase64: string,
+        backgroundScaling: number,
+    },
+    setBackgroundInfos: (newBackgroundInfos: {
+        backgroundBase64: string,
+        backgroundScaling: number,
+    }) => void;
 }
 
-export const Header = ({ strips, setStrips, enableSidebar, setEnableSidebar }: HeaderProps) => {
+export const Header = ({ strips, setStrips, enableSidebar, setEnableSidebar, backgroundInfos, setBackgroundInfos }: HeaderProps) => {
     const [openExportDialog, setOpenExportDialog] = React.useState(false);
     const incrementSidebar = () => {
         setEnableSidebar((enableSidebar + 1) % 3);
@@ -30,8 +38,8 @@ export const Header = ({ strips, setStrips, enableSidebar, setEnableSidebar }: H
             open={openExportDialog}
             onClose={() => setOpenExportDialog(false)}
         >
-            <div style={{width: "98vw"}}>
-                <Exporter closeModal={() => setOpenExportDialog(false)} strips={strips}/>
+            <div style={{ width: "98vw" }}>
+                <Exporter closeModal={() => setOpenExportDialog(false)} strips={strips} />
             </div>
         </Drawer>
         <AppBar position="static" >
@@ -41,11 +49,31 @@ export const Header = ({ strips, setStrips, enableSidebar, setEnableSidebar }: H
                 </Typography>
                 <Button color="inherit" onClick={async () => {
                     const data = await openJsonFile();
-                    if (data) {
+                    const projectData = JSON.parse(data);
+                    if (Array.isArray(projectData)) {
+                        //legacy project
                         setStrips(StraightStrip.fromJson(data));
+                        setBackgroundInfos({
+                            backgroundBase64: "",
+                            backgroundScaling: 1,
+                        })
+                    } else {
+                        const stripData = projectData.strips;
+                        if (stripData) {
+                            setStrips(StraightStrip.fromJson(JSON.stringify(stripData)));
+                        }
+                        if (projectData.backgroundInfos) {
+                            setBackgroundInfos(projectData.backgroundInfos);
+                        } else {
+                            setBackgroundInfos({
+                                backgroundBase64: "",
+                                backgroundScaling: 1,
+                            })
+                        }
                     }
+
                 }}>Load</Button>
-                <Button color="secondary" onClick={() => saveJsonFile(strips)}>Save</Button>
+                <Button color="secondary" onClick={() => saveJsonFile({ strips, backgroundInfos })}>Save</Button>
                 <Button color="info" onClick={() => setOpenExportDialog(true)}>Export to Pipeline</Button>
                 <Button color="inherit" onClick={() => incrementSidebar()}>
                     <MenuIcon />
