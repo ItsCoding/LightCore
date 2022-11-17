@@ -10,16 +10,24 @@ def syncConfig (vis, incommingConfig):
     stripsByLCID = {}
     for stripID in incommingConfig["strips"]:
         strip = incommingConfig["strips"][stripID]
-        if strip["lcid"] not in stripsByLCID:
-            stripsByLCID[strip["lcid"]] = []
-        stripsByLCID[strip["lcid"]].append(strip)
+        if int(strip["lcid"]) not in stripsByLCID:
+            stripsByLCID[int(strip["lcid"])] = []
+        stripsByLCID[int(strip["lcid"])].append(strip)
+
+    # print keys of stripsByLCID
+    for lcid in stripsByLCID:
+        print("lcid: " + str(lcid))
+        for strip in stripsByLCID[lcid]:
+            print("    " + str(strip["name"]))
 
     for lcid, strips in stripsByLCID.items():
         if len(strips) > 1:
-            udpIps[lcid] = "GROUP"
+            udpIps[int(lcid)] = "GROUP"
+            print("LCID", lcid, "is a group", strips)
             udpGroups[lcid] = []
             sumLeds = 0
             for strip in strips:
+                print("Adding strip", strip["name"], "to group", lcid)
                 udpGroups[lcid].append({
                     "from": ("stripControllerStart" in strip and strip["stripControllerStart"]) or 0,
                     "to": ("stripCotrollerEnd" in strip and strip["stripCotrollerEnd"]) or strip["leds"],
@@ -37,10 +45,11 @@ def syncConfig (vis, incommingConfig):
                 stripMirrors[strip["mirrorGroup"]].append(int(lcid))
             
         else:
+            print("Adding strip", strip["name"], "to single", lcid)
             if "stripIP" in strips[0]:
-                udpIps[lcid] = strips[0]["stripIP"]
+                udpIps[int(lcid)] = strips[0]["stripIP"]
             else:
-                udpIps[lcid] = "127.0.0.1"
+                udpIps[int(lcid)] = "127.0.0.1"
                 print ("!!!! no stripIP for strip", lcid)
             if "frameDivider" in strips[0]:
                 udpFrameDividers[lcid] = strips[0]["frameDivider"]
@@ -77,14 +86,16 @@ def syncConfig (vis, incommingConfig):
         if i not in config.STRIP_BRIGHTNESS:
             config.STRIP_BRIGHTNESS[i] = 100
 
-    # print("udpIps", udpIps)
-    # print("udpGroups", udpGroups)
-    # print("udpFrameDividers",udpFrameDividers)
-    # print("stripLedCountsArray",stripLedCountsArray)
-    # print("stripLedCount",stripLedCount)
-    # print("countOfStrips",countOfStrips)
-    # print("stripMirrors",stripMirrors)
-    # print("mirrorArray",mirrorArray)
+    print("udpIps", udpIps)
+    print("udpGroups", udpGroups)
+    print("udpFrameDividers",udpFrameDividers)
+    print("=======================================")
+    print("stripLedCountsArray",stripLedCountsArray)
+    print("stripLedCount",stripLedCount)
+    print("countOfStrips",countOfStrips)
+    print("=======================================")
+    print("stripMirrors",stripMirrors)
+    print("mirrorArray",mirrorArray)
 
 
 

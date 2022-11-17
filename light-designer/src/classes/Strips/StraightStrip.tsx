@@ -179,6 +179,9 @@ export class StraightStrip extends StripBase {
             nStrip.stripSymbol = obj.stripSymbol;
             nStrip.zIndex = obj.zIndex;
             nStrip.computingGroup = obj.computingGroup;
+            nStrip.mirrorGroup = obj.mirrorGroup;
+            nStrip.ledType = obj.ledType;
+            nStrip.uiMarks = obj.uiMarks;
             initializedStrips.push(nStrip);
         });
         return initializedStrips;

@@ -150,7 +150,6 @@ def _update_esp8266(composing):
                     # idxPart = range(grp["to"], grp["from"],1)
                     # print("Reversed:")
                     # print(idxPart)
-
                     n_packets = len(idx) // MAX_PIXELS_PER_PACKET + 1
                     idxPart = np.array_split(idxPart, n_packets)
                     # print(idxPart)

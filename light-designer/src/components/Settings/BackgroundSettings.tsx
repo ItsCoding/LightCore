@@ -54,7 +54,7 @@ export const BackgroundSettings = ({ backgroundInfos, setBackgroundInfos, backgr
                 setBackgroundInfos({ ...backgroundInfos, backgroundScaling: newValue as number })
             }} />
         </div>
-        <Typography variant="caption">Greyscale</Typography>
+        <Typography variant="caption">Brightness</Typography>
         <div style={{ paddingLeft: 10, paddingRight: 20 }}>
             <Slider min={0} valueLabelDisplay="auto" marks={[
                 { value: 0, label: "0%" },
