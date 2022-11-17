@@ -13,7 +13,7 @@ export class LightCoreConfig {
         public dropRandomMinWait: number,
         public globalSpeed: number,
         public globalIntensity: number,
-        public stripBrightness: number[],
+        public stripBrightness: { [key: string]: number; },
         public blacklistedEffects: { [key: string]: string[] },
         public colorCalibration: { [key: string]: number[] },
         public colorCalibrationAssignments: { [key: string]: string },
@@ -35,7 +35,7 @@ export class LightCoreConfig {
         accessor.get("dropRandomMinWait", expectNumber),
         accessor.get("globalSpeed", expectNumber),
         accessor.get("globalIntensity", expectNumber),
-        accessor.get("stripBrightness", arrayMapper(expectNumber)),
+        accessor.get("stripBrightness", mapObjectMapper(expectNumber)),
         accessor.get("blacklistedEffects", mapObjectMapper(accessor => {
             return accessor as string[]
         })),

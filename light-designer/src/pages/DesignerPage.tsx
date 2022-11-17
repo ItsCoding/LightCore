@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { StraightStrip } from "../classes/Strips/StraightStrip";
 import { Point } from "../classes/Point";
 import { Strip } from "../classes/Strips/Strip";
@@ -10,7 +10,6 @@ import { Header } from "../components/System/Header";
 import { GlobalSettings } from "../components/Settings/GlobalSettings";
 import { useSnackbar } from "notistack";
 import { WebSocketClient } from "../../../light-client/src/system/WebsocketClient";
-import { PipelineSettings } from "../components/Settings/PipelineSettings";
 
 export const DesignerPage = () => {
     const [strips, setStrips] = useState<Strip[]>([]);
@@ -18,6 +17,55 @@ export const DesignerPage = () => {
     const [globalScaling, setGlobalScalingState] = useState(2)
     const [enableSidebar, setEnableSidebar] = useState(0);
     const { enqueueSnackbar } = useSnackbar();
+
+    const onGlobalKeyInput = useCallback((e: KeyboardEvent) => {
+        const ctrlKey = e.ctrlKey;
+        const shiftKey = e.shiftKey;
+        switch (e.key) {
+            case "Escape":
+                setSelectedStrip(-1);
+                break;
+            // The arrow keys are used to move the selected strip, control is used to move it faster
+            case "ArrowUp":
+                if (selectedStripIndex !== -1 && ctrlKey) {
+                    const strip = strips[selectedStripIndex];
+                    strip.move(0, !shiftKey ? -10 : -1);
+                    setStrips([...strips]);
+                }else{
+                    console.log("No strip selected");
+                }
+                break;
+            case "ArrowDown":
+                if (selectedStripIndex !== -1 && ctrlKey) {
+                    const strip = strips[selectedStripIndex];
+                    strip.move(0, !shiftKey ? 10 : 1);
+                    setStrips([...strips]);
+                }
+                break;
+            case "ArrowLeft":
+                if (selectedStripIndex !== -1 && ctrlKey) {
+                    const strip = strips[selectedStripIndex];
+                    strip.move(!shiftKey ? -10 : -1, 0);
+                    setStrips([...strips]);
+                }
+                break;
+            case "ArrowRight":
+                if (selectedStripIndex !== -1 && ctrlKey) {
+                    const strip = strips[selectedStripIndex];
+                    strip.move(!shiftKey ? 10 : 1, 0);
+                    setStrips([...strips]);
+                }
+                break;
+        }
+
+    }, [selectedStripIndex, strips]);
+    useEffect(() => {
+        window.onkeydown = onGlobalKeyInput;
+        return () => {
+            window.onkeydown = null;
+        }
+    }, [selectedStripIndex, strips]);
+
     useEffect(() => {
         const startPoint = new Point(0, 0);
         const startPoint2 = new Point(0, 100);
@@ -32,11 +80,7 @@ export const DesignerPage = () => {
         console.table(strip.getPhysicalPositions());
         setStrips([strip, strip2]);
 
-        window.onkeydown = (e) => {
-            if (e.key === "Escape") {
-                setSelectedStrip(-1);
-            }
-        }
+       
 
 
         const wsClient = WebSocketClient.getInstance()
@@ -77,8 +121,6 @@ export const DesignerPage = () => {
             return 12;
         }
     }
-
-    console.log("SIDEBAR", enableSidebar, sidebarState(), gridState());
     return (<>
         <Header strips={strips} setStrips={setStrips} enableSidebar={enableSidebar} setEnableSidebar={setEnableSidebar} />
         <Grid container sx={{

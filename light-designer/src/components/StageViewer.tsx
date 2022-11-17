@@ -11,7 +11,6 @@ export type StageViewerProps = {
 export const StageViewer = ({ strips, onStripClick, selectedStrip, globalScaling, setStrips }: StageViewerProps) => {
 
     //Render the strips and make a div for each pixel
-    console.log("Rendering strips");
     return (
         <div style={{
             position: "relative",

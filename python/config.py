@@ -151,9 +151,9 @@ DROP_RANDOM_MIN_WAIT = 5 # editable in client, deprecated
 GLOBAL_SPEED = 50 # editable in client
 GLOBAL_INTENSITY = 1.0 # editable in client
 DETECT_BEAT = True # editable in client
-STRIP_BRIGHTNESS = [] # editable in client
+STRIP_BRIGHTNESS = {} # editable in client
 for i in range(STRIP_COUNT):
-    STRIP_BRIGHTNESS.append(100)
+    STRIP_BRIGHTNESS[i] = 100
 
 BLACKLISTED_EFFECTS = {"all": []}  # editable in client
 for i in range(STRIP_COUNT):

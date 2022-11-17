@@ -67,17 +67,12 @@ export const GlobalSettings = ({ setStrips, strips, setGlobalScalingState, globa
                 smallestY = startPoint.y;
             }
         });
-        console.log("Largest X: " + largestX);
-        console.log("Largest Y: " + largestY);
-        console.log("Smallest X: " + smallestX);
-        console.log("Smallest Y: " + smallestY);
         setCanvasSize({ width: Math.ceil(largestX - smallestX), height: Math.ceil(largestY - smallestY) })
         setGlobalMaxStripDensityState(maxDensity);
     }
     const debounceFn = useCallback(debounce(handleDebounceFn, 500), [strips]);
 
     useEffect(() => {
-        console.log("UseEffect")
         debounceFn();
 
     }, [strips])

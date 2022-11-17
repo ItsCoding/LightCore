@@ -71,6 +71,11 @@ def syncConfig (vis, incommingConfig):
 
     config.STRIP_LED_COUNTS = stripLedCountsArray
     config.STRIP_COUNT = countOfStrips
+    for i in range(countOfStrips):
+        if str(i) not in config.BLACKLISTED_EFFECTS:
+            config.BLACKLISTED_EFFECTS[str(i)] = []
+        if i not in config.STRIP_BRIGHTNESS:
+            config.STRIP_BRIGHTNESS[i] = 100
 
     # print("udpIps", udpIps)
     # print("udpGroups", udpGroups)
