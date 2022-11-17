@@ -10,6 +10,9 @@ import { Header } from "../components/System/Header";
 import { GlobalSettings } from "../components/Settings/GlobalSettings";
 import { useSnackbar } from "notistack";
 import { WebSocketClient } from "../../../light-client/src/system/WebsocketClient";
+import { saveJsonFile } from "../system/SaveDialogs";
+import { BrowserWindow, globalShortcut } from "@electron/remote";
+
 
 export const DesignerPage = () => {
     const [strips, setStrips] = useState<Strip[]>([]);
@@ -56,6 +59,19 @@ export const DesignerPage = () => {
                     setStrips([...strips]);
                 }
                 break;
+            case "s":
+                if (ctrlKey) {
+                    saveJsonFile(strips);
+                }
+                break;
+            case "i":
+                if (ctrlKey && e.shiftKey) {
+                    const win = BrowserWindow.getFocusedWindow();
+                    if (win) {
+                        BrowserWindow.getFocusedWindow()?.webContents.openDevTools();
+                    }
+                }
+                break;
         }
 
     }, [selectedStripIndex, strips]);
@@ -72,11 +88,11 @@ export const DesignerPage = () => {
         }, [globalScaling]);
 
     useEffect(() => {
-        window.onkeydown = onGlobalKeyInput;
-        window.addEventListener("mousewheel", onMouseWheel);
+        document.addEventListener('keydown', onGlobalKeyInput);
+        document.addEventListener("mousewheel", onMouseWheel);
         return () => {
-            window.onkeydown = null;
-            window.removeEventListener("mousewheel", onMouseWheel);
+            document.removeEventListener('keydown', onGlobalKeyInput);
+            document.removeEventListener("mousewheel", onMouseWheel);
         }
     }, [selectedStripIndex, strips, globalScaling]);
 
@@ -94,7 +110,20 @@ export const DesignerPage = () => {
         console.table(strip.getPhysicalPositions());
         setStrips([strip, strip2]);
 
-
+        // globalShortcut.register('CommandOrControl+S', () => {
+        //     //open dev tools
+        //     //check if window is focused
+        //     if (BrowserWindow.getFocusedWindow()) {
+        //         saveJsonFile(strips);
+        //     }
+        // })
+        // globalShortcut.register('Alt+CommandOrControl+I', () => {
+        //     //open dev tools
+        //     //check if window is focused
+        //     if (BrowserWindow.getFocusedWindow()) {
+        //         BrowserWindow.getFocusedWindow()?.webContents.openDevTools();
+        //     }
+        // })
 
 
         const wsClient = WebSocketClient.getInstance()
@@ -107,6 +136,7 @@ export const DesignerPage = () => {
 
         return () => {
             window.onkeydown = null;
+            globalShortcut.unregisterAll();
         };
     }, [])
 

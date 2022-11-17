@@ -1,8 +1,8 @@
 {
-  "name": "lightgrid",
-  "productName": "lightgrid",
+  "name": "lightdesigner",
+  "productName": "lightdesigner",
   "version": "1.0.0",
-  "description": "My Electron application description",
+  "description": "The place where planning happens",
   "main": ".webpack/main",
   "scripts": {
     "start": "electron-forge start",

@@ -1,39 +1,15 @@
 import { AppBar, Button, Drawer, Toolbar, Typography } from "@mui/material";
 import { Box } from "@mui/system";
-import * as fs from 'fs';
+
 import { StraightStrip } from "../../classes/Strips/StraightStrip";
 import { Strip } from "../../classes/Strips/Strip";
-import * as remote from '@electron/remote';
+
 import MenuIcon from '@mui/icons-material/Menu';
 import React from "react";
 import { Exporter } from "./Exporter";
-const dialog = remote.dialog;
-const openJsonFile = async () => {
-    const result = await dialog.showOpenDialog({
-        properties: ['openFile'],
-        filters: [
-            { name: 'LightCore-Mapping', extensions: ['lcm'] }
-        ]
-    });
-    if (result.canceled) {
-        return;
-    }
-    const data = fs.readFileSync(result.filePaths[0], 'utf8');
-    return data;
-}
+import { openJsonFile, saveJsonFile } from "../../system/SaveDialogs";
 
-const saveJsonFile = async (data: any) => {
-    const result = await dialog.showSaveDialog({
-        properties: ['createDirectory', 'showOverwriteConfirmation'],
-        filters: [
-            { name: 'LightCore-Mapping', extensions: ['lcm'] }
-        ]
-    });
-    if (result.canceled) {
-        return;
-    }
-    fs.writeFileSync(result.filePath, JSON.stringify(data));
-}
+
 export type HeaderProps = {
     strips: Strip[];
     setStrips: (newStrips: Strip[]) => void;

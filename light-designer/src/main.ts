@@ -23,6 +23,7 @@ const createWindow = (): void => {
       allowRunningInsecureContent: true,
     },
   });
+  mainWindow.setMenuBarVisibility(false);
   enableRemote(mainWindow.webContents);
   // and load the index.html of the app.
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
