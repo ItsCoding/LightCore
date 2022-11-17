@@ -285,10 +285,10 @@ class Visualization:
         self.allEffekts = self.randomEffekts + [visualize_Off,visualize_Abbau]
         randomizer.initRandomizer(queueHandler,self)
 
-        composer.addEffekt(visualize_runMirrored(0),FrequencyRange.all,0,0,1000)
-        composer.addEffekt(visualize_runMirrored(1),FrequencyRange.all,1,0,540)
-        composer.addEffekt(visualize_runMirrored(2),FrequencyRange.all,2,0,50)
-        composer.addEffekt(visualize_runMirrored(3),FrequencyRange.all,3,0,50)
+        composer.addEffekt(visualize_runMirrored(0),FrequencyRange.all,0,0,100)
+        # composer.addEffekt(visualize_runMirrored(1),FrequencyRange.all,1,0,540)
+        # composer.addEffekt(visualize_runMirrored(2),FrequencyRange.all,2,0,50)
+        # composer.addEffekt(visualize_runMirrored(3),FrequencyRange.all,3,0,50)
         self.queue2Parent.put(json.dumps({"type": "wsapi.requestConfig", "message": ""}))
         print("Requesting config...")
         microphone.start_stream(self.microphone_update)
