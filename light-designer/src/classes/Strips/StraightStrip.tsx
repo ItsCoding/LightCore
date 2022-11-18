@@ -2,6 +2,7 @@ import { Point } from "../Point";
 import { StripBase } from "./StripBase";
 import { v4 } from "uuid"
 import { extend } from "lodash";
+import { GeneratedStripConfig } from "../ExportConfig";
 export class StraightStrip extends StripBase {
     private end: Point;
     public id: string;
@@ -155,7 +156,7 @@ export class StraightStrip extends StripBase {
             lcid: this.lcid,
             offset: this.offset,
             name: this.stripName,
-        });
+        } as GeneratedStripConfig);
     }
 
     public toJson(): string {

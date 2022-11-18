@@ -70,7 +70,7 @@ def changeEffekt(hasBeatChanged):
 
     if (engine.randomizerBeatCount >= config.cfg["musicBeatsBar"] * config.cfg["randomizerBar"]):
         cleardBeatEffekts = False
-        print("Change Randomizer")
+        print("==> Change Randomizer")
         engine._lastTime = time.time()
         engine.randomizerBeatCount = 1
         makeRandomComposition("all")

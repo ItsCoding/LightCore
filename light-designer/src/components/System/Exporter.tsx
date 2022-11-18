@@ -77,6 +77,14 @@ export const Exporter = ({ strips, closeModal }: ExporterProps) => {
         }
         strips.forEach((strip, index) => {
             const stripConfig = strip.getExportConfig();
+
+            // remove all properties that are null
+            Object.keys(stripConfig).forEach(key => {
+                if (stripConfig[key] === null) {
+                    delete stripConfig[key];
+                }
+            });
+
             config.strips[strip.lcid + "-" + index] = stripConfig;
         })
 

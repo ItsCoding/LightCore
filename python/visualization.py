@@ -193,7 +193,7 @@ class Visualization:
                     self.randomizerBeatCount += 1
                 if(config.DISPLAY_BPM):
                     if(self.beat):
-                        print("- BPM: " + str(self.avg_Bpm) + " => " + str(self.randomizerBeatCount % config.cfg["musicBeatsBar"]))
+                        print("BPM: " + str(self.avg_Bpm) + " => " + str(self.randomizerBeatCount % config.cfg["musicBeatsBar"]))
                     else:
                         print("| BPM: " + str(self.avg_Bpm)+ " => " + str(self.randomizerBeatCount % config.cfg["musicBeatsBar"]))
         else:

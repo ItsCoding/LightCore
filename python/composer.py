@@ -45,6 +45,8 @@ def getComposition(frequencyBins,vis,beatChanged):
         realIndex = effekt.stripIndex
         if(realIndex < 0):
             realIndex = (realIndex * -1 ) - 5
+        if realIndex >= len(config.STRIP_LED_COUNTS):
+            continue
         if stipLength > config.STRIP_LED_COUNTS[realIndex]:
             stipLength = config.STRIP_LED_COUNTS[realIndex]
 

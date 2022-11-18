@@ -70,15 +70,25 @@ export const parseStrips = (stripConfig: any) => {
     let doneLCIDS: number[] = []
     for (const [keys, stripData] of Object.entries(stripConfig.strips)) {
         const strip: any = stripData;
-        if (!doneLCIDS.includes(strip.lcid)) {
+        if (!doneLCIDS.includes(parseInt(strip.lcid))) {
+
+            // find all strips with the same lcid and sum their leds
+            let totalLeds = 0;
+            for (const [keys, stripData] of Object.entries(stripConfig.strips)) {
+                const s: any = stripData;
+                if (parseInt(s.lcid) === parseInt(strip.lcid)) {
+                    totalLeds += parseInt(strip.leds);
+                }
+            }
+
             strips.push({
                 position: strip.name,
                 index: parseInt(strip.lcid),
-                length: parseInt(strip.leds),
+                length: totalLeds,
                 marks: strip.uiMarks ? generateMarks(parseInt(strip.leds), strip.uiMarks) : [],
                 symbol: strip.stripSymbol,
             })
-            doneLCIDS.push(strip.lcid)
+            doneLCIDS.push(parseInt(strip.lcid))
         }else{
             console.log("Got Strip Duplicate LCID found in config, skipping",doneLCIDS)
         }

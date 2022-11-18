@@ -17,6 +17,7 @@ import { BackgroundSettings } from "../components/Settings/BackgroundSettings";
 
 
 export const DesignerPage = () => {
+    const isMac = process.platform === "darwin";
     const [strips, setStrips] = useState<Strip[]>([]);
     const [selectedStripIndex, setSelectedStrip] = useState<number>(-1);
     const [globalScaling, setGlobalScalingState] = useState(2)
@@ -31,46 +32,56 @@ export const DesignerPage = () => {
     });
     const [backgroundGreyScale, setBackgroundGreyScale] = useState(35);
     const onGlobalKeyInput = useCallback((e: KeyboardEvent) => {
-        const ctrlKey = e.ctrlKey;
+        const ctrlKey = e.ctrlKey || e.metaKey;
         const shiftKey = e.shiftKey;
+        console.log(e);
         switch (e.key) {
             case "Escape":
                 setSelectedStrip(-1);
                 break;
             // The arrow keys are used to move the selected strip, control is used to move it faster
             case "ArrowUp":
-                if (selectedStripIndex !== -1 && ctrlKey) {
+                if (selectedStripIndex !== -1 && mouseInViewer && (ctrlKey || isMac)) {
+                    e.preventDefault();
                     const strip = strips[selectedStripIndex];
                     strip.move(0, !shiftKey ? -10 : -1);
                     setStrips([...strips]);
+
                 } else {
                     console.log("No strip selected");
                 }
                 break;
             case "ArrowDown":
-                if (selectedStripIndex !== -1 && ctrlKey) {
+                if (selectedStripIndex !== -1 && mouseInViewer && (ctrlKey || isMac)) {
+                    e.preventDefault();
                     const strip = strips[selectedStripIndex];
                     strip.move(0, !shiftKey ? 10 : 1);
                     setStrips([...strips]);
+
                 }
                 break;
             case "ArrowLeft":
-                if (selectedStripIndex !== -1 && ctrlKey) {
+                if (selectedStripIndex !== -1 && mouseInViewer && (ctrlKey || isMac)) {
+                    e.preventDefault();
                     const strip = strips[selectedStripIndex];
                     strip.move(!shiftKey ? -10 : -1, 0);
                     setStrips([...strips]);
+
                 }
                 break;
             case "ArrowRight":
-                if (selectedStripIndex !== -1 && ctrlKey) {
+                if (selectedStripIndex !== -1 && mouseInViewer && (ctrlKey || isMac)) {
+                    e.preventDefault();
                     const strip = strips[selectedStripIndex];
                     strip.move(!shiftKey ? 10 : 1, 0);
                     setStrips([...strips]);
+
                 }
                 break;
             case "s":
                 if (ctrlKey) {
                     saveJsonFile({ strips, backgroundInfos, globalScaling });
+                    e.preventDefault();
                 }
                 break;
             case "i":
@@ -78,6 +89,7 @@ export const DesignerPage = () => {
                     const win = BrowserWindow.getFocusedWindow();
                     if (win) {
                         BrowserWindow.getFocusedWindow()?.webContents.openDevTools();
+                        e.preventDefault();
                     }
                 }
                 break;
@@ -90,6 +102,7 @@ export const DesignerPage = () => {
                     copy.id = v4();
                     copy.move(100, 10);
                     setStrips([...strips, copy]);
+                    e.preventDefault();
                 } else {
                     if (!mouseInViewer) {
                         enqueueSnackbar("You need to hover over the stage viewer to copy a strip", { variant: "warning" })
@@ -105,13 +118,15 @@ export const DesignerPage = () => {
                     const strip = strips[selectedStripIndex];
                     strip.rotate(strip.getStripAngle + 1);
                     setStrips([...strips]);
+                    e.preventDefault();
                 }
                 break;
             case "e":
                 if (ctrlKey && selectedStripIndex !== -1 && mouseInViewer) {
                     const strip = strips[selectedStripIndex];
-                    strip.rotate(strip.getStripAngle - 1);
+                    strip.rotate(strip.getStripAngle - 2);
                     setStrips([...strips]);
+                    e.preventDefault();
                 }
                 break;
 
@@ -123,31 +138,31 @@ export const DesignerPage = () => {
         (e: WheelEvent) => {
             if (e.ctrlKey && !e.shiftKey) {
                 if (e.deltaY < 0) {
-                    if (!(globalScaling >= 10)) setGlobalScalingState(globalScaling + 0.1);
+                    if (!(globalScaling >= 10)) setGlobalScalingState(globalScaling + (isMac? 0.01 : 0.4));
                 } else {
-                    if (!(globalScaling <= 0.5)) setGlobalScalingState(globalScaling - 0.1);
+                    if (!(globalScaling <= 0.5)) setGlobalScalingState(globalScaling - (isMac? 0.01 : 0.4));
                 }
-                if (e.deltaY < 0) {
-                    if (!(backgroundInfos.backgroundScaling >= 10)) setBackgroundInfos({ ...backgroundInfos, backgroundScaling: backgroundInfos.backgroundScaling + 0.1 });
-                } else {
-                    if (!(backgroundInfos.backgroundScaling <= 0.1)) setBackgroundInfos({ ...backgroundInfos, backgroundScaling: backgroundInfos.backgroundScaling - 0.1 });
+                // if (e.deltaY < 0) {
+                //     if (!(backgroundInfos.backgroundScaling >= 10)) setBackgroundInfos({ ...backgroundInfos, backgroundScaling: backgroundInfos.backgroundScaling + 0.1 });
+                // } else {
+                //     if (!(backgroundInfos.backgroundScaling <= 0.1)) setBackgroundInfos({ ...backgroundInfos, backgroundScaling: backgroundInfos.backgroundScaling - 0.1 });
 
-                }
+                // }
             } else if (e.shiftKey && e.ctrlKey) {
                 if (e.deltaY < 0) {
                     if (!(globalScaling >= 10)) setGlobalScalingState(globalScaling + 0.1);
                 } else {
                     if (!(globalScaling <= 0.5)) setGlobalScalingState(globalScaling - 0.1);
                 }
-                
+
             }
         }, [globalScaling, backgroundInfos]);
 
     useEffect(() => {
-        document.addEventListener('keyup', onGlobalKeyInput);
+        document.addEventListener('keydown', onGlobalKeyInput);
         document.addEventListener("mousewheel", onMouseWheel);
         return () => {
-            document.removeEventListener('keyup', onGlobalKeyInput);
+            document.removeEventListener('keydown', onGlobalKeyInput);
             document.removeEventListener("mousewheel", onMouseWheel);
         }
     }, [selectedStripIndex, strips, globalScaling, mouseInViewer, backgroundInfos]);
@@ -248,19 +263,19 @@ export const DesignerPage = () => {
                         setSelectedStrip(index);
                     }} strips={strips} selectedStrip={selectedStripIndex} globalScaling={globalScaling} setStrips={setStrips} />
                 </div>
-                <div style={{
-                    position: "absolute",
+                <img style={{
+                    position: "static",
                     zIndex: -1000,
                     top: 0,
                     left: 0,
                     // apply a black filter to the background
                     filter: `brightness(${backgroundGreyScale / 100})`,
-                    backgroundImage: `url(${backgroundInfos.backgroundBase64})`,
-                    transform: `scale(${backgroundInfos.backgroundScaling})`,
-                    backgroundSize: "cover",
-                    height: backgroundInfos.height * backgroundInfos.backgroundScaling,
-                    width: backgroundInfos.width * backgroundInfos.backgroundScaling,
-                }}></div>
+                    // backgroundImage: `url(${backgroundInfos.backgroundBase64})`,
+                    // transform: `scale(${backgroundInfos.backgroundScaling})`,
+                    // backgroundSize: "cover",
+                    height: backgroundInfos.height * backgroundInfos.backgroundScaling * globalScaling,
+                    width: backgroundInfos.width * backgroundInfos.backgroundScaling * globalScaling,
+                }} src={backgroundInfos.backgroundBase64}/>
             </Grid>}
             {enableSidebar != 1 &&
                 <Grid item xs={sidebarState()} sx={{

@@ -79,7 +79,7 @@ USE_GUI = False
 """Whether or not to display a PyQtGraph GUI plot of visualization"""
 
 DISPLAY_FPS = True
-DISPLAY_BPM = True
+DISPLAY_BPM = False
 """Whether to display the FPS when running (can reduce performance)"""
 
 # ToDo: This need to be replaced

@@ -50,7 +50,7 @@ const marksBars = [
 export const QuickRandomControlls = ({ randomEnabled, randomSpecific, lightConfig, setRandomEnabled, setRandomSpecific, setLCConfig,strips }: QuickRandomControllsProps) => {
     const wsClient = WebSocketClient.getInstance();
     const [beatDetection, setBeatDetection] = React.useState(lightConfig.beatDetection);
-
+    const isPhone = window.innerWidth < 800;
     useEffect(() => {
         if (Object.keys(randomSpecific).length < 1) {
             const newSpecific = { ...randomSpecific };
@@ -125,7 +125,7 @@ export const QuickRandomControlls = ({ randomEnabled, randomSpecific, lightConfi
                 }}
                     justifyContent="center"
                 >
-                    <Grid xs={6} md={2} item>
+                    <Grid xs={isPhone? 12 : 6} md={2} item>
                         <Button variant="contained" color={randomEnabled ? "secondary" : "primary"} style={{
                             width: "100%",
                             height: "100%",
@@ -134,7 +134,7 @@ export const QuickRandomControlls = ({ randomEnabled, randomSpecific, lightConfi
                             wsClient.lightRandomSetEnabled(!randomEnabled);
                         }}>Random comp. toggle</Button>
                     </Grid>
-                    {strips.map(strip => (
+                    {!isPhone && strips.map(strip => (
                         <Grid xs={6} md={2} item>
                             <TouchButton variant="contained" color={randomSpecific[strip.index] ? "secondary" : "primary"} style={{
                                 width: "100%",
@@ -214,14 +214,14 @@ export const QuickRandomControlls = ({ randomEnabled, randomSpecific, lightConfi
                     /> */}
                 </div>
                 <Grid container>
-                    <Grid item xs={8}>
+                    <Grid item xs={isPhone? 12: 8}>
                         <Button fullWidth variant="contained" color="primary" style={{
                             marginTop: "10px",
                         }} onClick={() => {
                             wsClient.send("beat.reset");
                         }}>Reset Beat</Button>
                     </Grid>
-                    <Grid item xs={4}>
+                    <Grid item xs={isPhone? 6: 4}>
                         <FormGroup style={{
                             marginTop: "10px",
                             marginLeft: "20px",

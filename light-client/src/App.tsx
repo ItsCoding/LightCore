@@ -46,6 +46,8 @@ export const themeOptions = createTheme({
 const wsClient = WebSocketClient.getInstance();
 
 function App() {
+  const isPhone = window.innerWidth < 800;
+
   const [activeRoute, setActiveRoute] = React.useState("home");
   const [availableEffekts, setAvailableEffekts] = React.useState<Array<Effekt>>([]);
   const [connectionError, setConnectionError] = React.useState<boolean>(false);
@@ -56,6 +58,8 @@ function App() {
   const [stripConfig, setStripConfig] = useState<LedStrip[]>([]);
 
   const [loadedInfos, setLoadedInfos] = useState<{ [key: string]: boolean }>({})
+
+
 
   //System
   const [lcConfig, setLcConfig] = React.useState<LightCoreConfig>();
@@ -176,6 +180,7 @@ function App() {
 
   useEffect(() => {
     connectWS();
+
   }, [])
   // console.log("Reload")
   useEffect(() => {
@@ -201,8 +206,15 @@ function App() {
   }
 
   const Route = ({ element, path }: RouteProps) => {
+    let displayType = "none";
+    if (path === "quick" && isPhone) {
+      displayType = "block";
+    }
+    if (path === activeRoute && !isPhone) {
+      displayType = "block";
+    }
     return (<div key={path} style={{
-      display: activeRoute === path ? "block" : "none",
+      display: displayType,
     }}>
       {element}
     </div>)
@@ -218,12 +230,11 @@ function App() {
               {
                 activeRoute !== "stage" ?
                   <>
-                    <HeaderBar setTouchCapable={setTouchCapable} changeTab={(key) => setActiveRoute(key)} />
+                    {!isPhone && <HeaderBar setTouchCapable={setTouchCapable} changeTab={(key) => setActiveRoute(key)} />}
                     <div style={{
                       paddingBottom: "8vh",
                       margin: "10px"
                     }}>
-                      <Route path="home" element={<HomePage />} />
                       <Route path="quick" element={<QuickPage
                         strips={stripConfig}
                         availableEffekts={availableEffekts}
@@ -234,21 +245,24 @@ function App() {
                         lightConfig={lcConfig}
                         setLCConfig={setLcConfig}
                       />} />
-                      <Route path="effekts" element={<EffektsPage
-                        activeRoute={activeRoute}
-                        stripConfig={stripConfig}
-                        availableEffekts={availableEffekts}
-                        isRandomizerActive={randomEnabled}
-                        setRandomizerActive={setRandomEnabled}
-                        compositionStore={compositionStore}
-                        setCompositionStore={changeCompositionStore}
-                      />} />
-                      <Route path="boardeditor" element={<BoardEditor
-                        strips={stripConfig}
-                        compositions={compositionStore}
-                        availableBoards={availableBoards}
-                        setAvailableBoards={setAvailableBoards}
-                      />} />
+                      {!isPhone && <>
+                        <Route path="home" element={<HomePage />} />
+                        <Route path="effekts" element={<EffektsPage
+                          activeRoute={activeRoute}
+                          stripConfig={stripConfig}
+                          availableEffekts={availableEffekts}
+                          isRandomizerActive={randomEnabled}
+                          setRandomizerActive={setRandomEnabled}
+                          compositionStore={compositionStore}
+                          setCompositionStore={changeCompositionStore}
+                        />} />
+                        <Route path="boardeditor" element={<BoardEditor
+                          strips={stripConfig}
+                          compositions={compositionStore}
+                          availableBoards={availableBoards}
+                          setAvailableBoards={setAvailableBoards}
+                        />} />
+                      </>}
                       {/* <Route path="colors" element={<ColorsPage />} /> */}
                     </div>
                   </> : <StagePage setActiveRoute={setActiveRoute} />

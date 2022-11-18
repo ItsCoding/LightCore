@@ -50,7 +50,7 @@ export const BackgroundSettings = ({ backgroundInfos, setBackgroundInfos, backgr
             <Slider min={0.1} valueLabelDisplay="auto" marks={[
                 { value: 0.1, label: "0.1" },
                 { value: 10, label: "10" },
-            ]} max={10} step={0.1} value={backgroundInfos.backgroundScaling} onChange={(event, newValue) => {
+            ]} max={10} step={0.01} value={backgroundInfos.backgroundScaling} onChange={(event, newValue) => {
                 setBackgroundInfos({ ...backgroundInfos, backgroundScaling: newValue as number })
             }} />
         </div>

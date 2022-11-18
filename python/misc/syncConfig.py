@@ -1,5 +1,6 @@
 import config
 import randomizer as rnd
+from tabulate import tabulate
 def syncConfig (vis, incommingConfig):
 
     udpIps = {}
@@ -23,11 +24,11 @@ def syncConfig (vis, incommingConfig):
     for lcid, strips in stripsByLCID.items():
         if len(strips) > 1:
             udpIps[int(lcid)] = "GROUP"
-            print("LCID", lcid, "is a group", strips)
+            print("LCID", lcid, "is a group")
             udpGroups[lcid] = []
             sumLeds = 0
             for strip in strips:
-                print("Adding strip", strip["name"], "to group", lcid)
+                print("     Adding strip", strip["name"], "to group", lcid)
                 udpGroups[lcid].append({
                     "from": ("stripControllerStart" in strip and strip["stripControllerStart"]) or 0,
                     "to": ("stripCotrollerEnd" in strip and strip["stripCotrollerEnd"]) or strip["leds"],
@@ -85,9 +86,8 @@ def syncConfig (vis, incommingConfig):
             config.BLACKLISTED_EFFECTS[str(i)] = []
         if i not in config.STRIP_BRIGHTNESS:
             config.STRIP_BRIGHTNESS[i] = 100
-
+    print("\n =======================================")
     print("udpIps", udpIps)
-    print("udpGroups", udpGroups)
     print("udpFrameDividers",udpFrameDividers)
     print("=======================================")
     print("stripLedCountsArray",stripLedCountsArray)
@@ -100,9 +100,9 @@ def syncConfig (vis, incommingConfig):
 
 
     if (countOfStrips > 0): 
-        print("Successfully loaded config from server, got {} strips".format(countOfStrips))
+        print("✅ Successfully loaded config from server, got {} strips \n".format(countOfStrips))
         vis.configReady = True
         rnd.makeRandomComposition("all",True)
     else:
-        print("ERROR: No strips found in config, deactivating pipeline")
+        print("⛔️ ERROR: No strips found in config, deactivating pipeline \n")
         vis.configReady = False

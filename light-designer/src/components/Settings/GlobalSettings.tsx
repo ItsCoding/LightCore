@@ -108,7 +108,7 @@ export const GlobalSettings = ({ setStrips, strips, setGlobalScalingState, globa
                 value={globalScaling}
                 min={0.5}
                 max={10}
-                step={0.1}
+                step={0.01}
                 valueLabelDisplay="auto"
                 onChange={(e, v) => setGlobalScalingState(v as number)}
             />

@@ -43,8 +43,9 @@ def differentColor(pixels, prev_pixels, i):
 
 
 def _update_virtual(composing):
-
     global pixels, _prev_pixels, ws
+    if not ws.connected:
+        ws.connect("ws://127.0.0.1:8080/")
     frameDict = {}
     for key in composing:
         frame = composing[key].getLEDS()
