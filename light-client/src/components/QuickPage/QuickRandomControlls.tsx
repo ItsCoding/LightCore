@@ -152,7 +152,7 @@ export const QuickRandomControlls = ({ randomEnabled, randomSpecific, lightConfi
                     minHeight: "100px",
                     marginTop: "10px",
                 }} justifyContent="center">
-                    <Grid xs={6} md={2} item>
+                    <Grid xs={isPhone? 12 : 6} md={2} item>
                         <TouchButton style={{
                             width: "100%",
                             height: "100%",
