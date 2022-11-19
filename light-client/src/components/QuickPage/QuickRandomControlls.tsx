@@ -8,7 +8,7 @@ import { LightCoreConfig } from "../../types/LightCoreConfig";
 import { LedStrip } from "../../types/Strip";
 import { BarView } from "../General/BarView";
 import { TouchButton } from "../General/TouchButton";
-
+import { RandomTypeBtns } from "./RandomTypeBtns";
 
 
 type QuickRandomControllsProps = {
@@ -47,7 +47,7 @@ const marksBars = [
     }
 ];
 
-export const QuickRandomControlls = ({ randomEnabled, randomSpecific, lightConfig, setRandomEnabled, setRandomSpecific, setLCConfig,strips }: QuickRandomControllsProps) => {
+export const QuickRandomControlls = ({ randomEnabled, randomSpecific, lightConfig, setRandomEnabled, setRandomSpecific, setLCConfig, strips }: QuickRandomControllsProps) => {
     const wsClient = WebSocketClient.getInstance();
     const [beatDetection, setBeatDetection] = React.useState(lightConfig.beatDetection);
     const isPhone = window.innerWidth < 800;
@@ -68,33 +68,6 @@ export const QuickRandomControlls = ({ randomEnabled, randomSpecific, lightConfi
         setRandomSpecific(newSpecific);
     }
 
-    // const setRandomWait = (time: number[] | number) => {
-    //     if (!Array.isArray(time)) {
-    //         return;
-    //     }
-    //     if (time[0] === time[1]) {
-    //         time[1] += 1;
-    //     }
-    //     lightConfig.randomMinWait = time[0];
-    //     lightConfig.randomMaxWait = time[1];
-    //     wsClient.changeConfigProperty("randomMinWait", time[0]);
-    //     wsClient.changeConfigProperty("randomMaxWait", time[1]);
-    //     setLCConfig(lightConfig);
-    // }
-
-    // const setDropRandomWait = (time: number[] | number) => {
-    //     if (!Array.isArray(time)) {
-    //         return;
-    //     }
-    //     if (time[0] === time[1]) {
-    //         time[1] += 1;
-    //     }
-    //     lightConfig.dropRandomMinWait = time[0];
-    //     lightConfig.dropRandomMaxWait = time[1];
-    //     wsClient.changeConfigProperty("dropRandomMinWait", time[0]);
-    //     wsClient.changeConfigProperty("dropRandomMaxWait", time[1]);
-    //     setLCConfig(lightConfig);
-    // }
 
     const setMusicBeats = (beats: number) => {
         lightConfig.musicBeatsBar = beats;
@@ -125,7 +98,7 @@ export const QuickRandomControlls = ({ randomEnabled, randomSpecific, lightConfi
                 }}
                     justifyContent="center"
                 >
-                    <Grid xs={isPhone? 12 : 6} md={2} item>
+                    <Grid xs={isPhone ? 12 : 6} md={2} item>
                         <Button variant="contained" color={randomEnabled ? "secondary" : "primary"} style={{
                             width: "100%",
                             height: "100%",
@@ -147,12 +120,17 @@ export const QuickRandomControlls = ({ randomEnabled, randomSpecific, lightConfi
                     ))}
 
                 </Grid>
+
+                {isPhone && <>
+                    <Divider style={{ borderColor: "rgba(255, 255, 255, 0.12)", marginTop: "20px",marginBottom: "20px" }} />
+                    <RandomTypeBtns />
+                </>}
                 <Divider style={{ borderColor: "rgba(255, 255, 255, 0.12)", marginTop: "20px" }} />
                 <Grid container rowSpacing={2} columnSpacing={2} style={{
                     minHeight: "100px",
                     marginTop: "10px",
                 }} justifyContent="center">
-                    <Grid xs={isPhone? 12 : 6} md={2} item>
+                    <Grid xs={isPhone ? 12 : 6} md={2} item>
                         <TouchButton style={{
                             width: "100%",
                             height: "100%",
@@ -214,19 +192,19 @@ export const QuickRandomControlls = ({ randomEnabled, randomSpecific, lightConfi
                     /> */}
                 </div>
                 <Grid container>
-                    <Grid item xs={isPhone? 12: 8}>
+                    <Grid item xs={isPhone ? 12 : 8}>
                         <Button fullWidth variant="contained" color="primary" style={{
                             marginTop: "10px",
                         }} onClick={() => {
                             wsClient.send("beat.reset");
                         }}>Reset Beat</Button>
                     </Grid>
-                    <Grid item xs={isPhone? 6: 4}>
+                    <Grid item xs={isPhone ? 6 : 4}>
                         <FormGroup style={{
                             marginTop: "10px",
                             marginLeft: "20px",
                         }}>
-                            <FormControlLabel control={<Switch checked={beatDetection} onChange={(e,checked) => {
+                            <FormControlLabel control={<Switch checked={beatDetection} onChange={(e, checked) => {
                                 wsClient.changeConfigProperty("beatDetection", checked);
                                 lightConfig.beatDetection = checked;
                                 setBeatDetection(checked)

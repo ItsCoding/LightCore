@@ -6,25 +6,22 @@ import dsp
 from scipy.ndimage.filters import gaussian_filter1d
 
 
-
-class visualize_run:
+class visualize_runMirrored:
     def __init__(self,id):
         self.id = id
         self.p = None
         self.p_filt = None
         self.colors = random.sample(config.cfg["colorDict"], 2)
         self.lastFlash = 0
-        self.loopCount = None
-        self.longerP = None
         self.description = {
-            "name": "Running light",
-            "description": "A effekt that runs across the strip and changes color on beat",
-            "effektSystemName": "visualize_run",
+            "name": "Running light mirrored",
+            "description": "A effekt that runs across the strip and changes color on beat but mirrored",
+            "effektSystemName": "visualize_runMirrored",
             "group": "beat-run",
             "groupColor": "#FFFEE",
-            "bpmSensitive": True,
             "supports": ["color","speed"]
         }
+      
         self.runPosition = 0
         self.startRunPosition = 0
         self.offP = None
@@ -32,10 +29,11 @@ class visualize_run:
         self.steps = 1
         self.unlockColor = False
         self.offset = 0
+
     def run(self, y,stripSize,gain: dsp.ExpFilter,instanceData: dict = {}):
         """Effect that expands from the center with increasing sound energy"""
         # global p, p_filt
-        
+        stripSize = stripSize // 2
         if(self.p is None):
             
             if "loopCount" in instanceData and instanceData["loopCount"] is not None:
@@ -61,10 +59,17 @@ class visualize_run:
         ySc = y ** scale
         yMean = int(np.average(ySc[:]**scale))     
 
+
+
+
         if yMean > 255:
             yMean = 255
         yOff = yMean // 4
         self.p = np.tile(0, (3, stripSize))
+
+        # self.p[0, self.startRunPosition:self.runPosition] = self.colors[0][0] * 0.4
+        # self.p[1, self.startRunPosition:self.runPosition] = self.colors[0][1] * 0.4
+        # self.p[2, self.startRunPosition:self.runPosition] = self.colors[0][2] * 0.4
         steps = stripSize // self.loopCount
         
         loopRange = list(range(0,stripSize, steps))
@@ -108,6 +113,8 @@ class visualize_run:
         #         self.offP = None
         # else:
             # for i in range(self.startRunPosition,self.runPosition):
+        if self.runPosition > stripSize:
+            self.runPosition = stripSize
         self.p[0][self.startRunPosition:self.runPosition] = tempP[0][self.startRunPosition:self.runPosition]
         self.p[1][self.startRunPosition:self.runPosition] = tempP[1][self.startRunPosition:self.runPosition]
         self.p[2][self.startRunPosition:self.runPosition] = tempP[2][self.startRunPosition:self.runPosition]
@@ -124,4 +131,4 @@ class visualize_run:
             self.colors = random.sample(config.cfg["colorDict"], 2)
             self.startRunPosition = 0
             self.runPosition = 0
-        return self.p
+        return np.concatenate((self.p, self.p[:, ::-1]), axis=1)

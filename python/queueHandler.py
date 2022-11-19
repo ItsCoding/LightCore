@@ -110,5 +110,8 @@ def handleQueue(queue2Thread,queue2Parent,vis):
                 config.cfg["colorDict"] = data["colorPalette"]
             elif topicType == "system.config.sync":
                 syncConfig.syncConfig(vis,data)
-
-
+            elif topicType == "light.random.next.byType":
+                randomizer.lastRandomizerType = data["type"]
+                randomizer.makeRandomCompositionByType(data["type"])
+            elif topicType == "light.random.useLastType":
+                randomizer.useLastRandomizerType = data

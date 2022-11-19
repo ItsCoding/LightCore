@@ -36,17 +36,16 @@ export const QuickPage = ({ randomEnabled, randomSpecific, lightConfig, setRando
                     key="quickRandomControlls"
                 />
             </Grid>
-
-
+            <Grid item xs={12} md={6}>
+                <QuickSystemControlls
+                    strips={strips}
+                    lightConfig={lightConfig}
+                    setLCConfig={setLCConfig}
+                    key="system"
+                />
+            </Grid>
             {!isPhone && <>
-                <Grid item xs={12} md={6}>
-                    <QuickSystemControlls
-                        strips={strips}
-                        lightConfig={lightConfig}
-                        setLCConfig={setLCConfig}
-                        key="system"
-                    />
-                </Grid>
+
                 <Grid item xs={12} md={6}>
                     <ColorCalibration
                         lightConfig={lightConfig}

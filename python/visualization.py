@@ -6,8 +6,8 @@ import time
 import numpy as np
 from effekts.static.StarsActive import visualize_starsActive
 from effekts.wash.washColorInverted import visualize_washColorInverted
-from effekts.beat.run.run import visualize_run
-from effekts.beat.run.runMirrored import visualize_runMirrored
+from effekts.run.run import visualize_run
+from effekts.run.runMirrored import visualize_runMirrored
 from scipy.ndimage.filters import gaussian_filter1d
 import json
 # import wsServer as wsServer

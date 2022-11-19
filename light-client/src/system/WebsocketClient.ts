@@ -71,11 +71,11 @@ export class WebSocketClient {
             }
             this.socket.onclose = (event) => {
                 console.log(event);
-                if(!event.wasClean){
+                if (!event.wasClean) {
                     setTimeout(() => {
                         console.log("Trying to reconnect...");
                         this.connect(url);
-                    },1000)
+                    }, 1000)
                 }
             }
         })
@@ -264,6 +264,12 @@ export class WebSocketClient {
     public async getSystemStatus() {
         if (this.socket || this.inTransaction) {
             this.send("system.status.get", {});
+        }
+    }
+
+    public async makeRandomCompByType(type: string) {
+        if (this.socket || this.inTransaction) {
+            this.send("light.random.next.byType", { type: type });
         }
     }
 
