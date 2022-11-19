@@ -1,4 +1,5 @@
-import { Card, CardContent, CardHeader, Divider, Slider, Typography } from "@mui/material"
+import { Button, Card, CardContent, CardHeader, Divider, Slider, Typography } from "@mui/material"
+import { useSnackbar } from "notistack";
 // import { strips } from "../../system/StripConfig";
 import { WebSocketClient } from "../../system/WebsocketClient";
 import { LightCoreConfig } from "../../types/LightCoreConfig"
@@ -19,7 +20,7 @@ const marks = [
 
 export const QuickSystemControlls = ({ lightConfig, setLCConfig,strips }: QuickSystemControllsProps) => {
     const wsClient = WebSocketClient.getInstance();
-
+    const {enqueueSnackbar} = useSnackbar();
     const setBrightness = (brightness: number | number[]) => {
         if (Array.isArray(brightness)) {
             return;
@@ -56,6 +57,10 @@ export const QuickSystemControlls = ({ lightConfig, setLCConfig,strips }: QuickS
         setLCConfig(lightConfig);
     }
 
+    const reloadIps = () => {
+        wsClient.send("wsapi.reloadIPs",{})
+        enqueueSnackbar("Reloaded IPs", { variant: "success" });
+    }
 
     return (<>
         <Card variant="outlined" style={{
@@ -92,7 +97,11 @@ export const QuickSystemControlls = ({ lightConfig, setLCConfig,strips }: QuickS
                     </>
 
                 ))}
-                <Divider />
+                <Divider sx={{
+                        marginTop: "10px",
+                        marginBottom: "20px",
+                        borderColor: "rgba(255, 255, 255, 0.12)"
+                    }}/>
                 <Typography gutterBottom>Speed</Typography>
                 <Slider
                     min={1}
@@ -115,6 +124,12 @@ export const QuickSystemControlls = ({ lightConfig, setLCConfig,strips }: QuickS
                     valueLabelDisplay="auto"
                     getAriaValueText={(value) => `${value}%`}
                 />
+               <Divider sx={{
+                        marginTop: "10px",
+                        marginBottom: "20px",
+                        borderColor: "rgba(255, 255, 255, 0.12)"
+                    }}/>
+                <Button onClick={() => reloadIps()} variant="contained">Reload IPs</Button>
             </CardContent>
         </Card>
     </>)

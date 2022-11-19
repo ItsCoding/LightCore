@@ -51,19 +51,5 @@ class visualize_spectrum:
         g = np.concatenate((g[::-1], g))
         b = np.concatenate((b[::-1], b))
 
-        # r = [i for i in r if i > 1]
-        # g = [i for i in g if i > 1]
-        # b = [i for i in b if i > 1]
-        # if(len(r) < 1):
-        #     r = np.tile(0, stripSize)
-        # if(len(g) < 1):
-        #     g = np.tile(0, stripSize)
-        # if(len(b) < 1):
-        #     b = np.tile(0, stripSize)
-
-        # r = interpolate(r, stripSize)
-        # g = interpolate(g, stripSize)
-        # b = interpolate(b, stripSize)
-
         output = np.array([r, g,b]) * 255
         return output
