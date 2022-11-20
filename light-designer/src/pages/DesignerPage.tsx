@@ -14,6 +14,7 @@ import { saveJsonFile } from "../system/SaveDialogs";
 import { BrowserWindow, globalShortcut } from "@electron/remote";
 import { v4 } from "uuid";
 import { BackgroundSettings } from "../components/Settings/BackgroundSettings";
+import { MelChart } from "../components/MelChart";
 
 
 export const DesignerPage = () => {
@@ -138,16 +139,10 @@ export const DesignerPage = () => {
         (e: WheelEvent) => {
             if (e.ctrlKey && !e.shiftKey) {
                 if (e.deltaY < 0) {
-                    if (!(globalScaling >= 10)) setGlobalScalingState(globalScaling + (isMac? 0.01 : 0.4));
+                    if (!(globalScaling >= 10)) setGlobalScalingState(globalScaling + (isMac ? 0.01 : 0.4));
                 } else {
-                    if (!(globalScaling <= 0.5)) setGlobalScalingState(globalScaling - (isMac? 0.01 : 0.4));
+                    if (!(globalScaling <= 0.5)) setGlobalScalingState(globalScaling - (isMac ? 0.01 : 0.4));
                 }
-                // if (e.deltaY < 0) {
-                //     if (!(backgroundInfos.backgroundScaling >= 10)) setBackgroundInfos({ ...backgroundInfos, backgroundScaling: backgroundInfos.backgroundScaling + 0.1 });
-                // } else {
-                //     if (!(backgroundInfos.backgroundScaling <= 0.1)) setBackgroundInfos({ ...backgroundInfos, backgroundScaling: backgroundInfos.backgroundScaling - 0.1 });
-
-                // }
             } else if (e.shiftKey && e.ctrlKey) {
                 if (e.deltaY < 0) {
                     if (!(globalScaling >= 10)) setGlobalScalingState(globalScaling + 0.1);
@@ -180,22 +175,6 @@ export const DesignerPage = () => {
         console.log(strip.getPhysicalLedSize());
         console.table(strip.getPhysicalPositions());
         setStrips([strip, strip2]);
-
-        // globalShortcut.register('CommandOrControl+S', () => {
-        //     //open dev tools
-        //     //check if window is focused
-        //     if (BrowserWindow.getFocusedWindow()) {
-        //         saveJsonFile(strips);
-        //     }
-        // })
-        // globalShortcut.register('Alt+CommandOrControl+I', () => {
-        //     //open dev tools
-        //     //check if window is focused
-        //     if (BrowserWindow.getFocusedWindow()) {
-        //         BrowserWindow.getFocusedWindow()?.webContents.openDevTools();
-        //     }
-        // })
-
 
         const wsClient = WebSocketClient.getInstance()
         wsClient.connect("ws://localhost:8000").then(() => {
@@ -275,7 +254,7 @@ export const DesignerPage = () => {
                     // backgroundSize: "cover",
                     height: backgroundInfos.height * backgroundInfos.backgroundScaling * globalScaling,
                     width: backgroundInfos.width * backgroundInfos.backgroundScaling * globalScaling,
-                }} src={backgroundInfos.backgroundBase64}/>
+                }} src={backgroundInfos.backgroundBase64} />
             </Grid>}
             {enableSidebar != 1 &&
                 <Grid item xs={sidebarState()} sx={{
@@ -284,6 +263,7 @@ export const DesignerPage = () => {
                     <GlobalSettings strips={strips} setStrips={setStrips} globalScaling={globalScaling} setGlobalScalingState={setGlobalScalingState} />
                     <StripSettings changeSelectedStrip={changeSelectedStrip} selectedStrip={selectedStripIndex >= 0 ? strips[selectedStripIndex] : null} />
                     <StripManager selectedStrip={selectedStripIndex} setSelectedStrip={(index) => setSelectedStrip(index)} strips={strips} setStrips={setStrips} />
+                    <MelChart />
                     <BackgroundSettings backgroundGreyScale={backgroundGreyScale} setBackgroundGreyScale={setBackgroundGreyScale} backgroundInfos={backgroundInfos} setBackgroundInfos={setBackgroundInfos} />
                 </Grid>}
 

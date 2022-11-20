@@ -25,17 +25,29 @@
  *  });
  * ```
  */
+import {
+    Chart as ChartJS,
+    registerables 
+} from 'chart.js';
+
 
 import '.';
 import { Socket, Server } from "net";
 import WebSocket, { WebSocketServer } from 'ws';
+import { addToHistory } from './system/MelHistory';
 const port = 8080;
+ChartJS.register(
+    ...registerables
+);
+
+
 
 // Use net.createServer() in your code. This is just for illustration purpose.
 // Create a new TCP server.
 const server = new Server();
 const wss = new WebSocketServer({ port: port });
 const clients: WebSocket[] = [];
+
 let serverStarted = false;
 let allreadyConnected = false;
 type LightData = {
@@ -56,6 +68,18 @@ const processData = (data: LightData) => {
     Object.keys(data).forEach((key: string) => {
         applyData(parseInt(key), data[key]);
     })
+}
+
+
+const processMelChars = (newData: number[]) => {
+    //Average the frequency ranges 0 - 11
+    const mel0 = newData.slice(0, 11).reduce((a, b) => a + b, 0) / 11;
+    // 12 - 39
+    const mel1 = newData.slice(12, 39).reduce((a, b) => a + b, 0) / 27;
+    //40-64
+    const mel2 = newData.slice(40, 64).reduce((a, b) => a + b, 0) / 24;
+
+    addToHistory({ low: mel0, mid: mel1, high: mel2 });
 }
 
 
@@ -127,7 +151,9 @@ const initWsServer = () => {
             // self.zeroMQServerOUT.sendMessage(data.toString());
             const chunkString = incommingData.toString();
             // replace all }{ with },{ to make it valid JSON
-            processData(JSON.parse(chunkString));
+            const parsedData = JSON.parse(chunkString);
+            processData(parsedData["frames"]);
+            processMelChars(parsedData["mel"]);
         });
         ws.on('close', function () {
             console.log("Client disconnected");

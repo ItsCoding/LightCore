@@ -249,7 +249,7 @@ class Visualization:
        
 
         startLed = time.time()
-        led.update(composerOutput,self.queue2Parent)
+        led.update(composerOutput,self.queue2Parent,mel)
         endLed = time.time()
         
 
