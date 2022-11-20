@@ -27,7 +27,7 @@
  */
 import {
     Chart as ChartJS,
-    registerables 
+    registerables
 } from 'chart.js';
 
 
@@ -35,9 +35,13 @@ import '.';
 import { Socket, Server } from "net";
 import WebSocket, { WebSocketServer } from 'ws';
 import { addToHistory } from './system/MelHistory';
+import 'chartjs-adapter-luxon';
+import { StreamingPlugin, RealTimeScale } from 'chartjs-plugin-streaming';
 const port = 8080;
 ChartJS.register(
-    ...registerables
+    ...registerables,
+    StreamingPlugin,
+    RealTimeScale
 );
 
 

@@ -263,7 +263,7 @@ export const DesignerPage = () => {
                     <GlobalSettings strips={strips} setStrips={setStrips} globalScaling={globalScaling} setGlobalScalingState={setGlobalScalingState} />
                     <StripSettings changeSelectedStrip={changeSelectedStrip} selectedStrip={selectedStripIndex >= 0 ? strips[selectedStripIndex] : null} />
                     <StripManager selectedStrip={selectedStripIndex} setSelectedStrip={(index) => setSelectedStrip(index)} strips={strips} setStrips={setStrips} />
-                    <MelChart />
+                    <MelChart key="melchart" />
                     <BackgroundSettings backgroundGreyScale={backgroundGreyScale} setBackgroundGreyScale={setBackgroundGreyScale} backgroundInfos={backgroundInfos} setBackgroundInfos={setBackgroundInfos} />
                 </Grid>}
 
