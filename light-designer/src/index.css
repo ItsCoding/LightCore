@@ -10,8 +10,10 @@
   height: 8px;
 }
 
+*::-webkit-scrollbar-corner { background: #121212; }
+
 *::-webkit-scrollbar-track {
-  background: #000000;
+  background: #121212;
 }
 
 *::-webkit-scrollbar-thumb {

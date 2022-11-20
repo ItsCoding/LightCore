@@ -216,9 +216,9 @@ export const DesignerPage = () => {
         }
     }
     return (<>
-        <Header globalScaling={globalScaling} setGlobalScalingState={setGlobalScalingState} setBackgroundInfos={setBackgroundInfos} backgroundInfos={backgroundInfos} strips={strips} setStrips={setStrips} enableSidebar={enableSidebar} setEnableSidebar={setEnableSidebar} />
+        {enableSidebar == 1 && <Header globalScaling={globalScaling} setGlobalScalingState={setGlobalScalingState} setBackgroundInfos={setBackgroundInfos} backgroundInfos={backgroundInfos} strips={strips} setStrips={setStrips} enableSidebar={enableSidebar} setEnableSidebar={setEnableSidebar} />}
         <Grid container sx={{
-            height: "90vh",
+            height: enableSidebar == 1 ? "96vh" : "100vh",
         }}>
             {enableSidebar != 2 && <Grid
                 onMouseEnter={() => setMouseInViewer(true)}
@@ -228,7 +228,7 @@ export const DesignerPage = () => {
                 sx={{
                     overflow: "scroll",
                     position: "relative",
-                    maxHeight: "96vh"
+                    maxHeight: "100vh"
                 }}>
                 <div style={{
                     height: "100%",
@@ -259,9 +259,10 @@ export const DesignerPage = () => {
             </Grid>}
             {enableSidebar != 1 &&
                 <Grid item xs={sidebarState()} sx={{
-                    height: "96vh",
+                    height: "100vh",
                     overflowY: "scroll",
                 }}>
+                    <Header globalScaling={globalScaling} setGlobalScalingState={setGlobalScalingState} setBackgroundInfos={setBackgroundInfos} backgroundInfos={backgroundInfos} strips={strips} setStrips={setStrips} enableSidebar={enableSidebar} setEnableSidebar={setEnableSidebar} />
                     <GlobalSettings strips={strips} setStrips={setStrips} globalScaling={globalScaling} setGlobalScalingState={setGlobalScalingState} />
                     <StripSettings changeSelectedStrip={changeSelectedStrip} selectedStrip={selectedStripIndex >= 0 ? strips[selectedStripIndex] : null} />
                     <StripManager selectedStrip={selectedStripIndex} setSelectedStrip={(index) => setSelectedStrip(index)} strips={strips} setStrips={setStrips} />
