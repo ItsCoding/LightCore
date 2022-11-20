@@ -16,8 +16,14 @@ const melHistory: MelHistory = {
     high: []
 };
 
+const activeMelHistory: MelHistory = {
+    low: [],
+    mid: [],
+    high: []
+};
+
 export const addToHistory = (newData: { low: number, mid: number, high: number }) => {
-    if (melHistory.low.length > 200) {
+    if (melHistory.low.length > 300) {
         melHistory.low.shift();
         melHistory.mid.shift();
         melHistory.high.shift();
@@ -34,14 +40,30 @@ export const addToHistory = (newData: { low: number, mid: number, high: number }
         timestamp: Date.now(),
         value: newData.low
     });
+    activeMelHistory.high.push({
+        timestamp: Date.now(),
+        value: newData.high
+    });
+    activeMelHistory.mid.push({
+        timestamp: Date.now(),
+        value: newData.mid
+    });
+    activeMelHistory.low.push({
+        timestamp: Date.now(),
+        value: newData.low
+    });
 }
 
 export const clearHistory = () => {
-    melHistory.high = [];
-    melHistory.mid = [];
-    melHistory.low = [];
+    activeMelHistory.high = [];
+    activeMelHistory.mid = [];
+    activeMelHistory.low = [];
 }
 
 export const getHistory = () => {
+    return activeMelHistory;
+}
+
+export const getFullHistory = () => {
     return melHistory;
 }
