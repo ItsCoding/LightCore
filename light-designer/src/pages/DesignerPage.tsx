@@ -259,7 +259,8 @@ export const DesignerPage = () => {
             </Grid>}
             {enableSidebar != 1 &&
                 <Grid item xs={sidebarState()} sx={{
-                    overflow: "scroll",
+                    height: "96vh",
+                    overflowY: "scroll",
                 }}>
                     <GlobalSettings strips={strips} setStrips={setStrips} globalScaling={globalScaling} setGlobalScalingState={setGlobalScalingState} />
                     <StripSettings changeSelectedStrip={changeSelectedStrip} selectedStrip={selectedStripIndex >= 0 ? strips[selectedStripIndex] : null} />
