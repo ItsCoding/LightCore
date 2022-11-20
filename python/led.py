@@ -42,7 +42,7 @@ def differentColor(pixels, prev_pixels, i):
     return False
 
 
-def _update_virtual(composing,y):
+def _update_virtual(composing,y,beatChange):
     global pixels, _prev_pixels, ws
     if not ws.connected:
         ws.connect("ws://127.0.0.1:8080/")
@@ -65,7 +65,7 @@ def _update_virtual(composing,y):
     # _prev_pixels = np.copy(sumPixels)
     # print(p)
     # ("===========================")
-    ws.send(json.dumps({"frames": frameDict,"mel":y.tolist()}).encode())
+    ws.send(json.dumps({"frames": frameDict,"mel":y.tolist(),"beatChange": beatChange}).encode())
     # strip.show()
 
 def capAt255(x):
@@ -197,7 +197,7 @@ def _updateClient(composing, queue2Parent):
     )
 
 
-def update(composing, queue2Parent,y):
+def update(composing, queue2Parent,y,beatChange):
 
     positiveComp = {}
     negativeComp = {}
@@ -212,12 +212,12 @@ def update(composing, queue2Parent,y):
 
     """Updates the LED strip values"""
     if config.DEVICE == "virtual":
-        _update_virtual(positiveComp,y)
+        _update_virtual(positiveComp,y,beatChange)
     elif config.DEVICE == "esp":
         # _update_virtual(composing)
         _update_esp8266(positiveComp)
     elif config.DEVICE == "espv":
-        _update_virtual(positiveComp)
+        _update_virtual(positiveComp,y,beatChange)
         _update_esp8266(positiveComp)
     elif config.DEVICE == "null":
         pass

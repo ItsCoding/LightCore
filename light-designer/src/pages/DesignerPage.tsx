@@ -218,7 +218,7 @@ export const DesignerPage = () => {
     return (<>
         <Header globalScaling={globalScaling} setGlobalScalingState={setGlobalScalingState} setBackgroundInfos={setBackgroundInfos} backgroundInfos={backgroundInfos} strips={strips} setStrips={setStrips} enableSidebar={enableSidebar} setEnableSidebar={setEnableSidebar} />
         <Grid container sx={{
-            minHeight: "95vh",
+            height: "90vh",
         }}>
             {enableSidebar != 2 && <Grid
                 onMouseEnter={() => setMouseInViewer(true)}
@@ -226,8 +226,9 @@ export const DesignerPage = () => {
                 item
                 xs={gridState()}
                 sx={{
-                    overflow: "auto",
-                    position: "relative"
+                    overflow: "scroll",
+                    position: "relative",
+                    maxHeight: "96vh"
                 }}>
                 <div style={{
                     height: "100%",
@@ -258,7 +259,7 @@ export const DesignerPage = () => {
             </Grid>}
             {enableSidebar != 1 &&
                 <Grid item xs={sidebarState()} sx={{
-                    overflow: "auto",
+                    overflow: "scroll",
                 }}>
                     <GlobalSettings strips={strips} setStrips={setStrips} globalScaling={globalScaling} setGlobalScalingState={setGlobalScalingState} />
                     <StripSettings changeSelectedStrip={changeSelectedStrip} selectedStrip={selectedStripIndex >= 0 ? strips[selectedStripIndex] : null} />

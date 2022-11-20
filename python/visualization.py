@@ -249,7 +249,7 @@ class Visualization:
        
 
         startLed = time.time()
-        led.update(composerOutput,self.queue2Parent,mel)
+        led.update(composerOutput,self.queue2Parent,mel,self.hasBeatChanged)
         endLed = time.time()
         
 
@@ -261,8 +261,7 @@ class Visualization:
                     try:
                         print("Led time: " + str(round((endLed - startLed) * 1000,2)) + "ms | Effekt time: " + str(round((endLed - start) * 1000,2)) + "ms | Record Time: " + str(round(recordTime * 1000)) + "ms | FPS: " + str(round(1 / (endLed - startLed + end - start + recordTime),2)) + ' | Real FPS {:.0f} / {:.0f}'.format(fps, config.FPS))
                     except:
-                        # continue
-                        print("Kein debug, weil ging nicht")
+                        let = "Error"
 
                     # for key, value in timeDict.items():
                     #     print(key + ": " + str(round(value[0] * 1000,2)) + "ms | " + str(round(value[1] * 1000,2)) + "ms")

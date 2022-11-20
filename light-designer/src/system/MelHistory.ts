@@ -22,6 +22,10 @@ const activeMelHistory: MelHistory = {
     high: []
 };
 
+
+const beatHistory: Datapoint[] = []
+let activeBeatHistory: Datapoint[] = []
+
 export const addToHistory = (newData: { low: number, mid: number, high: number }) => {
     if (melHistory.low.length > 300) {
         melHistory.low.shift();
@@ -54,6 +58,38 @@ export const addToHistory = (newData: { low: number, mid: number, high: number }
     });
 }
 
+export const addBeatHistory = () => {
+    if (beatHistory.length > 300) {
+        beatHistory.shift();
+        beatHistory.shift();
+        beatHistory.shift();
+    }
+    beatHistory.push({
+        timestamp: Date.now() - 50,
+        value: 0
+    });
+    activeBeatHistory.push({
+        timestamp: Date.now() - 50,
+        value: 0
+    });
+    beatHistory.push({
+        timestamp: Date.now(),
+        value: 1
+    });
+    activeBeatHistory.push({
+        timestamp: Date.now(),
+        value: 1
+    });
+    beatHistory.push({
+        timestamp: Date.now() + 50,
+        value: 0
+    });
+    activeBeatHistory.push({
+        timestamp: Date.now() + 50,
+        value: 0
+    });
+}
+
 export const clearHistory = () => {
     activeMelHistory.high = [];
     activeMelHistory.mid = [];
@@ -66,4 +102,16 @@ export const getHistory = () => {
 
 export const getFullHistory = () => {
     return melHistory;
+}
+
+export const getBeatHistory = () => {
+    return activeBeatHistory;
+}
+
+export const getFullBeatHistory = () => {
+    return beatHistory;
+}
+
+export const clearBeatHistory = () => {
+    activeBeatHistory = [];
 }

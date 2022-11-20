@@ -34,7 +34,7 @@ import {
 import '.';
 import { Socket, Server } from "net";
 import WebSocket, { WebSocketServer } from 'ws';
-import { addToHistory } from './system/MelHistory';
+import { addBeatHistory, addToHistory } from './system/MelHistory';
 import 'chartjs-adapter-luxon';
 import { StreamingPlugin, RealTimeScale } from 'chartjs-plugin-streaming';
 const port = 8080;
@@ -84,6 +84,13 @@ const processMelChars = (newData: number[]) => {
     const mel2 = newData.slice(40, 64).reduce((a, b) => a + b, 0) / 24;
 
     addToHistory({ low: mel0, mid: mel1, high: mel2 });
+}
+
+const processBeatChange = (beat: boolean) => {
+    if(beat){
+        addBeatHistory()
+    }
+    
 }
 
 
@@ -158,6 +165,7 @@ const initWsServer = () => {
             const parsedData = JSON.parse(chunkString);
             processData(parsedData["frames"]);
             processMelChars(parsedData["mel"]);
+            processBeatChange(parsedData["beatChange"]);
         });
         ws.on('close', function () {
             console.log("Client disconnected");
