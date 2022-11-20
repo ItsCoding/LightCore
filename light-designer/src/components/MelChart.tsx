@@ -49,10 +49,10 @@ export const MelChart = () => {
         },
         {
             label: "Beat - All",
-            borderDash: [10,5],
+            type: "bar",
             data: [],
-            backgroundColor: 'rgba(0, 0, 0, 0.6)',
-            borderColor: 'rgba(0, 0, 0, 0.6)',
+            backgroundColor: 'rgba(255, 255, 255, 0.1)',
+            borderColor: 'rgba(255, 255, 255, 0.1)',
             borderWidth: 1,
         },
         {
@@ -61,7 +61,7 @@ export const MelChart = () => {
             data: [],
             backgroundColor: 'rgba(0, 99, 255, 0.4)',
             borderColor: 'rgba(0, 99, 255, 0.4)',
-            borderWidth: 1,
+            borderWidth: 1.5,
         },
         {
             label: "Beat - Mid",
@@ -69,7 +69,7 @@ export const MelChart = () => {
             data: [],
             backgroundColor: 'rgba(0, 255, 50, 0.4)',
             borderColor: 'rgba(0, 255, 50, 0.4)',
-            borderWidth: 1,
+            borderWidth: 1.5,
         },
         {
             label: "Beat - High",
@@ -77,7 +77,7 @@ export const MelChart = () => {
             data: [],
             backgroundColor: 'rgba(255, 10, 0, 0.4)',
             borderColor: 'rgba(255, 10, 0, 0.4)',
-            borderWidth: 1,
+            borderWidth: 1.5,
         }
     ]
 

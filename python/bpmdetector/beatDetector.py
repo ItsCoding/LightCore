@@ -65,8 +65,6 @@ class BeatDetector:
         # xs = numpy.tile(0,config.N_FFT_BINS)
         # calculate average for all frequency ranges
         y_avg = numpy.mean(ys)
-        xs = xs[0:len(xs) // 3]
-        ys = ys[0:len(ys) // 3]
         # print("YS Length: ", len(ys))
         # calculate low frequency average
         low_freq = [ys[i] for i in range(len(xs)) if xs[i] < 1000]

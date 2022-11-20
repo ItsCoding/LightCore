@@ -9,24 +9,26 @@ const processMessage = async (message: string) => {
     const data = JSON.parse(message)
     switch (data.type) {
         case "return.beat.detected":
-            if (pingPong) {
-                virtualOutput.send('noteon', {
-                    note: 60,
-                    velocity: 127,
-                    channel: 0
-                });
-                pingPong = false
-                process.stdout.write("\rBeat: |")
-            } else {
-                virtualOutput.send('noteoff', {
-                    note: 60,
-                    velocity: 127,
-                    channel: 0
-                });
-                process.stdout.write("\rBeat: -")
-                pingPong = true
+            if (data.message.type === "all") {
+                if (pingPong) {
+                    virtualOutput.send('noteon', {
+                        note: 60,
+                        velocity: 127,
+                        channel: 0
+                    });
+                    pingPong = false
+                    process.stdout.write("\rBeat: |")
+                } else {
+                    virtualOutput.send('noteoff', {
+                        note: 60,
+                        velocity: 127,
+                        channel: 0
+                    });
+                    process.stdout.write("\rBeat: -")
+                    pingPong = true
+                }
+                virtualOutput.send('clock')
             }
-            virtualOutput.send('clock')
             break;
         case "return.trigger.randomizer.next":
             process.stdout.write("\rRandomizer next\n")
