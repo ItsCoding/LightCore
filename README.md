@@ -1,8 +1,19 @@
 # LightCore
 Real-time LED strip music visualization using Python and the ESP8266 or Raspberry Pi.
-## Special thanks to ❤
+### Special thanks to ❤
 - Scott Lawson for the base [project](https://github.com/scottlawsonbc/audio-reactive-led-strip)
 - shunfu for the beat detection [project](https://github.com/shunfu/python-beat-detector)
+
+## Components
+
+The LightCore is mad up of 5 modules:
+
+- `/arduino` - The Arduino code for the ESP8266, needed to control the LED strip
+- `/light-client` - Webclient to controll the render pipeline and make changes on stage
+- `/light-designer` - Electron based GUI to design a stage and position the strips, bascily pepare everything
+- `/messageBroker` - Websocket Server that handles *most* of the communication between the modules
+- `/midi-adapter` - Midi Adapter to easly integrate existing software/hardware with LightCore
+- `/python` - Render pipeline for calculating the LED colors
 
 ## Python Dependencies
 Visualization code is compatible with Python 3.9. A few Python dependencies must also be installed:
@@ -110,6 +121,6 @@ yarn
 
 ### Run everything
 ```
-cd controller
-yarn start
+cd startup-controller
+yarn && yarn start
 ```
