@@ -151,6 +151,7 @@ class Visualization:
         self.randomEnabled = True
         self.randomizerBeatCount = 0
         self.configReady = False
+        self.listenForBeatType = "all"
     def frames_per_second(self):
         """Return the estimated frames per second
 
@@ -186,16 +187,17 @@ class Visualization:
         if config.cfg["beatDetection"]:
             while not self.bpmQueue.empty():
                 message = self.bpmQueue.get()
-                self.avg_Bpm = message["bpm"]
-                if self.beat != message["beat"]:
-                    self.beat = message["beat"]
-                    self.hasBeatChanged = True
-                    self.randomizerBeatCount += 1
-                if(config.DISPLAY_BPM):
-                    if(self.beat):
-                        print("BPM: " + str(self.avg_Bpm) + " => " + str(self.randomizerBeatCount % config.cfg["musicBeatsBar"]))
-                    else:
-                        print("| BPM: " + str(self.avg_Bpm)+ " => " + str(self.randomizerBeatCount % config.cfg["musicBeatsBar"]))
+                if message["type"] == self.listenForBeatType:
+                    self.avg_Bpm = message["bpm"]
+                    if self.beat != message["beat"]:
+                        self.beat = message["beat"]
+                        self.hasBeatChanged = True
+                        self.randomizerBeatCount += 1
+                    if(config.DISPLAY_BPM):
+                        if(self.beat):
+                            print("BPM: " + str(self.avg_Bpm) + " => " + str(self.randomizerBeatCount % config.cfg["musicBeatsBar"]))
+                        else:
+                            print("| BPM: " + str(self.avg_Bpm)+ " => " + str(self.randomizerBeatCount % config.cfg["musicBeatsBar"]))
         else:
             #throw all packets away so they dont stack up
              while not self.bpmQueue.empty():

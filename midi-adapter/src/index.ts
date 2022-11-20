@@ -39,7 +39,7 @@ const main = async () => {
     //get url from cli args
     const url = process.argv[2]
     console.log("Connecting to: ", url)
-    const ws = new WebSocket(`ws://${url}:8000`);
+    let ws = new WebSocket(`ws://${url}:8000`);
 
     ws.on('open', function open() {
         console.log("Connected to LC-MessageBroker")
@@ -47,6 +47,12 @@ const main = async () => {
 
     ws.on('message', async (data) => {
         await processMessage(`${data}`)
+    });
+
+    // if connection is closed, try to reconnect
+    ws.on('close', () => {
+        console.log("Connection closed, trying to reconnect...")
+        ws = new WebSocket(`ws://${url}:8000`);
     });
 }
 

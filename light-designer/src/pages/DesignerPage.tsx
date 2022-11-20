@@ -35,7 +35,7 @@ export const DesignerPage = () => {
     const onGlobalKeyInput = useCallback((e: KeyboardEvent) => {
         const ctrlKey = e.ctrlKey || e.metaKey;
         const shiftKey = e.shiftKey;
-        console.log(e);
+        // console.log(e);
         switch (e.key) {
             case "Escape":
                 setSelectedStrip(-1);

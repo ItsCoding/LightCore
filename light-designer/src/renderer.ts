@@ -86,12 +86,6 @@ const processMelChars = (newData: number[]) => {
     addToHistory({ low: mel0, mid: mel1, high: mel2 });
 }
 
-const processBeatChange = (beat: boolean) => {
-    if(beat){
-        addBeatHistory()
-    }
-    
-}
 
 
 const initTCP = () => {
@@ -165,7 +159,6 @@ const initWsServer = () => {
             const parsedData = JSON.parse(chunkString);
             processData(parsedData["frames"]);
             processMelChars(parsedData["mel"]);
-            processBeatChange(parsedData["beatChange"]);
         });
         ws.on('close', function () {
             console.log("Client disconnected");

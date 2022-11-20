@@ -10,6 +10,15 @@ export type MelHistory = {
     [key: string]: Datapoint[]
 }
 
+export type BeatHistory = {
+    low: Datapoint[],
+    mid: Datapoint[],
+    high: Datapoint[],
+    all: Datapoint[]
+    [key: string]: Datapoint[]
+}
+
+
 const melHistory: MelHistory = {
     low: [],
     mid: [],
@@ -23,8 +32,19 @@ const activeMelHistory: MelHistory = {
 };
 
 
-const beatHistory: Datapoint[] = []
-let activeBeatHistory: Datapoint[] = []
+const beatHistory: BeatHistory = {
+    low: [],
+    mid: [],
+    high: [],
+    all: []
+};
+
+const activeBeatHistory: BeatHistory = {
+    low: [],
+    mid: [],
+    high: [],
+    all: []
+};
 
 export const addToHistory = (newData: { low: number, mid: number, high: number }) => {
     if (melHistory.low.length > 300) {
@@ -58,33 +78,33 @@ export const addToHistory = (newData: { low: number, mid: number, high: number }
     });
 }
 
-export const addBeatHistory = () => {
-    if (beatHistory.length > 300) {
-        beatHistory.shift();
-        beatHistory.shift();
-        beatHistory.shift();
+export const addBeatHistory = (type: string) => {
+    if (beatHistory[type].length > 300) {
+        beatHistory[type].shift();
+        beatHistory[type].shift();
+        beatHistory[type].shift();
     }
-    beatHistory.push({
+    beatHistory[type].push({
         timestamp: Date.now() - 50,
         value: 0
     });
-    activeBeatHistory.push({
+    activeBeatHistory[type].push({
         timestamp: Date.now() - 50,
         value: 0
     });
-    beatHistory.push({
+    beatHistory[type].push({
         timestamp: Date.now(),
         value: 1
     });
-    activeBeatHistory.push({
+    activeBeatHistory[type].push({
         timestamp: Date.now(),
         value: 1
     });
-    beatHistory.push({
+    beatHistory[type].push({
         timestamp: Date.now() + 50,
         value: 0
     });
-    activeBeatHistory.push({
+    activeBeatHistory[type].push({
         timestamp: Date.now() + 50,
         value: 0
     });
@@ -104,14 +124,14 @@ export const getFullHistory = () => {
     return melHistory;
 }
 
-export const getBeatHistory = () => {
-    return activeBeatHistory;
+export const getBeatHistory = (type: string) => {
+    return activeBeatHistory[type];
 }
 
-export const getFullBeatHistory = () => {
-    return beatHistory;
+export const getFullBeatHistory = (type: string) => {
+    return beatHistory[type];
 }
 
-export const clearBeatHistory = () => {
-    activeBeatHistory = [];
+export const clearBeatHistory = (type: string) => {
+    activeBeatHistory[type] = [];
 }

@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react"
 import { Line } from 'react-chartjs-2';
-import { clearBeatHistory, clearHistory, Datapoint, getBeatHistory, getFullBeatHistory, getFullHistory, getHistory } from "../system/MelHistory";
-import { Paper } from "@mui/material";
+import { addBeatHistory, clearBeatHistory, clearHistory, Datapoint, getBeatHistory, getFullBeatHistory, getFullHistory, getHistory } from "../system/MelHistory";
+import { Checkbox, FormControl, InputLabel, ListItemText, MenuItem, OutlinedInput, Paper, Select, SelectChangeEvent } from "@mui/material";
 import { BarElement, CategoryScale, ChartData, LinearScale, LineElement, PointElement } from "chart.js";
 import { Chart } from "chart.js";
 import 'chartjs-adapter-luxon';
 import { StreamingPlugin, RealTimeScale } from 'chartjs-plugin-streaming';
+import { WebSocketClient } from "../../../light-client/src/system/WebsocketClient";
 Chart.register(
     LinearScale,
     CategoryScale,
@@ -15,22 +16,9 @@ Chart.register(
     RealTimeScale,
     BarElement
 );
+const freqs = ["LOW", "MID", "HIGH", "ALL"]
 export const MelChart = () => {
-    // const [chartData, setChartData] = useState<ChartData<"line">>({
-    //     labels: [],
-    //     datasets: []
-    // });
-
-    // useEffect(() => {
-    //     const intervall = setInterval(() => {
-    //         getChartData();
-    //     }, 100)
-
-    //     return () => {
-    //         clearInterval(intervall);
-    //     }
-    // }, [])
-
+    const [selectedFreqs, setSelectedFreqs] = useState<string[]>([]);
 
     const dataSets = [
         {
@@ -60,11 +48,35 @@ export const MelChart = () => {
             pointHoverRadius: 1
         },
         {
-            label: "Beat",
-            type: "bar",
+            label: "Beat - All",
+            borderDash: [10,5],
             data: [],
-            backgroundColor: 'rgba(255, 255, 255, 0.1)',
-            borderColor: 'rgba(255, 255, 255, 0.1)',
+            backgroundColor: 'rgba(0, 0, 0, 0.6)',
+            borderColor: 'rgba(0, 0, 0, 0.6)',
+            borderWidth: 1,
+        },
+        {
+            label: "Beat - Low",
+            borderDash: [10,5],
+            data: [],
+            backgroundColor: 'rgba(0, 99, 255, 0.4)',
+            borderColor: 'rgba(0, 99, 255, 0.4)',
+            borderWidth: 1,
+        },
+        {
+            label: "Beat - Mid",
+            borderDash: [10,5],
+            data: [],
+            backgroundColor: 'rgba(0, 255, 50, 0.4)',
+            borderColor: 'rgba(0, 255, 50, 0.4)',
+            borderWidth: 1,
+        },
+        {
+            label: "Beat - High",
+            borderDash: [10,5],
+            data: [],
+            backgroundColor: 'rgba(255, 10, 0, 0.4)',
+            borderColor: 'rgba(255, 10, 0, 0.4)',
             borderWidth: 1,
         }
     ]
@@ -74,7 +86,7 @@ export const MelChart = () => {
         const newData = getHistory();
         chart.data.datasets.forEach(dataset => {
             const setName = dataset.label.toLowerCase() as string;
-            if (setName !== "beat") {
+            if (!setName.startsWith("beat")) {
                 const dataSetData = newData[setName];
                 // console.log("Push history, dlen: ", dataset.data.length)
                 if (dataset.data.length === 0) {
@@ -94,11 +106,12 @@ export const MelChart = () => {
                 }
             } else {
                 let data: Datapoint[] = []
+                const dataType = setName.split(" - ")[1];
                 if (dataset.data.length === 0) {
-                    data = getFullBeatHistory()
+                    data = getFullBeatHistory(dataType)
                 } else {
-                    data = getBeatHistory();
-                    clearBeatHistory();
+                    data = getBeatHistory(dataType);
+                    clearBeatHistory(dataType);
                 }
                 data.forEach(dp => {
                     dataset.data.push({
@@ -115,6 +128,32 @@ export const MelChart = () => {
         });
         clearHistory();
     };
+
+    const wsClient = WebSocketClient.getInstance()
+    const handleFreqChange = (event: SelectChangeEvent<typeof freqs>) => {
+        const {
+            target: { value },
+        } = event;
+        const check = typeof value === 'string' ? value.split(',') : value
+        if (Array.isArray(check) ? value.includes("ALL") : value === "ALL") {
+            setSelectedFreqs(["ALL"])
+        } else {
+            setSelectedFreqs(
+                typeof value === 'string' ? value.split(',') : value,
+            );
+        }
+
+    };
+
+    useEffect(() => {
+        const handlerID = wsClient.addEventHandler("return.beat.detected", topic => {
+            const key = topic.message.type;
+            addBeatHistory(key)
+        })
+        return () => {
+            wsClient.removeEventHandler(handlerID)
+        }
+    })
 
     return <Paper sx={{
         marginTop: 1,
@@ -155,5 +194,28 @@ export const MelChart = () => {
                 duration: 0
             }
         }} data={{ datasets: dataSets }} />
+        <FormControl sx={{
+            margin: 1,
+            paddingRight: 2
+        }} fullWidth>
+            <InputLabel id="demo-multiple-checkbox-label">Tag</InputLabel>
+            <Select
+                labelId="demo-multiple-checkbox-label"
+                id="demo-multiple-checkbox"
+                multiple
+                value={selectedFreqs}
+                onChange={handleFreqChange}
+                input={<OutlinedInput label="Tag" />}
+                renderValue={(selected) => selected.join(', ')}
+                fullWidth
+            >
+                {freqs.map((freq) => (
+                    <MenuItem key={freq} value={freq}>
+                        <Checkbox checked={selectedFreqs.indexOf(freq) > -1} />
+                        <ListItemText primary={freq} />
+                    </MenuItem>
+                ))}
+            </Select>
+        </FormControl>
     </Paper>;
 }
