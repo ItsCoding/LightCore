@@ -82,7 +82,9 @@ def makeRandomCompositionByType(type):
             if randomEffekt.__name__ in allFrequencyEffekts:
                 randomFreq = FrequencyRange.all
             composer.removeElementByStripIndex(x)
-            composer.addEffekt(randomEffekt(str(uuid.uuid1())),randomFreq,x,0,config.STRIP_LED_COUNTS[x])   
+            composer.addEffekt(randomEffekt(str(uuid.uuid1())),randomFreq,x,0,config.STRIP_LED_COUNTS[x])
+    queueHandler.reportEffekts(engine, engine.queue2Parent)
+    queueHandler.randomizerTriggered(engine, engine.queue2Parent)
 
 def makeRandomComposition(parts,overrideEnabled = False, noBeat = False):
     global queueHandler, engine
@@ -122,6 +124,7 @@ def makeRandomComposition(parts,overrideEnabled = False, noBeat = False):
         composer.removeElementByStripIndex(parts)
         composer.addEffekt(randomEffekt(str(uuid.uuid1())),randomFreq,parts,0,config.STRIP_LED_COUNTS[parts])
     queueHandler.reportEffekts(engine, engine.queue2Parent)
+    queueHandler.randomizerTriggered(engine, engine.queue2Parent)
 
 def changeEffekt(hasBeatChanged):
     global queueHandler, engine, lastDetectedBeat,cleardBeatEffekts

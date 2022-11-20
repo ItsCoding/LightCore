@@ -23,6 +23,10 @@ def addEffektToComp(vis,effektName,stripIndex,frequencyRange,instanceData,instan
         return
     composer.addEffekt(effektClass(instanceUUID),frequencyRange,stripIndex,startIndex,endIndex,instanceData,zIndex)
 
+def randomizerTriggered(vis,queue2Parent):
+    queue2Parent.put(json.dumps({"type": "return.trigger.randomizer.next", "message": ""}))
+
+
 def reportEffekts(vis,queue2Parent):
     comEffekts = composer.getEffekts()
     effektList = []

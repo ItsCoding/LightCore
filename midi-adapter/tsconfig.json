@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "target": "ES6",
+    "lib": [
+      "ES6"
+    ],
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true
+  },
+  "include": [
+    "src",
+    "../light-designer/src/classes/ExportConfig.ts",
+    "../light-client/src/system/WebsocketClient.ts"
+  ]
+}
