@@ -1,6 +1,5 @@
 import config
 import randomizer as rnd
-from tabulate import tabulate
 def syncConfig (vis, incommingConfig):
 
     udpIps = {}
