@@ -29,6 +29,13 @@ export const getEffektGroups = (availableEffekts: Effekt[]) => {
         }
         effektGroups[effekt.group].push(effekt);
     });
+
+    const allBeatEffekte = availableEffekts.filter(eff => eff.beatSensitive);
+    const allFFTBased = availableEffekts.filter(eff => !eff.beatSensitive)
+    const allColorEffekts = availableEffekts.filter(eff => eff.name.toLowerCase().includes("color") || eff.name.toLowerCase().includes("run") || eff.name.toLowerCase().includes("wash"))
+    effektGroups["Beat-Based"] = allBeatEffekte;
+    effektGroups["FFT-Based"] = allFFTBased;
+    effektGroups["Color-Based"] = allColorEffekts;
     return effektGroups;
 }
 

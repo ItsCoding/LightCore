@@ -38,6 +38,7 @@ export const StagePage = ({ setActiveRoute }: StagePageProps) => {
 
         const handlerIDEffekts = wsClient.addEventHandler(ReturnType.DATA.AVAILABLE_EFFEKTS, topic => {
             const effekts = Effekt.fromJSONArray(topic.message);
+            console.log("Available Effekts", availableEffekts)
             setAvailableEffekts(effekts);
             wsClient.removeEventHandler(handlerIDEffekts);
         })

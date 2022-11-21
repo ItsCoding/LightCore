@@ -290,11 +290,7 @@ const JamRowMaster = ({ clearAllEffekts, changeRowState, jamRowState, masterEffe
         } else {
             const newJamState = jamRowState;
             if (effektSetModeGlobal === "SET") {
-                newJamState.activeEffektIDs = [];
-                Object.keys(newJamState.buttons).forEach((key) => {
-                    newJamState.buttons[key].activeEffektId = "";
-                })
-                changeRowState(newJamState);
+                clearAllEffekts();
                 strips.forEach(strip => {
                     wsTransaction.lightClear(strip.index);
                 })
