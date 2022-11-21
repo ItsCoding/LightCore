@@ -122,3 +122,6 @@ def handleQueue(queue2Thread,queue2Parent,vis):
             elif topicType == "light.setStripBrightness":
                 print("Setting Strip Brightness to: ", data["brightness"], " for Strip: ", data["stripIndex"])
                 config.cfg["stripBrightness"][data["stripIndex"]] = data["brightness"]
+            elif topicType == "beat.detectFreq":
+                vis.listenForBeatType = data
+                print("Changing Beat detect to:", data)

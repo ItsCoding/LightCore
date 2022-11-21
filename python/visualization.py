@@ -151,7 +151,7 @@ class Visualization:
         self.randomEnabled = True
         self.randomizerBeatCount = 0
         self.configReady = False
-        self.listenForBeatType = "all"
+        self.listenForBeatType = ["ALL"]
     def frames_per_second(self):
         """Return the estimated frames per second
 
@@ -187,7 +187,7 @@ class Visualization:
         if config.cfg["beatDetection"]:
             while not self.bpmQueue.empty():
                 message = self.bpmQueue.get()
-                if message["type"] == self.listenForBeatType:
+                if message["type"].upper() in self.listenForBeatType:
                     self.avg_Bpm = message["bpm"]
                     if self.beat != message["beat"]:
                         self.beat = message["beat"]
