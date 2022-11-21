@@ -119,3 +119,6 @@ def handleQueue(queue2Thread,queue2Parent,vis):
                 randomizer.makeRandomCompositionByType(data["type"])
             elif topicType == "light.random.useLastType":
                 randomizer.useLastRandomizerType = data
+            elif topicType == "light.setStripBrightness":
+                print("Setting Strip Brightness to: ", data["brightness"], " for Strip: ", data["stripIndex"])
+                config.cfg["stripBrightness"][data["stripIndex"]] = data["brightness"]

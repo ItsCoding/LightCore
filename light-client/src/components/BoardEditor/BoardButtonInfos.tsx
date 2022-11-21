@@ -71,7 +71,7 @@ export const BoardButtonInfos = ({ composition, strips }: BoardButtonInfosProps)
                 </Grid> */}
             {/* </Grid> */}
             <Typography variant={matches ? "h6" : "h5"} component="h5">
-                {composition.getAffectedStrips().map((strip, i) => strips[strip].symbol).join(" ")}
+                {composition.getAffectedStrips().map((strip, i) => strips[strip]?.symbol).join(" ")}
             </Typography>
             <div style={{
                 width: "90%",

@@ -9,6 +9,9 @@ import { Board } from "../types/Board";
 import { LedStrip } from "../types/Strip";
 import { WebSocketClient } from "../system/WebsocketClient";
 import { parseStrips } from "../system/Utils";
+import { Jamboard } from "../components/StagePage/Jamboard";
+import { Effekt } from "../types/Effekt";
+import { ReturnType } from "../types/TopicReturnType";
 
 export type StagePageProps = {
     setActiveRoute: React.Dispatch<React.SetStateAction<string>>;
@@ -20,6 +23,9 @@ export const StagePage = ({ setActiveRoute }: StagePageProps) => {
     const [availableBoards, setAvailableBoards] = useState<Array<Board>>([])
     const [activeWidget, setActiveWidget] = useState<string | undefined>(undefined)
     const [strips, setStrips] = useState<LedStrip[]>([]);
+    const [subRoute, setSubRoute] = useState<string>("grid");
+    const [availableEffekts, setAvailableEffekts] = useState<Array<Effekt>>([]);
+
     useEffect(() => {
         initEvents(setAvailableBoards, setActiveBoard)
         const handlerIDConfig = wsClient.addEventHandler("return.wsapi.ledconfig", topic => {
@@ -29,6 +35,13 @@ export const StagePage = ({ setActiveRoute }: StagePageProps) => {
             setStrips(strips)
             wsClient.removeEventHandler(handlerIDConfig);
         })
+
+        const handlerIDEffekts = wsClient.addEventHandler(ReturnType.DATA.AVAILABLE_EFFEKTS, topic => {
+            const effekts = Effekt.fromJSONArray(topic.message);
+            setAvailableEffekts(effekts);
+            wsClient.removeEventHandler(handlerIDEffekts);
+        })
+        wsClient.send("data.get.availableEffekts",{});
         wsClient.send("wsapi.requestConfig", {});
     }, [])
 
@@ -48,17 +61,17 @@ export const StagePage = ({ setActiveRoute }: StagePageProps) => {
     }
 
     return (<div style={{
-        padding: "10px"
+        // padding: "10px"
     }}>
         <Grid container spacing={2} rowSpacing={2} columnSpacing={2}>
             {activeWidget && <Grid item xs={3}>
                 {getWidget()}
             </Grid>}
             <Grid item xs={(activeWidget ? 9 : 12)}>
-                <ButtonGrid strips={strips} board={activeBoard} />
+                {subRoute === "grid" && <ButtonGrid strips={strips} board={activeBoard} />}
+                {subRoute === "jam" && <Jamboard availableEffekts={availableEffekts} strips={strips} />}
             </Grid>
         </Grid>
-
-        <StageToolbar activeWidget={activeWidget} setActiveWidget={setActiveWidget} activeBoard={activeBoard} setActiveRoute={setActiveRoute} setActiveBoard={setActiveBoard} availableBoards={availableBoards} />
+        <StageToolbar subRoute={subRoute} setSubRoute={setSubRoute} activeWidget={activeWidget} setActiveWidget={setActiveWidget} activeBoard={activeBoard} setActiveRoute={setActiveRoute} setActiveBoard={setActiveBoard} availableBoards={availableBoards} />
     </div>)
 }
