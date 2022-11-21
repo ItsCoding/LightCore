@@ -8,7 +8,8 @@ import TuneIcon from '@mui/icons-material/Tune';
 import React from "react";
 import { Board } from "../../types/Board";
 import PianoIcon from '@mui/icons-material/Piano';
-import { getEffektSetMode, getHoldToActivate, setEffektSetMode, setHoldToActivate } from "../../system/JamboardCrossHandler";
+import { getEffektSetMode, getHoldToActivate, setEffektSetMode, setHoldToActivate, setOptionKey } from "../../system/JamboardCrossHandler";
+import { TouchButton } from "./Jamboard/TouchButton";
 export type StageToolbarProps = {
     setActiveRoute: React.Dispatch<React.SetStateAction<string>>;
     availableBoards: Array<Board>;
@@ -89,6 +90,7 @@ export const StageToolbar = ({ setSubRoute, subRoute, activeWidget, setActiveWid
                             <FormGroup>
                                 <FormControlLabel control={<Switch defaultChecked={getHoldToActivate()} onChange={(e) => setHoldToActivate(e.target.checked)} />} label="Hold to activate" />
                             </FormGroup>
+                            <TouchButton onInteractEnd={() => setOptionKey(false)} onInteract={() => setOptionKey(true)} fullWidth={false} color="secondary" variant="outlined" title={"OPTION"} />
                         </>}
                     </Toolbar>
                 </Grid>

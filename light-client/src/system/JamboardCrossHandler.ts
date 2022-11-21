@@ -3,6 +3,7 @@ import { Effekt } from "../types/Effekt";
 let effektSetMode: "SET" | "ADD" = "ADD";
 let holdToActivate = false;
 let modKey = false;
+let optionKey = false;
 
 export const setEffektSetMode = (mode: "SET" | "ADD") => {
     effektSetMode = mode;
@@ -37,4 +38,12 @@ export const setModKey = (value: boolean) => {
 
 export const getModKey = () => {
     return modKey;
+}
+
+export const setOptionKey = (value: boolean) => {
+    optionKey = value;
+}
+
+export const getOptionKey = () => {
+    return optionKey;
 }
