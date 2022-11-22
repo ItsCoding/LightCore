@@ -65,7 +65,10 @@ export const StagePage = ({ setActiveRoute }: StagePageProps) => {
         // padding: "10px"
     }}>
         <Grid container spacing={2} rowSpacing={2} columnSpacing={2}>
-            {activeWidget && <Grid item xs={3}>
+            {activeWidget && <Grid item xs={3} sx={{
+                overflow: "auto",
+                height: "95vh",
+            }}>
                 {getWidget()}
             </Grid>}
             <Grid item xs={(activeWidget ? 9 : 12)}>

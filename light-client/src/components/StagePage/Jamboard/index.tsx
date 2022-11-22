@@ -36,10 +36,11 @@ type JamRowProps = {
     effektGroups: {
         [key: string]: Effekt[];
     };
+    openOptionSelect: (key: number) => void;
 }
 
 
-const JamRow = ({ effektGroups, index, strip, changeRowState, jamRowState, masterEffektGroups }: JamRowProps) => {
+const JamRow = ({ effektGroups, index, strip, changeRowState, jamRowState, masterEffektGroups, openOptionSelect }: JamRowProps) => {
     const wsClient = WebSocketClient.getInstance();
     const randomizeEffekts = () => {
         const newButtons = jamRowState.buttons;
@@ -109,10 +110,11 @@ const JamRow = ({ effektGroups, index, strip, changeRowState, jamRowState, maste
                 changeRowState({ ...jamRowState, buttons: newButtons })
                 break;
             case !modKey && optionKey:
-                const newButtonsActivate = jamRowState.buttons;
-                //switch holdOnActivate
-                newButtonsActivate[key].holdToActivate = !newButtonsActivate[key].holdToActivate;
-                changeRowState({ ...jamRowState, buttons: newButtonsActivate })
+                // const newButtonsActivate = jamRowState.buttons;
+                // //switch holdOnActivate
+                // newButtonsActivate[key].holdToActivate = !newButtonsActivate[key].holdToActivate;
+                // changeRowState({ ...jamRowState, buttons: newButtonsActivate })
+                openOptionSelect(key);
                 break;
             default:
                 console.log("Spawn Effekt")
@@ -186,7 +188,7 @@ const JamRow = ({ effektGroups, index, strip, changeRowState, jamRowState, maste
             marginLeft: index === 0 ? "10px !important" : null,
         }}>
 
-            <Typography variant="h5" color="text.secondary">
+            <Typography variant="caption" color="text.secondary">
                 {strip.position}
             </Typography>
             {Array(countOfEffektGroups).fill(0).map((_, i) =>
@@ -395,23 +397,23 @@ const JamRowMaster = ({ clearAllEffekts, changeRowState, jamRowState, masterEffe
 
     return (
         <>
-            <Typography variant="h5" color="text.secondary">
-                Master
-            </Typography>
             {Array(countOfEffektGroups).fill(0).map((_, i) =>
-                <TouchButton
-                    onInteractEnd={() => onButtonInteractEnd(i)}
-                    onInteract={() => onButtonInteract(i)}
-                    sx={{
-                        height: "6vh",
-                        marginBottom: 2,
-                        fontSize: 9.5,
-                        backgroundColor: getButtonColor(i),
-                        "&:hover": {
-                            backgroundColor: getButtonHoverColor(i)
-                        },
-                    }}
-                    title={jamRowState.buttons[i].effekt.name} />
+                <>
+                    <Typography key={i} variant="caption" style={{ color: "white", textAlign: "center" }}>{masterEffektGroups[i].toLocaleUpperCase()}</Typography>
+                    <TouchButton
+                        onInteractEnd={() => onButtonInteractEnd(i)}
+                        onInteract={() => onButtonInteract(i)}
+                        sx={{
+                            height: "6vh",
+                            // marginBottom: 2,
+                            fontSize: 9.5,
+                            backgroundColor: getButtonColor(i),
+                            "&:hover": {
+                                backgroundColor: getButtonHoverColor(i)
+                            },
+                        }}
+                        title={jamRowState.buttons[i].effekt.name} />
+                </>
             )}
             <Grid container justifyContent={"center"} sx={{
                 marginTop: 2,
@@ -452,6 +454,8 @@ export const Jamboard = ({ strips, availableEffekts }: JamboardProps) => {
     const [masterEffektGroups, setMasterEffektGroups] = useState<MasteEffektDict>({})
     const [jamRowStates, setJamRowStates] = useState<{ [key: number | string]: JamRowState }>({})
     const [openMasterModal, setOpenMasterModal] = useState(-1);
+    const [openRowIdKey, setOpenRowIdKey] = useState({ rowId: -1, key: -1 });
+
     const changeRowState = (stripPosition: number | string, newState: JamRowState) => {
         setJamRowStates({ ...jamRowStates, [stripPosition]: newState })
     }
@@ -472,6 +476,12 @@ export const Jamboard = ({ strips, availableEffekts }: JamboardProps) => {
         setOpenMasterModal(key);
     }
 
+    const openRowChooser = (key: number, rowID: number) => {
+        setOpenRowIdKey({
+            rowId: rowID,
+            key: key
+        });
+    }
 
 
     const initializeJamRowStates = (masterEffektGrp: MasteEffektDict) => {
@@ -543,6 +553,25 @@ export const Jamboard = ({ strips, availableEffekts }: JamboardProps) => {
         setJamRowStates({ ...newJamStates });
     }
 
+    const getEffektsForRow = () => {
+        if (openRowIdKey.rowId === -1) return [];
+        const effektGroupKey = masterEffektGroups[openRowIdKey.key];
+        return effektGroups[effektGroupKey];
+    }
+
+    const onEffektSelection = useCallback((effekt: Effekt) => {
+        const newJamStates = jamRowStates;
+        newJamStates[openRowIdKey.rowId].buttons[openRowIdKey.key].effekt = effekt;
+        setJamRowStates({ ...newJamStates });
+        setOpenRowIdKey({ rowId: -1, key: -1 });
+    }, [jamRowStates, openRowIdKey])
+
+    const changeBtnHoldToActivate = useCallback((state: boolean) => {
+        const newJamStates = jamRowStates;
+        newJamStates[openRowIdKey.rowId].buttons[openRowIdKey.key].holdToActivate = state;
+        setJamRowStates({ ...newJamStates });
+    }, [jamRowStates, openRowIdKey])
+
     return (
         <>
             <Modal
@@ -574,10 +603,39 @@ export const Jamboard = ({ strips, availableEffekts }: JamboardProps) => {
                     </FormGroup>
                 </Box>
             </Modal>
+            <Modal
+                open={openRowIdKey.rowId >= 0}
+                onClose={() => setOpenRowIdKey({ rowId: -1, key: -1 })}
+            // aria-labelledby="modal-modal-title"
+            // aria-describedby="modal-modal-description"
+            >
+                <Box sx={style}>
+                    <List>
+                        {getEffektsForRow().map((eff) => (
+                            <ListItem disablePadding>
+                                <ListItemButton
+                                    onClick={() => onEffektSelection(eff)}
+                                    sx={{
+                                        backgroundColor: jamRowStates[openRowIdKey.rowId].buttons[openRowIdKey.key].effekt.effektSystemName === eff.effektSystemName ? "rgb(2, 45, 97,0.4)" : null
+                                    }}>
+                                    <ListItemText primary={eff.name} />
+                                </ListItemButton>
+                            </ListItem>
+                        ))}
+                    </List>
+                    <Divider style={{ borderColor: "rgba(255, 255, 255, 0.12)" }} />
+                    <FormGroup sx={{
+                        paddingLeft: 2,
+                        paddingBottom: 1
+                    }}>
+                        <FormControlLabel control={<Switch onChange={(e, check) => changeBtnHoldToActivate(check)} checked={jamRowStates[openRowIdKey.rowId]?.buttons[openRowIdKey.key]?.holdToActivate} />} label="Hold to activate" />
+                    </FormGroup>
+                </Box>
+            </Modal>
             {Object.keys(jamRowStates).length > 0 && <Grid container columnSpacing={2}>
                 {strips.map((strip, i) => {
                     return (
-                        <JamRow effektGroups={effektGroups} index={i} jamRowState={jamRowStates[strip.index]} changeRowState={(state: JamRowState) => changeRowState(strip.index, state)} masterEffektGroups={masterEffektGroups} key={i} strip={strip} />
+                        <JamRow openOptionSelect={(key: number) => { openRowChooser(key, strip.index) }} effektGroups={effektGroups} index={i} jamRowState={jamRowStates[strip.index]} changeRowState={(state: JamRowState) => changeRowState(strip.index, state)} masterEffektGroups={masterEffektGroups} key={i} strip={strip} />
                     )
                 })}
                 <Grid item xs />
