@@ -261,7 +261,7 @@ class Visualization:
                 self.prev_fps_update = time.time()
                 if config.DEBUG_LOG:
                     try:
-                        print("Led time: " + str(round((endLed - startLed) * 1000,2)) + "ms | Effekt time: " + str(round((endLed - start) * 1000,2)) + "ms | Record Time: " + str(round(recordTime * 1000)) + "ms | FPS: " + str(round(1 / (endLed - startLed + end - start + recordTime),2)) + ' | Real FPS {:.0f} / {:.0f}'.format(fps, config.FPS))
+                        print("Led time: " + str(round((endLed - startLed) * 1000,2)) + "ms | Effekt time: " + str(round((endLed - start) * 1000,2)) + "ms | Record Time: " + str(round(recordTime * 1000)) + "ms | Rendering FPS: " + str(round(1 / (endLed - startLed + end - start + recordTime),2)) + ' | Output FPS {:.0f} / {:.0f}'.format(fps, config.FPS))
                     except:
                         let = "Error"
 
