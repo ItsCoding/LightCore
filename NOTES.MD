@@ -1,0 +1,1 @@
+5m Strip : A8:48:FA:DC:94:A3

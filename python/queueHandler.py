@@ -48,7 +48,9 @@ def handleQueue(queue2Thread,queue2Parent,vis):
     while not queue2Thread.empty():
             incommingData = queue2Thread.get()
             msg = json.loads(incommingData)
+            
             topicType = msg["type"]
+            print("TOPIC", topicType)
             data = msg["message"]
             # print("Got QueueTask: ", msg)
             if topicType == "light.random.next":
