@@ -25,6 +25,7 @@ export const StagePage = ({ setActiveRoute }: StagePageProps) => {
     const [strips, setStrips] = useState<LedStrip[]>([]);
     const [subRoute, setSubRoute] = useState<string>("grid");
     const [availableEffekts, setAvailableEffekts] = useState<Array<Effekt>>([]);
+    const [activeJamBoardIndex, setActiveJamBoardIndex] = useState<number>(1);
 
     useEffect(() => {
         initEvents(setAvailableBoards, setActiveBoard)
@@ -42,7 +43,7 @@ export const StagePage = ({ setActiveRoute }: StagePageProps) => {
             setAvailableEffekts(effekts);
             wsClient.removeEventHandler(handlerIDEffekts);
         })
-        wsClient.send("data.get.availableEffekts",{});
+        wsClient.send("data.get.availableEffekts", {});
         wsClient.send("wsapi.requestConfig", {});
     }, [])
 
@@ -73,9 +74,9 @@ export const StagePage = ({ setActiveRoute }: StagePageProps) => {
             </Grid>}
             <Grid item xs={(activeWidget ? 9 : 12)}>
                 {subRoute === "grid" && <ButtonGrid strips={strips} board={activeBoard} />}
-                {subRoute === "jam" && <Jamboard availableEffekts={availableEffekts} strips={strips} />}
+                {subRoute === "jam" && <Jamboard activeJamBoardIndex={activeJamBoardIndex} setActiveJamBoardIndex={setActiveJamBoardIndex} availableEffekts={availableEffekts} strips={strips} />}
             </Grid>
         </Grid>
-        <StageToolbar subRoute={subRoute} setSubRoute={setSubRoute} activeWidget={activeWidget} setActiveWidget={setActiveWidget} activeBoard={activeBoard} setActiveRoute={setActiveRoute} setActiveBoard={setActiveBoard} availableBoards={availableBoards} />
+        <StageToolbar key="stage-toolbar" activeJamBoardIndex={activeJamBoardIndex} setActiveJamBoardIndex={setActiveJamBoardIndex} subRoute={subRoute} setSubRoute={setSubRoute} activeWidget={activeWidget} setActiveWidget={setActiveWidget} activeBoard={activeBoard} setActiveRoute={setActiveRoute} setActiveBoard={setActiveBoard} availableBoards={availableBoards} />
     </div>)
 }

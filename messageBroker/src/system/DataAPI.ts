@@ -14,8 +14,8 @@ export class DataAPI {
     }
 
     public async connect() {
-       await this.db.initialize()
-       console.log("💾 Database connected");
+        await this.db.initialize()
+        console.log("💾 Database connected");
     }
 
     public async getKeyValue(key: string) {
