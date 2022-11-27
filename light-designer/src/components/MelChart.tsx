@@ -57,7 +57,7 @@ export const MelChart = () => {
         },
         {
             label: "Beat - Low",
-            borderDash: [10,5],
+            borderDash: [10, 5],
             data: [],
             backgroundColor: 'rgba(0, 99, 255, 0.4)',
             borderColor: 'rgba(0, 99, 255, 0.4)',
@@ -65,7 +65,7 @@ export const MelChart = () => {
         },
         {
             label: "Beat - Mid",
-            borderDash: [10,5],
+            borderDash: [10, 5],
             data: [],
             backgroundColor: 'rgba(0, 255, 50, 0.4)',
             borderColor: 'rgba(0, 255, 50, 0.4)',
@@ -73,7 +73,7 @@ export const MelChart = () => {
         },
         {
             label: "Beat - High",
-            borderDash: [10,5],
+            borderDash: [10, 5],
             data: [],
             backgroundColor: 'rgba(255, 10, 0, 0.4)',
             borderColor: 'rgba(255, 10, 0, 0.4)',
@@ -136,13 +136,13 @@ export const MelChart = () => {
         } = event;
         const check = typeof value === 'string' ? value.split(',') : value
         if (Array.isArray(check) ? value.includes("ALL") : value === "ALL") {
+            wsClient.send("beat.detectFreq", ["ALL"])
             setSelectedFreqs(["ALL"])
-            wsClient.send("beat.useFreq", "ALL")
         } else {
+            wsClient.send("beat.detectFreq", typeof value === 'string' ? value.split(',') : value)
             setSelectedFreqs(
                 typeof value === 'string' ? value.split(',') : value,
             );
-            wsClient.send("beat.useFreq", typeof value === 'string' ? value.split(',') : value)
         }
 
     };

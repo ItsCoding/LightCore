@@ -51,9 +51,9 @@ def _update_virtual(composing,y,beatChange):
         frame = composing[key].getLEDS()
         ledStripType = config.COLOR_CALIBRATION_ASSIGNMENTS[key]
         ledCalibration = config.cfg["colorCalibration"][ledStripType]
-        frame[0] = frame[0] * ledCalibration[0]
-        frame[1] = frame[1] * ledCalibration[1]
-        frame[2] = frame[2] * ledCalibration[2]
+        frame[0] = frame[0] * ledCalibration[0] * (config.cfg["brightness"] / 100) * (config.cfg["stripBrightness"][key] / 100)
+        frame[1] = frame[1] * ledCalibration[1] * (config.cfg["brightness"] / 100) * (config.cfg["stripBrightness"][key] / 100)
+        frame[2] = frame[2] * ledCalibration[2] * (config.cfg["brightness"] / 100) * (config.cfg["stripBrightness"][key] / 100)
         frame = np.clip(frame, 0, 255).astype(int)
         # frame = _gamma[frame] if config.SOFTWARE_GAMMA_CORRECTION
         frame = np.copy(frame)

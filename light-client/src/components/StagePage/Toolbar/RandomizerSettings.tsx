@@ -5,6 +5,7 @@ import { WebSocketClient } from "../../../system/WebsocketClient";
 import { LightCoreConfig } from "../../../types/LightCoreConfig";
 import { LedStrip } from "../../../types/Strip";
 import { ReturnType } from "../../../types/TopicReturnType";
+import { RandomTypeBtns } from "../../QuickPage/RandomTypeBtns";
 
 const marksBeat = [
     {
@@ -110,6 +111,8 @@ export const RandomizerSettings = ({strips}: {strips: LedStrip[]}) => {
                 ))}
             </Grid>
         </div>
+        <Divider sx={{ borderColor: "rgba(255, 255, 255, 0.12)", marginBottom: 1}} />
+        <RandomTypeBtns />
         <Divider sx={{ borderColor: "rgba(255, 255, 255, 0.12)" }} />
         <div style={{ marginTop: "20px", marginBottom: "20px" }}>
             <Grid container columnSpacing={2} rowSpacing={2} >
@@ -127,8 +130,8 @@ export const RandomizerSettings = ({strips}: {strips: LedStrip[]}) => {
                 ))}
             </Grid>
         </div>
-        <Divider sx={{ borderColor: "rgba(255, 255, 255, 0.12)" }} />
-        <div style={{ marginTop: "20px" }}>
+        <Divider sx={{ borderColor: "rgba(255, 255, 255, 0.12)",marginBottom: 1 }} />
+        <div>
             <Typography gutterBottom>Randomizer wait time</Typography>
             <Slider
                 min={1}

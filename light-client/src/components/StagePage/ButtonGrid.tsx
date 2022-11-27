@@ -68,7 +68,9 @@ export const ButtonGrid = ({ board,strips }: ButtonGridProsp) => {
     }, [board])
     // console.log("IS SX: ", matches)
     return (
-        <Grid container columnSpacing={1} rowSpacing={1}>
+        <Grid sx={{
+            padding: "10px"
+        }} container columnSpacing={1} rowSpacing={1}>
             {
                 amountButtons.map((btn, i) => {
                     const composition = board.elements[i]?.data

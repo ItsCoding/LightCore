@@ -1,8 +1,7 @@
 import config
 import randomizer as rnd
-from tabulate import tabulate
 def syncConfig (vis, incommingConfig):
-
+    print("Parsing config...")
     udpIps = {}
     udpGroups = {}
     udpFrameDividers = {}

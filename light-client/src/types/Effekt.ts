@@ -16,7 +16,7 @@ export class Effekt {
         accessor.get("description", expectString),
         accessor.get("group", expectString),
         accessor.getOptional("groupColor", expectString),
-        accessor.getOptional("beatSensitive", expectBoolean)
+        accessor.getOptional("bpmSensitive", expectBoolean)
     ));
 
     public static readonly fromJSONArray = arrayMapper(Effekt.fromJSON);

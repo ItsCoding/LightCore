@@ -30,7 +30,9 @@ export const findIPsByMac = async () => {
             macs.push(mac.toLowerCase());
         }
     })
-    const allDevices = await find();
+    const allDevices = await find({
+        skipNameResolution: true
+    });
     allDevices.forEach(device => {
         if (macs.includes(device.mac.toLowerCase())) {
             ipsByMac[device.mac.toLowerCase()] = device.ip;
@@ -41,6 +43,14 @@ export const findIPsByMac = async () => {
             }
         }
     });
+
+    Object.keys(stageData.strips).forEach(stripKey => {
+        if(!stageData.strips[stripKey].stripIP || stageData.strips[stripKey].stripIP === ""){
+            console.log(`[${stageData.strips[stripKey].name}] Strip not found in Network, setting to localhost`)
+            stageData.strips[stripKey].stripIP = "127.0.0.1"
+        }
+    })
+
     console.log("🖥  All Devices in Network");
     console.table(allDevices);
     return ipsByMac;
