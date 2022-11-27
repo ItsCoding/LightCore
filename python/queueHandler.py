@@ -119,3 +119,6 @@ def handleQueue(queue2Thread,queue2Parent,vis):
                 randomizer.makeRandomCompositionByType(data["type"])
             elif topicType == "light.random.useLastType":
                 randomizer.useLastRandomizerType = data
+            elif topicType == "beat.useFreq":
+                print("Change Beat to Freq: ", data)
+                vis.listenForBeatType = data

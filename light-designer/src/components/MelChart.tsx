@@ -137,10 +137,12 @@ export const MelChart = () => {
         const check = typeof value === 'string' ? value.split(',') : value
         if (Array.isArray(check) ? value.includes("ALL") : value === "ALL") {
             setSelectedFreqs(["ALL"])
+            wsClient.send("beat.useFreq", "ALL")
         } else {
             setSelectedFreqs(
                 typeof value === 'string' ? value.split(',') : value,
             );
+            wsClient.send("beat.useFreq", typeof value === 'string' ? value.split(',') : value)
         }
 
     };
