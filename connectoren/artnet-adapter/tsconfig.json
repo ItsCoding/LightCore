@@ -11,7 +11,7 @@
   },
   "include": [
     "src",
-    "../light-designer/src/classes/ExportConfig.ts",
-    "../light-client/src/system/WebsocketClient.ts"
+    "../../light-designer/src/classes/ExportConfig.ts",
+    "../../light-client/src/system/WebsocketClient.ts"
   ]
 }

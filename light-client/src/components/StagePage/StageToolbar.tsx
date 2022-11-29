@@ -1,4 +1,4 @@
-import { AppBar, Button, Divider, FormControlLabel, FormGroup, Grid, IconButton, MenuItem, Paper, Popover, Select, Switch, Tab, Tabs, Toolbar, Typography } from "@mui/material"
+import { AppBar, Button, Divider, FormControlLabel, FormGroup, Grid, IconButton, MenuItem, Pagination, Paper, Popover, Select, Switch, Tab, Tabs, Toolbar, Typography } from "@mui/material"
 import { Box } from "@mui/system"
 // import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import PermDataSettingIcon from '@mui/icons-material/PermDataSetting';
@@ -19,9 +19,11 @@ export type StageToolbarProps = {
     activeWidget: string | undefined;
     subRoute: string;
     setSubRoute: React.Dispatch<React.SetStateAction<string>>;
+    activeJamBoardIndex: number;
+    setActiveJamBoardIndex: React.Dispatch<React.SetStateAction<number>>;
 }
 
-export const StageToolbar = ({ setSubRoute, subRoute, activeWidget, setActiveWidget, setActiveRoute, activeBoard, availableBoards, setActiveBoard }: StageToolbarProps) => {
+export const StageToolbar = ({ setSubRoute, subRoute, activeWidget, setActiveWidget, setActiveRoute, activeBoard, availableBoards, setActiveBoard, activeJamBoardIndex, setActiveJamBoardIndex }: StageToolbarProps) => {
 
     const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
 
@@ -90,7 +92,10 @@ export const StageToolbar = ({ setSubRoute, subRoute, activeWidget, setActiveWid
                             <FormGroup>
                                 <FormControlLabel control={<Switch defaultChecked={getHoldToActivate()} onChange={(e) => setHoldToActivate(e.target.checked)} />} label="Hold to activate" />
                             </FormGroup>
+                            <Pagination page={activeJamBoardIndex} onChange={(e, p) => setActiveJamBoardIndex(p)} count={5} />
+                            <Divi />
                             <TouchButton onInteractEnd={() => setOptionKey(false)} onInteract={() => setOptionKey(true)} fullWidth={false} color="secondary" variant="outlined" title={"OPTION"} />
+
                         </>}
                     </Toolbar>
                 </Grid>

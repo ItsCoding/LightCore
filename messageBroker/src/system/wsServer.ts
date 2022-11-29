@@ -20,6 +20,7 @@ export class WebsocketServer {
                     case "wsapi.requestConfig":
                         console.log("📡  Pipeline requested config");
                         this.zeroMQServerOUT.sendMessage(JSON.stringify({ type: "system.config.sync", message: getStageData() }));
+                        console.log("Sent config")
                         break;
                 }
             } else {

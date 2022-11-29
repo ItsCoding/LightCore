@@ -1,4 +1,4 @@
-import { Box, Button, Divider, FormControl, FormControlLabel, FormGroup, Grid, InputLabel, List, ListItem, ListItemButton, ListItemText, MenuItem, Modal, Paper, Select, Slider, Switch, SxProps, Typography } from "@mui/material"
+import { Box, Button, CircularProgress, Divider, FormControl, FormControlLabel, FormGroup, Grid, InputLabel, List, ListItem, ListItemButton, ListItemText, MenuItem, Modal, Paper, Select, Slider, Switch, SxProps, Typography } from "@mui/material"
 import React, { useCallback, useEffect, useState } from "react";
 import { LedStrip } from "../../../types/Strip"
 import { FrequencyRange } from "../../../types/FrequencyRanges"
@@ -9,6 +9,7 @@ import { WebSocketClient } from "../../../system/WebsocketClient";
 import { createUUID } from "../../../system/Utils";
 import { Theme } from "@mui/system";
 import { TouchButton } from "./TouchButton"
+import { ReturnType } from "../../../types/TopicReturnType";
 
 type ButtonState = {
     holdToActivate: boolean;
@@ -444,13 +445,25 @@ const JamRowMaster = ({ clearAllEffekts, changeRowState, jamRowState, masterEffe
 export type JamboardProps = {
     strips: Array<LedStrip>;
     availableEffekts: Array<Effekt>;
+    activeJamBoardIndex: number;
+    setActiveJamBoardIndex: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export type MasteEffektDict = {
     [key: string]: string;
 }
 
-export const Jamboard = ({ strips, availableEffekts }: JamboardProps) => {
+export type JamBoard = {
+    [key: number]: {
+        masterEffektGroups: MasteEffektDict;
+        rowStates: { [key: number | string]: JamRowState };
+    }
+}
+
+export const Jamboard = ({ strips, availableEffekts, activeJamBoardIndex, setActiveJamBoardIndex }: JamboardProps) => {
+    const wsClient = WebSocketClient.getInstance();
+    const [jamBoards, setJamBoards] = useState<JamBoard>({})
+    const [loading, setLoading] = useState(true);
     const [masterEffektGroups, setMasterEffektGroups] = useState<MasteEffektDict>({})
     const [jamRowStates, setJamRowStates] = useState<{ [key: number | string]: JamRowState }>({})
     const [openMasterModal, setOpenMasterModal] = useState(-1);
@@ -458,6 +471,8 @@ export const Jamboard = ({ strips, availableEffekts }: JamboardProps) => {
 
     const changeRowState = (stripPosition: number | string, newState: JamRowState) => {
         setJamRowStates({ ...jamRowStates, [stripPosition]: newState })
+        setJamBoards({ ...jamBoards, [stripPosition]: { masterEffektGroups, rowStates: { ...jamRowStates, [stripPosition]: newState } } })
+        // wsClient.issueKeySet("jampages", JSON.stringify({ ...jamBoards, [stripPosition]: { masterEffektGroups, rowStates: { ...jamRowStates, [stripPosition]: newState } } }));
     }
     const effektGroups = getEffektGroups(availableEffekts)
 
@@ -483,6 +498,27 @@ export const Jamboard = ({ strips, availableEffekts }: JamboardProps) => {
         });
     }
 
+    useEffect(() => {
+        const board = jamBoards[activeJamBoardIndex];
+        if (!loading) {
+            wsClient.issueKeySet("jampages", JSON.stringify(jamBoards));
+        }
+        if (board) {
+            console.log("Found board", board);
+            setMasterEffektGroups(board.masterEffektGroups);
+            setJamRowStates(board.rowStates);
+        } else {
+            console.log("No board found for Index", activeJamBoardIndex);
+            const masterEffektGroups: MasteEffektDict = {}
+            const effektGroupKeys = Object.keys(effektGroups);
+            for (let i = 0; i < countOfEffektGroups; i++) {
+                masterEffektGroups[i] = effektGroupKeys[i]
+            }
+            initializeJamRowStates(masterEffektGroups)
+            setMasterEffektGroups(masterEffektGroups)
+        }
+    }, [activeJamBoardIndex])
+
 
     const initializeJamRowStates = (masterEffektGrp: MasteEffektDict) => {
         const newStates: { [key: number | string]: JamRowState } = {}
@@ -503,19 +539,41 @@ export const Jamboard = ({ strips, availableEffekts }: JamboardProps) => {
             }
         })
         setJamRowStates(newStates)
+        const newBoard = { ...jamBoards }
+        newBoard[activeJamBoardIndex] = { masterEffektGroups: masterEffektGrp, rowStates: newStates }
+        setJamBoards(newBoard);
+        // wsClient.issueKeySet("jampages", JSON.stringify(newBoard));
     }
 
     useEffect(() => {
         if (availableEffekts.length > 0) {
             console.log(effektGroups)
+            const boardsHandler = wsClient.addEventHandler(ReturnType.WSAPI.GET_KEY_VALUE, (data) => {
+                console.log("BoardData", data, Object.keys(JSON.parse(data.message.value)).length)
+                if (data.message.key === "jampages") {
+                    if (data.message.value && Object.keys(JSON.parse(data.message.value)).length > 0) {
+                        const boards = JSON.parse(data.message.value) as JamBoard
+                        console.log("Board Parsed", boards)
 
-            const masterEffektGroups: MasteEffektDict = {}
-            const effektGroupKeys = Object.keys(effektGroups);
-            for (let i = 0; i < countOfEffektGroups; i++) {
-                masterEffektGroups[i] = effektGroupKeys[i]
-            }
-            initializeJamRowStates(masterEffektGroups)
-            setMasterEffektGroups(masterEffektGroups)
+                        setMasterEffektGroups(boards[activeJamBoardIndex].masterEffektGroups);
+                        setJamRowStates(boards[activeJamBoardIndex].rowStates);
+                        setJamBoards(boards);
+                    } else {
+                        console.log("Generating new Board")
+                        const masterEffektGroups: MasteEffektDict = {}
+                        const effektGroupKeys = Object.keys(effektGroups);
+                        for (let i = 0; i < countOfEffektGroups; i++) {
+                            masterEffektGroups[i] = effektGroupKeys[i]
+                        }
+                        initializeJamRowStates(masterEffektGroups)
+                        setMasterEffektGroups(masterEffektGroups)
+                    }
+                    setLoading(false);
+                }
+                wsClient.removeEventHandler(boardsHandler);
+            });
+            wsClient.issueKeyGet("jampages");
+            console.log("Requesting jamboards")
         }
     }, [])
 
@@ -536,11 +594,15 @@ export const Jamboard = ({ strips, availableEffekts }: JamboardProps) => {
         newMasterEffektGroups[openMasterModal] = effektGroupKey;
         setMasterEffektGroups({ ...newMasterEffektGroups });
 
-
         const newJamStates = jamRowStates;
         Object.keys(newJamStates).forEach((key) => {
             newJamStates[key].buttons[openMasterModal].effekt = _.sample(effektGroups[effektGroupKey])!;
         })
+        const newBoards = { ...jamBoards };
+        newBoards[activeJamBoardIndex].masterEffektGroups = newMasterEffektGroups;
+        newBoards[activeJamBoardIndex].rowStates = newJamStates;
+        setJamBoards(newBoards)
+        wsClient.issueKeySet("jampages", JSON.stringify(newBoards));
         setJamRowStates({ ...newJamStates });
         setOpenMasterModal(-1);
     }, [openMasterModal])
@@ -632,17 +694,29 @@ export const Jamboard = ({ strips, availableEffekts }: JamboardProps) => {
                     </FormGroup>
                 </Box>
             </Modal>
-            {Object.keys(jamRowStates).length > 0 && <Grid container columnSpacing={2}>
-                {strips.map((strip, i) => {
-                    return (
-                        <JamRow openOptionSelect={(key: number) => { openRowChooser(key, strip.index) }} effektGroups={effektGroups} index={i} jamRowState={jamRowStates[strip.index]} changeRowState={(state: JamRowState) => changeRowState(strip.index, state)} masterEffektGroups={masterEffektGroups} key={i} strip={strip} />
-                    )
-                })}
-                <Grid item xs />
-                <Grid item xs={1.5} sx={{ backgroundColor: "#222222", padding: "10px" }}>
-                    <JamRowMaster openMasterChooser={openMasterChooser} clearAllEffekts={() => clearAllEffekts()} strips={strips} effektGroups={effektGroups} jamRowState={jamRowStates["MASTER"]} changeRowState={(state: JamRowState) => changeRowState("MASTER", state)} masterEffektGroups={masterEffektGroups} />
-                </Grid>
-            </Grid>}
+            {loading ? <>
+
+                <div style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "80vh"
+                }}>
+                    <CircularProgress size="10rem" />
+                </div>
+            </> : <>
+                {Object.keys(jamRowStates).length > 0 && <Grid container columnSpacing={2}>
+                    {strips.map((strip, i) => {
+                        return (
+                            <JamRow openOptionSelect={(key: number) => { openRowChooser(key, strip.index) }} effektGroups={effektGroups} index={i} jamRowState={jamRowStates[strip.index]} changeRowState={(state: JamRowState) => changeRowState(strip.index, state)} masterEffektGroups={masterEffektGroups} key={i} strip={strip} />
+                        )
+                    })}
+                    <Grid item xs />
+                    <Grid item xs={1.5} sx={{ backgroundColor: "#222222", padding: "10px" }}>
+                        <JamRowMaster openMasterChooser={openMasterChooser} clearAllEffekts={() => clearAllEffekts()} strips={strips} effektGroups={effektGroups} jamRowState={jamRowStates["MASTER"]} changeRowState={(state: JamRowState) => changeRowState("MASTER", state)} masterEffektGroups={masterEffektGroups} />
+                    </Grid>
+                </Grid>}
+            </>}
         </>
     )
 }
