@@ -254,6 +254,12 @@ class Visualization:
         led.update(composerOutput,self.queue2Parent,mel,self.hasBeatChanged)
         endLed = time.time()
         
+        if config.LIMIT_FPS:
+            sumExecTime = (end - start) + (endLed - startLed) + recordTime
+            sleepTime = 1.0 / (config.FPS + 30) - sumExecTime
+            if sleepTime > 0:
+                time.sleep(sleepTime)
+            # print("SUM EXEC TIME: " + str(sumExecTime), "SLEEP TIME: " + str(sleepTime))
 
         if config.DISPLAY_FPS:
             fps = self.frames_per_second()

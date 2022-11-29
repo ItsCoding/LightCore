@@ -20,7 +20,7 @@ class visualize_run:
             "name": "Running light",
             "description": "A effekt that runs across the strip and changes color on beat",
             "effektSystemName": "visualize_run",
-            "group": "beat-run",
+            "group": "moving",
             "groupColor": "#FFFEE",
             "supports": ["color","speed"]
         }
@@ -73,9 +73,9 @@ class visualize_run:
         if self.runPosition == 0 and self.startRunPosition == 0:
             tempP[:,:] = 0
         else:
-            tempP[0, self.startRunPosition:self.runPosition] = int(self.colors[0][0] * 0.3)
-            tempP[1, self.startRunPosition:self.runPosition] = int(self.colors[0][1] * 0.3)
-            tempP[2, self.startRunPosition:self.runPosition] = int(self.colors[0][2] * 0.3)
+            tempP[0, self.startRunPosition:self.runPosition] = int(self.colors[0][0] * 0.25)
+            tempP[1, self.startRunPosition:self.runPosition] = int(self.colors[0][1] * 0.25)
+            tempP[2, self.startRunPosition:self.runPosition] = int(self.colors[0][2] * 0.25)
 
         for i in loopRange:
             i = i + self.offset

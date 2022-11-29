@@ -5,9 +5,12 @@ export class DataAPI {
     private db: DataSource;
 
     constructor() {
+        // get file path from cli args
+        const filePath = process.argv[2] || "./db.sqlite";
+
         this.db = new DataSource({
             type: "sqlite",
-            database: "db.sqlite",
+            database: filePath,
             entities: [KeyValue],
             synchronize: true
         });

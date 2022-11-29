@@ -19,7 +19,6 @@ audio input and control the LED strip directly.
 to control the leds connected to it.1
 """
 DEBUG_LOG = True
-
 if DEVICE == "esp" or DEVICE == "espv":
     UDP_IPS = { # editable in designer
        
@@ -92,6 +91,7 @@ MIC_RATE = 44100
 """Sampling frequency of the microphone in Hz"""
 
 FPS = 120 # editable in designer
+LIMIT_FPS = True
 FRAMES_PER_BUFFER = int(MIC_RATE / FPS)
 """Desired refresh rate of the visualization (frames per second)
 

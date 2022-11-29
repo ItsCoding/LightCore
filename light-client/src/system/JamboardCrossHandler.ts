@@ -36,6 +36,7 @@ export const getEffektGroups = (availableEffekts: Effekt[]) => {
     effektGroups["Beat-Based"] = allBeatEffekte;
     effektGroups["FFT-Based"] = allFFTBased;
     effektGroups["Color-Based"] = allColorEffekts;
+    effektGroups["All"] = availableEffekts;
     return effektGroups;
 }
 
