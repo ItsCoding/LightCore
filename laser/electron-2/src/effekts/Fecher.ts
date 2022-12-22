@@ -3,7 +3,7 @@ import { Scene, Rect, Path, Line } from '@laser-dac/draw';
 
 
 export class Fecher {
-    private partsArray: any[] = []
+    private partsArray = []
     constructor(
         public scene: Scene,
         public parts: number,

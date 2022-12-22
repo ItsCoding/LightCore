@@ -1,0 +1,3 @@
+import { startReact } from ".";
+
+startReact();
