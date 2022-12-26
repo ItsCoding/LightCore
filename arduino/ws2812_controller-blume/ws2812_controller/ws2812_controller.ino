@@ -17,9 +17,9 @@
 #else
 #error "This is not a ESP8266 or ESP32!"
 #endif
-#define PIN 25
+#define PIN 4
 // Set to the number of LEDs in your LED strip
-#define NUM_LEDS 892
+#define NUM_LEDS 100
 // Maximum number of packets to hold in the buffer. Don't change this.
 #define BUFFER_LEN 1350
 // Toggles FPS output (1 = print FPS over serial, 0 = disable output)
@@ -45,7 +45,53 @@ WiFiUDP port;
 //IPAddress gateway(10, 40, 0, 1);
 //IPAddress subnet(255, 255, 255, 0);
 //Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUM_LEDS, PIN, NEO_GRB + NEO_KHZ800);
-NeoPixelBus<NeoGrbFeature, NeoEsp32I2s1800KbpsMethod> strip(NUM_LEDS, PIN);
+NeoPixelBus<NeoGrbFeature, NeoEsp32Rmt0800KbpsMethod > strip(NUM_LEDS, PIN);
+
+
+xSemaphoreHandle semaphore = NULL;
+TaskHandle_t commit_task;
+
+#if PRINT_FPS
+    uint16_t fpsCounter = 0;
+    uint32_t secondTimer = 0;
+#endif
+
+
+void commitTaskProcedure(void *arg)
+{
+    while (true)
+    {
+        while (ulTaskNotifyTake(pdTRUE, portMAX_DELAY) != 1)
+            ;
+        strip.Show();
+        while (!strip.CanShow())
+            ;
+        xSemaphoreGive(semaphore);
+    }
+}
+
+void commit()
+{
+    xTaskNotifyGive(commit_task);
+    while (xSemaphoreTake(semaphore, portMAX_DELAY) != pdTRUE)
+        ;
+}
+
+void init_task()
+{
+    commit_task = NULL;
+    semaphore = xSemaphoreCreateBinary();
+
+    xTaskCreatePinnedToCore(
+        commitTaskProcedure,         /* Task function. */
+        "ShowRunnerTask",            /* name of task. */
+        10000,                       /* Stack size of task */
+        NULL,                        /* parameter of the task */
+        4,                           /* priority of the task */
+        &commit_task,                /* Task handle to keep track of created task */
+        1);                          /* pin task to core core_id */
+}
+
 
 void setup() {
     Serial.begin(115200);
@@ -65,17 +111,17 @@ void setup() {
     Serial.println(ssid);
     Serial.print("IP address: ");
     Serial.println(WiFi.localIP());
-    
+    Serial.print("MAC: ");
+    Serial.println(WiFi.macAddress());
+    Serial.print("Device Name: ");
+    Serial.println(nodeName);
     port.begin(localPort);
     Serial.println("Port open");
     strip.Begin();
     Serial.println("Strip open");
+    //init_task();
 }
 
-#if PRINT_FPS
-    uint16_t fpsCounter = 0;
-    uint32_t secondTimer = 0;
-#endif
 
 void loop() {
     int packetSize = port.parsePacket();
@@ -87,20 +133,20 @@ void loop() {
             offset = packetBuffer[i];
             N = packetBuffer[i+1];      
             NC = (uint32_t)N + (uint32_t)1 + (uint32_t)offset * (uint32_t)256;
-            strip.SetPixelColor(NC, RgbColor((uint8_t)packetBuffer[i+2],(uint8_t)packetBuffer[i+3], (uint8_t)packetBuffer[i+4]));
+            strip.SetPixelColor(NC, RgbColor((uint8_t)packetBuffer[i+2],(uint8_t)packetBuffer[i+4], (uint8_t)packetBuffer[i+3]));
 
         }
+         #if PRINT_FPS
+            if (millis() - secondTimer >= 1000U) {
+                secondTimer = millis();
+                Serial.printf("FPS: %d\n", fpsCounter);
+                fpsCounter = 0;
+            }   
+        #endif
         strip.Show();
         #if PRINT_FPS
             fpsCounter++;
             Serial.print("/");//Monitors connection(shows jumps/jitters in packets)
         #endif
     }
-    #if PRINT_FPS
-        if (millis() - secondTimer >= 1000U) {
-            secondTimer = millis();
-            Serial.printf("FPS: %d\n", fpsCounter);
-            fpsCounter = 0;
-        }   
-    #endif
 }

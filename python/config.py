@@ -6,7 +6,7 @@ import os
 
 
 # DEVICE = 'esp8266'
-DEVICE = "virtual" # editable in designer
+DEVICE = "espv" # editable in designer
 """Device used to control LED strip. Must be 'esp', 'espv' or 'virtual'
 
 'esp8266' means that you are using an ESP8266 module to control the LED strip

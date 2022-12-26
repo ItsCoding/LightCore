@@ -6,6 +6,7 @@ import config
 import json
 import socket
 from websocket import create_connection
+import time 
 
 # ESP8266 uses WiFi communication
 if config.DEVICE == "virtual" or config.DEVICE == "espv":
@@ -132,8 +133,11 @@ def _update_esp8266(composing):
                         m.append(int(capAt255(p[2][i] * ledCalibration[2] * brightness * stripBrightness)))  # Pixel blue value
                     # print(len(m))
                     try:
+                        epochTime = int(time.time())
+                        bytes_val = epochTime.to_bytes(4, 'big')
+                        bytes_val += bytes(m)
                         # print(m)
-                        mx = bytearray(m)
+                        mx = bytearray(bytes_val)
                         _sock.sendto(mx, (config.UDP_IPS[stripIndex], config.UDP_PORT))
                     except Exception as e:
                         if e != lastEspError:

@@ -179,7 +179,6 @@ class Visualization:
 
 
     def microphone_update(self,audio_samples,recordTime):
-       
         # time.sleep(0.01)
         self.hasBeatChanged = False
         self.hasBeatChangedManual = False
