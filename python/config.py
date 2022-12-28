@@ -77,6 +77,9 @@ BRIGHTNESS = 100
 USE_GUI = False
 """Whether or not to display a PyQtGraph GUI plot of visualization"""
 
+# Wheter to record 5 sec samples of the audio input. It will be saved to file.wav
+RECORD_SAMPLES = False
+
 DISPLAY_FPS = True
 DISPLAY_BPM = False
 """Whether to display the FPS when running (can reduce performance)"""
@@ -90,7 +93,7 @@ GAMMA_TABLE_PATH = os.path.join(os.path.dirname(__file__), "gamma_table.npy")
 MIC_RATE = 44100
 """Sampling frequency of the microphone in Hz"""
 
-FPS = 120 # editable in designer
+FPS = 60 # editable in designer
 LIMIT_FPS = True
 FRAMES_PER_BUFFER = int(MIC_RATE / FPS)
 """Desired refresh rate of the visualization (frames per second)

@@ -27,7 +27,7 @@ class visualize_stars:
         
         # Get ten random positions between 0 and stripSize
         if len(self.activeStars) < 10:
-            for i in range(0,random.randint(4,stripSize // 10)):
+            for i in range(0,random.randint(2,stripSize // 10)):
                 pos = random.randint(0,stripSize-1)
                 self.activeStars[pos] = 0
         # Make a star at each position
