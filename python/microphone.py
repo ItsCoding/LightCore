@@ -2,13 +2,39 @@ import time
 import numpy as np
 import pyaudio
 import config
+import wave
 
+p = pyaudio.PyAudio()
+FORMAT = pyaudio.paInt16
+RATE = config.MIC_RATE
+CHUNK = 1024
+RECORD_SECONDS = 5
+WAVE_OUTPUT_FILENAME = "file.wav"
+
+audioStream = None
 threa = None
+audioFrames = []
+frames_per_buffer = int(config.MIC_RATE / config.FPS)
+
+
+def saveAudioData():
+    global frameCount
+    global audioFrames
+    waveFile = wave.open(WAVE_OUTPUT_FILENAME, 'wb')
+    waveFile.setnchannels(1)
+    waveFile.setsampwidth(p.get_sample_size(FORMAT))
+    waveFile.setframerate(config.MIC_RATE)
+    waveFile.writeframes(b''.join(audioFrames))
+    waveFile.close()
+    print("Saved to file")
+
 def start_stream(callback):
     global killMe
-    p = pyaudio.PyAudio()
-    frames_per_buffer = int(config.MIC_RATE / config.FPS)
-    stream = p.open(format=pyaudio.paInt16,
+    global audioFrames
+    global audioStream
+    global frames_per_buffer
+  
+    audioStream = p.open(format=pyaudio.paInt16,
                     channels=1,
                     rate=config.MIC_RATE,
                     input=True,
@@ -18,12 +44,18 @@ def start_stream(callback):
     while True:
         try:
             startTime = time.time()
-            y = np.fromstring(stream.read(frames_per_buffer, exception_on_overflow=False), dtype=np.int16)
+            audioData = audioStream.read(frames_per_buffer, exception_on_overflow=False)
+            if config.RECORD_SAMPLES:
+                audioFrames.append(audioData)
+                if len(audioFrames) > 350:
+                    saveAudioData()
+                    audioFrames = []
+            y = np.fromstring(audioData, dtype=np.int16)
             y = y.astype(np.float32)
-            # print(stream.get_read_available())
+            # print(audioStream.get_read_available())
 
             # crank fps here, runs with 400-600fps on windows
-            # stream.read(800, exception_on_overflow=False)
+            # audioStream.read(800, exception_on_overflow=False)
             endTime = time.time()
             callback(y, endTime - startTime)
         except IOError as e:
@@ -32,8 +64,8 @@ def start_stream(callback):
                 print(e)
                 prev_ovf_time = time.time()
                 print('Audio buffer has overflowed {} times'.format(overflows))
-    stream.stop_stream()
-    stream.close()
+    audioStream.stop_stream()
+    audioStream.close()
     p.terminate()
 
 # def start_stream(callback):

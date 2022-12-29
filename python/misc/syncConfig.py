@@ -87,6 +87,7 @@ def syncConfig (vis, incommingConfig):
             config.STRIP_BRIGHTNESS[i] = 100
     print("\n =======================================")
     print("udpIps", udpIps)
+    print("udpGroups", udpGroups)
     print("udpFrameDividers",udpFrameDividers)
     print("=======================================")
     print("stripLedCountsArray",stripLedCountsArray)
