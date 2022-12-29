@@ -142,9 +142,9 @@ def _update_esp8266(composing):
                     except Exception as e:
                         if e != lastEspError:
                             lastEspError = str(e)
-                            if config.DEBUG_LOG:
-                                print(e)
-                                print("There is something with the ESP connection....")
+                            # if config.DEBUG_LOG:
+                                # print(e)
+                                # print("There is something with the ESP connection....")
             # _prev_pixels = np.copy(p)
             else:
                 for grp in config.UDP_GROUPS[stripIndex]:

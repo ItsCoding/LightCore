@@ -549,7 +549,9 @@ export const Jamboard = ({ strips, availableEffekts, activeJamBoardIndex, setAct
         if (availableEffekts.length > 0) {
             console.log(effektGroups)
             const boardsHandler = wsClient.addEventHandler(ReturnType.WSAPI.GET_KEY_VALUE, (data) => {
-                console.log("BoardData", data, Object.keys(JSON.parse(data.message.value)).length)
+
+                console.log("BoardData", data)
+
                 if (data.message.key === "jampages") {
                     if (data.message.value && Object.keys(JSON.parse(data.message.value)).length > 0) {
                         const boards = JSON.parse(data.message.value) as JamBoard

@@ -22,6 +22,7 @@
 #define BUFFER_LEN 1024
 // Toggles FPS output (1 = print FPS over serial, 0 = disable output)
 #define PRINT_FPS 0
+#define OUT_FPS 120
 
 //NeoPixelBus settings
 // Wifi and socket settings
@@ -35,6 +36,9 @@ uint8_t N = 0;
 uint32_t NC = 0;
 uint8_t offset = 0;
 uint32_t packetArraySize = 0;
+
+uint32_t fpsSleepTime = 1000 / OUT_FPS;
+TaskHandle_t  Core0TaskHnd ;
 CRGB leds[NUM_LEDS];
 
 WiFiUDP port;
@@ -70,7 +74,7 @@ void setup() {
     FastLED.addLeds<NEOPIXEL, PIN>(leds, NUM_LEDS);
     
     port.begin(localPort);
-    
+    xTaskCreatePinnedToCore(readNetworkCommand,"CPU_0",1000,NULL,1,&Core0TaskHnd,0);
     //strip.Begin();
 }
 
@@ -79,8 +83,9 @@ void setup() {
     uint32_t secondTimer = 0;
 #endif
 
-void loop() {
-    int packetSize = port.parsePacket();
+
+void readNetworkCommand() {
+  int packetSize = port.parsePacket();
     if (packetSize) {
         int len = port.read(packetBuffer, BUFFER_LEN);
         packetArraySize = sizeof(packetBuffer);
@@ -96,7 +101,7 @@ void loop() {
             //Serial.print(5);
         }
         //Serial.print("1");
-        FastLED.show();
+        //
         //Serial.print("6 \n");
         #if PRINT_FPS
             fpsCounter++;
@@ -110,4 +115,9 @@ void loop() {
             fpsCounter = 0;
         }   
     #endif
+}
+
+void loop() {
+    FastLED.show();
+    delay(fpsSleepTime);
 }
