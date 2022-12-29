@@ -1,11 +1,13 @@
+#include <ESP32Time.h>
 #include <FastLED.h>
 #include "WiFi.h"
 #include "AsyncUDP.h"
+#include "time.h"
 
 
 #define PIN 4
 // Set to the number of LEDs in your LED strip
-#define NUM_LEDS 100
+#define NUM_LEDS 40
 #define PRINT_FPS 1
 #if PRINT_FPS
     uint16_t fpsCounter = 0;
@@ -14,16 +16,31 @@
 
 TaskHandle_t  Core0TaskHnd ;  
 TaskHandle_t  Core1TaskHnd ; 
-String nodeName = "regenrinne-2";
+String nodeName = "blume-1";
 const char* ssid     = "FakeGigabit";
 const char* password = "Schreib was rein.";
 unsigned int localPort = 7777;
 uint8_t N = 0;
 uint32_t NC = 0;
 uint8_t offset = 0;
+const char* ntpServer = "pool.ntp.org";
+ESP32Time rtc(0);
+
 
 AsyncUDP udp;
 CRGB leds[NUM_LEDS];
+
+unsigned long getTimeByNtp() {
+  time_t now;
+  struct tm timeinfo;
+  if (!getLocalTime(&timeinfo)) {
+    //Serial.println("Failed to obtain time");
+    return(0);
+  }
+  time(&now);
+  return now;
+}
+
 
 void setup() 
 {
@@ -50,6 +67,18 @@ void setup()
    Serial.println(WiFi.macAddress());
    Serial.print("Device Name: ");
    Serial.println(nodeName); 
+
+   configTime(0, 0, ntpServer);
+   rtc.setTime(getTimeByNtp());
+   Serial.print("Epoch: ");
+   Serial.println(rtc.getEpoch());
+   
+
+
+
+
+
+   
    xTaskCreatePinnedToCore(CoreTask0,"CPU_0",1000,NULL,1,&Core0TaskHnd,0);
    //xTaskCreatePinnedToCore(CoreTask1,"CPU_1",1000,NULL,1,&Core0TaskHnd,1);
    if(udp.listen(localPort)) {
@@ -57,25 +86,40 @@ void setup()
         Serial.println(localPort);
         udp.onPacket([](AsyncUDPPacket packet) {
             int len = packet.length();
-            //Serial.println(len);
-            for(int i = 0; i < len; i+=5) {
+            uint8_t * udpData = packet.data();
+            long timestamp = 0;
+            timestamp += udpData[0] << 24;
+            timestamp += udpData[1] << 16;
+            timestamp += udpData[2] << 8;
+            timestamp += udpData[3];
+            if((long)rtc.getEpoch() - timestamp > 1){
+              Serial.println("[Drop Package] PaketTime:");
+              Serial.print(timestamp);
+              Serial.print(" | System Time: ");
+              Serial.print(rtc.getEpoch());
+              Serial.print(" | Delay: ");
+              Serial.println((long)rtc.getEpoch() - timestamp);
+            }else{
+              for(int i = 4; i < len; i+=5) {
                 //packetBuffer[len] = 0;
-                offset = packet.data()[i];
+               
+                offset = udpData[i];
                 N = packet.data()[i+1];      
                 NC = (uint32_t)N + (uint32_t)offset * (uint32_t)256;
                 leds[NC].setRGB((uint8_t)packet.data()[i+2],(uint8_t)packet.data()[i+4], (uint8_t)packet.data()[i+3]);
-            }
-            #if PRINT_FPS
-                fpsCounter++;
-                Serial.print("/");//Monitors connection(shows jumps/jitters in packets)
-            #endif
-            #if PRINT_FPS
-                if (millis() - secondTimer >= 1000U) {
-                    secondTimer = millis();
-                    Serial.printf("FPS: %d\n", fpsCounter);
-                    fpsCounter = 0;
-                }   
-            #endif
+              }
+              #if PRINT_FPS
+                  fpsCounter++;
+                  Serial.print("/");//Monitors connection(shows jumps/jitters in packets)
+              #endif
+              #if PRINT_FPS
+                  if (millis() - secondTimer >= 1000U) {
+                      secondTimer = millis();
+                      Serial.printf("FPS: %d\n", fpsCounter);
+                      fpsCounter = 0;
+                  }   
+              #endif
+            }        
         });
     }
 }
