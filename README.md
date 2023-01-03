@@ -8,25 +8,17 @@ Real-time LED strip music visualization using Python and the ESP8266 or Raspberr
 
 The LightCore is mad up of 5 modules:
 
-- `/arduino` - The Arduino code for the ESP8266, needed to control the LED strip
+- `/arduino` - The Arduino code for the ESP32, needed to control the LED strip
 - `/light-client` - Webclient to controll the render pipeline and make changes on stage
 - `/light-designer` - Electron based GUI to design a stage and position the strips, bascily pepare everything
 - `/messageBroker` - Websocket Server that handles *most* of the communication between the modules
 - `/midi-adapter` - Midi Adapter to easly integrate existing software/hardware with LightCore
 - `/python` - Render pipeline for calculating the LED colors
 
-## Python Dependencies
-Visualization code is compatible with Python 3.9. A few Python dependencies must also be installed:
-- Numpy
-- Scipy (for digital signal processing)
-- PyQtGraph (for GUI visualization)
-- PyAudio (for recording audio with microphone)
 # Installing dependencies
 The pip package manager can also be used to install the python dependencies.
 ```
 pip install numpy
-pip install scipy
-pip install pyqtgraph
 pip install pyaudio
 pip install matplotlib
 pip install zmq
@@ -43,10 +35,7 @@ If you don't have brew installed you can get it here: https://brew.sh
 export LDFLAGS=-L/opt/homebrew/lib
 export CPPFLAGS=-I/opt/homebrew/include
 brew install portaudio
-brew install pyqt5
 pip3 install numpy
-pip3 install scipy
-pip3 install pyqtgraph
 pip3 install pyaudio
 pip3 install matplotlib
 pip3 install zmq
@@ -124,3 +113,27 @@ yarn
 cd startup-controller
 yarn && yarn start
 ```
+
+## Technical Specs
+
+### Network Protocol
+
+To have an nearly unlimited amount of Pixels we can control on one ESP, we needed to change the Protocol a little bit. It now looks like this:
+
+```
+<4Bytes Long>Epoch Timestamp
+-> For each Pixel
+    <1Byte>Address offset
+    <1Byte>Address
+    <3Bytes>RGB
+```
+
+The real Pixeladdress is calculated by `i + 255 * [OFFSET]`
+
+### Use an LogicLevel Shifter
+I realised this is a crucial part to have an reliable data stream.
+
+### Pinning
+
+On the ESP32 i use D4 as my data pin. This pin is directly wired to the low input of the LogicLevelShifter. It should step the data signal up to 5v.
+There are fore sure different ways out there to wire/build this, but since im not so much into Hardware im fine with this way :D
