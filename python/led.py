@@ -133,8 +133,10 @@ def _update_esp8266(composing):
                         m.append(int(capAt255(p[2][i] * ledCalibration[2] * brightness * stripBrightness)))  # Pixel blue value
                     # print(len(m))
                     try:
-                        epochTime = int(time.time())
-                        bytes_val = epochTime.to_bytes(4, 'big')
+                        bytes_val = b''
+                        if ledStripType == "WS2811":
+                            epochTime = int(time.time())
+                            bytes_val = epochTime.to_bytes(4, 'big')
                         bytes_val += bytes(m)
                         # print(m)
                         mx = bytearray(bytes_val)
@@ -151,8 +153,8 @@ def _update_esp8266(composing):
                     m = []
                     # print(idx)
                     idxPart = range(grp["from"], grp["to"])
-                    # if "invert" in grp:
-                    # idxPart = range(grp["to"], grp["from"],1)
+                    if "invert" in grp and grp["invert"]:
+                        idxPart = range(grp["to"] -1 , grp["from"],-1)
                     # print("Reversed:")
                     # print(idxPart)
                     n_packets = len(idx) // MAX_PIXELS_PER_PACKET + 1
@@ -162,7 +164,7 @@ def _update_esp8266(composing):
                         for i in packet_indices:
                             # i = packet_indices[i]
                             newI = i - grp["from"]
-                            if "invert" in grp:
+                            if "invert" in grp and grp["invert"]:
                                 newI = grp["to"] - i
                             # print(newI)
                             offset = newI // 256
@@ -175,7 +177,13 @@ def _update_esp8266(composing):
                             m.append(int(capAt255(p[2][i] * ledCalibration[2] * brightness * stripBrightness)))
                         # print(len(m))
                         try:
-                            mx = bytearray(m)
+                            bytes_val = b''
+                            if ledStripType == "WS2811":
+                                epochTime = int(time.time())
+                                bytes_val = epochTime.to_bytes(4, 'big')
+                            bytes_val += bytes(m)
+                            # print(m)
+                            mx = bytearray(bytes_val)
                             _sock.sendto(mx, (grp["IP"], config.UDP_PORT))
                         except Exception as e:
                             if e != lastEspError:
