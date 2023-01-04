@@ -14,6 +14,7 @@ import json
 import composer
 import config
 import dsp
+import esp.ackHandler as AckHandler
 import effekts.beat.flash.flashRotating as flashRotatingEffekt
 import effekts.beat.flash.flashSection as flashSectionEffekt
 import effekts.beat.flash.flashSectionMirrored as flashSectionMirroredEffekt
@@ -275,6 +276,7 @@ class Visualization:
 
         
     def start(self, q2t, q2p, bpmQ):
+        AckHandler.startHandler()
         self.queue2Thread = q2t
         self.bpmQueue = bpmQ
         self.queue2Parent = q2p

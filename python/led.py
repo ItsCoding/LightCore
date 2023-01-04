@@ -6,8 +6,9 @@ import config
 import json
 import socket
 from websocket import create_connection
+import random
 import time 
-
+import esp.ackHandler as AckHandler
 # ESP8266 uses WiFi communication
 if config.DEVICE == "virtual" or config.DEVICE == "espv":
     ws = create_connection("ws://127.0.0.1:8080/")
@@ -17,6 +18,7 @@ if config.DEVICE == "virtual" or config.DEVICE == "espv":
 
 if config.DEVICE == "esp" or config.DEVICE == "espv":
     _sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
 
 _gamma = np.load(config.GAMMA_TABLE_PATH)
 """Gamma lookup table used for nonlinear brightness correction"""
@@ -120,71 +122,82 @@ def _update_esp8266(composing):
 
         if not skipFrame:
             if config.UDP_IPS[stripIndex] != "GROUP":
-                idx = np.array_split(idx, n_packets)
-                for packet_indices in idx:
-                    m = []
-                    for i in packet_indices:
-                        offset = i // 256
-                        newI = i % 256
-                        m.append(offset)
-                        m.append(newI)  # Index of pixel to change
-                        m.append(int(capAt255(p[0][i] * ledCalibration[0] * brightness * stripBrightness)))  # Pixel red value
-                        m.append(int(capAt255(p[1][i] * ledCalibration[1] * brightness * stripBrightness)))  # Pixel green value
-                        m.append(int(capAt255(p[2][i] * ledCalibration[2] * brightness * stripBrightness)))  # Pixel blue value
-                    # print(len(m))
-                    try:
-                        epochTime = int(time.time())
-                        bytes_val = epochTime.to_bytes(4, 'big')
-                        bytes_val += bytes(m)
-                        # print(m)
-                        mx = bytearray(bytes_val)
-                        _sock.sendto(mx, (config.UDP_IPS[stripIndex], config.UDP_PORT))
-                    except Exception as e:
-                        if e != lastEspError:
-                            lastEspError = str(e)
-                            # if config.DEBUG_LOG:
-                                # print(e)
-                                # print("There is something with the ESP connection....")
-            # _prev_pixels = np.copy(p)
-            else:
-                for grp in config.UDP_GROUPS[stripIndex]:
-                    m = []
-                    # print(idx)
-                    idxPart = range(grp["from"], grp["to"])
-                    # if "invert" in grp:
-                    # idxPart = range(grp["to"], grp["from"],1)
-                    # print("Reversed:")
-                    # print(idxPart)
-                    n_packets = len(idx) // MAX_PIXELS_PER_PACKET + 1
-                    idxPart = np.array_split(idxPart, n_packets)
-                    # print(idxPart)
-                    for packet_indices in idxPart:
+
+                #check wether the device is lagging behind
+                deviceLag = AckHandler.getDeviceLag(config.UDP_IPS[stripIndex])
+                # print("Device lagging behind: ", config.UDP_IPS[stripIndex], deviceLag)
+                if deviceLag > 15:
+                    pass
+                else:
+                    idx = np.array_split(idx, n_packets)
+                    for packet_indices in idx:
+                        m = []
                         for i in packet_indices:
-                            # i = packet_indices[i]
-                            newI = i - grp["from"]
-                            if "invert" in grp:
-                                newI = grp["to"] - i
-                            # print(newI)
-                            offset = newI // 256
-                            newI = newI % 256
+                            offset = i // 256
+                            newI = i % 256
                             m.append(offset)
                             m.append(newI)  # Index of pixel to change
-                            # print(offset,newI)
                             m.append(int(capAt255(p[0][i] * ledCalibration[0] * brightness * stripBrightness)))  # Pixel red value
                             m.append(int(capAt255(p[1][i] * ledCalibration[1] * brightness * stripBrightness)))  # Pixel green value
-                            m.append(int(capAt255(p[2][i] * ledCalibration[2] * brightness * stripBrightness)))
+                            m.append(int(capAt255(p[2][i] * ledCalibration[2] * brightness * stripBrightness)))  # Pixel blue value
                         # print(len(m))
                         try:
-                            mx = bytearray(m)
-                            _sock.sendto(mx, (grp["IP"], config.UDP_PORT))
+                            messageAckId = int(random.randint(0, 1000000000))
+                            bytes_val = messageAckId.to_bytes(4, 'big')
+                            bytes_val += bytes(m)
+                            # print(m)
+                            mx = bytearray(bytes_val)
+                            _sock.sendto(mx, (config.UDP_IPS[stripIndex], config.UDP_PORT))
+                            AckHandler.registerAckId(config.UDP_IPS[stripIndex], messageAckId)
                         except Exception as e:
                             if e != lastEspError:
                                 lastEspError = str(e)
                                 if config.DEBUG_LOG:
                                     print(e)
-                                    print(
-                                        "[GROUP] There is something with the ESP connection...."
-                                    )
+                                    print("There is something with the ESP connection....")
+            # _prev_pixels = np.copy(p)
+            else:
+                for grp in config.UDP_GROUPS[stripIndex]:
+                    if AckHandler.getDeviceLag(grp["IP"]) > 10:
+                        print("Device lagging behind: ", config.UDP_IPS[stripIndex])
+                    else:
+                        m = []
+                        # print(idx)
+                        idxPart = range(grp["from"], grp["to"])
+                        # if "invert" in grp:
+                        # idxPart = range(grp["to"], grp["from"],1)
+                        # print("Reversed:")
+                        # print(idxPart)
+                        n_packets = len(idx) // MAX_PIXELS_PER_PACKET + 1
+                        idxPart = np.array_split(idxPart, n_packets)
+                        # print(idxPart)
+                        for packet_indices in idxPart:
+                            for i in packet_indices:
+                                # i = packet_indices[i]
+                                newI = i - grp["from"]
+                                if "invert" in grp:
+                                    newI = grp["to"] - i
+                                # print(newI)
+                                offset = newI // 256
+                                newI = newI % 256
+                                m.append(offset)
+                                m.append(newI)  # Index of pixel to change
+                                # print(offset,newI)
+                                m.append(int(capAt255(p[0][i] * ledCalibration[0] * brightness * stripBrightness)))  # Pixel red value
+                                m.append(int(capAt255(p[1][i] * ledCalibration[1] * brightness * stripBrightness)))  # Pixel green value
+                                m.append(int(capAt255(p[2][i] * ledCalibration[2] * brightness * stripBrightness)))
+                            # print(len(m))
+                            try:
+                                mx = bytearray(m)
+                                _sock.sendto(mx, (grp["IP"], config.UDP_PORT))
+                            except Exception as e:
+                                if e != lastEspError:
+                                    lastEspError = str(e)
+                                    if config.DEBUG_LOG:
+                                        print(e)
+                                        print(
+                                            "[GROUP] There is something with the ESP connection...."
+                                        )
 
 
 def _updateClient(composing, queue2Parent):

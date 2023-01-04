@@ -69,6 +69,8 @@ if DEVICE == "esp" or DEVICE == "espv":
     """Port number used for socket communication between Python and ESP8266"""
     SOFTWARE_GAMMA_CORRECTION = True
     """Set to False because the firmware handles gamma correction + dither"""
+    ESP_ACK_PORT = 58880 # this should stay the same, otherwise you need to change the esp firmware
+    ESP_ACK_TIMEOUT = 0.1
 
 if DEVICE == "virtual" or DEVICE == "espv":
     SOFTWARE_GAMMA_CORRECTION = True

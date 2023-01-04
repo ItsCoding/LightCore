@@ -9,6 +9,7 @@
 // Set to the number of LEDs in your LED strip
 #define NUM_LEDS 40
 #define PRINT_FPS 1
+#define ACK_PORT 58880
 #if PRINT_FPS
     uint16_t fpsCounter = 0;
     uint32_t secondTimer = 0;
@@ -28,6 +29,7 @@ ESP32Time rtc(0);
 
 
 AsyncUDP udp;
+WiFiUDP sendingUDP;
 CRGB leds[NUM_LEDS];
 
 unsigned long getTimeByNtp() {
@@ -40,7 +42,6 @@ unsigned long getTimeByNtp() {
   time(&now);
   return now;
 }
-
 
 void setup() 
 {
@@ -72,13 +73,7 @@ void setup()
    rtc.setTime(getTimeByNtp());
    Serial.print("Epoch: ");
    Serial.println(rtc.getEpoch());
-   
-
-
-
-
-
-   
+      
    xTaskCreatePinnedToCore(CoreTask0,"CPU_0",1000,NULL,1,&Core0TaskHnd,0);
    //xTaskCreatePinnedToCore(CoreTask1,"CPU_1",1000,NULL,1,&Core0TaskHnd,1);
    if(udp.listen(localPort)) {
@@ -86,40 +81,38 @@ void setup()
         Serial.println(localPort);
         udp.onPacket([](AsyncUDPPacket packet) {
             int len = packet.length();
-            uint8_t * udpData = packet.data();
-            long timestamp = 0;
-            timestamp += udpData[0] << 24;
-            timestamp += udpData[1] << 16;
-            timestamp += udpData[2] << 8;
-            timestamp += udpData[3];
-            if((long)rtc.getEpoch() - timestamp > 1){
-              Serial.println("[Drop Package] PaketTime:");
-              Serial.print(timestamp);
-              Serial.print(" | System Time: ");
-              Serial.print(rtc.getEpoch());
-              Serial.print(" | Delay: ");
-              Serial.println((long)rtc.getEpoch() - timestamp);
-            }else{
-              for(int i = 4; i < len; i+=5) {
-                //packetBuffer[len] = 0;
-               
-                offset = udpData[i];
-                N = packet.data()[i+1];      
-                NC = (uint32_t)N + (uint32_t)offset * (uint32_t)256;
-                leds[NC].setRGB((uint8_t)packet.data()[i+2],(uint8_t)packet.data()[i+4], (uint8_t)packet.data()[i+3]);
-              }
-              #if PRINT_FPS
-                  fpsCounter++;
-                  Serial.print("/");//Monitors connection(shows jumps/jitters in packets)
-              #endif
-              #if PRINT_FPS
-                  if (millis() - secondTimer >= 1000U) {
-                      secondTimer = millis();
-                      Serial.printf("FPS: %d\n", fpsCounter);
-                      fpsCounter = 0;
-                  }   
-              #endif
-            }        
+            uint8_t * udpData = packet.data();            
+            long paketID = 0;
+            paketID += udpData[0] << 24;
+            paketID += udpData[1] << 16;
+            paketID += udpData[2] << 8;
+            paketID += udpData[3];
+            for(int i = 4; i < len; i+=5) {
+              //packetBuffer[len] = 0;
+             
+              offset = udpData[i];
+              N = packet.data()[i+1];      
+              NC = (uint32_t)N + (uint32_t)offset * (uint32_t)256;
+              leds[NC].setRGB((uint8_t)packet.data()[i+2],(uint8_t)packet.data()[i+4], (uint8_t)packet.data()[i+3]);
+            }
+            #if PRINT_FPS
+                fpsCounter++;
+                Serial.print("/");//Monitors connection(shows jumps/jitters in packets)
+            #endif
+            #if PRINT_FPS
+                if (millis() - secondTimer >= 1000U) {
+                    secondTimer = millis();
+                    Serial.printf("FPS: %d\n", fpsCounter);
+                    fpsCounter = 0;
+                }   
+            #endif
+            char packetResponse[10];
+            sprintf(packetResponse, "%i", paketID);   
+            sendingUDP.beginPacket(packet.remoteIP(), ACK_PORT);
+            // Just test touch pin - Touch0 is T0 which is on GPIO 4.
+            sendingUDP.printf(packetResponse);
+            sendingUDP.endPacket();        
+            //packet.printf(packetResponse);
         });
     }
 }
@@ -128,7 +121,12 @@ void loop()
 {
   //Serial.print ("Application CPU is on core:"); //1
   //Serial.println (xPortGetCoreID());
-  //delay (500);
+  /**delay (500);
+  sendingUDP.beginPacket("10.40.0.241", ACK_PORT);
+  // Just test touch pin - Touch0 is T0 which is on GPIO 4.
+  sendingUDP.printf("Hello World");
+  sendingUDP.endPacket();
+  Serial.println("I am alive"); **/
 }  
 
 void CoreTask0( void * parameter ) 
