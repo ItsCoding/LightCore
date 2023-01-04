@@ -1,6 +1,6 @@
 from __future__ import print_function
 from __future__ import division
-
+from datetime import datetime
 import numpy as np
 import config
 import json
@@ -125,11 +125,14 @@ def _update_esp8266(composing):
 
                 #check wether the device is lagging behind
                 deviceLag = AckHandler.getDeviceLag(config.UDP_IPS[stripIndex])
+                idx = np.array_split(idx, n_packets)
                 # print("Device lagging behind: ", config.UDP_IPS[stripIndex], deviceLag)
-                if deviceLag > 15:
-                    pass
+                if deviceLag > config.ESP_MAX_FRAMES_SKIPPED * len(idx):
+                   now = datetime.now()
+                   date_time = now.strftime("%H:%M:%S")
+                   print("[" + date_time + "] Device lagging behind: ", config.UDP_IPS[stripIndex])
                 else:
-                    idx = np.array_split(idx, n_packets)
+                    
                     for packet_indices in idx:
                         m = []
                         for i in packet_indices:
@@ -158,18 +161,20 @@ def _update_esp8266(composing):
             # _prev_pixels = np.copy(p)
             else:
                 for grp in config.UDP_GROUPS[stripIndex]:
-                    if AckHandler.getDeviceLag(grp["IP"]) > 10:
-                        print("Device lagging behind: ", config.UDP_IPS[stripIndex])
+                    m = []
+                    # print(idx)
+                    idxPart = range(grp["from"], grp["to"])
+                    # if "invert" in grp:
+                    # idxPart = range(grp["to"], grp["from"],1)
+                    # print("Reversed:")
+                    # print(idxPart)
+                    n_packets = len(idxPart) // MAX_PIXELS_PER_PACKET + 1
+                    idxPart = np.array_split(idxPart, n_packets)
+                    if AckHandler.getDeviceLag(grp["IP"]) > config.ESP_MAX_FRAMES_SKIPPED * len(idxPart):
+                        now = datetime.now()
+                        date_time = now.strftime("%H:%M:%S")
+                        print("[" + date_time + "] Device lagging behind: ", grp["IP"])
                     else:
-                        m = []
-                        # print(idx)
-                        idxPart = range(grp["from"], grp["to"])
-                        # if "invert" in grp:
-                        # idxPart = range(grp["to"], grp["from"],1)
-                        # print("Reversed:")
-                        # print(idxPart)
-                        n_packets = len(idx) // MAX_PIXELS_PER_PACKET + 1
-                        idxPart = np.array_split(idxPart, n_packets)
                         # print(idxPart)
                         for packet_indices in idxPart:
                             for i in packet_indices:

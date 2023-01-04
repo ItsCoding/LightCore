@@ -71,6 +71,7 @@ if DEVICE == "esp" or DEVICE == "espv":
     """Set to False because the firmware handles gamma correction + dither"""
     ESP_ACK_PORT = 58880 # this should stay the same, otherwise you need to change the esp firmware
     ESP_ACK_TIMEOUT = 0.1
+    ESP_MAX_FRAMES_SKIPPED = 3 #maximal number of packets that can be skipped before the connection is considered disturbed
 
 if DEVICE == "virtual" or DEVICE == "espv":
     SOFTWARE_GAMMA_CORRECTION = True
