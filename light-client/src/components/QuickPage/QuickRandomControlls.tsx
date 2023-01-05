@@ -8,6 +8,7 @@ import { LightCoreConfig } from "../../types/LightCoreConfig";
 import { LedStrip } from "../../types/Strip";
 import { BarView } from "../General/BarView";
 import { TouchButton } from "../General/TouchButton";
+import { RandomizerMode } from "./RandomizerMode";
 import { RandomTypeBtns } from "./RandomTypeBtns";
 
 
@@ -122,7 +123,7 @@ export const QuickRandomControlls = ({ randomEnabled, randomSpecific, lightConfi
                 </Grid>
 
                 {isPhone && <>
-                    <Divider style={{ borderColor: "rgba(255, 255, 255, 0.12)", marginTop: "20px",marginBottom: "20px" }} />
+                    <Divider style={{ borderColor: "rgba(255, 255, 255, 0.12)", marginTop: "20px", marginBottom: "20px" }} />
                     <RandomTypeBtns />
                 </>}
                 <Divider style={{ borderColor: "rgba(255, 255, 255, 0.12)", marginTop: "20px" }} />
@@ -192,14 +193,14 @@ export const QuickRandomControlls = ({ randomEnabled, randomSpecific, lightConfi
                     /> */}
                 </div>
                 <Grid container>
-                    <Grid item xs={isPhone ? 12 : 8}>
+                    <Grid item xs={isPhone ? 12 : 4}>
                         <Button fullWidth variant="contained" color="primary" style={{
                             marginTop: "10px",
                         }} onClick={() => {
                             wsClient.send("beat.reset");
                         }}>Reset Beat</Button>
                     </Grid>
-                    <Grid item xs={isPhone ? 6 : 4}>
+                    <Grid item xs={4}>
                         <FormGroup style={{
                             marginTop: "10px",
                             marginLeft: "20px",
@@ -211,6 +212,9 @@ export const QuickRandomControlls = ({ randomEnabled, randomSpecific, lightConfi
                                 setLCConfig(lightConfig);
                             }} />} label="Beatdetection" />
                         </FormGroup>
+                    </Grid>
+                    <Grid item xs={isPhone ? 8 : 4}>
+                        <RandomizerMode />
                     </Grid>
                 </Grid>
 

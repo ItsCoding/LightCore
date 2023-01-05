@@ -5,6 +5,7 @@ import composer
 import config
 import randomizer
 import misc.syncConfig as syncConfig
+from customTypes.Composition import Composition
 def setSpecificEffekt(vis,effektName,stripIndex,frequencyRange,instanceData,instanceUUID,zIndex):
     print("Adding Effekt: ", effektName, " to strip: ", stripIndex, instanceUUID)
     effektClass = next(x for x in vis.allEffekts if x.__name__ == effektName)
@@ -127,3 +128,16 @@ def handleQueue(queue2Thread,queue2Parent,vis):
             elif topicType == "beat.detectFreq":
                 vis.listenForBeatType = data
                 print("Changing Beat detect to:", data)
+            elif topicType == "system.reloadPipelineCompositions":
+                parsedCompositions = []
+                for x in data:
+                    parsedCompositions.append(Composition(x,vis))
+                print("Parsed Compositions: ", len(parsedCompositions))
+                randomizer.setAvailableCompositions(parsedCompositions)
+            elif topicType == "light.random.getMode":
+                queue2Parent.put(json.dumps({"type": "return.system.randomizerMode", "message": randomizer.randomizerMode}))
+            elif topicType == "light.random.setMode":
+                randomizer.randomizerMode = data
+                print("Setting Randomizer Mode to: ", data)
+
+                

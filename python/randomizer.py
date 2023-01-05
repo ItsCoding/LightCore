@@ -5,12 +5,22 @@ from customTypes.frequencyRange import FrequencyRange
 import config
 import composer
 
+class RndMode:
+    auto = 0 # just random
+    byComposition = 1 # random by composition
+
+
 lastDetectedBeat = 0
 cleardBeatEffekts = False
 queueHandler = None
 engine = None
 useLastRandomizerType = False
 lastRandomizerType = "chilleddrop"
+randomizerMode = RndMode.auto
+
+availableCompositions = []
+
+
 def initRandomizer(queueHandlerP, engineP):
     global queueHandler, engine
     queueHandler = queueHandlerP
@@ -86,13 +96,19 @@ def makeRandomCompositionByType(type):
     queueHandler.reportEffekts(engine, engine.queue2Parent)
     queueHandler.randomizerTriggered(engine, engine.queue2Parent)
 
-def makeRandomComposition(parts,overrideEnabled = False, noBeat = False):
+def makeRandomComposition(parts,overrideEnabled = False, noBeat = False, cleanBeatEffekts = False):
     global queueHandler, engine
     allFreqencys = [FrequencyRange.all, FrequencyRange.high,FrequencyRange.mid,FrequencyRange.low]
     rndEffekts = list(filter(lambda eff: eff.__name__ not in config.cfg["blacklistedEffects"]["all"] and ("bpmSensitive" not in eff(1).description or not noBeat), engine.randomEffekts))
     if(parts == "all"):  
         allPartsRange = list(range(0,config.STRIP_COUNT))
         for x in config.STRIP_MIRRORS:
+
+            runningEffekt = composer.getEffektByStripIndex(x[0])
+            if len(runningEffekt) > 0:
+                if cleanBeatEffekts and not "bpmSensitive" in runningEffekt[0].effekt.description:
+                    print("Skip clean: " + runningEffekt[0].effekt.description["name"],x[0])
+                    continue
             randomColor = random.choice(config.cfg["colorDict"])
             randomFreq = random.choice(allFreqencys)
             rndEffektsStrip = list(filter(lambda eff: eff.__name__ not in config.cfg["blacklistedEffects"][str(x[0])], rndEffekts))
@@ -112,6 +128,11 @@ def makeRandomComposition(parts,overrideEnabled = False, noBeat = False):
                 allPartsRange.remove(i)
         for x in allPartsRange:
             if engine.ENDABLED_RND_PARTS[x] or overrideEnabled:
+                runningEffekt = composer.getEffektByStripIndex(x)
+                if len(runningEffekt) > 0:
+                    if cleanBeatEffekts and not "bpmSensitive" in runningEffekt[0].effekt.description:
+                        print("Skip clean: " + runningEffekt[0].effekt.description["name"],x)
+                        continue
                 randomFreq = random.choice(allFreqencys)
                 rndEffektsStrip = list(filter(lambda eff: eff.__name__ not in config.cfg["blacklistedEffects"][str(x)], rndEffekts))
                 randomEffekt = random.choice(rndEffektsStrip)
@@ -131,21 +152,42 @@ def changeEffekt(hasBeatChanged):
     if hasBeatChanged:
         lastDetectedBeat = time.time()
 
-    #check if last beat is older than 2 seconds
-    if (time.time() - lastDetectedBeat > 1.5 or engine.avg_Bpm < 1) and not cleardBeatEffekts:
-        cleardBeatEffekts = True
-        print("Clearing beat effekts")
-        if not useLastRandomizerType:
-            makeRandomComposition("all",False,True)
-    if cleardBeatEffekts and not hasBeatChanged and time.time() - lastDetectedBeat > 2:
-        engine.randomizerBeatCount = 1
+    if randomizerMode == RndMode.auto:
+        #check if last beat is older than 2 seconds
+        if (time.time() - lastDetectedBeat > 1.5 or engine.avg_Bpm < 1) and not cleardBeatEffekts:
+            cleardBeatEffekts = True
+            print("Clearing beat effekts")
+            if not useLastRandomizerType:
+                makeRandomComposition("all",False,True,True)
+        if cleardBeatEffekts and not hasBeatChanged and time.time() - lastDetectedBeat > 2:
+            engine.randomizerBeatCount = 1
 
-    if (engine.randomizerBeatCount >= config.cfg["musicBeatsBar"] * config.cfg["randomizerBar"]):
-        cleardBeatEffekts = False
-        print("==> Change Randomizer")
-        engine._lastTime = time.time()
-        engine.randomizerBeatCount = 1
-        if useLastRandomizerType:
-            makeRandomCompositionByType(lastRandomizerType)
-        else:
-            makeRandomComposition("all")
+        if (engine.randomizerBeatCount >= config.cfg["musicBeatsBar"] * config.cfg["randomizerBar"]):
+            cleardBeatEffekts = False
+            print("==> Change Randomizer")
+            engine._lastTime = time.time()
+            engine.randomizerBeatCount = 1
+            if useLastRandomizerType:
+                makeRandomCompositionByType(lastRandomizerType)
+            else:
+                makeRandomComposition("all")
+    elif randomizerMode == RndMode.byComposition:
+        #do stuff
+        if cleardBeatEffekts and not hasBeatChanged and time.time() - lastDetectedBeat > 2:
+            engine.randomizerBeatCount = 1
+
+        if (engine.randomizerBeatCount >= config.cfg["musicBeatsBar"] * config.cfg["randomizerBar"]):
+            cleardBeatEffekts = False
+            print("==> Change Randomizer")
+            engine._lastTime = time.time()
+            engine.randomizerBeatCount = 1
+
+            # pick a random composition from available compositions
+            randomComposition = random.choice(availableCompositions)
+            print("Picked random composition: " + randomComposition.compositionName)
+            composer.clear()
+            randomComposition.activate()
+
+def setAvailableCompositions(comps):
+    global availableCompositions
+    availableCompositions = comps

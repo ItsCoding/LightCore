@@ -33,6 +33,9 @@ def removeElementByStripIndex(stripIndex):
 def getEffekts():
     return runningEffekts
 
+def getEffektByStripIndex(stripIndex):
+    return [effekt for effekt in runningEffekts if effekt.stripIndex == stripIndex]
+
 # Get the renderd composition output
 def getComposition(frequencyBins,vis,beatChanged):
     frameDict = {}

@@ -48,7 +48,7 @@ def initServer():
         if socks.get(socket) == zmq.POLLIN:
             # print("Received request:")
             message = socket.recv().decode("utf-8")
-            print("ZMQ Message", message)
+            # print("ZMQ Message", message)
             # print(message)
             queue2Thread.put(message)
         #  Do some 'work'
