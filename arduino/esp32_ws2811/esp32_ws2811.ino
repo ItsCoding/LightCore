@@ -1,8 +1,8 @@
-#include <ESP32Time.h>
+// #include <ESP32Time.h>
 #include <FastLED.h>
 #include "WiFi.h"
 #include "AsyncUDP.h"
-#include "time.h"
+// #include "time.h"
 
 
 #define PIN 4
@@ -24,24 +24,24 @@ unsigned int localPort = 7777;
 uint8_t N = 0;
 uint32_t NC = 0;
 uint8_t offset = 0;
-const char* ntpServer = "pool.ntp.org";
-ESP32Time rtc(0);
+// const char* ntpServer = "pool.ntp.org";
+// ESP32Time rtc(0);
 
 
 AsyncUDP udp;
 WiFiUDP sendingUDP;
 CRGB leds[NUM_LEDS];
 
-unsigned long getTimeByNtp() {
-  time_t now;
-  struct tm timeinfo;
-  if (!getLocalTime(&timeinfo)) {
-    //Serial.println("Failed to obtain time");
-    return(0);
-  }
-  time(&now);
-  return now;
-}
+// unsigned long getTimeByNtp() {
+//   time_t now;
+//   struct tm timeinfo;
+//   if (!getLocalTime(&timeinfo)) {
+//     //Serial.println("Failed to obtain time");
+//     return(0);
+//   }
+//   time(&now);
+//   return now;
+// }
 
 void setup() 
 {
@@ -69,10 +69,10 @@ void setup()
    Serial.print("Device Name: ");
    Serial.println(nodeName); 
 
-   configTime(0, 0, ntpServer);
-   rtc.setTime(getTimeByNtp());
-   Serial.print("Epoch: ");
-   Serial.println(rtc.getEpoch());
+  //  configTime(0, 0, ntpServer);
+  //  rtc.setTime(getTimeByNtp());
+  //  Serial.print("Epoch: ");
+  //  Serial.println(rtc.getEpoch());
       
    xTaskCreatePinnedToCore(CoreTask0,"CPU_0",1000,NULL,1,&Core0TaskHnd,0);
    //xTaskCreatePinnedToCore(CoreTask1,"CPU_1",1000,NULL,1,&Core0TaskHnd,1);
