@@ -236,6 +236,7 @@ function App() {
                       margin: "10px"
                     }}>
                       <Route path="quick" element={<QuickPage
+                        compositions={compositionStore}
                         strips={stripConfig}
                         availableEffekts={availableEffekts}
                         randomEnabled={randomEnabled}

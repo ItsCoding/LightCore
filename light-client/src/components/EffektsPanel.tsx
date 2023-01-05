@@ -23,7 +23,7 @@ type EffektsPanelProps = {
 
 export const EffektsPanel = ({ availableEffekts, strip, colorDict, inPreviewMode }: EffektsPanelProps) => {
     // const classes = useStyles();
-    const [selectedFreqRange, setSelectedFreqRange] = React.useState<number>(0);
+    const [selectedFreqRange, setSelectedFreqRange] = React.useState<number>(6);
     const wsClient = WebSocketClient.getInstance();
     const [selectedEffekt, setSelectedEffekt] = React.useState<Effekt | null>(null);
     const [position, setPosition] = React.useState<number[]>([0, strip.length]);

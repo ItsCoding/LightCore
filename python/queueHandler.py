@@ -55,7 +55,10 @@ def handleQueue(queue2Thread,queue2Parent,vis):
             data = msg["message"]
             # print("Got QueueTask: ", msg)
             if topicType == "light.random.next":
-                randomizer.makeRandomComposition("all")
+                if randomizer.randomizerMode == randomizer.RndMode.auto:
+                    randomizer.makeRandomComposition("all")
+                else:
+                    randomizer.pickRandomComposition()
             elif topicType == "light.random.next.specific":
                 randomizer.makeRandomComposition(data["stripIndex"])
             elif topicType == "light.random.setEnabled":
@@ -139,5 +142,9 @@ def handleQueue(queue2Thread,queue2Parent,vis):
             elif topicType == "light.random.setMode":
                 randomizer.randomizerMode = data
                 print("Setting Randomizer Mode to: ", data)
+            elif topicType == "light.random.setTags":
+                randomizer.useTags = data
+            elif topicType == "light.random.getTags":
+                queue2Parent.put(json.dumps({"type": "return.system.randomizerTags", "message": randomizer.useTags}))
 
                 

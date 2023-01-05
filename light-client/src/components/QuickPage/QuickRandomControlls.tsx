@@ -4,6 +4,7 @@ import { Box } from "@mui/system";
 import React, { useEffect } from "react";
 // import { strips } from "../../system/StripConfig";
 import { WebSocketClient } from "../../system/WebsocketClient";
+import { Composition } from "../../types/Composition";
 import { LightCoreConfig } from "../../types/LightCoreConfig";
 import { LedStrip } from "../../types/Strip";
 import { BarView } from "../General/BarView";
@@ -20,6 +21,7 @@ type QuickRandomControllsProps = {
     setRandomSpecific: (specific: { [key: number]: boolean }) => void,
     setLCConfig: (config: LightCoreConfig) => void,
     strips: Array<LedStrip>;
+    compositions: Array<Composition>;
 }
 
 const marksBeat = [
@@ -48,7 +50,7 @@ const marksBars = [
     }
 ];
 
-export const QuickRandomControlls = ({ randomEnabled, randomSpecific, lightConfig, setRandomEnabled, setRandomSpecific, setLCConfig, strips }: QuickRandomControllsProps) => {
+export const QuickRandomControlls = ({ randomEnabled, randomSpecific, lightConfig, setRandomEnabled, setRandomSpecific, setLCConfig, strips,compositions }: QuickRandomControllsProps) => {
     const wsClient = WebSocketClient.getInstance();
     const [beatDetection, setBeatDetection] = React.useState(lightConfig.beatDetection);
     const isPhone = window.innerWidth < 800;
@@ -192,7 +194,7 @@ export const QuickRandomControlls = ({ randomEnabled, randomSpecific, lightConfi
                         getAriaValueText={(value) => `${value}s`}
                     /> */}
                 </div>
-                <Grid container>
+                <Grid container rowSpacing={2}>
                     <Grid item xs={isPhone ? 12 : 4}>
                         <Button fullWidth variant="contained" color="primary" style={{
                             marginTop: "10px",
@@ -200,7 +202,7 @@ export const QuickRandomControlls = ({ randomEnabled, randomSpecific, lightConfi
                             wsClient.send("beat.reset");
                         }}>Reset Beat</Button>
                     </Grid>
-                    <Grid item xs={4}>
+                    <Grid item xs={isPhone ? 6 : 4}>
                         <FormGroup style={{
                             marginTop: "10px",
                             marginLeft: "20px",
@@ -213,8 +215,8 @@ export const QuickRandomControlls = ({ randomEnabled, randomSpecific, lightConfi
                             }} />} label="Beatdetection" />
                         </FormGroup>
                     </Grid>
-                    <Grid item xs={isPhone ? 8 : 4}>
-                        <RandomizerMode />
+                    <Grid item xs={12}>
+                        <RandomizerMode compositionsProps={compositions} />
                     </Grid>
                 </Grid>
 
