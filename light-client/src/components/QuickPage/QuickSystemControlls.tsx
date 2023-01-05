@@ -62,10 +62,10 @@ export const QuickSystemControlls = ({ lightConfig, setLCConfig,strips }: QuickS
         enqueueSnackbar("Reloaded IPs", { variant: "success" });
     }
 
-    const reloadPipelineCompositions = () => {
-        wsClient.send("wsapi.reloadPipelineCompositions",{})
-        enqueueSnackbar("Reloaded Compositions", { variant: "success" });
-    }
+    // const reloadPipelineCompositions = () => {
+    //     wsClient.send("wsapi.reloadPipelineCompositions",{})
+    //     enqueueSnackbar("Reloaded Compositions", { variant: "success" });
+    // }
 
     return (<>
         <Card variant="outlined" style={{
@@ -135,7 +135,7 @@ export const QuickSystemControlls = ({ lightConfig, setLCConfig,strips }: QuickS
                         borderColor: "rgba(255, 255, 255, 0.12)"
                     }}/>
                 <Button onClick={() => reloadIps()} variant="contained">Reload IPs</Button>
-                <Button onClick={() => reloadPipelineCompositions()} variant="contained">Reload Compositions</Button>
+                {/* <Button onClick={() => reloadPipelineCompositions()} variant="contained">Reload Compositions</Button> */}
             </CardContent>
         </Card>
     </>)

@@ -10,6 +10,7 @@ class RndMode:
     byComposition = 1 # random by composition
 
 
+
 lastDetectedBeat = 0
 cleardBeatEffekts = False
 queueHandler = None
@@ -163,6 +164,7 @@ def pickRandomComposition():
         filterdCompos = availableCompositions
 
     randomComposition = random.choice(filterdCompos)
+    print("Picked random composition: " + randomComposition.compositionName, randomComposition.tags)
     composer.clear()
     randomComposition.activate()
 

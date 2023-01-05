@@ -238,7 +238,7 @@ export const EffektsPage = ({ availableEffekts, activeRoute, isRandomizerActive,
             confirm: () => {
                 if (newComposition) {
                     stripConfig.forEach((strip) => {
-                        wsClient.lightClear(strip.index);
+                        wsClient.lightClear( inPreviewMode ? (strip.index + 5) * -1 : strip.index);
                     });
                     newComposition.activate(() => { }, inPreviewMode);
                     setActiveEffekts(newComposition.activeEffekts);

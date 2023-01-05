@@ -13,9 +13,13 @@ gain = dsp.ExpFilter(np.tile(0.01, config.cfg["frequencyBins"]),
                          alpha_decay=0.001, alpha_rise=0.99)
 # Add a new effekt to the composition
 def addEffekt(effekt, frequencyRange: array, stripIndex: int, ledStartIndex: int, ledEndIndex: int, instanceData: dict = {}, zIndex: int = 0):
-    if stripIndex >= config.STRIP_COUNT:
+    realIndex = stripIndex
+    if(realIndex < 0):
+        realIndex = (realIndex * -1 ) - 5
+    if realIndex >= config.STRIP_COUNT:
         return
-    if ledEndIndex > config.STRIP_LED_COUNTS[stripIndex]:
+
+    if ledEndIndex > config.STRIP_LED_COUNTS[realIndex]:
         print("ledEndIndex is out of range", stripIndex, ledEndIndex, config.STRIP_LED_COUNTS[stripIndex])
         return
     runningEffekts.append(ActiveEffekt(effekt, frequencyRange, stripIndex, ledStartIndex, ledEndIndex,instanceData,zIndex))
