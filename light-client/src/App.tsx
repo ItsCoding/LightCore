@@ -78,7 +78,7 @@ function App() {
     wsClient.issueKeySet("compositionStore", JSON.stringify(compJSON));
   }
 
-  const initEventHandler = () => {
+  const initEventHandler = (override = false) => {
 
     if (!loadedInfos["AVAILABLE_EFFEKTS"]) {
       console.log("Requesting AVAILABLE_EFFEKTS");
@@ -132,7 +132,7 @@ function App() {
       wsClient.send("system.config.get")
     }
 
-    if (!loadedInfos["compositionStore"] || !loadedInfos["boards"]) {
+    if (!loadedInfos["compositionStore"] || override) {
       const compStoreHandlerID = wsClient.addEventHandler(ReturnType.WSAPI.GET_KEY_VALUE, topic => {
         if (topic.message === null) return;
         const msg: WSApiKey = topic.message;
@@ -152,7 +152,7 @@ function App() {
       wsClient.issueKeyGet("compositionStore");
     }
 
-    if(!loadedInfos["boards"]){
+    if (!loadedInfos["boards"]) {
       const boardHandlerID = wsClient.addEventHandler(ReturnType.WSAPI.GET_KEY_VALUE, topic => {
         if (topic.message === null) return;
         const msg: WSApiKey = topic.message;
@@ -170,7 +170,7 @@ function App() {
       });
       wsClient.issueKeyGet("boards");
     }
-    
+
   }
   const connectWS = async () => {
     if (connectedToWs.current) return;
@@ -193,7 +193,7 @@ function App() {
   useEffect(() => {
     if (activeRoute !== "stage" && wsClient.mode === ClientMode.STAGE && wsClient.connected) {
       wsClient.mode = ClientMode.EDITOR;
-      initEventHandler();
+      initEventHandler(true);
       console.log("🌈 Switched to Editor Mode");
     } else if (activeRoute === "stage" && wsClient.mode === ClientMode.EDITOR) {
       wsClient.mode = ClientMode.STAGE;

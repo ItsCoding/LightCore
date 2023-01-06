@@ -48,6 +48,7 @@ export const CompositionSaveDialog = ({ activeEffekts, onClose, compositionStore
                     wsClient.removeEventHandler(handlerID);
                 }
             })
+            wsClient.issueKeyGet("compositionStore");
         }
     }, [])
 
@@ -82,6 +83,7 @@ export const CompositionSaveDialog = ({ activeEffekts, onClose, compositionStore
 
     const saveNewComposition = () => {
         const newComposition = new Composition(createUUID(), name, selectedTags, activeEffekts)
+        console.log([...localCompositionStore, newComposition])
         if (setCompositionStore) {
             console.log("Saving using the local method")
             setCompositionStore([...localCompositionStore, newComposition])

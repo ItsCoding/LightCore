@@ -10,6 +10,7 @@ import { Board } from "../../types/Board";
 import PianoIcon from '@mui/icons-material/Piano';
 import { getEffektSetMode, getHoldToActivate, setEffektSetMode, setHoldToActivate, setOptionKey } from "../../system/JamboardCrossHandler";
 import { TouchButton } from "./Jamboard/TouchButton";
+import { QuickSaveButton } from "../General/QuickSaveButton";
 export type StageToolbarProps = {
     setActiveRoute: React.Dispatch<React.SetStateAction<string>>;
     availableBoards: Array<Board>;
@@ -44,7 +45,9 @@ export const StageToolbar = ({ setSubRoute, subRoute, activeWidget, setActiveWid
     return (<Box sx={{ flexGrow: 1 }}>
         <AppBar position="fixed" sx={{ top: 'auto', bottom: 0 }}>
 
-            <Grid container>
+            <Grid container sx={{
+                paddingRight: 2
+            }}>
                 <Grid item xs>
                     <Toolbar style={{ paddingLeft: "0px", paddingRight: "0px" }}>
                         <Tabs onChange={(e, value) => changeWidget(value)}>
@@ -99,8 +102,9 @@ export const StageToolbar = ({ setSubRoute, subRoute, activeWidget, setActiveWid
                         </>}
                     </Toolbar>
                 </Grid>
-                <Grid item xs={1}>
+                <Grid item >
                     <Toolbar style={{ paddingLeft: "0px", paddingRight: "0px" }}>
+                        <QuickSaveButton />
                         <Popover
                             open={Boolean(anchorEl)}
                             anchorEl={anchorEl}
