@@ -1,4 +1,4 @@
-import config
+from config import config
 import randomizer as rnd
 def syncConfig (vis, incommingConfig):
     print("Parsing config...")

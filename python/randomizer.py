@@ -2,7 +2,7 @@ import random
 import time
 import uuid
 from customTypes.frequencyRange import FrequencyRange
-import config
+from config import config
 import composer
 
 class RndMode:
@@ -179,15 +179,23 @@ def pickRandomComposition():
 
 def changeEffekt(hasBeatChanged):
     global queueHandler, engine, lastDetectedBeat,cleardBeatEffekts
+
+    # convert bpm to ms
+    bpm = engine.avg_Bpm
+    if bpm < 1:
+        bpm = 1
+    bpmInSec = 60 / bpm
+
+    #check if last beat is older than 2 seconds
+    if (time.time() - lastDetectedBeat > bpmInSec * 2 or engine.avg_Bpm < 1) and not cleardBeatEffekts:
+        cleardBeatEffekts = True
+        engine.randomizerBeatCount = 1
+        print("Clearing beat effekts")
+        if not useLastRandomizerType:
+            makeRandomComposition("all",False,True,True)
+
     if hasBeatChanged:
         lastDetectedBeat = time.time()
-
-        #check if last beat is older than 2 seconds
-        if (time.time() - lastDetectedBeat > 1.5 or engine.avg_Bpm < 1) and not cleardBeatEffekts:
-            cleardBeatEffekts = True
-            print("Clearing beat effekts")
-            if not useLastRandomizerType:
-                makeRandomComposition("all",False,True,True)
         if cleardBeatEffekts and not hasBeatChanged and time.time() - lastDetectedBeat > 2:
             engine.randomizerBeatCount = 1
 

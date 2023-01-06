@@ -2,7 +2,7 @@
 
 import socket
 import threading
-import config
+from config import config
 import time
 import multiprocessing
 

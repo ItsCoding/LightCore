@@ -12,7 +12,7 @@ from scipy.ndimage.filters import gaussian_filter1d
 import json
 # import wsServer as wsServer
 import composer
-import config
+from config import config
 import dsp
 from datetime import datetime
 import esp.ackHandler as AckHandler
@@ -270,7 +270,7 @@ class Visualization:
                     try:
                         now = datetime.now()
                         date_time = now.strftime("%H:%M:%S")
-                        print("[" + date_time + "] Led time: " + str(round((endLed - startLed) * 1000,2)) + "ms | Effekt time: " + str(round((endLed - start) * 1000,2)) + "ms | Record Time: " + str(round(recordTime * 1000)) + "ms | Rendering FPS: " + str(round(1 / (endLed - startLed + end - start + recordTime),2)) + ' | Output FPS {:.0f} / {:.0f}'.format(fps, config.FPS))
+                        print("[" + date_time + "] Led time: " + str(round((endLed - startLed) * 1000,2)) + "ms | Effekt time: " + str(round((end - start) * 1000,2)) + "ms | Record Time: " + str(round(recordTime * 1000)) + "ms | Rendering FPS: " + str(round(1 / (endLed - startLed + end - start + recordTime),2)) + ' | Output FPS {:.0f} / {:.0f}'.format(fps, config.FPS))
                     except:
                         let = "Error"
 
@@ -279,7 +279,8 @@ class Visualization:
 
         
     def start(self, q2t, q2p, bpmQ):
-        AckHandler.startHandler()
+        if config.DEVICE == "esp" or config.DEVICE == "espv":
+            AckHandler.startHandler()
         self.queue2Thread = q2t
         self.bpmQueue = bpmQ
         self.queue2Parent = q2p

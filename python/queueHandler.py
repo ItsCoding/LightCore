@@ -2,7 +2,7 @@
 import json
 from tracemalloc import start
 import composer
-import config
+from config import config
 import randomizer
 import misc.syncConfig as syncConfig
 from customTypes.Composition import Composition

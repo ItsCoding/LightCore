@@ -1,5 +1,5 @@
 import random
-import config
+from config import config
 import numpy as np
 import dsp
 from scipy.ndimage.filters import gaussian_filter1d

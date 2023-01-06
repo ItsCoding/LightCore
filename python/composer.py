@@ -1,5 +1,5 @@
 from array import array
-import config
+from config import config
 from customTypes.activeEffekt import ActiveEffekt
 import numpy as np
 import dsp

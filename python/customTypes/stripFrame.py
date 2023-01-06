@@ -1,6 +1,6 @@
 from tracemalloc import start
 import numpy as np
-import config
+from config import config
 
 class StripFrame:
     def __init__(self, stripIndex: int, stripLength: int):
