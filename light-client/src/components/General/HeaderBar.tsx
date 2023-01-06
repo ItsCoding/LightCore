@@ -8,12 +8,15 @@ import StreamIcon from '@mui/icons-material/Stream';
 import BorderInnerIcon from '@mui/icons-material/BorderInner';
 import FormatColorFillIcon from '@mui/icons-material/FormatColorFill';
 import { QuickSaveButton } from './QuickSaveButton';
+import { Composition } from '../../types/Composition';
 type HeaderBarProps = {
     changeTab: (key: string) => void;
     setTouchCapable: (capable: boolean) => void;
+    compositionStore: Array<Composition>,
+    setCompositionStore: (store: Array<Composition>) => void,
 }
 
-export default function HeaderBar({ changeTab, setTouchCapable }: HeaderBarProps) {
+export default function HeaderBar({ changeTab, setTouchCapable, compositionStore, setCompositionStore }: HeaderBarProps) {
     const [selectedPath, setSelectedPath] = React.useState("");
     // const navigate = useNavigate();
     const navigateTo = (path: string) => {
@@ -73,7 +76,7 @@ export default function HeaderBar({ changeTab, setTouchCapable }: HeaderBarProps
                         }}>
                             <FormControlLabel control={<Switch defaultChecked />} label="Touch" checked={window.touchToggle ? true : false} onChange={(e,state) => onTouchChanged(state)} />
                         </FormGroup> */}
-                        <QuickSaveButton />
+                        <QuickSaveButton compositionStore={compositionStore} setCompositionStore={setCompositionStore} />
                         <IconButton color='error' aria-label="fullscreen" onClick={() => {
                             if (document.documentElement.requestFullscreen) {
                                 document.documentElement.requestFullscreen();

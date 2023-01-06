@@ -237,7 +237,7 @@ function App() {
               {
                 activeRoute !== "stage" ?
                   <>
-                    {!isPhone && <HeaderBar setTouchCapable={setTouchCapable} changeTab={(key) => setActiveRoute(key)} />}
+                    {!isPhone && <HeaderBar setCompositionStore={changeCompositionStore} compositionStore={compositionStore} setTouchCapable={setTouchCapable} changeTab={(key) => setActiveRoute(key)} />}
                     <div style={{
                       paddingBottom: "8vh",
                       margin: "10px"

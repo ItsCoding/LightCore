@@ -8,6 +8,7 @@ import { ActiveEffekt } from "../../types/ActiveEffekt";
 import { Composition } from "../../types/Composition";
 import { LedStrip } from "../../types/Strip";
 import { ReturnType } from "../../types/TopicReturnType";
+import { CompositionSaveDialog } from "./CompositionSaveDialog";
 
 export type ActiveEffektHistory = {
     effekts: ActiveEffekt[],
@@ -18,9 +19,15 @@ export type ActiveEffektHistory = {
 let stripConfig: LedStrip[] = [];
 let pauseRecording = false;
 
-export const QuickSaveButton = () => {
+export type QuickSaveButtonProps = {
+    compositionStore?: Array<Composition>,
+    setCompositionStore?: (store: Array<Composition>) => void,
+}
+
+export const QuickSaveButton = ({ compositionStore, setCompositionStore }: QuickSaveButtonProps) => {
     const wsClient = WebSocketClient.getInstance();
     const [drawerOpen, setDrawerOpen] = useState(false);
+    const [saveDialogData, setSaveDialogData] = useState<ActiveEffekt[] | undefined>(undefined);
     const [lastActiveEffekts, setLastActiveEffekts] = useState<ActiveEffektHistory[]>([]);
 
     useEffect(() => {
@@ -88,7 +95,7 @@ export const QuickSaveButton = () => {
                     }
                 </CardContent>
                 <CardActions>
-                    <Button color="success" size="small">Save</Button>
+                    <Button color="success" size="small" onClick={() => setSaveDialogData(historyItem.effekts)}>Save</Button>
                     <Button color="warning" size="small" onClick={() => recallTempComp(historyItem.effekts)}>Reacall</Button>
                 </CardActions>
             </Card>
@@ -102,9 +109,16 @@ export const QuickSaveButton = () => {
             marginRight: 10
         }}>
             {/* <Button onClick={toggleDrawer(anchor, true)}>{anchor}</Button> */}
-            <IconButton aria-label="fullscreen" onClick={() => setDrawerOpen(true)}component="label" >
+            <IconButton aria-label="fullscreen" onClick={() => setDrawerOpen(true)} component="label" >
                 <GridSaveAltIcon />
             </IconButton>
+            <CompositionSaveDialog
+                open={saveDialogData !== undefined}
+                onClose={() => setSaveDialogData(undefined)}
+                activeEffekts={saveDialogData ?? []}
+                compositionStore={compositionStore}
+                setCompositionStore={setCompositionStore}
+            />
             <Drawer
                 anchor={"bottom"}
                 open={drawerOpen}
