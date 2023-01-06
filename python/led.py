@@ -82,6 +82,11 @@ def capAt255(x):
 
 
 def updateEspStrip(stripIndex,composing,cfgInstance):
+    
+    # check if composing exists for stripIndex
+    if stripIndex not in composing:
+        return
+
     pixelsComp = composing[stripIndex].getLEDS()
     # Truncate values and cast to integer
     pixelsComp = np.clip(pixelsComp, 0, 255).astype(int)

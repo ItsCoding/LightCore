@@ -51,7 +51,7 @@ def handleQueue(queue2Thread,queue2Parent,vis):
             msg = json.loads(incommingData)
             
             topicType = msg["type"]
-            print("TOPIC", topicType)
+            # print("TOPIC", topicType)
             data = msg["message"]
             # print("Got QueueTask: ", msg)
             if topicType == "light.random.next":

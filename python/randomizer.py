@@ -113,7 +113,7 @@ def makeRandomComposition(parts,overrideEnabled = False, noBeat = False, cleanBe
             runningEffekt = composer.getEffektByStripIndex(x[0])
             if len(runningEffekt) > 0:
                 if cleanBeatEffekts and not "bpmSensitive" in runningEffekt[0].effekt.description:
-                    print("Skip clean: " + runningEffekt[0].effekt.description["name"],x[0])
+                    # print("Skip clean: " + runningEffekt[0].effekt.description["name"],x[0])
                     continue
             randomColor = random.choice(config.cfg["colorDict"])
             randomFreq = random.choice(allFreqencys)

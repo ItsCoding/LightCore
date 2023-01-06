@@ -96,7 +96,7 @@ class config:
     MIC_RATE = 44100
     """Sampling frequency of the microphone in Hz"""
 
-    FPS = 120 # editable in designer
+    FPS = 80 # editable in designer
     LIMIT_FPS = True
     FRAMES_PER_BUFFER = int(MIC_RATE / FPS)
     """Desired refresh rate of the visualization (frames per second)

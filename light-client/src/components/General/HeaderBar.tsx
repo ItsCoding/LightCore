@@ -7,6 +7,7 @@ import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
 import StreamIcon from '@mui/icons-material/Stream';
 import BorderInnerIcon from '@mui/icons-material/BorderInner';
 import FormatColorFillIcon from '@mui/icons-material/FormatColorFill';
+import { QuickSaveButton } from './QuickSaveButton';
 type HeaderBarProps = {
     changeTab: (key: string) => void;
     setTouchCapable: (capable: boolean) => void;
@@ -72,6 +73,7 @@ export default function HeaderBar({ changeTab, setTouchCapable }: HeaderBarProps
                         }}>
                             <FormControlLabel control={<Switch defaultChecked />} label="Touch" checked={window.touchToggle ? true : false} onChange={(e,state) => onTouchChanged(state)} />
                         </FormGroup> */}
+                        <QuickSaveButton />
                         <IconButton color='error' aria-label="fullscreen" onClick={() => {
                             if (document.documentElement.requestFullscreen) {
                                 document.documentElement.requestFullscreen();
