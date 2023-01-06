@@ -34,7 +34,7 @@ export const QuickSystemControlls = ({ lightConfig, setLCConfig,strips }: QuickS
         if (Array.isArray(brightness)) {
             return;
         }
-        lightConfig.stripBrightness[index] = brightness;
+        lightConfig.stripBrightness[index] = parseInt(`${brightness}`);
         wsClient.changeConfigProperty("stripBrightness", lightConfig.stripBrightness);
         setLCConfig(lightConfig);
     }

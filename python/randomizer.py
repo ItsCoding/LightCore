@@ -51,7 +51,7 @@ def getEffektsDict(type,lenght):
         returnDict[stripIndex] = random.choice(stripEffBeatsDrop)
     return returnDict
 
-availableFreqs = [FrequencyRange.high,FrequencyRange.mid,FrequencyRange.low]
+availableFreqs = [FrequencyRange.high,FrequencyRange.mid,FrequencyRange.low,FrequencyRange.all]
 allFrequencyEffekts = ["visualize_spectrum"]
 def makeRandomCompositionByType(type):
     print("Make by Type: " + type)
@@ -61,6 +61,7 @@ def makeRandomCompositionByType(type):
     effektDict = getEffektsDict(type,config.STRIP_COUNT)
     for x in config.STRIP_MIRRORS:
         randomColor = random.choice(config.cfg["colorDict"])
+        randomColorPalette = random.sample(config.cfg["colorDict"], 3)
         if len(allFreqencys) == 0:
             allFreqencys = availableFreqs.copy()
         randomFreq = random.choice(allFreqencys)
@@ -76,7 +77,11 @@ def makeRandomCompositionByType(type):
         for i in x:
             if engine.ENDABLED_RND_PARTS[i]:
                 composer.removeElementByStripIndex(i)
-                composer.addEffekt(randomEffekt(str(uuid.uuid1())),randomFreq,i,0,config.STRIP_LED_COUNTS[i],{
+                effectInstance = randomEffekt(str(uuid.uuid1()))
+                if hasattr(effectInstance,"colors"):
+                    # print("Effekt supports colors", randomEffekt.__name__)
+                    effectInstance.colors = randomColorPalette
+                composer.addEffekt(effectInstance,randomFreq,i,0,config.STRIP_LED_COUNTS[i],{
                     "color":randomColor,
                     "loopCount":randomLoopCount,
                     "stepAmount":random.randint(6,12)
@@ -104,7 +109,7 @@ def makeRandomComposition(parts,overrideEnabled = False, noBeat = False, cleanBe
     if(parts == "all"):  
         allPartsRange = list(range(0,config.STRIP_COUNT))
         for x in config.STRIP_MIRRORS:
-
+            randomColorPalette = random.sample(config.cfg["colorDict"], 3)
             runningEffekt = composer.getEffektByStripIndex(x[0])
             if len(runningEffekt) > 0:
                 if cleanBeatEffekts and not "bpmSensitive" in runningEffekt[0].effekt.description:
@@ -120,8 +125,12 @@ def makeRandomComposition(parts,overrideEnabled = False, noBeat = False, cleanBe
             else:  
                 randomLoopCount = random.randint(1,3)
             for i in x:
+                effectInstance = randomEffekt(str(uuid.uuid1()))
+                if hasattr(effectInstance,"colors"):
+                    # print("Effekt supports colors", randomEffekt.__name__)
+                    effectInstance.colors = randomColorPalette
                 composer.removeElementByStripIndex(i)
-                composer.addEffekt(randomEffekt(str(uuid.uuid1())),randomFreq,i,0,config.STRIP_LED_COUNTS[i],{
+                composer.addEffekt(effectInstance,randomFreq,i,0,config.STRIP_LED_COUNTS[i],{
                     "color":randomColor,
                     "loopCount":randomLoopCount,
                     "stepAmount":random.randint(6,12)
