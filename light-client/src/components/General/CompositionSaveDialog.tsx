@@ -82,6 +82,10 @@ export const CompositionSaveDialog = ({ activeEffekts, onClose, compositionStore
     }
 
     const saveNewComposition = () => {
+        if(nameExists()){
+            enqueueSnackbar("Name already exists, please choose a different", { variant: "error" })
+            return;
+        }
         const newComposition = new Composition(createUUID(), name, selectedTags, activeEffekts)
         console.log([...localCompositionStore, newComposition])
         if (setCompositionStore) {
