@@ -96,7 +96,7 @@ class config:
     MIC_RATE = 44100
     """Sampling frequency of the microphone in Hz"""
 
-    FPS = 80 # editable in designer
+    FPS = 100 # editable in designer
     LIMIT_FPS = True
     FRAMES_PER_BUFFER = int(MIC_RATE / FPS)
     """Desired refresh rate of the visualization (frames per second)
@@ -165,6 +165,8 @@ class config:
     for i in range(STRIP_COUNT):
         BLACKLISTED_EFFECTS[str(i)] = []
 
+    """Randomizer Settings"""
+    RND_COMPOSITION_FILL_UNUSED = True # this toggels whether the randomizer should fill the unused strips with its mirror strips
 
     COLOR_DICT = [ # editable in client
         [0, 0, 255],

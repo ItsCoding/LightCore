@@ -170,6 +170,7 @@ export const EffektsPage = ({ availableEffekts, activeRoute, isRandomizerActive,
             console.log("Set effekts")
             const eventID = wsClient.addEventHandler(ReturnType.DATA.ACTIVE_EFFEKTS, (topic => {
                 const incommingEffekts = ActiveEffekt.fromJSONArray(topic.message);
+                // console.log("Incomming Effekts changed: ", incommingEffekts)
                 if (inPreviewMode) {
                     setActiveEffekts(incommingEffekts.filter((effekt) => effekt.stripIndex < 0))
                 } else {

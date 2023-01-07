@@ -20,8 +20,8 @@ def addEffekt(effekt, frequencyRange: array, stripIndex: int, ledStartIndex: int
         return
 
     if ledEndIndex > config.STRIP_LED_COUNTS[realIndex]:
-        print("ledEndIndex is out of range", stripIndex, ledEndIndex, config.STRIP_LED_COUNTS[stripIndex])
-        return
+        print("ledEndIndex is out of range, correcting", stripIndex, ledEndIndex, config.STRIP_LED_COUNTS[stripIndex])
+        ledEndIndex = config.STRIP_LED_COUNTS[realIndex]
     runningEffekts.append(ActiveEffekt(effekt, frequencyRange, stripIndex, ledStartIndex, ledEndIndex,instanceData,zIndex))
     runningEffekts.sort(key=lambda x: x.zIndex, reverse=True)
 

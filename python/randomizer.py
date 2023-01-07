@@ -158,7 +158,7 @@ def makeRandomComposition(parts,overrideEnabled = False, noBeat = False, cleanBe
     queueHandler.randomizerTriggered(engine, engine.queue2Parent)
 
 def pickRandomComposition():
-    global availableCompositions, useTags
+    global availableCompositions, useTags, engine
     # filter out compositions wich dont include at least one tag from useTags
     filterdCompos = []
     lookupCount = 0
@@ -176,6 +176,7 @@ def pickRandomComposition():
     print("Picked random composition: " + randomComposition.compositionName, randomComposition.tags)
     composer.clear()
     randomComposition.activate()
+    queueHandler.reportEffekts(engine, engine.queue2Parent)
 
 def changeEffekt(hasBeatChanged):
     global queueHandler, engine, lastDetectedBeat,cleardBeatEffekts
