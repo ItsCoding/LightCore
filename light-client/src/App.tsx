@@ -78,7 +78,7 @@ function App() {
     wsClient.issueKeySet("compositionStore", JSON.stringify(compJSON));
   }
 
-  const initEventHandler = () => {
+  const initEventHandler = (override = false) => {
 
     if (!loadedInfos["AVAILABLE_EFFEKTS"]) {
       console.log("Requesting AVAILABLE_EFFEKTS");
@@ -95,12 +95,11 @@ function App() {
       })
       wsClient.send("data.get.availableEffekts");
     }
+
     if (!loadedInfos["stripConfig"]) {
       const handlerIDConfig = wsClient.addEventHandler("return.wsapi.ledconfig", topic => {
         const data = topic.message;
-        console.log("Got strip data", data);
         const strips = parseStrips(data);
-        console.log("Got Strips", strips);
         setStripConfig(strips)
         setLoadedInfos((prev) => {
           return {
@@ -110,12 +109,11 @@ function App() {
         });
         wsClient.removeEventHandler(handlerIDConfig);
       })
-      console.log("Requesting strips")
       wsClient.send("wsapi.requestConfig", {});
     }
+
     if (!loadedInfos["SYSTEM_CONFIG"]) {
-      console.log("Requesting System config");
-      wsClient.addEventHandler(ReturnType.SYSTEM.CONFIG, topic => {
+      const sysConfigHandlerID = wsClient.addEventHandler(ReturnType.SYSTEM.CONFIG, topic => {
         const conf = LightCoreConfig.fromJSON(topic.message);
         console.log("System Config: ", conf);
         setLcConfig((prev) => {
@@ -129,14 +127,13 @@ function App() {
             "SYSTEM_CONFIG": true
           }
         });
+        wsClient.removeEventHandler(sysConfigHandlerID);
       })
       wsClient.send("system.config.get")
     }
 
-    if (!loadedInfos["compositionStore"] || !loadedInfos["boards"]) {
-      console.log("Requesting Composition Store");
-      wsClient.addEventHandler(ReturnType.WSAPI.GET_KEY_VALUE, topic => {
-        console.log("Got Key Value: ", topic);
+    if (!loadedInfos["compositionStore"] || override) {
+      const compStoreHandlerID = wsClient.addEventHandler(ReturnType.WSAPI.GET_KEY_VALUE, topic => {
         if (topic.message === null) return;
         const msg: WSApiKey = topic.message;
         if (msg.key === "compositionStore" && msg.value) {
@@ -149,7 +146,17 @@ function App() {
               "compositionStore": true
             }
           });
-        } else if (msg.key === "boards" && msg.value) {
+          wsClient.removeEventHandler(compStoreHandlerID);
+        }
+      });
+      wsClient.issueKeyGet("compositionStore");
+    }
+
+    if (!loadedInfos["boards"]) {
+      const boardHandlerID = wsClient.addEventHandler(ReturnType.WSAPI.GET_KEY_VALUE, topic => {
+        if (topic.message === null) return;
+        const msg: WSApiKey = topic.message;
+        if (msg.key === "boards" && msg.value) {
           const boards: Board[] = JSON.parse(msg.value).map((b: any) => JSON2Board(b));
           setAvailableBoards(boards);
           setLoadedInfos((prev) => {
@@ -158,12 +165,12 @@ function App() {
               "boards": true
             }
           });
+          wsClient.removeEventHandler(boardHandlerID);
         }
       });
-      wsClient.issueKeyGet("compositionStore");
       wsClient.issueKeyGet("boards");
     }
-    console.log("Get available effekts");
+
   }
   const connectWS = async () => {
     if (connectedToWs.current) return;
@@ -186,7 +193,7 @@ function App() {
   useEffect(() => {
     if (activeRoute !== "stage" && wsClient.mode === ClientMode.STAGE && wsClient.connected) {
       wsClient.mode = ClientMode.EDITOR;
-      initEventHandler();
+      initEventHandler(true);
       console.log("🌈 Switched to Editor Mode");
     } else if (activeRoute === "stage" && wsClient.mode === ClientMode.EDITOR) {
       wsClient.mode = ClientMode.STAGE;
@@ -230,12 +237,13 @@ function App() {
               {
                 activeRoute !== "stage" ?
                   <>
-                    {!isPhone && <HeaderBar setTouchCapable={setTouchCapable} changeTab={(key) => setActiveRoute(key)} />}
+                    {!isPhone && <HeaderBar setCompositionStore={changeCompositionStore} compositionStore={compositionStore} setTouchCapable={setTouchCapable} changeTab={(key) => setActiveRoute(key)} />}
                     <div style={{
                       paddingBottom: "8vh",
                       margin: "10px"
                     }}>
                       <Route path="quick" element={<QuickPage
+                        compositions={compositionStore}
                         strips={stripConfig}
                         availableEffekts={availableEffekts}
                         randomEnabled={randomEnabled}

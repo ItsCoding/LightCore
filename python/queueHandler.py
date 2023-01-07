@@ -2,9 +2,10 @@
 import json
 from tracemalloc import start
 import composer
-import config
+from config import config
 import randomizer
 import misc.syncConfig as syncConfig
+from customTypes.Composition import Composition
 def setSpecificEffekt(vis,effektName,stripIndex,frequencyRange,instanceData,instanceUUID,zIndex):
     print("Adding Effekt: ", effektName, " to strip: ", stripIndex, instanceUUID)
     effektClass = next(x for x in vis.allEffekts if x.__name__ == effektName)
@@ -50,11 +51,14 @@ def handleQueue(queue2Thread,queue2Parent,vis):
             msg = json.loads(incommingData)
             
             topicType = msg["type"]
-            print("TOPIC", topicType)
+            # print("TOPIC", topicType)
             data = msg["message"]
             # print("Got QueueTask: ", msg)
             if topicType == "light.random.next":
-                randomizer.makeRandomComposition("all")
+                if randomizer.randomizerMode == randomizer.RndMode.auto:
+                    randomizer.makeRandomComposition("all")
+                else:
+                    randomizer.pickRandomComposition()
             elif topicType == "light.random.next.specific":
                 randomizer.makeRandomComposition(data["stripIndex"])
             elif topicType == "light.random.setEnabled":
@@ -127,3 +131,20 @@ def handleQueue(queue2Thread,queue2Parent,vis):
             elif topicType == "beat.detectFreq":
                 vis.listenForBeatType = data
                 print("Changing Beat detect to:", data)
+            elif topicType == "system.reloadPipelineCompositions":
+                parsedCompositions = []
+                for x in data:
+                    parsedCompositions.append(Composition(x,vis))
+                print("Parsed Compositions: ", len(parsedCompositions))
+                randomizer.setAvailableCompositions(parsedCompositions)
+            elif topicType == "light.random.getMode":
+                queue2Parent.put(json.dumps({"type": "return.system.randomizerMode", "message": randomizer.randomizerMode}))
+            elif topicType == "light.random.setMode":
+                randomizer.randomizerMode = data
+                print("Setting Randomizer Mode to: ", data)
+            elif topicType == "light.random.setTags":
+                randomizer.useTags = data
+            elif topicType == "light.random.getTags":
+                queue2Parent.put(json.dumps({"type": "return.system.randomizerTags", "message": randomizer.useTags}))
+
+                

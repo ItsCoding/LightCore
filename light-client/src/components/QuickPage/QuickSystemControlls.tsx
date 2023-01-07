@@ -34,7 +34,7 @@ export const QuickSystemControlls = ({ lightConfig, setLCConfig,strips }: QuickS
         if (Array.isArray(brightness)) {
             return;
         }
-        lightConfig.stripBrightness[index] = brightness;
+        lightConfig.stripBrightness[index] = parseInt(`${brightness}`);
         wsClient.changeConfigProperty("stripBrightness", lightConfig.stripBrightness);
         setLCConfig(lightConfig);
     }
@@ -61,6 +61,11 @@ export const QuickSystemControlls = ({ lightConfig, setLCConfig,strips }: QuickS
         wsClient.send("wsapi.reloadIPs",{})
         enqueueSnackbar("Reloaded IPs", { variant: "success" });
     }
+
+    // const reloadPipelineCompositions = () => {
+    //     wsClient.send("wsapi.reloadPipelineCompositions",{})
+    //     enqueueSnackbar("Reloaded Compositions", { variant: "success" });
+    // }
 
     return (<>
         <Card variant="outlined" style={{
@@ -130,6 +135,7 @@ export const QuickSystemControlls = ({ lightConfig, setLCConfig,strips }: QuickS
                         borderColor: "rgba(255, 255, 255, 0.12)"
                     }}/>
                 <Button onClick={() => reloadIps()} variant="contained">Reload IPs</Button>
+                {/* <Button onClick={() => reloadPipelineCompositions()} variant="contained">Reload Compositions</Button> */}
             </CardContent>
         </Card>
     </>)

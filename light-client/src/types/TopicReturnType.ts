@@ -5,7 +5,8 @@ export const ReturnType = {
     },
     SYSTEM:{
         CONFIG: "return.system.config",
-        STATUS: "return.system.status"
+        STATUS: "return.system.status",
+        RANDOMIZER_MODE: "return.system.randomizerMode",
     },
     WSAPI:{
         GET_KEY_VALUE: "return.wsapi.getKeyValue",

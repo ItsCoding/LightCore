@@ -1,6 +1,6 @@
 import random
 import time
-import config
+from config import config
 import numpy as np
 import dsp
 from scipy.ndimage.filters import gaussian_filter1d
@@ -67,9 +67,9 @@ class visualize_washColorInverted:
             yMean = 255
         
         yOff = yMean // 4
-        self.p[0, :] = self.colors[0][0] * 0.25
-        self.p[1, :] = self.colors[0][1] * 0.25
-        self.p[2, :] = self.colors[0][2] * 0.25
+        self.p[0, :] = self.colors[0][0] * 0.1
+        self.p[1, :] = self.colors[0][1] * 0.1
+        self.p[2, :] = self.colors[0][2] * 0.1
         
         steps = stripSize // self.loopCount
         
@@ -84,9 +84,9 @@ class visualize_washColorInverted:
         # print(offset)
        
         tempP = np.tile(0, (3, self.longerP))
-        tempP[0, :] = self.colors[0][0] * 0.25
-        tempP[1, :] = self.colors[0][1] * 0.25
-        tempP[2, :] = self.colors[0][2] * 0.25
+        tempP[0, :] = self.colors[0][0] * 0.1
+        tempP[1, :] = self.colors[0][1] * 0.1
+        tempP[2, :] = self.colors[0][2] * 0.1
         for i in loopRange:
             i = i + self.offset
             if i > stripSize:

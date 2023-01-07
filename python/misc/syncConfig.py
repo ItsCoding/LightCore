@@ -1,4 +1,4 @@
-import config
+from config import config
 import randomizer as rnd
 def syncConfig (vis, incommingConfig):
     print("Parsing config...")
@@ -80,11 +80,15 @@ def syncConfig (vis, incommingConfig):
     config.STRIP_MIRRORS = mirrorArray
     config.STRIP_LED_COUNTS = stripLedCountsArray
     config.STRIP_COUNT = countOfStrips
+
+    config.STRIP_BRIGHTNESS = {} # editable in client
+
     for i in range(countOfStrips):
         if str(i) not in config.BLACKLISTED_EFFECTS:
             config.BLACKLISTED_EFFECTS[str(i)] = []
         if i not in config.STRIP_BRIGHTNESS:
-            config.STRIP_BRIGHTNESS[i] = 100
+            config.STRIP_BRIGHTNESS[str(i)] = 100
+    config.cfg["stripBrightness"] = config.STRIP_BRIGHTNESS
     print("\n =======================================")
     print("udpIps", udpIps)
     print("udpGroups", udpGroups)
@@ -96,6 +100,8 @@ def syncConfig (vis, incommingConfig):
     print("=======================================")
     print("stripMirrors",stripMirrors)
     print("mirrorArray",mirrorArray)
+    print("stripBrightness",config.STRIP_BRIGHTNESS)
+    print("=======================================")
 
 
 

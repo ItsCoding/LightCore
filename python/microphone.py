@@ -1,7 +1,7 @@
 import time
 import numpy as np
 import pyaudio
-import config
+from config import config
 import wave
 
 p = pyaudio.PyAudio()

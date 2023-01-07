@@ -12,8 +12,10 @@ from scipy.ndimage.filters import gaussian_filter1d
 import json
 # import wsServer as wsServer
 import composer
-import config
+from config import config
 import dsp
+from datetime import datetime
+import esp.ackHandler as AckHandler
 import effekts.beat.flash.flashRotating as flashRotatingEffekt
 import effekts.beat.flash.flashSection as flashSectionEffekt
 import effekts.beat.flash.flashSectionMirrored as flashSectionMirroredEffekt
@@ -266,7 +268,9 @@ class Visualization:
                 self.prev_fps_update = time.time()
                 if config.DEBUG_LOG:
                     try:
-                        print("Led time: " + str(round((endLed - startLed) * 1000,2)) + "ms | Effekt time: " + str(round((endLed - start) * 1000,2)) + "ms | Record Time: " + str(round(recordTime * 1000)) + "ms | Rendering FPS: " + str(round(1 / (endLed - startLed + end - start + recordTime),2)) + ' | Output FPS {:.0f} / {:.0f}'.format(fps, config.FPS))
+                        now = datetime.now()
+                        date_time = now.strftime("%H:%M:%S")
+                        print("[" + date_time + "] Led time: " + str(round((endLed - startLed) * 1000,2)) + "ms | Effekt time: " + str(round((end - start) * 1000,2)) + "ms | Record Time: " + str(round(recordTime * 1000)) + "ms | Rendering FPS: " + str(round(1 / (endLed - startLed + end - start + recordTime),2)) + ' | Output FPS {:.0f} / {:.0f}'.format(fps, config.FPS))
                     except:
                         let = "Error"
 
@@ -275,6 +279,8 @@ class Visualization:
 
         
     def start(self, q2t, q2p, bpmQ):
+        if config.DEVICE == "esp" or config.DEVICE == "espv":
+            AckHandler.startHandler()
         self.queue2Thread = q2t
         self.bpmQueue = bpmQ
         self.queue2Parent = q2p
@@ -291,7 +297,7 @@ class Visualization:
         self.allEffekts = self.randomEffekts + [visualize_Off,visualize_Abbau]
         randomizer.initRandomizer(queueHandler,self)
 
-        composer.addEffekt(visualize_runMirrored(0),FrequencyRange.all,0,0,100)
+        # composer.addEffekt(visualize_runMirrored(0),FrequencyRange.all,0,0,100)
         # composer.addEffekt(visualize_runMirrored(1),FrequencyRange.all,1,0,540)
         # composer.addEffekt(visualize_runMirrored(2),FrequencyRange.all,2,0,50)
         # composer.addEffekt(visualize_runMirrored(3),FrequencyRange.all,3,0,50)

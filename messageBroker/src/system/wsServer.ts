@@ -102,6 +102,17 @@ export class WebsocketServer {
                     console.log("📡  Client requested config");
                     this.sendMessage(JSON.stringify({ type: "return.wsapi.ledconfig", message: getStageData() }));
                     break;
+                case "wsapi.reloadPipelineCompositions":
+                    try {
+                        const compositionData = await this.dataAPI.getKeyValue("compositionStore");
+                        const parsedData = JSON.parse(compositionData);
+                        console.log("📡  Sending composition reload",parsedData.length);
+                        this.zeroMQServerOUT.sendMessage(JSON.stringify({ type: "system.reloadPipelineCompositions", message: parsedData }));
+                    } catch (error) {
+                        console.log("📡  Sending composition reload", 0);
+                        this.zeroMQServerOUT.sendMessage(JSON.stringify({ type: "system.reloadPipelineCompositions", message: [] }));
+                    }
+
             }
         } else {
             this.zeroMQServerOUT.sendMessage(message);

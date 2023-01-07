@@ -7,6 +7,7 @@ import { Effekt } from "../types/Effekt"
 import { LightCoreConfig } from "../types/LightCoreConfig"
 import { ColorsCard } from "../components/General/ColorsCard"
 import { LedStrip } from "../types/Strip"
+import { Composition } from "../types/Composition"
 
 
 type QuickPageProps = {
@@ -17,15 +18,17 @@ type QuickPageProps = {
     setRandomSpecific: (specific: { [key: number]: boolean }) => void,
     setLCConfig: (config: LightCoreConfig) => void,
     availableEffekts: Effekt[],
-    strips: Array<LedStrip>
+    strips: Array<LedStrip>;
+    compositions: Array<Composition>;
 }
 
-export const QuickPage = ({ randomEnabled, randomSpecific, lightConfig, setRandomEnabled, setRandomSpecific, setLCConfig, availableEffekts, strips }: QuickPageProps) => {
+export const QuickPage = ({ randomEnabled, randomSpecific, lightConfig, setRandomEnabled, setRandomSpecific, setLCConfig, availableEffekts, strips, compositions }: QuickPageProps) => {
     const isPhone = window.innerWidth < 800;
     return (<>
         <Grid container spacing={2} rowSpacing={2} columnSpacing={2}>
             <Grid item xs={12} md={12}>
                 <QuickRandomControlls
+                    compositions={compositions}
                     strips={strips}
                     randomEnabled={randomEnabled}
                     randomSpecific={randomSpecific}

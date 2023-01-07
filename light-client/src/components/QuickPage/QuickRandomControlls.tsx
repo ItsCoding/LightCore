@@ -4,10 +4,12 @@ import { Box } from "@mui/system";
 import React, { useEffect } from "react";
 // import { strips } from "../../system/StripConfig";
 import { WebSocketClient } from "../../system/WebsocketClient";
+import { Composition } from "../../types/Composition";
 import { LightCoreConfig } from "../../types/LightCoreConfig";
 import { LedStrip } from "../../types/Strip";
 import { BarView } from "../General/BarView";
 import { TouchButton } from "../General/TouchButton";
+import { RandomizerMode } from "./RandomizerMode";
 import { RandomTypeBtns } from "./RandomTypeBtns";
 
 
@@ -19,6 +21,7 @@ type QuickRandomControllsProps = {
     setRandomSpecific: (specific: { [key: number]: boolean }) => void,
     setLCConfig: (config: LightCoreConfig) => void,
     strips: Array<LedStrip>;
+    compositions: Array<Composition>;
 }
 
 const marksBeat = [
@@ -47,7 +50,7 @@ const marksBars = [
     }
 ];
 
-export const QuickRandomControlls = ({ randomEnabled, randomSpecific, lightConfig, setRandomEnabled, setRandomSpecific, setLCConfig, strips }: QuickRandomControllsProps) => {
+export const QuickRandomControlls = ({ randomEnabled, randomSpecific, lightConfig, setRandomEnabled, setRandomSpecific, setLCConfig, strips,compositions }: QuickRandomControllsProps) => {
     const wsClient = WebSocketClient.getInstance();
     const [beatDetection, setBeatDetection] = React.useState(lightConfig.beatDetection);
     const isPhone = window.innerWidth < 800;
@@ -122,7 +125,7 @@ export const QuickRandomControlls = ({ randomEnabled, randomSpecific, lightConfi
                 </Grid>
 
                 {isPhone && <>
-                    <Divider style={{ borderColor: "rgba(255, 255, 255, 0.12)", marginTop: "20px",marginBottom: "20px" }} />
+                    <Divider style={{ borderColor: "rgba(255, 255, 255, 0.12)", marginTop: "20px", marginBottom: "20px" }} />
                     <RandomTypeBtns />
                 </>}
                 <Divider style={{ borderColor: "rgba(255, 255, 255, 0.12)", marginTop: "20px" }} />
@@ -191,8 +194,8 @@ export const QuickRandomControlls = ({ randomEnabled, randomSpecific, lightConfi
                         getAriaValueText={(value) => `${value}s`}
                     /> */}
                 </div>
-                <Grid container>
-                    <Grid item xs={isPhone ? 12 : 8}>
+                <Grid container rowSpacing={2}>
+                    <Grid item xs={isPhone ? 12 : 4}>
                         <Button fullWidth variant="contained" color="primary" style={{
                             marginTop: "10px",
                         }} onClick={() => {
@@ -211,6 +214,9 @@ export const QuickRandomControlls = ({ randomEnabled, randomSpecific, lightConfi
                                 setLCConfig(lightConfig);
                             }} />} label="Beatdetection" />
                         </FormGroup>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <RandomizerMode compositionsProps={compositions} />
                     </Grid>
                 </Grid>
 

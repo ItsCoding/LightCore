@@ -12,7 +12,7 @@ import numpy
 from bpmdetector.recorder import *
 from time import perf_counter, sleep
 import multiprocessing
-import config
+from config import config
 colors_list = ["red", "blue", "green"]
 colors_idx = 0
 

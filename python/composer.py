@@ -1,5 +1,5 @@
 from array import array
-import config
+from config import config
 from customTypes.activeEffekt import ActiveEffekt
 import numpy as np
 import dsp
@@ -13,6 +13,15 @@ gain = dsp.ExpFilter(np.tile(0.01, config.cfg["frequencyBins"]),
                          alpha_decay=0.001, alpha_rise=0.99)
 # Add a new effekt to the composition
 def addEffekt(effekt, frequencyRange: array, stripIndex: int, ledStartIndex: int, ledEndIndex: int, instanceData: dict = {}, zIndex: int = 0):
+    realIndex = stripIndex
+    if(realIndex < 0):
+        realIndex = (realIndex * -1 ) - 5
+    if realIndex >= config.STRIP_COUNT:
+        return
+
+    if ledEndIndex > config.STRIP_LED_COUNTS[realIndex]:
+        print("ledEndIndex is out of range, correcting", stripIndex, ledEndIndex, config.STRIP_LED_COUNTS[stripIndex])
+        ledEndIndex = config.STRIP_LED_COUNTS[realIndex]
     runningEffekts.append(ActiveEffekt(effekt, frequencyRange, stripIndex, ledStartIndex, ledEndIndex,instanceData,zIndex))
     runningEffekts.sort(key=lambda x: x.zIndex, reverse=True)
 
@@ -32,6 +41,9 @@ def removeElementByStripIndex(stripIndex):
 
 def getEffekts():
     return runningEffekts
+
+def getEffektByStripIndex(stripIndex):
+    return [effekt for effekt in runningEffekts if effekt.stripIndex == stripIndex]
 
 # Get the renderd composition output
 def getComposition(frequencyBins,vis,beatChanged):

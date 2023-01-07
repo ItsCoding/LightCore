@@ -1,6 +1,6 @@
 from tracemalloc import start
 import numpy as np
-import config
+from config import config
 
 class StripFrame:
     def __init__(self, stripIndex: int, stripLength: int):
@@ -19,7 +19,10 @@ class StripFrame:
             # print(len(frame[i]),endIndex - startIndex,endIndex,startIndex,len(range(startIndex, endIndex)))
             if len(frame[i]) < endIndex - startIndex:
                 endIndex = endIndex - 1
-            self.leds[i, startIndex:endIndex] = np.add(self.leds[i, startIndex:endIndex], frame[i])
+            try:
+                self.leds[i, startIndex:endIndex] = np.add(self.leds[i, startIndex:endIndex], frame[i])
+            except Exception as excep:
+                print("Error adding frame to stripFrame",self.stripIndex,excep)
             # self.leds[0, startIndex:endIndex] = [int(i * brightness * stripBrightness) for i in self.leds[0, startIndex:endIndex]]
             # self.leds[1, startIndex:endIndex] = [int(i * brightness * stripBrightness) for i in self.leds[1, startIndex:endIndex]]
             # self.leds[2, startIndex:endIndex] = [int(i * brightness * stripBrightness) for i in self.leds[2, startIndex:endIndex]]
