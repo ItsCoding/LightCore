@@ -81,8 +81,9 @@ def capAt255(x):
     return x
 
 
-def updateEspStrip(stripIndex,composing,cfgInstance):
-    
+def updateEspStrip(stripIndex,composing,cfgInstance,ackData):
+    global lastEspError
+    packetIDs = []
     # check if composing exists for stripIndex
     if stripIndex not in composing:
         return
@@ -133,14 +134,16 @@ def updateEspStrip(stripIndex,composing,cfgInstance):
         if cfgInstance["UDP_IPS"][stripIndex] != "GROUP":
 
             #check wether the device is lagging behind
-            # deviceLag = 0
-            deviceLag = AckHandler.getDeviceLag(cfgInstance["UDP_IPS"][stripIndex])
+            deviceLag = 0
+            if cfgInstance["UDP_IPS"][stripIndex] in ackData:
+                deviceLag = ackData[cfgInstance["UDP_IPS"][stripIndex]]
             idx = np.array_split(idx, n_packets)
             # print("Device lagging behind: ", cfgInstance["UDP_IPS"][stripIndex], deviceLag)
             if deviceLag > cfgInstance["ESP_MAX_FRAMES_SKIPPED"] * len(idx):
-                now = datetime.now()
-                date_time = now.strftime("%H:%M:%S")
-                print("[" + date_time + "] Device lagging behind: ", cfgInstance["UDP_IPS"][stripIndex])
+                pass
+                # now = datetime.now()
+                # date_time = now.strftime("%H:%M:%S")
+                # print("[" + date_time + "] Device lagging behind: ", cfgInstance["UDP_IPS"][stripIndex], cfgInstance["ESP_MAX_FRAMES_SKIPPED"] * len(idx),deviceLag)
             else:
                 messageAckId = int(random.randint(0, 1000000000))
                 bytes_val = messageAckId.to_bytes(4, 'big')
@@ -152,6 +155,8 @@ def updateEspStrip(stripIndex,composing,cfgInstance):
                             break
                         offset = i // 256
                         newI = i % 256
+                        # if "invert" in grp and grp["invert"]:
+                        #     newI = grp["to"] - i
                         # print(len(p[0]), stripIndex,cfgInstance.STRIP_LED_COUNTS[stripIndex],i)
                         appendM = [
                             offset,
@@ -164,13 +169,20 @@ def updateEspStrip(stripIndex,composing,cfgInstance):
                     try:
                         mx = bytearray(bytes_val)
                         _sock.sendto(mx, (cfgInstance["UDP_IPS"][stripIndex], cfgInstance["UDP_PORT"]))
-                        AckHandler.registerAckId(cfgInstance["UDP_IPS"][stripIndex], messageAckId)
+                        packetIDs.append({
+                            "id": messageAckId,
+                            "ip": cfgInstance["UDP_IPS"][stripIndex]
+                            })
+                        # ackInstance.registerAckId(cfgInstance["UDP_IPS"][stripIndex], messageAckId)
                     except Exception as e:
-                        if e != lastEspError:
-                            lastEspError = str(e)
-                            if cfgInstance["DEBUG_LOG"]:
-                                print(e)
-                                print("There is something with the ESP connection....")
+                        pass
+                        # if e != lastEspError:
+                        #     lastEspError = str(e)
+                        #     if cfgInstance["DEBUG_LOG"]:
+                        #         print(e)
+                        #         print("There is something with the ESP connection....")
+                        # else:
+                        #     pass
         else:
             for grp in cfgInstance["UDP_GROUPS"][stripIndex]:
                 m = []
@@ -182,15 +194,24 @@ def updateEspStrip(stripIndex,composing,cfgInstance):
                 # print(idxPart)
                 n_packets = len(idxPart) // MAX_PIXELS_PER_PACKET + 1
                 idxPart = np.array_split(idxPart, n_packets)
-                deviceLag = AckHandler.getDeviceLag(grp["IP"])
-                # deviceLag = 0
+                deviceLag = 0
+                if grp["IP"] in ackData:
+                    deviceLag = ackData[grp["IP"]]
+
                 if deviceLag > cfgInstance["ESP_MAX_FRAMES_SKIPPED"] * len(idxPart):
-                    now = datetime.now()
-                    date_time = now.strftime("%H:%M:%S")
-                    print("[" + date_time + "] Device lagging behind: ", grp["IP"])
+                    pass
+                #     now = datetime.now()
+                #     date_time = now.strftime("%H:%M:%S")
+                #     print("[" + date_time + "] Device lagging behind: ", grp["IP"],cfgInstance["UDP_IPS"][stripIndex], cfgInstance["ESP_MAX_FRAMES_SKIPPED"] * len(idx),deviceLag)
                 else:
                     # print(idxPart)
                     for packet_indices in idxPart:
+                        messageAckId = int(random.randint(0, 1000000000))
+                        bytes_val = messageAckId.to_bytes(4, 'big')
+                        packetIDs.append({
+                            "id": messageAckId,
+                            "ip": grp["IP"]
+                        })
                         for i in packet_indices:
                             # i = packet_indices[i]
                             newI = i - grp["from"]
@@ -199,25 +220,30 @@ def updateEspStrip(stripIndex,composing,cfgInstance):
                             # print(newI)
                             offset = newI // 256
                             newI = newI % 256
-                            m.append(offset)
-                            m.append(newI)  # Index of pixel to change
-                            # print(offset,newI)
-                            m.append(int(capAt255(p[0][i] * ledCalibration[0] * brightnesCalc)))  # Pixel red value
-                            m.append(int(capAt255(p[1][i] * ledCalibration[1] * brightnesCalc)))  # Pixel green value
-                            m.append(int(capAt255(p[2][i] * ledCalibration[2] * brightnesCalc)))
+                            appendM = [
+                                offset,
+                                newI,
+                                int(capAt255(p[0][i] * ledCalibration[0]) * brightnesCalc),
+                                int(capAt255(p[1][i] * ledCalibration[1]) * brightnesCalc),
+                                int(capAt255(p[2][i] * ledCalibration[2]) * brightnesCalc)
+                            ]
+                            bytes_val += bytes(appendM)
                         # print(len(m))
                         try:
-                            mx = bytearray(m)
+                            mx = bytearray(bytes_val)
                             _sock.sendto(mx, (grp["IP"], cfgInstance["UDP_PORT"]))
                         except Exception as e:
-                            if e != lastEspError:
-                                lastEspError = str(e)
-                                if cfgInstance["DEBUG_LOG"]:
-                                    print(e)
-                                    print(
-                                        "[GROUP] There is something with the ESP connection...."
-                                    )
-
+                            pass
+                            # if e != lastEspError:
+                            #     lastEspError = str(e)
+                            #     if cfgInstance["DEBUG_LOG"]:
+                            #         print(e)
+                            #         print(
+                            #             "[GROUP] There is something with the ESP connection...."
+                            #         )
+                            #     else:
+                            #         pass
+    return packetIDs
 
 def _update_esp8266(composing):
     """Sends TCP packets to c# virtualizer"""
@@ -240,12 +266,15 @@ def _update_esp8266(composing):
         "ESP_MAX_FRAMES_SKIPPED": config.ESP_MAX_FRAMES_SKIPPED,
         "DEBUG_LOG": config.DEBUG_LOG,
     }
-
-    updateEspStrip_with_static_arg = partial(updateEspStrip, composing=composing,cfgInstance=configClone)
+    # print("=======================")
+    allDeviceLag = AckHandler.getAllDeviceLag()
+    updateEspStrip_with_static_arg = partial(updateEspStrip, composing=composing,cfgInstance=configClone,ackData=allDeviceLag)
     # for i in range(len(composing)):
     #     updateEspStrip_with_static_arg(i)
     results = pool.map(updateEspStrip_with_static_arg, range(len(composing)))
-
+    for result in results:
+        for msg in result:
+            AckHandler.registerAckId(msg["ip"], msg["id"])
     # with concurrent.futures.ThreadPoolExecutor() as executor:
     #     results = [executor.submit(updateEspStrip, i,composing) for i in composing]
     #     for future in concurrent.futures.as_completed(results):
