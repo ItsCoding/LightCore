@@ -6,6 +6,7 @@ import { StraightStrip } from "../../classes/Strips/StraightStrip";
 import { Point } from "../../classes/Point";
 import { useState } from "react";
 import { Height } from "@mui/icons-material";
+import { TransportProtocol } from "../../classes/TransportProtocol";
 
 
 export type StripManagerProps = {
@@ -124,6 +125,14 @@ const columns: GridColDef[] = [
         editable: true,
         type: "number",
     },
+    {
+        field: "transportProtocol",
+        headerName: "Network Protocol",
+        width: 100,
+        editable: true,
+        type: "singleSelect",
+        valueOptions: [TransportProtocol.LCP, TransportProtocol.WLED],
+    },
 ];
 
 const colGroup = [
@@ -229,6 +238,8 @@ export const StripManager = ({ strips, setStrips, setSelectedStrip, selectedStri
         }
         else if (params.field === "uiMarks") {
             strip.uiMarks = params.value as number;
+        }else if(params.field === "transportProtocol"){
+            strip.transportProtocol = params.value as TransportProtocol;
         }
 
         setStrips(newStrips);

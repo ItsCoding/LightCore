@@ -8,6 +8,7 @@ def syncConfig (vis, incommingConfig):
     stripLedCount = {}
     stripMirrors = {}
     stripsByLCID = {}
+    esp_protocols = {}
     for stripID in incommingConfig["strips"]:
         strip = incommingConfig["strips"][stripID]
         if int(strip["lcid"]) not in stripsByLCID:
@@ -28,13 +29,18 @@ def syncConfig (vis, incommingConfig):
             sumLeds = 0
             for strip in strips:
                 print("     Adding strip", strip["name"], "to group", lcid)
+                stripIP = ("stripIP" in strip and strip["stripIP"]) or "127.0.0.1"
                 udpGroups[lcid].append({
                     "from": ("stripControllerStart" in strip and strip["stripControllerStart"]) or 0,
                     "to": ("stripCotrollerEnd" in strip and strip["stripCotrollerEnd"]) or strip["leds"],
-                    "IP": ("stripIP" in strip and strip["stripIP"]) or "127.0.0.1",
+                    "IP": stripIP,
                     "offset": ("offset" in strip and strip["offset"]) or 0,
                     "invert": ("stripInverted" in strip and strip["stripInverted"]) or False
                 })
+
+                if "transportProtocol" in strip:
+                    esp_protocols[stripIP] = strip["transportProtocol"]
+
                 if "frameDivider" in strip:
                     udpFrameDividers[lcid] = strip["frameDivider"]
                 sumLeds += strip["leds"]
@@ -51,6 +57,10 @@ def syncConfig (vis, incommingConfig):
             else:
                 udpIps[int(lcid)] = "127.0.0.1"
                 print ("!!!! no stripIP for strip", lcid)
+
+            if "transportProtocol" in strip:
+                    esp_protocols[udpIps[int(lcid)]] = strip["transportProtocol"]
+
             if "frameDivider" in strips[0]:
                 udpFrameDividers[lcid] = strips[0]["frameDivider"]
             stripLedCount[int(lcid)] = strips[0]["leds"]
@@ -89,10 +99,12 @@ def syncConfig (vis, incommingConfig):
         if i not in config.STRIP_BRIGHTNESS:
             config.STRIP_BRIGHTNESS[str(i)] = 100
     config.cfg["stripBrightness"] = config.STRIP_BRIGHTNESS
+    config.ESP_PROTOCOLS = esp_protocols
     print("\n =======================================")
     print("udpIps", udpIps)
     print("udpGroups", udpGroups)
     print("udpFrameDividers",udpFrameDividers)
+    print("esp_protocols",esp_protocols)
     print("=======================================")
     print("stripLedCountsArray",stripLedCountsArray)
     print("stripLedCount",stripLedCount)

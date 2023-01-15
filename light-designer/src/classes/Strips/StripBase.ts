@@ -1,4 +1,5 @@
 import { Point } from "../Point";
+import { TransportProtocol } from "../TransportProtocol";
 
 export class StripBase {
     public stripIP: string;
@@ -12,6 +13,7 @@ export class StripBase {
     public stripInverted: boolean;
     public ledType: "WS2811" | "WS2813"
     public uiMarks: number;
+    public transportProtocol = TransportProtocol.LCP;
 
     public getExportConfig() {
         return {
@@ -26,6 +28,7 @@ export class StripBase {
             ledType: this.ledType,
             stripInverted: this.stripInverted,
             uiMarks: this.uiMarks,
+            transportProtocol: this.transportProtocol,
         };
     }
 }

@@ -65,7 +65,8 @@ class config:
         #     9: 113*5
         # }
         """IP address of the ESP8266. Must match IP in ws2812_controller.ino"""
-        UDP_PORT = 7777
+        UDP_PORT_LCP = 7777
+        UDP_PORT_WLED = 21324
         """Port number used for socket communication between Python and ESP8266"""
         SOFTWARE_GAMMA_CORRECTION = True
         """Set to False because the firmware handles gamma correction + dither"""

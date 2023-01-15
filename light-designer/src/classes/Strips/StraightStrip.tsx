@@ -3,6 +3,7 @@ import { StripBase } from "./StripBase";
 import { v4 } from "uuid"
 import { extend } from "lodash";
 import { GeneratedStripConfig } from "../ExportConfig";
+import { TransportProtocol } from "../TransportProtocol";
 export class StraightStrip extends StripBase {
     private end: Point;
     public id: string;
@@ -183,6 +184,7 @@ export class StraightStrip extends StripBase {
             nStrip.mirrorGroup = obj.mirrorGroup;
             nStrip.ledType = obj.ledType;
             nStrip.uiMarks = obj.uiMarks;
+            nStrip.transportProtocol = obj.transportProtocol as TransportProtocol || TransportProtocol.LCP;
             initializedStrips.push(nStrip);
         });
         return initializedStrips;
