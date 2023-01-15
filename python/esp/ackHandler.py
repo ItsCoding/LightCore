@@ -40,6 +40,7 @@ class InternAckHandler:
                     ackID = int(decodedData)
                     self.ackDict[ip].append(ackID)
                     # print("ESP-AckHandler received ack from " + ip + " with data " + str(ackID))
+                    # print("ESP-AckHandler received ack from " + ip + " with data " + str(ackID))
                 except:
                     print("Error in handeling ack data")
                     pass
@@ -115,3 +116,12 @@ def getDeviceLag(addr):
                 ackDict[addr].remove(ackElement)
         return len(ackDict[addr])
     return 0
+
+def getAllDeviceLag():
+    global iAckHandler,ackDict
+    lagDict = {}
+    for addr in ackDict:
+        lagDict[addr] = getDeviceLag(addr)
+    lagDict["localhost"] = 0
+    lagDict["127.0.0.1"] = 0
+    return lagDict
