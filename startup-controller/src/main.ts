@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import process from "process";
-import { LogLevel, Process } from "./process.js"
+import { LogLevel, Process } from "./process"
 
 const workingDir = process.env.INIT_CWD;
 
@@ -41,7 +41,7 @@ const run = async () => {
     lightClient.run((data) => logHandler("Light-Client", data, LogLevel.DEBUG), (code) => {
         console.log(chalk.bgRed(`[☠️]Light-Client exited with code ${code}`));
     });
-    await sleep(30*1000);
+    await sleep(45*1000);
 
     console.log(chalk.green("[SYS] 🚀 Starting Light-Core..."));
     const lightCore = new Process(`cd ${workingDir}/../python && python pipeline.py`);

@@ -1,14 +1,17 @@
 {
   "compilerOptions": {
     "esModuleInterop": true,
-    "moduleResolution": "Node16",
-    "target": "ES2015",
-		"module": "Node16",
+    "moduleResolution": "Node",
+    "target": "es6",
     "rootDir":"./src",
     "outDir": "./dist",
     "baseUrl":".",
+    "types": ["node"]
   },
-  
+  "lib": [
+    "es2016",
+    "dom"
+  ],
   "include": ["/**/*.ts", "src/main.ts"],
   "exclude": ["node_modules"]
 }

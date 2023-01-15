@@ -21,6 +21,7 @@ class visualize_scroll:
         """Effect that originates in the center and scrolls outwards"""
         
         if(self.p is None):
+            # print(stripSize // 2)
             self.p = np.tile(1.0, (3, stripSize // 2))
         # print(y)
         y = y**(3 * config.cfg["globalIntensity"])

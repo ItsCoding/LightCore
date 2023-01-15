@@ -43,7 +43,7 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
     lightClient.run((data) => logHandler("Light-Client", data, LogLevel.DEBUG), (code) => {
         console.log(chalk.bgRed(`[☠️]Light-Client exited with code ${code}`));
     });
-    yield sleep(30 * 1000);
+    yield sleep(45 * 1000);
     console.log(chalk.green("[SYS] 🚀 Starting Light-Core..."));
     const lightCore = new Process(`cd ${workingDir}/../python && python pipeline.py`);
     lightCore.run((data, level) => logHandler("LightCore", data, level), (code) => {

@@ -13,7 +13,7 @@ export var LogLevel;
     LogLevel["INFO"] = "info";
     LogLevel["ERROR"] = "error";
     LogLevel["DEBUG"] = "debug";
-})(LogLevel = LogLevel || (LogLevel = {}));
+})(LogLevel || (LogLevel = {}));
 export class Process {
     constructor(command) {
         this.command = command;

@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "src/main.ts",
-  "type": "module",
   "scripts": {
-    "start": "tsc -p . && node dist/main.js"
+    "start": "tsc -p . && node dist/main.js",
+    "dev": "ts-node src/main.ts"
   },
   "author": "",
   "license": "ISC",

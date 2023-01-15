@@ -18,9 +18,8 @@ def addEffekt(effekt, frequencyRange: array, stripIndex: int, ledStartIndex: int
         realIndex = (realIndex * -1 ) - 5
     if realIndex >= config.STRIP_COUNT:
         return
-
     if ledEndIndex > config.STRIP_LED_COUNTS[realIndex]:
-        print("ledEndIndex is out of range, correcting", stripIndex, ledEndIndex, config.STRIP_LED_COUNTS[stripIndex])
+        print("ledEndIndex is out of range, correcting",realIndex, stripIndex, ledEndIndex, config.STRIP_LED_COUNTS[stripIndex])
         ledEndIndex = config.STRIP_LED_COUNTS[realIndex]
     runningEffekts.append(ActiveEffekt(effekt, frequencyRange, stripIndex, ledStartIndex, ledEndIndex,instanceData,zIndex))
     runningEffekts.sort(key=lambda x: x.zIndex, reverse=True)
@@ -59,6 +58,8 @@ def getComposition(frequencyBins,vis,beatChanged):
             realIndex = (realIndex * -1 ) - 5
         if realIndex >= len(config.STRIP_LED_COUNTS):
             continue
+        if stipLength < 0:
+            stipLength = effekt.ledStartIndex - effekt.ledEndIndex
         if stipLength > config.STRIP_LED_COUNTS[realIndex]:
             stipLength = config.STRIP_LED_COUNTS[realIndex]
 
@@ -75,7 +76,11 @@ def getComposition(frequencyBins,vis,beatChanged):
         effekt.instanceData["beatChanged"] = beatChanged
         effekt.instanceData["beatCount"] = vis.randomizerBeatCount
         startTime = time.time()
-        effektResult = effekt.effekt.run(tempBins,stipLength,gain,effekt.instanceData)
+        try:
+            effektResult = effekt.effekt.run(tempBins,stipLength,gain,effekt.instanceData)
+        except Exception as e:
+            print("Error in effekt", effekt.effekt.__class__.__name__,realIndex,stipLength//2,stipLength, e)
+            effektResult = np.tile(0, (3, stipLength))
         endTime = time.time()
       
         # Adjust brightness
