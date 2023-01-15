@@ -57,13 +57,13 @@ class config:
             1: 3,
         }
 
-        UDP_INDEX_OFFSET = { # editable in designer
-            5: 113,
-            6: 113*2,
-            7: 113*3,
-            8: 113*4,
-            9: 113*5
-        }
+        # UDP_INDEX_OFFSET = { # editable in designer
+        #     5: 113,
+        #     6: 113*2,
+        #     7: 113*3,
+        #     8: 113*4,
+        #     9: 113*5
+        # }
         """IP address of the ESP8266. Must match IP in ws2812_controller.ino"""
         UDP_PORT = 7777
         """Port number used for socket communication between Python and ESP8266"""
@@ -72,7 +72,7 @@ class config:
         ESP_ACK_PORT = 58880 # this should stay the same, otherwise you need to change the esp firmware
         ESP_ACK_TIMEOUT = 0.1
         ESP_MAX_FRAMES_SKIPPED = 3 #maximal number of packets that can be skipped before the connection is considered disturbed
-
+        ESP_PROTOCOLS = {}
     if DEVICE == "virtual" or DEVICE == "espv":
         SOFTWARE_GAMMA_CORRECTION = True
 

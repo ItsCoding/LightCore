@@ -239,6 +239,7 @@ def _update_esp8266(composing):
         "UDP_GROUPS": config.UDP_GROUPS,
         "ESP_MAX_FRAMES_SKIPPED": config.ESP_MAX_FRAMES_SKIPPED,
         "DEBUG_LOG": config.DEBUG_LOG,
+        "ESP_PROTOCOLS": config.ESP_PROTOCOLS,
     }
 
     updateEspStrip_with_static_arg = partial(updateEspStrip, composing=composing,cfgInstance=configClone)
