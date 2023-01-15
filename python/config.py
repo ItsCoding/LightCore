@@ -57,13 +57,7 @@ class config:
             1: 3,
         }
 
-        # UDP_INDEX_OFFSET = { # editable in designer
-        #     5: 113,
-        #     6: 113*2,
-        #     7: 113*3,
-        #     8: 113*4,
-        #     9: 113*5
-        # }
+        UDP_INDEX_OFFSET = {}
         """IP address of the ESP8266. Must match IP in ws2812_controller.ino"""
         UDP_PORT_LCP = 7777
         UDP_PORT_WLED = 21324

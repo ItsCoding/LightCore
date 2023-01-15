@@ -9,6 +9,7 @@ def syncConfig (vis, incommingConfig):
     stripMirrors = {}
     stripsByLCID = {}
     esp_protocols = {}
+    udpIndexOffset = {}
     for stripID in incommingConfig["strips"]:
         strip = incommingConfig["strips"][stripID]
         if int(strip["lcid"]) not in stripsByLCID:
@@ -51,15 +52,16 @@ def syncConfig (vis, incommingConfig):
                 stripMirrors[strip["mirrorGroup"]].append(int(lcid))
             
         else:
-            print("Adding strip", strip["name"], "to single", lcid)
+            print("Adding strip", strips[0]["name"], "to single", lcid)
             if "stripIP" in strips[0]:
                 udpIps[int(lcid)] = strips[0]["stripIP"]
             else:
                 udpIps[int(lcid)] = "127.0.0.1"
                 print ("!!!! no stripIP for strip", lcid)
-
-            if "transportProtocol" in strip:
-                    esp_protocols[udpIps[int(lcid)]] = strip["transportProtocol"]
+            if "offset" in strips[0]:
+                udpIndexOffset[lcid] = strips[0]["offset"]
+            if "transportProtocol" in strips[0]:
+                    esp_protocols[udpIps[int(lcid)]] = strips[0]["transportProtocol"]
 
             if "frameDivider" in strips[0]:
                 udpFrameDividers[lcid] = strips[0]["frameDivider"]
@@ -79,7 +81,7 @@ def syncConfig (vis, incommingConfig):
     config.UDP_IPS = udpIps
     config.UDP_GROUPS = udpGroups
     config.UDP_FRAMEDIVIDER = udpFrameDividers
-
+    config.UDP_INDEX_OFFSET = udpIndexOffset
     stripLedCountsArray = []
     for i in range(0,countOfStrips):
         # print("LED: ", i, " ", stripLedCount[i])
@@ -105,6 +107,7 @@ def syncConfig (vis, incommingConfig):
     print("udpGroups", udpGroups)
     print("udpFrameDividers",udpFrameDividers)
     print("esp_protocols",esp_protocols)
+    print("udpIndexOffset",udpIndexOffset)
     print("=======================================")
     print("stripLedCountsArray",stripLedCountsArray)
     print("stripLedCount",stripLedCount)

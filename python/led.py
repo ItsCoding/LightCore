@@ -161,10 +161,16 @@ def updateEspStrip(stripIndex,composing,cfgInstance,ackData):
                     m = []
                    
                     for i in packet_indices:
+
+                        copyI = i
                         if i >= len(p[0]):
                             break
-                        offset = i // 256
-                        newI = i % 256
+                        
+                        if stripIndex in cfgInstance["UDP_INDEX_OFFSET"]:
+                            copyI = i + cfgInstance["UDP_INDEX_OFFSET"][stripIndex]
+
+                        offset = copyI // 256
+                        newI = copyI % 256
                         # if "invert" in grp and grp["invert"]:
                         #     newI = grp["to"] - i
                         # print(len(p[0]), stripIndex,cfgInstance.STRIP_LED_COUNTS[stripIndex],i)
@@ -308,6 +314,7 @@ def _update_esp8266(composing):
         "ESP_MAX_FRAMES_SKIPPED": config.ESP_MAX_FRAMES_SKIPPED,
         "DEBUG_LOG": config.DEBUG_LOG,
         "ESP_PROTOCOLS": config.ESP_PROTOCOLS,
+        "UDP_INDEX_OFFSET": config.UDP_INDEX_OFFSET,
     }
     # print("=======================")
     allDeviceLag = AckHandler.getAllDeviceLag()

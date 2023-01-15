@@ -12,6 +12,13 @@ export const StageViewer = ({ strips, onStripClick, selectedStrip, globalScaling
 
     //Render the strips and make a div for each pixel
 
+    const isLCIDUnique = (lcid: string) => {
+        const stripsWithLCID = strips.filter(strip => strip.lcid === lcid);
+        // console.log("Strip with LCID: ", stripsWithLCID, "isUnique:", stripsWithLCID.length === 1)
+        return stripsWithLCID.length === 1;
+    }
+
+
     return (
         <div style={{
             position: "relative",
@@ -26,7 +33,7 @@ export const StageViewer = ({ strips, onStripClick, selectedStrip, globalScaling
                 return (
                     <div key={stripIndex}>
                         {strip.getPhysicalPositions().map((ledPosition, index) => {
-                            const pixelID = `${strip.lcid}-${index + offset}`;
+                            const pixelID = `${strip.lcid}-${index + (isLCIDUnique(strip.lcid) ? 0 : offset)}`;
                             return (
                                 <div key={pixelID} id={pixelID}
                                     style={{
