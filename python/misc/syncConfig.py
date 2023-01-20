@@ -94,7 +94,10 @@ def syncConfig (vis, incommingConfig):
     config.STRIP_COUNT = countOfStrips
 
     config.STRIP_BRIGHTNESS = {} # editable in client
-
+    config.STRIP_LED_POSITIONS = incommingConfig["ledPositions"]
+    # print("ledPositions", incommingConfig["ledPositions"])
+    config.CANVAS_HEIGHT = int(incommingConfig["canvasSize"]["height"]) + 1
+    config.CANVAS_WIDTH = int(incommingConfig["canvasSize"]["width"]) + 1
     for i in range(countOfStrips):
         if str(i) not in config.BLACKLISTED_EFFECTS:
             config.BLACKLISTED_EFFECTS[str(i)] = []
@@ -117,6 +120,9 @@ def syncConfig (vis, incommingConfig):
     print("mirrorArray",mirrorArray)
     print("stripBrightness",config.STRIP_BRIGHTNESS)
     print("=======================================")
+    print("Canvas Width",config.CANVAS_WIDTH)
+    print("Canvas Height",config.CANVAS_HEIGHT)
+    print("=======================================\n")
 
 
 

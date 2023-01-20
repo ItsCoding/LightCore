@@ -139,15 +139,15 @@ export const DesignerPage = () => {
         (e: WheelEvent) => {
             if (e.ctrlKey && !e.shiftKey) {
                 if (e.deltaY < 0) {
-                    if (!(globalScaling >= 10)) setGlobalScalingState(globalScaling + (isMac ? 0.01 : 0.4));
+                    if (!(globalScaling >= 100)) setGlobalScalingState(globalScaling + (isMac ? 0.01 : 0.4));
                 } else {
-                    if (!(globalScaling <= 0.5)) setGlobalScalingState(globalScaling - (isMac ? 0.01 : 0.4));
+                    if (!(globalScaling <= 2)) setGlobalScalingState(globalScaling - (isMac ? 0.01 : 0.4));
                 }
             } else if (e.shiftKey && e.ctrlKey) {
                 if (e.deltaY < 0) {
-                    if (!(globalScaling >= 10)) setGlobalScalingState(globalScaling + 0.1);
+                    if (!(globalScaling >= 100)) setGlobalScalingState(globalScaling + 0.1);
                 } else {
-                    if (!(globalScaling <= 0.5)) setGlobalScalingState(globalScaling - 0.1);
+                    if (!(globalScaling <= 2)) setGlobalScalingState(globalScaling - 0.1);
                 }
 
             }
@@ -164,13 +164,13 @@ export const DesignerPage = () => {
 
     useEffect(() => {
         const startPoint = new Point(0, 0);
-        const startPoint2 = new Point(0, 100);
+        const startPoint2 = new Point(0, 1);
         const strip = new StraightStrip("0", startPoint, 100, 500);
         strip.scaleFactor = 2;
 
         const strip2 = new StraightStrip("1", startPoint2, 300, 500);
         strip2.scaleFactor = 2;
-        strip2.rotate(40);
+        strip2.rotate(0);
 
         console.log(strip.getPhysicalLedSize());
         console.table(strip.getPhysicalPositions());

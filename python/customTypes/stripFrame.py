@@ -31,5 +31,7 @@ class StripFrame:
         # np.put(self.leds[i], range(startIndex, endIndex), scaledUp)
         # print(self.leds[0])
 
+   
+
     def getLEDS(self):
         return self.leds

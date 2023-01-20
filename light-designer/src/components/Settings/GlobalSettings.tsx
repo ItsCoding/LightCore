@@ -11,7 +11,7 @@ export type StripSettingsProps = {
 
 export const GlobalSettings = ({ setStrips, strips, setGlobalScalingState, globalScaling }: StripSettingsProps) => {
 
-    const [getGlobalMaxStripDensity, setGlobalMaxStripDensityState] = useState(60)
+    const [getGlobalMaxStripDensity, setGlobalMaxStripDensityState] = useState(30)
     const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 })
 
 
@@ -106,9 +106,9 @@ export const GlobalSettings = ({ setStrips, strips, setGlobalScalingState, globa
             <Slider
                 aria-label="Angle"
                 value={globalScaling}
-                min={0.5}
-                max={10}
-                step={0.01}
+                min={2}
+                max={100}
+                step={0.5}
                 valueLabelDisplay="auto"
                 onChange={(e, v) => setGlobalScalingState(v as number)}
             />

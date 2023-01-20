@@ -91,7 +91,7 @@ class config:
     MIC_RATE = 44100
     """Sampling frequency of the microphone in Hz"""
 
-    FPS = 60 # editable in designer
+    FPS = 120 # editable in designer
     LIMIT_FPS = True
     FRAMES_PER_BUFFER = int(MIC_RATE / FPS)
     """Desired refresh rate of the visualization (frames per second)
@@ -196,6 +196,11 @@ class config:
     MUSIC_BEATS_BAR = 4 # editable in client
     # How many bars to wait before changin randomizer
     RANDOMIZER_BAR = 4 # editable in client
+
+    #positional stuff
+    STRIP_LED_POSITIONS = {} # editable in designer
+    CANVAS_WIDTH = 1000 # editable in designer
+    CANVAS_HEIGHT = 1000 # editable in designer
 
     cfg = {
         "device": DEVICE,

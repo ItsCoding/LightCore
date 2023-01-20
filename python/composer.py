@@ -1,6 +1,7 @@
 from array import array
 from config import config
 from customTypes.activeEffekt import ActiveEffekt
+from effekts.positional.test import TestEffekt
 import numpy as np
 import dsp
 import time
@@ -97,3 +98,38 @@ def getComposition(frequencyBins,vis,beatChanged):
     #         0: np.tile(0, (3, config.STRIP_LED_COUNTS[0]))
     #     }
     return frameDict, timeDict
+testeffekt = None
+def runPositional(frequencyBins,vis,beatChanged):
+    global testeffekt
+    ledPositions = config.STRIP_LED_POSITIONS
+    if testeffekt == None:
+        testeffekt = TestEffekt("1",None,config.CANVAS_WIDTH,config.CANVAS_HEIGHT,ledPositions)
+    effektCanvas = testeffekt.run(None,None)
+
+    frameDict = {}
+    
+    for x in ledPositions:
+        for y in ledPositions[x]:
+            for led in ledPositions[x][y]:
+                stripId = int(led["stripID"])
+                ledIndex = int(led["ledIndex"])
+                xInt = int(x)
+                yInt = int(y)
+                if ledIndex >= config.STRIP_LED_COUNTS[stripId] or ledIndex < 0 or yInt >= config.CANVAS_HEIGHT or xInt >= config.CANVAS_WIDTH or xInt < 0 or yInt < 0:
+                    continue
+               
+                # print(stripId,"StripID", config.STRIP_LED_COUNTS[stripId],ledIndex,x,y)
+                if not stripId in frameDict:
+                    frameDict[stripId] = np.zeros((3, config.STRIP_LED_COUNTS[stripId]))
+                try:
+                    frameDict[stripId][0][ledIndex] += effektCanvas[xInt][yInt][0]
+                    frameDict[stripId][1][ledIndex] += effektCanvas[xInt][yInt][1]
+                    frameDict[stripId][2][ledIndex] += effektCanvas[xInt][yInt][2]
+                except Exception as e:
+                    print("Error in effekt", stripId,ledIndex,[xInt,config.CANVAS_WIDTH],[yInt,config.CANVAS_HEIGHT], e)
+    returnDict = {}
+    # print(len(frameDict))
+    for stripID in frameDict:
+        returnDict[stripID] = StripFrame(stripID, config.STRIP_LED_COUNTS[stripID])
+        returnDict[stripID].addFrame(frameDict[stripID], 0, config.STRIP_LED_COUNTS[stripID])
+    return returnDict
