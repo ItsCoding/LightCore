@@ -44,6 +44,10 @@ def syncConfig (vis, incommingConfig):
 
                 if "frameDivider" in strip:
                     udpFrameDividers[lcid] = strip["frameDivider"]
+                if "ledType" in strip:
+                    config.COLOR_CALIBRATION_ASSIGNMENTS[lcid] = strip["ledType"]
+                else:
+                    config.COLOR_CALIBRATION_ASSIGNMENTS[lcid] = "WS2812"
                 sumLeds += strip["leds"]
             stripLedCount[lcid] = sumLeds
             if "mirrorGroup" in strip:
@@ -61,8 +65,11 @@ def syncConfig (vis, incommingConfig):
             if "offset" in strips[0]:
                 udpIndexOffset[lcid] = strips[0]["offset"]
             if "transportProtocol" in strips[0]:
-                    esp_protocols[udpIps[int(lcid)]] = strips[0]["transportProtocol"]
-
+                esp_protocols[udpIps[int(lcid)]] = strips[0]["transportProtocol"]
+            if "ledType" in strip:
+                config.COLOR_CALIBRATION_ASSIGNMENTS[int(lcid)] = strips[0]["ledType"]
+            else:
+                config.COLOR_CALIBRATION_ASSIGNMENTS[int(lcid)] = "ws2811"
             if "frameDivider" in strips[0]:
                 udpFrameDividers[lcid] = strips[0]["frameDivider"]
             stripLedCount[int(lcid)] = strips[0]["leds"]
@@ -72,6 +79,10 @@ def syncConfig (vis, incommingConfig):
                 stripMirrors[strips[0]["mirrorGroup"]].append(int(lcid))
     
     countOfStrips = len(udpIps)
+    vis.ENDABLED_RND_PARTS = {}
+    for i in range(countOfStrips):
+        vis.ENDABLED_RND_PARTS[i] = True
+
     mirrorArray = []
     for groupId, items in stripMirrors.items():
         # get unique items
