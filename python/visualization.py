@@ -194,6 +194,7 @@ class Visualization:
                         self.beat = message["beat"]
                         self.hasBeatChanged = True
                         self.randomizerBeatCount += 1
+                        queueHandler.reportBeat(self, self.queue2Parent)
                     if(config.DISPLAY_BPM):
                         if(self.beat):
                             print("BPM: " + str(self.avg_Bpm) + " => " + str(self.randomizerBeatCount % config.cfg["musicBeatsBar"]))
@@ -248,11 +249,18 @@ class Visualization:
         # measure time of effekt
         start = time.time()
         composerOutput, timeDict = composer.getComposition(mel,self,self.hasBeatChanged)
-        end = time.time()
-       
+        positionalOutput = {}  #composer.runPositional(mel,self,self.hasBeatChanged)
 
+        for i in range(0,config.STRIP_COUNT):
+            if i in positionalOutput:
+                if i in composerOutput:
+                    positionalOutput[i].addFrame(composerOutput[i].getLEDS(),0,config.STRIP_LED_COUNTS[i])
+            elif i in composerOutput:
+                positionalOutput[i] = composerOutput[i]
+
+        end = time.time()
         startLed = time.time()
-        led.update(composerOutput,self.queue2Parent,mel,self.hasBeatChanged)
+        led.update(positionalOutput,self.queue2Parent,mel,self.hasBeatChanged)
         endLed = time.time()
         
         if config.LIMIT_FPS:

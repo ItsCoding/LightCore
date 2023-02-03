@@ -12,17 +12,13 @@ The LightCore is mad up of 5 modules:
 - `/light-client` - Webclient to controll the render pipeline and make changes on stage
 - `/light-designer` - Electron based GUI to design a stage and position the strips, bascily pepare everything
 - `/messageBroker` - Websocket Server that handles *most* of the communication between the modules
-- `/midi-adapter` - Midi Adapter to easly integrate existing software/hardware with LightCore
+- `/connectoren` -Adapters to easly integrate existing software/hardware with LightCore
 - `/python` - Render pipeline for calculating the LED colors
 
 # Installing dependencies
 The pip package manager can also be used to install the python dependencies.
 ```
-pip install numpy
-pip install pyaudio
-pip install matplotlib
-pip install zmq
-pip install websocket-client
+pip install numpy pyaudio matplotlib zmq websocket-client scipy
 
 ```
 If `pip` is not found try using `python -m pip install` instead.
@@ -35,24 +31,13 @@ If you don't have brew installed you can get it here: https://brew.sh
 export LDFLAGS=-L/opt/homebrew/lib
 export CPPFLAGS=-I/opt/homebrew/include
 brew install portaudio
-pip3 install numpy
-pip3 install pyaudio
-pip3 install matplotlib
-pip3 install zmq
-pip3 install websocket-client
+pip3 install numpy pyaudio matplotlib zmq websocket-client scipy
 
 ```
 
 Running the visualization can be done using the command below.
 
 `python3 pipeline.py`
-
-## Installing the Python dependencies
-Install python dependencies using apt-get
-```
-sudo apt-get update
-sudo apt-get install python-numpy python-scipy python-pyaudio
-```
 
 ## Audio device configuration
 For the Raspberry Pi, a USB audio device needs to be configured as the default audio device.

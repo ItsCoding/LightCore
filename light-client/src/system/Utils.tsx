@@ -85,7 +85,7 @@ export const parseStrips = (stripConfig: any) => {
                 position: strip.name,
                 index: parseInt(strip.lcid),
                 length: totalLeds,
-                marks: strip.uiMarks ? generateMarks(parseInt(strip.leds), strip.uiMarks) : [],
+                marks: strip.uiMarks ? generateMarks(totalLeds, strip.uiMarks) : [],
                 symbol: strip.stripSymbol,
             })
             doneLCIDS.push(parseInt(strip.lcid))

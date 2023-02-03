@@ -90,7 +90,11 @@ export class WebsocketServer {
                     let stage = messageObject.message;
                     await this.dataAPI.setKeyValue("stageData", JSON.stringify(stage));
                     setStageData(stage);
-                    console.log("🏗  Stage data updated");
+                    // get a human readable now for the log
+                    let now = new Date();
+                    let nowString = now.toLocaleString();
+
+                    console.log(nowString,"🏗  Stage data updated");
                     await findIPsByMac();
                     this.zeroMQServerOUT.sendMessage(JSON.stringify({ type: "system.config.sync", message: getStageData() }));
                     break;

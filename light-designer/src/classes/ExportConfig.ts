@@ -1,3 +1,4 @@
+import { PointDict } from "src/components/System/Exporter";
 import { Point } from "./Point";
 
 export type GeneratedStripConfig = {
@@ -20,4 +21,11 @@ export type GeneratedStripConfig = {
 
 export type GeneratedConfig = {
     strips: { [key: string]: GeneratedStripConfig }
+    ledPositions: PointDict
+    canvasSize: {
+        width: number;
+        height: number;
+        smallestX: number;
+        smallestY: number;
+    }
 }

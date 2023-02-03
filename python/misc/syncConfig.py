@@ -44,6 +44,10 @@ def syncConfig (vis, incommingConfig):
 
                 if "frameDivider" in strip:
                     udpFrameDividers[lcid] = strip["frameDivider"]
+                if "ledType" in strip:
+                    config.COLOR_CALIBRATION_ASSIGNMENTS[lcid] = strip["ledType"]
+                else:
+                    config.COLOR_CALIBRATION_ASSIGNMENTS[lcid] = "WS2812"
                 sumLeds += strip["leds"]
             stripLedCount[lcid] = sumLeds
             if "mirrorGroup" in strip:
@@ -61,8 +65,11 @@ def syncConfig (vis, incommingConfig):
             if "offset" in strips[0]:
                 udpIndexOffset[lcid] = strips[0]["offset"]
             if "transportProtocol" in strips[0]:
-                    esp_protocols[udpIps[int(lcid)]] = strips[0]["transportProtocol"]
-
+                esp_protocols[udpIps[int(lcid)]] = strips[0]["transportProtocol"]
+            if "ledType" in strip:
+                config.COLOR_CALIBRATION_ASSIGNMENTS[int(lcid)] = strips[0]["ledType"]
+            else:
+                config.COLOR_CALIBRATION_ASSIGNMENTS[int(lcid)] = "ws2811"
             if "frameDivider" in strips[0]:
                 udpFrameDividers[lcid] = strips[0]["frameDivider"]
             stripLedCount[int(lcid)] = strips[0]["leds"]
@@ -72,6 +79,10 @@ def syncConfig (vis, incommingConfig):
                 stripMirrors[strips[0]["mirrorGroup"]].append(int(lcid))
     
     countOfStrips = len(udpIps)
+    vis.ENDABLED_RND_PARTS = {}
+    for i in range(countOfStrips):
+        vis.ENDABLED_RND_PARTS[i] = True
+
     mirrorArray = []
     for groupId, items in stripMirrors.items():
         # get unique items
@@ -94,7 +105,10 @@ def syncConfig (vis, incommingConfig):
     config.STRIP_COUNT = countOfStrips
 
     config.STRIP_BRIGHTNESS = {} # editable in client
-
+    config.STRIP_LED_POSITIONS = incommingConfig["ledPositions"]
+    # print("ledPositions", incommingConfig["ledPositions"])
+    config.CANVAS_HEIGHT = int(incommingConfig["canvasSize"]["height"]) + 1
+    config.CANVAS_WIDTH = int(incommingConfig["canvasSize"]["width"]) + 1
     for i in range(countOfStrips):
         if str(i) not in config.BLACKLISTED_EFFECTS:
             config.BLACKLISTED_EFFECTS[str(i)] = []
@@ -117,6 +131,9 @@ def syncConfig (vis, incommingConfig):
     print("mirrorArray",mirrorArray)
     print("stripBrightness",config.STRIP_BRIGHTNESS)
     print("=======================================")
+    print("Canvas Width",config.CANVAS_WIDTH)
+    print("Canvas Height",config.CANVAS_HEIGHT)
+    print("=======================================\n")
 
 
 

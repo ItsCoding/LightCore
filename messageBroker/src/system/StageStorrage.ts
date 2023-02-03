@@ -3,7 +3,14 @@ import { DataAPI } from "./DataAPI";
 import find from 'local-devices'
 
 let stageData: GeneratedConfig = {
-    strips: {}
+    strips: {},
+    ledPositions: {},
+    canvasSize: {
+        width: 0,
+        height: 0,
+        smallestX: 0,
+        smallestY: 0
+    }
 }
 
 let dataAPI: DataAPI = undefined
@@ -61,6 +68,15 @@ export const initializeStageData = async (dbApi: DataAPI) => {
     const dbConfig = await dataAPI.getKeyValue("stageData");
     if (dbConfig) {
         stageData = JSON.parse(dbConfig) as GeneratedConfig;
+        if(stageData.hasOwnProperty("ledPositions")){
+            console.log("POITIONAL-DATA Loaded");
+        }
+        if(stageData.hasOwnProperty("strips")){
+            console.log("STRIP-DATA Loaded");
+        }
+        if(stageData.hasOwnProperty("canvasSize")){
+            console.log("CANVAS-DATA Loaded");
+        }
         console.log("🏗  Stage data loaded from database");
     }else{
         console.log("⚠ No stage data found in database");

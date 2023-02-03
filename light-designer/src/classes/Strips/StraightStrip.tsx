@@ -13,9 +13,9 @@ export class StraightStrip extends StripBase {
         this.end = new Point(start.x + physicalLength, start.y);
         this.id = v4();
     }
-
+    public smallestDensity = 30;
     public scaleFactor = 1;
-    public maxStripDensity = 60;
+    public maxStripDensity = 30;
     public stripName = "Straight Strip";
     public zIndex = 1;
     get startPoint(): Point {
@@ -97,13 +97,6 @@ export class StraightStrip extends StripBase {
         return points;
     }
 
-    public getLedsPositions(): Point[][] {
-        const positions: Point[][] = [];
-        for (let i = 0; i < this.leds; i++) {
-            positions.push(this.getPositionAt(i));
-        }
-        return positions;
-    }
 
 
     // get the physical positions of the leds with a scale of 1cm = 20px
@@ -119,31 +112,25 @@ export class StraightStrip extends StripBase {
         return positions;
     }
 
-    public getPhysicalPositionsAt(index: number): Point {
-        const ledSize = this.getPhysicalLedSize();
-        const angle = this.getStripAngle;
-        const x = this.start.x + (index * ledSize * Math.cos(angle * Math.PI / 180));
-        const y = this.start.y + (index * ledSize * Math.sin(angle * Math.PI / 180));
-        return new Point(x, y)
+    public getExportSize(smallestDensity: number): number {
+        return (smallestDensity / (this.ledCount / (this.physicalLength / 100)))
     }
 
-    public getExportLEDsAt(i: number): Point[] {
-        const angle = this.getStripAngle;
-        const ledSize = this.physicalLength / this.leds;
-        console.log("LED Size: " + ledSize);
-        const points: Point[] = []
-        for (let iX = 0; iX < ledSize; iX++) {
-            const x = this.start.x + (i * ledSize * Math.cos(angle * Math.PI / 180));
-            const y = this.start.y + (i * ledSize * Math.sin(angle * Math.PI / 180));
-            points.push(new Point(x, y));
-        }
-        return points;
-    }
-
-    public getExportLEDs(): Point[][] {
+    public getExportLEDs(smallestDensity: number): Point[][] {
+        //return the position for each led in the strip, scale the density down to the smallest led size
         const positions: Point[][] = [];
+        const ledSize = this.getExportSize(smallestDensity)
+        const angle = this.getStripAngle;
+        console.log("LC-" + this.lcid, ledSize, smallestDensity, this.ledCount, this.physicalLength)
         for (let i = 0; i < this.leds; i++) {
-            positions.push(this.getExportLEDsAt(i));
+            const points: Point[] = []
+            const ledPosition = new Point(this.start.x * ledSize, this.start.y * ledSize);
+            ledPosition.x += (((ledSize * i)) * Math.cos(angle * Math.PI / 180)) ;
+            ledPosition.y += (((ledSize * i)) * Math.sin(angle * Math.PI / 180)) ;
+            for (let j = 0; j < ledSize; j++) {
+                positions.push([ledPosition]);
+            }
+            // positions.push(points);
         }
         return positions;
     }
@@ -188,6 +175,10 @@ export class StraightStrip extends StripBase {
             initializedStrips.push(nStrip);
         });
         return initializedStrips;
+    }
+
+    public get density(): number {
+        return this.maxStripDensity / (this.ledCount / (this.physicalLength / 100));
     }
 
 

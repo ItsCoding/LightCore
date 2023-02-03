@@ -343,6 +343,13 @@ export const EffektsPage = ({ availableEffekts, activeRoute, isRandomizerActive,
                             <FormControlLabel control={<Switch checked={inPreviewMode} onChange={(e, checked) => changePreviewMode(checked)} />} label="Preview" />
                         </FormGroup>
                         <Button disabled={!inPreviewMode} color="info" variant="contained" onClick={() => { setPreviewOpen(true) }}>Open Preview</Button>
+                        <Button sx={{
+                            marginLeft: 2
+                        }} color="error" onClick={() => {
+                            stripConfig.forEach((strip) => {
+                                wsClient.lightSetOff( inPreviewMode ? (strip.index + 5) * -1 : strip.index);
+                            });
+                        }}>All OFF</Button>
                     </Toolbar>
                     )} />
                     <CardContent>

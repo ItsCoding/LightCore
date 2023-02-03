@@ -18,6 +18,19 @@ export const StageViewer = ({ strips, onStripClick, selectedStrip, globalScaling
         return stripsWithLCID.length === 1;
     }
 
+    let smallestDensity = Number.MAX_VALUE;
+    let largestDensity = 0;
+    strips.forEach(strip => {
+        const density = strip.ledCount / (strip.getPhysicalLength / 100)
+        if (smallestDensity > density) {
+            smallestDensity = density;
+        }
+        if (largestDensity < density) {
+            largestDensity = density;
+        }
+    })
+
+
 
     return (
         <div style={{
@@ -25,56 +38,40 @@ export const StageViewer = ({ strips, onStripClick, selectedStrip, globalScaling
         }}>
             {strips.map((strip, stripIndex) => {
                 const ledSize = {
-                    width: strip.getPhysicalLedSize(),
-                    height: strip.getPhysicalLedSize()
+                    width: strip.getExportSize(smallestDensity),
+                    height: strip.getExportSize(smallestDensity)
                 }
                 const angle = strip.getStripAngleExact;
                 const offset = strip.offset;
                 return (
                     <div key={stripIndex}>
-                        {strip.getPhysicalPositions().map((ledPosition, index) => {
-                            const pixelID = `${strip.lcid}-${index + (isLCIDUnique(strip.lcid) ? 0 : offset)}`;
-                            return (
-                                <div key={pixelID} id={pixelID}
-                                    style={{
-                                        position: "absolute",
-                                        top: ledPosition.y,
-                                        left: ledPosition.x,
-                                        width: ledSize.width,
-                                        height: ledSize.height,
-                                        backgroundColor: "red",
-                                        transform: `rotate(${angle}deg)`,
-                                        ...(globalScaling >= 1 && selectedStrip === stripIndex && {
-                                            borderWidth: 1,
-                                            borderStyle: "solid",
-                                            borderColor: selectedStrip === stripIndex ? "rgba(9, 13, 220, 0.52)" : "black",
-                                        }),
-                                        zIndex: strip.zIndex
-                                    }}
-                                    // onDragStart={(e) => {
-                                    //     console.log("START", e);
-                                    // }}
-                                    // onDragEnd={(e) => {
-                                    //     console.log("END", e);
-                                    // }}
-                                    // onDrag={(e) => {
-                                    //     // move the strip
-                                    //     // console.log(ledPosition.x - e.pageX, ledPosition.y - e.pageY);
-                                    //     console.log(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
-                                    //     const newStrips = [...strips];
-                                    //     const newStrip = newStrips[stripIndex];
-                                    //     newStrip.move(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
-                                    //     newStrips[stripIndex] = newStrip;
-                                    //     strips = newStrips;
-                                    //     setStrips(newStrips);
-                                    // }}
-                                    // draggable
-                                    onClick={() => {
-                                        if (onStripClick) {
-                                            onStripClick(stripIndex, index);
-                                        }
-                                    }}></div>
-                            )
+                        {strip.getExportLEDs(smallestDensity).map((vPixel, index) => {
+                            return vPixel.map((ledPosition) => {
+                                const pixelID = `${strip.lcid}-${index + (isLCIDUnique(strip.lcid) ? 0 : offset)}`;
+                                return (
+                                    <div key={pixelID} id={pixelID}
+                                        style={{
+                                            position: "absolute",
+                                            top: ledPosition.y,
+                                            left: ledPosition.x,
+                                            width: ledSize.width,
+                                            height: ledSize.height,
+                                            backgroundColor: "red",
+                                            transform: `rotate(${angle}deg)`,
+                                            ...(globalScaling >= 1 && selectedStrip === stripIndex && {
+                                                borderWidth: 1,
+                                                borderStyle: "solid",
+                                                borderColor: selectedStrip === stripIndex ? "rgba(9, 13, 220, 0.52)" : "black",
+                                            }),
+                                            zIndex: strip.zIndex
+                                        }}
+                                        onClick={() => {
+                                            if (onStripClick) {
+                                                onStripClick(stripIndex, index);
+                                            }
+                                        }}></div>
+                                )
+                            })
                         })}
                     </div>
                 )

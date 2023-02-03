@@ -156,14 +156,14 @@ const JamRow = ({ effektGroups, index, strip, changeRowState, jamRowState, maste
 
     const isButtonActive = (key: number) => {
 
-        return jamRowState.buttons[key].activeEffektId.toString().length > 0;
+        return jamRowState && jamRowState.buttons && jamRowState.buttons[key].activeEffektId.toString().length > 0;
     }
 
     const getButtonColor = (key: number) => {
         if (isButtonActive(key)) {
             return "#5e0000";
         } else {
-            if (jamRowState.buttons[key].holdToActivate) {
+            if (jamRowState && jamRowState.buttons[key].holdToActivate) {
                 return "#00005e";
             } else {
                 return null;
@@ -175,13 +175,15 @@ const JamRow = ({ effektGroups, index, strip, changeRowState, jamRowState, maste
         if (isButtonActive(key)) {
             return "#780000";
         } else {
-            if (jamRowState.buttons[key].holdToActivate) {
+            if (jamRowState && jamRowState.buttons[key].holdToActivate) {
                 return "#00005e";
             } else {
                 return null;
             }
         }
     }
+
+    if (!jamRowState) return <></>
 
     return (
         <Grid item xs={1.5} sx={{
@@ -361,7 +363,7 @@ const JamRowMaster = ({ clearAllEffekts, changeRowState, jamRowState, masterEffe
     }, [jamRowState])
 
     const isButtonActive = (key: number) => {
-        return jamRowState.buttons[key].activeEffektId.toString().length > 0;
+        return jamRowState && jamRowState.buttons && jamRowState.buttons[key].activeEffektId.toString().length > 0;
     }
 
     const lightOff = () => {
@@ -376,7 +378,7 @@ const JamRowMaster = ({ clearAllEffekts, changeRowState, jamRowState, masterEffe
         if (isButtonActive(key)) {
             return "#5e0000";
         } else {
-            if (jamRowState.buttons[key].holdToActivate) {
+            if (jamRowState && jamRowState.buttons[key].holdToActivate) {
                 return "#00005e";
             } else {
                 return null;
@@ -388,7 +390,7 @@ const JamRowMaster = ({ clearAllEffekts, changeRowState, jamRowState, masterEffe
         if (isButtonActive(key)) {
             return "#780000";
         } else {
-            if (jamRowState.buttons[key].holdToActivate) {
+            if (jamRowState && jamRowState.buttons[key].holdToActivate) {
                 return "#00005e";
             } else {
                 return null;
@@ -545,6 +547,17 @@ export const Jamboard = ({ strips, availableEffekts, activeJamBoardIndex, setAct
         // wsClient.issueKeySet("jampages", JSON.stringify(newBoard));
     }
 
+    const generateNewBoard = () => {
+        console.log("Generating new Board")
+        const masterEffektGroups: MasteEffektDict = {}
+        const effektGroupKeys = Object.keys(effektGroups);
+        for (let i = 0; i < countOfEffektGroups; i++) {
+            masterEffektGroups[i] = effektGroupKeys[i]
+        }
+        initializeJamRowStates(masterEffektGroups)
+        setMasterEffektGroups(masterEffektGroups)
+    }
+
     useEffect(() => {
         if (availableEffekts.length > 0) {
             console.log(effektGroups)
@@ -553,22 +566,20 @@ export const Jamboard = ({ strips, availableEffekts, activeJamBoardIndex, setAct
                 console.log("BoardData", data)
 
                 if (data.message.key === "jampages") {
+                    const allPossibleRows = [...(strips.map(s => s.index)), "MASTER"]
                     if (data.message.value && Object.keys(JSON.parse(data.message.value)).length > 0) {
                         const boards = JSON.parse(data.message.value) as JamBoard
                         console.log("Board Parsed", boards)
-
-                        setMasterEffektGroups(boards[activeJamBoardIndex].masterEffektGroups);
-                        setJamRowStates(boards[activeJamBoardIndex].rowStates);
-                        setJamBoards(boards);
-                    } else {
-                        console.log("Generating new Board")
-                        const masterEffektGroups: MasteEffektDict = {}
-                        const effektGroupKeys = Object.keys(effektGroups);
-                        for (let i = 0; i < countOfEffektGroups; i++) {
-                            masterEffektGroups[i] = effektGroupKeys[i]
+                        if (allPossibleRows.length !== Object.keys(boards[activeJamBoardIndex].rowStates).length) {
+                            console.log("Board has wrong amount of rows, generating new States")
+                            generateNewBoard();
+                        } else {
+                            setMasterEffektGroups(boards[activeJamBoardIndex].masterEffektGroups);
+                            setJamRowStates(boards[activeJamBoardIndex].rowStates);
+                            setJamBoards(boards);
                         }
-                        initializeJamRowStates(masterEffektGroups)
-                        setMasterEffektGroups(masterEffektGroups)
+                    } else {
+                        generateNewBoard();
                     }
                     setLoading(false);
                 }
@@ -638,64 +649,6 @@ export const Jamboard = ({ strips, availableEffekts, activeJamBoardIndex, setAct
 
     return (
         <>
-            <Modal
-                open={openMasterModal >= 0}
-                onClose={() => setOpenMasterModal(-1)}
-            // aria-labelledby="modal-modal-title"
-            // aria-describedby="modal-modal-description"
-            >
-                <Box sx={style}>
-                    <List>
-                        {Object.keys(effektGroups).map((key) => (
-                            <ListItem disablePadding>
-                                <ListItemButton
-                                    onClick={() => onMasterSelection(key)}
-                                    sx={{
-                                        backgroundColor: masterEffektGroups[openMasterModal] === key ? "rgb(2, 45, 97,0.4)" : null
-                                    }}>
-                                    <ListItemText primary={key} />
-                                </ListItemButton>
-                            </ListItem>
-                        ))}
-                    </List>
-                    <Divider style={{ borderColor: "rgba(255, 255, 255, 0.12)" }} />
-                    <FormGroup sx={{
-                        paddingLeft: 2,
-                        paddingBottom: 1
-                    }}>
-                        <FormControlLabel control={<Switch onChange={(e, check) => changeMasterHoldToActivate(openMasterModal, check)} checked={jamRowStates["MASTER"]?.buttons[openMasterModal]?.holdToActivate} />} label="Hold to activate" />
-                    </FormGroup>
-                </Box>
-            </Modal>
-            <Modal
-                open={openRowIdKey.rowId >= 0}
-                onClose={() => setOpenRowIdKey({ rowId: -1, key: -1 })}
-            // aria-labelledby="modal-modal-title"
-            // aria-describedby="modal-modal-description"
-            >
-                <Box sx={style}>
-                    <List>
-                        {getEffektsForRow().map((eff) => (
-                            <ListItem disablePadding>
-                                <ListItemButton
-                                    onClick={() => onEffektSelection(eff)}
-                                    sx={{
-                                        backgroundColor: jamRowStates[openRowIdKey.rowId].buttons[openRowIdKey.key].effekt.effektSystemName === eff.effektSystemName ? "rgb(2, 45, 97,0.4)" : null
-                                    }}>
-                                    <ListItemText primary={eff.name} />
-                                </ListItemButton>
-                            </ListItem>
-                        ))}
-                    </List>
-                    <Divider style={{ borderColor: "rgba(255, 255, 255, 0.12)" }} />
-                    <FormGroup sx={{
-                        paddingLeft: 2,
-                        paddingBottom: 1
-                    }}>
-                        <FormControlLabel control={<Switch onChange={(e, check) => changeBtnHoldToActivate(check)} checked={jamRowStates[openRowIdKey.rowId]?.buttons[openRowIdKey.key]?.holdToActivate} />} label="Hold to activate" />
-                    </FormGroup>
-                </Box>
-            </Modal>
             {loading ? <>
 
                 <div style={{
@@ -707,6 +660,64 @@ export const Jamboard = ({ strips, availableEffekts, activeJamBoardIndex, setAct
                     <CircularProgress size="10rem" />
                 </div>
             </> : <>
+                <Modal
+                    open={openMasterModal >= 0}
+                    onClose={() => setOpenMasterModal(-1)}
+                // aria-labelledby="modal-modal-title"
+                // aria-describedby="modal-modal-description"
+                >
+                    <Box sx={style}>
+                        <List>
+                            {Object.keys(effektGroups).map((key) => (
+                                <ListItem disablePadding>
+                                    <ListItemButton
+                                        onClick={() => onMasterSelection(key)}
+                                        sx={{
+                                            backgroundColor: masterEffektGroups[openMasterModal] === key ? "rgb(2, 45, 97,0.4)" : null
+                                        }}>
+                                        <ListItemText primary={key} />
+                                    </ListItemButton>
+                                </ListItem>
+                            ))}
+                        </List>
+                        <Divider style={{ borderColor: "rgba(255, 255, 255, 0.12)" }} />
+                        <FormGroup sx={{
+                            paddingLeft: 2,
+                            paddingBottom: 1
+                        }}>
+                            <FormControlLabel control={<Switch onChange={(e, check) => changeMasterHoldToActivate(openMasterModal, check)} checked={jamRowStates["MASTER"]?.buttons[openMasterModal]?.holdToActivate} />} label="Hold to activate" />
+                        </FormGroup>
+                    </Box>
+                </Modal>
+                <Modal
+                    open={openRowIdKey.rowId >= 0}
+                    onClose={() => setOpenRowIdKey({ rowId: -1, key: -1 })}
+                // aria-labelledby="modal-modal-title"
+                // aria-describedby="modal-modal-description"
+                >
+                    <Box sx={style}>
+                        <List>
+                            {getEffektsForRow().map((eff) => (
+                                <ListItem disablePadding>
+                                    <ListItemButton
+                                        onClick={() => onEffektSelection(eff)}
+                                        sx={{
+                                            backgroundColor: jamRowStates[openRowIdKey.rowId].buttons[openRowIdKey.key].effekt.effektSystemName === eff.effektSystemName ? "rgb(2, 45, 97,0.4)" : null
+                                        }}>
+                                        <ListItemText primary={eff.name} />
+                                    </ListItemButton>
+                                </ListItem>
+                            ))}
+                        </List>
+                        <Divider style={{ borderColor: "rgba(255, 255, 255, 0.12)" }} />
+                        <FormGroup sx={{
+                            paddingLeft: 2,
+                            paddingBottom: 1
+                        }}>
+                            <FormControlLabel control={<Switch onChange={(e, check) => changeBtnHoldToActivate(check)} checked={jamRowStates[openRowIdKey.rowId]?.buttons[openRowIdKey.key]?.holdToActivate} />} label="Hold to activate" />
+                        </FormGroup>
+                    </Box>
+                </Modal>
                 {Object.keys(jamRowStates).length > 0 && <Grid container columnSpacing={2}>
                     {strips.map((strip, i) => {
                         return (

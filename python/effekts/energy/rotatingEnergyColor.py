@@ -20,7 +20,7 @@ class visualize_rotatingEnergyColor:
             "effektSystemName": "visualize_rotatingEnergyColor",
             "group": "moving",
             "groupColor": "#44bd32",
-            "supports": ["intensity"]
+            "supports": ["intensity","colorDict-3"]
         }
         self.colors = random.sample(config.cfg["colorDict"], 3)
     def run(self, y,stripSize,gain: dsp.ExpFilter,instanceData: dict = {}):

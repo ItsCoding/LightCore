@@ -13,6 +13,11 @@ export type ExporterProps = {
     closeModal: () => void;
 }
 
+export type PointDict = {
+    [key: number]: {
+        [key: number]: Array<{ stripID: string; ledIndex: number; }>
+    }
+}
 
 export const Exporter = ({ strips, closeModal }: ExporterProps) => {
 
@@ -30,8 +35,8 @@ export const Exporter = ({ strips, closeModal }: ExporterProps) => {
         let smallestY = Number.MAX_VALUE;
 
         strips.forEach(strip => {
-            const startPoint = strip.getPhysicalPositionsAt(0)
-            const endPoint = strip.getPhysicalPositionsAt(strip.ledCount - 1)
+            const startPoint = strip.startPoint;
+            const endPoint = strip.endPoint;
 
             if (endPoint.x > largestX) {
                 largestX = endPoint.x;
@@ -49,8 +54,8 @@ export const Exporter = ({ strips, closeModal }: ExporterProps) => {
 
         //get the smallest pixel coordinate
         strips.forEach(strip => {
-            const startPoint = strip.getPhysicalPositionsAt(0)
-            const endPoint = strip.getPhysicalPositionsAt(strip.ledCount - 1)
+            const startPoint = strip.startPoint;
+            const endPoint = strip.endPoint;
             if (endPoint.x < smallestX) {
                 smallestX = endPoint.x;
             }
@@ -73,7 +78,8 @@ export const Exporter = ({ strips, closeModal }: ExporterProps) => {
 
     const generateConfig = () => {
         const config: GeneratedConfig = {
-            strips: {}
+            strips: {},
+            ledPositions: {},
         }
         strips.forEach((strip, index) => {
             const stripConfig = strip.getExportConfig();
@@ -91,28 +97,46 @@ export const Exporter = ({ strips, closeModal }: ExporterProps) => {
         return config;
     }
 
+    const randomHexColor = () => {
+        return '#' + Math.floor(Math.random() * 16777215).toString(16);
+    }
+
 
     useEffect(() => {
         if (strips) {
             const cvs = document.createElement('canvas');
-            const size = getCanvasSize();
+            const { pointDict, size } = pointsTo2DDict(strips);
             cvs.width = size.width + 1;
             cvs.height = size.height + 1;
             const context = cvs.getContext("2d");
             //Our first draw
             context.fillStyle = '#000000'
             context.fillRect(0, 0, context.canvas.width, context.canvas.height)
+
             let pointCount = 0;
-            strips.forEach(strip => {
-                const points = strip.getPhysicalPositions();
-                points.flat().forEach(point => {
+            Object.keys(pointDict).forEach(xString => {
+                const x = parseInt(xString);
+                Object.keys(pointDict[x]).forEach(yString => {
+                    const y = parseInt(yString);
+                    context.fillStyle = randomHexColor();
                     pointCount++;
-                    context.fillStyle = '#FFFFFF'
-                    context.fillRect(point.x - size.smallestX, point.y - size.smallestY, 1, 1)
+                    context.fillRect(x - size.smallestX, y - size.smallestY, 1, 1)
                 })
-            });
-            console.table(strips.map(strip => ({ name: strip.stripName, start: strip.getExportLEDsAt(0).map(p => `${p.x}/${p.y}`).join("; "), end: strip.getExportLEDsAt(strip.ledCount - 1).map(p => `${p.x}/${p.y}`).join("; ") })))
-            console.table(strips.map(strip => ({ name: strip.stripName, start: strip.getPhysicalPositionsAt(0).toString(), end: strip.getPhysicalPositionsAt(strip.ledCount - 1).toString() })))
+            })
+
+            // let pointCount = 0;
+            // strips.forEach(strip => {
+            //     const points = strip.getLedsPositions();
+            //     console.log("Points: ", points, strip);
+            //     points.flat().forEach(point => {
+            //         pointCount++;
+            //         context.fillStyle = ledColor;
+            //         ledColor = ledColor === '#FFFFFF' ? '#32a852' : '#FFFFFF';
+            //         context.fillRect(point.x - size.smallestX, point.y - size.smallestY, 1, 1)
+            //     })
+            // });
+            // console.table(strips.map(strip => ({ name: strip.stripName, start: strip.getExportLEDsAt(0).map(p => `${p.x}/${p.y}`).join("; "), end: strip.getExportLEDsAt(strip.ledCount - 1).map(p => `${p.x}/${p.y}`).join("; ") })))
+            // console.table(strips.map(strip => ({ name: strip.stripName, start: strip.getPhysicalPositionsAt(0).toString(), end: strip.getPhysicalPositionsAt(strip.ledCount - 1).toString() })))
             setPixelAmount(pointCount)
             setImageBase64(cvs.toDataURL());
             setCanvasSize(new Point(cvs.width, cvs.height));
@@ -123,10 +147,78 @@ export const Exporter = ({ strips, closeModal }: ExporterProps) => {
 
     }, [])
 
+
+
+    const pointsTo2DDict = (strips: Strip[]) => {
+        const pointDict: PointDict = {}
+        let largestX = 0;
+        let largestY = 0;
+        let smallestX = 0;
+        let smallestY = 0;
+        let smallestDensity = Number.MAX_VALUE;
+        strips.forEach(strip => {
+            const density = strip.ledCount / (strip.getPhysicalLength / 100)
+            if (smallestDensity > density) {
+                smallestDensity = density;
+            }
+        })
+
+        console.log("Smallest Density: ", smallestDensity)
+        strips.forEach(strip => {
+            const leds = strip.getExportLEDs(smallestDensity);
+            console.log("StripLEDs", strip.lcid, leds)
+            leds.forEach((virtualPoints, ledIndex) => {
+                // console.log("Virtual Points: ", strip.lcid, ledIndex)
+                virtualPoints.forEach((point) => {
+                    if (!pointDict[Math.round(point.x)]) {
+                        pointDict[Math.round(point.x)] = {}
+                    }
+                    if (!pointDict[Math.round(point.x)][Math.round(point.y)]) {
+                        pointDict[Math.round(point.x)][Math.round(point.y)] = []
+                    }
+
+                    if (point.x > largestX) {
+                        largestX = point.x;
+                    }
+                    if (point.y > largestY) {
+                        largestY = point.y;
+                    }
+                    if (point.x < smallestX) {
+                        smallestX = point.x;
+                    }
+                    if (point.y < smallestY) {
+                        smallestY = point.y;
+                    }
+
+                    pointDict[Math.round(point.x)][Math.round(point.y)].push({
+                        stripID: strip.lcid,
+                        ledIndex: ledIndex
+                    })
+                })
+            })
+        })
+
+        return {
+            pointDict,
+            size: {
+                width: largestX,
+                height: largestY,
+                smallestX,
+                smallestY
+            }
+        };
+    }
+
     const syncToMessageBroker = async () => {
         try {
+            const { pointDict, size } = pointsTo2DDict(strips);
+            console.log("LedPositions: ", pointDict)
             const wsClient = WebSocketClient.getInstance()
-            wsClient.send("wsapi.syncStage", exportConfig);
+            wsClient.send("wsapi.syncStage", {
+                ...exportConfig,
+                ledPositions: pointDict,
+                canvasSize: size
+            });
             enqueueSnackbar("Synced to message broker", { variant: "success" })
         } catch (error) {
             enqueueSnackbar("Failed to sync to message broker", { variant: "error" })

@@ -57,7 +57,7 @@ def _update_virtual(composing,y,beatChange):
     for key in composing:
         frame = composing[key].getLEDS()
         ledStripType = config.COLOR_CALIBRATION_ASSIGNMENTS[key]
-        ledCalibration = config.cfg["colorCalibration"][ledStripType]
+        ledCalibration = config.cfg["colorCalibration"][ledStripType.upper()]
         frame[0] = frame[0] * ledCalibration[0] * (config.cfg["brightness"] / 100) * (config.cfg["stripBrightness"][str(key)] / 100)
         frame[1] = frame[1] * ledCalibration[1] * (config.cfg["brightness"] / 100) * (config.cfg["stripBrightness"][str(key)] / 100)
         frame[2] = frame[2] * ledCalibration[2] * (config.cfg["brightness"] / 100) * (config.cfg["stripBrightness"][str(key)] / 100)
@@ -333,9 +333,11 @@ def _update_esp8266(composing):
     # for i in range(len(composing)):
     #     updateEspStrip_with_static_arg(i)
     results = pool.map(updateEspStrip_with_static_arg, range(len(composing)))
-    for result in results:
-        for msg in result:
-            AckHandler.registerAckId(msg["ip"], msg["id"])
+    if results is not None:
+        for result in results:
+            if result is not None:
+                for msg in result:
+                    AckHandler.registerAckId(msg["ip"], msg["id"])
     # with concurrent.futures.ThreadPoolExecutor() as executor:
     #     results = [executor.submit(updateEspStrip, i,composing) for i in composing]
     #     for future in concurrent.futures.as_completed(results):

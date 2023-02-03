@@ -9,6 +9,7 @@ import BorderInnerIcon from '@mui/icons-material/BorderInner';
 import FormatColorFillIcon from '@mui/icons-material/FormatColorFill';
 import { QuickSaveButton } from './QuickSaveButton';
 import { Composition } from '../../types/Composition';
+import { BeatBars } from './BeatBars';
 type HeaderBarProps = {
     changeTab: (key: string) => void;
     setTouchCapable: (capable: boolean) => void;
@@ -54,6 +55,7 @@ export default function HeaderBar({ changeTab, setTouchCapable, compositionStore
                             {/* <Tab value={"colors"} icon={<FormatColorFillIcon />} aria-label="colors" /> */}
                             {/* <Tab icon={<PersonPinIcon />} aria-label="person" /> */}
                         </Tabs>
+                        <BeatBars />
                         {/* <Toolbar>
                         <IconButton
                             size="large"
