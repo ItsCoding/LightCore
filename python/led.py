@@ -139,7 +139,10 @@ def updateEspStrip(stripIndex,composing,cfgInstance,ackData):
             deviceLag = 0
             if cfgInstance["UDP_IPS"][stripIndex] in ackData:
                 deviceLag = ackData[cfgInstance["UDP_IPS"][stripIndex]]
-            idx = np.array_split(idx, n_packets)
+            if isLCPProtocol:
+                idx = np.array_split(idx, n_packets)
+            else:
+                idx = [idx]
             # print("Device lagging behind: ", cfgInstance["UDP_IPS"][stripIndex], deviceLag)
             if deviceLag > cfgInstance["ESP_MAX_FRAMES_SKIPPED"] * len(idx) and isLCPProtocol:
                 pass
@@ -155,8 +158,9 @@ def updateEspStrip(stripIndex,composing,cfgInstance,ackData):
                    bytes_val += messageAckId.to_bytes(4, 'big')
                 else:
                     udpPort = cfgInstance["UDP_PORT_WLED"]
-                    bytes_val += int(1).to_bytes(1, 'big')
-                    bytes_val += int(3).to_bytes(1, 'big')
+                    bytes_val += bytes("H","ascii")[0].to_bytes(1,"big")
+                    # bytes_val += int(2).to_bytes(1, 'big')
+                    # bytes_val += int(3).to_bytes(1, 'big')
                 for packet_indices in idx:
                     m = []
                    
@@ -185,7 +189,7 @@ def updateEspStrip(stripIndex,composing,cfgInstance,ackData):
                             bytes_val += bytes(appendM)
                         else:
                             appendM = [
-                                newI,
+                                # newI,
                                 int(capAt255(p[0][i] * ledCalibration[0]) * brightnesCalc),
                                 int(capAt255(p[1][i] * ledCalibration[1]) * brightnesCalc),
                                 int(capAt255(p[2][i] * ledCalibration[2]) * brightnesCalc)
@@ -194,10 +198,13 @@ def updateEspStrip(stripIndex,composing,cfgInstance,ackData):
                     try:
                         mx = bytearray(bytes_val)
                         _sock.sendto(mx, (cfgInstance["UDP_IPS"][stripIndex], udpPort))
-                        packetIDs.append({
-                            "id": messageAckId,
-                            "ip": cfgInstance["UDP_IPS"][stripIndex]
-                            })
+                        if isLCPProtocol:
+                            packetIDs.append({
+                                "id": messageAckId,
+                                "ip": cfgInstance["UDP_IPS"][stripIndex]
+                                })
+                        # else:
+                        #     print(len(mx),"Sending packet to", cfgInstance["UDP_IPS"][stripIndex],cfgInstance["UDP_PORT_WLED"], len(packet_indices))
                         # ackInstance.registerAckId(cfgInstance["UDP_IPS"][stripIndex], messageAckId)
                     except Exception as e:
                         pass
@@ -222,7 +229,11 @@ def updateEspStrip(stripIndex,composing,cfgInstance,ackData):
                 # print("Reversed:")
                 # print(idxPart)
                 n_packets = len(idxPart) // MAX_PIXELS_PER_PACKET + 1
-                idxPart = np.array_split(idxPart, n_packets)
+                if isLCPProtocol:
+                    idxPart = np.array_split(idxPart, n_packets)
+                else:
+                    idxPart = [idxPart]
+                
                 deviceLag = 0
                 if grp["IP"] in ackData:
                     deviceLag = ackData[grp["IP"]]
@@ -243,7 +254,7 @@ def updateEspStrip(stripIndex,composing,cfgInstance,ackData):
                             bytes_val += messageAckId.to_bytes(4, 'big')
                         else:
                             udpPort = cfgInstance["UDP_PORT_WLED"]
-                            bytes_val += int(1).to_bytes(1, 'big')
+                            bytes_val += int(2).to_bytes(1, 'big')
                             bytes_val += int(3).to_bytes(1, 'big')
                         
                         packetIDs.append({
@@ -269,7 +280,7 @@ def updateEspStrip(stripIndex,composing,cfgInstance,ackData):
                                 bytes_val += bytes(appendM)
                             else:
                                 appendM = [
-                                    newI,
+                                    # newI,
                                     int(capAt255(p[0][i] * ledCalibration[0]) * brightnesCalc),
                                     int(capAt255(p[1][i] * ledCalibration[1]) * brightnesCalc),
                                     int(capAt255(p[2][i] * ledCalibration[2]) * brightnesCalc)
