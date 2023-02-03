@@ -175,8 +175,8 @@ class config:
         [190, 46, 221],
     ]
     COLOR_CALIBRATION = { # editable in client
-        "ws2813": [1.0,1.0,1.0],
-        "ws2811": [1.0,1.0,1.0],
+        "WS2813": [1.0,1.0,1.0],
+        "WS2811": [1.0,1.0,1.0],
     }
 
     COLOR_CALIBRATION_ASSIGNMENTS = { # editable in designer

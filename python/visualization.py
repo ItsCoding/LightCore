@@ -248,7 +248,7 @@ class Visualization:
         # measure time of effekt
         start = time.time()
         composerOutput, timeDict = composer.getComposition(mel,self,self.hasBeatChanged)
-        positionalOutput = composer.runPositional(mel,self,self.hasBeatChanged)
+        positionalOutput = {}  #composer.runPositional(mel,self,self.hasBeatChanged)
 
         for i in range(0,config.STRIP_COUNT):
             if i in positionalOutput:
