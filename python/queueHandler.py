@@ -32,7 +32,6 @@ def reportEffekts(vis,queue2Parent):
     comEffekts = composer.getEffekts()
     effektList = []
     for activeEffekt in comEffekts:
-
         effektList.append({
             "id": activeEffekt.effekt.id,
             "frequencyRange": activeEffekt.frequencyRange,
@@ -44,6 +43,16 @@ def reportEffekts(vis,queue2Parent):
             "effektName": activeEffekt.effekt.description["name"],
         })
     queue2Parent.put(json.dumps({"type": "return.data.activeEffekts", "message": effektList}))
+
+def reportBeat(vis,queue2Parent):
+    queue2Parent.put(json.dumps({
+        "type": "return.system.beatUpdate", 
+        "message": {
+                "beat": vis.randomizerBeatCount,
+                "beats": config.cfg["musicBeatsBar"],
+                "bar": config.cfg["randomizerBar"]
+            }
+    }))
 
 def handleQueue(queue2Thread,queue2Parent,vis):
     while not queue2Thread.empty():
@@ -114,7 +123,7 @@ def handleQueue(queue2Thread,queue2Parent,vis):
             elif topicType == "beat.tap":
                 vis.hasBeatChangedManual = True
             elif topicType == "beat.reset":
-                vis.randomizerBeatCount = 1
+                vis.randomizerBeatCount = 0
             elif topicType == "light.colorPalette.set":
                 print("ColorDict set to: ", data["colorPalette"])
                 config.cfg["colorDict"] = data["colorPalette"]

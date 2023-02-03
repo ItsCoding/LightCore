@@ -322,7 +322,7 @@ def _update_esp8266(composing):
     # for i in range(len(composing)):
     #     updateEspStrip_with_static_arg(i)
     results = pool.map(updateEspStrip_with_static_arg, range(len(composing)))
-    if results:
+    if results is not None:
         for result in results:
             for msg in result:
                 AckHandler.registerAckId(msg["ip"], msg["id"])

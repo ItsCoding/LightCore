@@ -190,7 +190,8 @@ def changeEffekt(hasBeatChanged):
     #check if last beat is older than 2 seconds
     if (time.time() - lastDetectedBeat > bpmInSec * 2 or engine.avg_Bpm < 1) and not cleardBeatEffekts:
         cleardBeatEffekts = True
-        engine.randomizerBeatCount = 1
+        engine.randomizerBeatCount = 0
+        queueHandler.reportBeat(engine, engine.queue2Parent)
         print("Clearing beat effekts")
         if not useLastRandomizerType:
             makeRandomComposition("all",False,True,True)
@@ -198,13 +199,15 @@ def changeEffekt(hasBeatChanged):
     if hasBeatChanged:
         lastDetectedBeat = time.time()
         if cleardBeatEffekts and not hasBeatChanged and time.time() - lastDetectedBeat > 2:
-            engine.randomizerBeatCount = 1
+            engine.randomizerBeatCount = 0
+            queueHandler.reportBeat(engine, engine.queue2Parent)
 
         if (engine.randomizerBeatCount >= config.cfg["musicBeatsBar"] * config.cfg["randomizerBar"]):
             cleardBeatEffekts = False
             print("==> Change Randomizer")
             engine._lastTime = time.time()
-            engine.randomizerBeatCount = 1
+            engine.randomizerBeatCount = 0
+            queueHandler.reportBeat(engine, engine.queue2Parent)
             if randomizerMode == RndMode.auto:
                 if useLastRandomizerType:
                     makeRandomCompositionByType(lastRandomizerType)

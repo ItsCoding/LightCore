@@ -194,6 +194,7 @@ class Visualization:
                         self.beat = message["beat"]
                         self.hasBeatChanged = True
                         self.randomizerBeatCount += 1
+                        queueHandler.reportBeat(self, self.queue2Parent)
                     if(config.DISPLAY_BPM):
                         if(self.beat):
                             print("BPM: " + str(self.avg_Bpm) + " => " + str(self.randomizerBeatCount % config.cfg["musicBeatsBar"]))
