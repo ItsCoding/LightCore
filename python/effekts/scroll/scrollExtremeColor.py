@@ -16,7 +16,7 @@ class visualize_scrollExtremeColor:
             "effektSystemName": "visualize_scrollExtremeColor",
             "group": "scroll",
             "groupColor": "#ff00d7",
-            "supports": ["intensity"]
+            "supports": ["intensity","colorDict-3"]
         }
         self.colors = random.sample(config.cfg["colorDict"], 3)
     def run(self, y,stripSize,gain: dsp.ExpFilter,instanceData: dict = {}):

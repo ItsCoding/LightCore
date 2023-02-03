@@ -16,7 +16,7 @@ class visualize_energyExtremeColor:
             "effektSystemName": "visualize_energyExtremeColor",
             "group": "energy",
             "groupColor": "#5b82ec",
-            "supports": ["intensity"],
+            "supports": ["intensity","colorDict-3"],
         }
         self.colors = random.sample(config.cfg["colorDict"], 3)
 

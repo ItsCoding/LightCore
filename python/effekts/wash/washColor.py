@@ -20,7 +20,7 @@ class visualize_washColor:
             "effektSystemName": "visualize_washColor",
             "group": "moving",
             "groupColor": "#44bd32",
-            "supports": ["intensity"]
+            "supports": ["intensity","colorDict-2"]
         }
         self.colors = random.sample(config.cfg["colorDict"], 2)
         self.offset = 0

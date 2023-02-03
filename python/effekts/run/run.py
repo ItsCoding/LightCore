@@ -22,7 +22,7 @@ class visualize_run:
             "effektSystemName": "visualize_run",
             "group": "moving",
             "groupColor": "#FFFEE",
-            "supports": ["color","speed"]
+            "supports": ["colorDict-2","speed"]
         }
         self.runPosition = 0
         self.startRunPosition = 0

@@ -19,7 +19,7 @@ class visualize_runMirrored:
             "effektSystemName": "visualize_runMirrored",
             "group": "moving",
             "groupColor": "#FFFEE",
-            "supports": ["color","speed"]
+            "supports": ["colorDict-2","speed"]
         }
       
         self.runPosition = 0
