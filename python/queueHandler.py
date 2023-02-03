@@ -124,6 +124,7 @@ def handleQueue(queue2Thread,queue2Parent,vis):
                 vis.hasBeatChangedManual = True
             elif topicType == "beat.reset":
                 vis.randomizerBeatCount = 0
+                reportBeat(vis,queue2Parent)
             elif topicType == "light.colorPalette.set":
                 print("ColorDict set to: ", data["colorPalette"])
                 config.cfg["colorDict"] = data["colorPalette"]

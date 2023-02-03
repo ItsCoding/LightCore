@@ -50,7 +50,7 @@ class visualize_flashSectionUpwardsAscending:
                 self.p[1, :] = gaussian_filter1d(self.p[1, :], sigma=4.0)
                 self.p[2, :] = gaussian_filter1d(self.p[2, :], sigma=4.0)
                 self.position = self.position + 1
-                if(self.position > 8):
+                if(self.position >= 8):
                     self.position = 0
                 # print(self.p)
         if self.lastFlash + (60000/((instanceData["bpm"]+1))) - 250 < int(round(time.time() * 1000)):

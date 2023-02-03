@@ -20,7 +20,7 @@ export const BeatBars = () => {
         const handlerID = wsClient.addEventHandler("return.system.beatUpdate", (data: any) => {
             const message = data.message;
             setBeat(message.beat);
-            console.log(message)
+            // console.log(message)
             if (config.bars !== message.bar || config.beatsPerBar !== message.beats) {
                 setConfig({
                     beatsPerBar: message.beats,
@@ -36,13 +36,13 @@ export const BeatBars = () => {
 
     return (
         <Stack direction={"row"}>
-            {Array(config.bars).fill(0).map((_, i) => {
+            {Array(config.bars >= config.beatsPerBar ? config.bars : config.beatsPerBar).fill(0).map((_, i) => {
                 return (
                     <div key={i} style={{
                         borderRadius: "50%",
                         width: "5px",
                         height: "5px",
-                        backgroundColor: beat % config.beatsPerBar === i ? "red" : (config.beatsPerBar * i < beat ? "lightblue" : "black"),
+                        backgroundColor: beat % config.beatsPerBar === i ? "red" : (config.beatsPerBar * i <= beat ? "lightblue" : "black"),
                         margin: "5px"
                     }} />
                 )

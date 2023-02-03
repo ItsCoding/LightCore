@@ -324,8 +324,9 @@ def _update_esp8266(composing):
     results = pool.map(updateEspStrip_with_static_arg, range(len(composing)))
     if results is not None:
         for result in results:
-            for msg in result:
-                AckHandler.registerAckId(msg["ip"], msg["id"])
+            if result is not None:
+                for msg in result:
+                    AckHandler.registerAckId(msg["ip"], msg["id"])
     # with concurrent.futures.ThreadPoolExecutor() as executor:
     #     results = [executor.submit(updateEspStrip, i,composing) for i in composing]
     #     for future in concurrent.futures.as_completed(results):

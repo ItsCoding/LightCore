@@ -11,6 +11,7 @@ import PianoIcon from '@mui/icons-material/Piano';
 import { getEffektSetMode, getHoldToActivate, setEffektSetMode, setHoldToActivate, setOptionKey } from "../../system/JamboardCrossHandler";
 import { TouchButton } from "./Jamboard/TouchButton";
 import { QuickSaveButton } from "../General/QuickSaveButton";
+import { BeatBars } from "../General/BeatBars";
 export type StageToolbarProps = {
     setActiveRoute: React.Dispatch<React.SetStateAction<string>>;
     availableBoards: Array<Board>;
@@ -85,6 +86,7 @@ export const StageToolbar = ({ setSubRoute, subRoute, activeWidget, setActiveWid
                                     </MenuItem>
                                 ))}
                             </Select>
+
                             {/* <Divi /> */}
                         </>}
                         {subRoute === "jam" && <>
@@ -104,6 +106,7 @@ export const StageToolbar = ({ setSubRoute, subRoute, activeWidget, setActiveWid
                 </Grid>
                 <Grid item >
                     <Toolbar style={{ paddingLeft: "0px", paddingRight: "0px" }}>
+                        <BeatBars />
                         <QuickSaveButton />
                         <Popover
                             open={Boolean(anchorEl)}
