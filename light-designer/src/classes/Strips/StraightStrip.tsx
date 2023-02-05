@@ -121,7 +121,7 @@ export class StraightStrip extends StripBase {
         const positions: Point[][] = [];
         const ledSize = this.getExportSize(smallestDensity)
         const angle = this.getStripAngle;
-        console.log("LC-" + this.lcid, ledSize, smallestDensity, this.ledCount, this.physicalLength)
+        // console.log("LC-" + this.lcid, ledSize, smallestDensity, this.ledCount, this.physicalLength)
         for (let i = 0; i < this.leds; i++) {
             const points: Point[] = []
             const ledPosition = new Point(this.start.x * ledSize, this.start.y * ledSize);

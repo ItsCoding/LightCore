@@ -15,7 +15,8 @@ from functools import partial
 import esp.ackHandler as AckHandler
 # ESP8266 uses WiFi communication
 if config.DEVICE == "virtual" or config.DEVICE == "espv":
-    ws = create_connection("ws://127.0.0.1:8080/")
+    ws = create_connection(config.DESIGNER_WS_URL)
+    lastWSURL = config.DESIGNER_WS_URL
     # _vsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # server_address = ("127.0.0.1", 8080)
     # _vsock.connect(server_address)
@@ -51,29 +52,27 @@ def differentColor(pixels, prev_pixels, i):
 
 def _update_virtual(composing,y,beatChange):
     global pixels, _prev_pixels, ws
-    if not ws.connected:
-        ws.connect("ws://127.0.0.1:8080/")
-    frameDict = {}
-    for key in composing:
-        frame = composing[key].getLEDS()
-        ledStripType = config.COLOR_CALIBRATION_ASSIGNMENTS[key]
-        ledCalibration = config.cfg["colorCalibration"][ledStripType.upper()]
-        frame[0] = frame[0] * ledCalibration[0] * (config.cfg["brightness"] / 100) * (config.cfg["stripBrightness"][str(key)] / 100)
-        frame[1] = frame[1] * ledCalibration[1] * (config.cfg["brightness"] / 100) * (config.cfg["stripBrightness"][str(key)] / 100)
-        frame[2] = frame[2] * ledCalibration[2] * (config.cfg["brightness"] / 100) * (config.cfg["stripBrightness"][str(key)] / 100)
-        frame = np.clip(frame, 0, 255).astype(int)
-        # frame = _gamma[frame] if config.SOFTWARE_GAMMA_CORRECTION
-        frame = np.copy(frame)
-        frameDict[key] = frame.tolist()
-
-    # Truncate values and cast to integer
-
-    # Optional gamma correction
-    # _prev_pixels = np.copy(sumPixels)
-    # print(p)
-    # ("===========================")
-    ws.send(json.dumps({"frames": frameDict,"mel":y.tolist(),"beatChange": beatChange}).encode())
-    # strip.show()
+    try:
+        if config.DESIGNER_WS_URL != lastWSURL:
+            ws.close()
+        if not ws.connected:
+            ws.connect(config.DESIGNER_WS_URL)
+        frameDict = {}
+        for key in composing:
+            frame = composing[key].getLEDS()
+            ledStripType = config.COLOR_CALIBRATION_ASSIGNMENTS[key]
+            ledCalibration = config.cfg["colorCalibration"][ledStripType.upper()]
+            frame[0] = frame[0] * ledCalibration[0] * (config.cfg["brightness"] / 100) * (config.cfg["stripBrightness"][str(key)] / 100)
+            frame[1] = frame[1] * ledCalibration[1] * (config.cfg["brightness"] / 100) * (config.cfg["stripBrightness"][str(key)] / 100)
+            frame[2] = frame[2] * ledCalibration[2] * (config.cfg["brightness"] / 100) * (config.cfg["stripBrightness"][str(key)] / 100)
+            frame = np.clip(frame, 0, 255).astype(int)
+            # frame = _gamma[frame] if config.SOFTWARE_GAMMA_CORRECTION
+            frame = np.copy(frame)
+            frameDict[key] = frame.tolist()
+        ws.send(json.dumps({"frames": frameDict,"mel":y.tolist(),"beatChange": beatChange}).encode())
+    except Exception as e:
+        ws.close()
+        pass
 
 def capAt255(x):
     if x > 255:

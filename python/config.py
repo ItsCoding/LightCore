@@ -202,6 +202,9 @@ class config:
     CANVAS_WIDTH = 1000 # editable in designer
     CANVAS_HEIGHT = 1000 # editable in designer
 
+    DESIGNER_WS_URL = "ws://127.0.0.1:8080/" # editable in designer
+
+
     cfg = {
         "device": DEVICE,
         "brightness": BRIGHTNESS,

@@ -11,6 +11,13 @@ import { useSnackbar } from "notistack";
 export type ExporterProps = {
     strips: Strip[];
     closeModal: () => void;
+    backgroundInfos: {
+        backgroundBase64: string,
+        backgroundScaling: number,
+        width: number,
+        height: number,
+    },
+    globalScaling: number;
 }
 
 export type PointDict = {
@@ -19,7 +26,7 @@ export type PointDict = {
     }
 }
 
-export const Exporter = ({ strips, closeModal }: ExporterProps) => {
+export const Exporter = ({ strips, closeModal, backgroundInfos, globalScaling }: ExporterProps) => {
 
     const canvasRef = useRef(null)
     const [imageBase64, setImageBase64] = useState<string>("");
@@ -219,6 +226,12 @@ export const Exporter = ({ strips, closeModal }: ExporterProps) => {
                 ledPositions: pointDict,
                 canvasSize: size
             });
+
+            wsClient.issueKeySet("designer.project", JSON.stringify({
+                strips,
+                backgroundInfos,
+                globalScaling
+            }))
             enqueueSnackbar("Synced to message broker", { variant: "success" })
         } catch (error) {
             enqueueSnackbar("Failed to sync to message broker", { variant: "error" })

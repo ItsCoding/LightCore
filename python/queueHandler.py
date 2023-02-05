@@ -156,5 +156,7 @@ def handleQueue(queue2Thread,queue2Parent,vis):
                 randomizer.useTags = data
             elif topicType == "light.random.getTags":
                 queue2Parent.put(json.dumps({"type": "return.system.randomizerTags", "message": randomizer.useTags}))
+            elif topicType == "system.config.setDesignerURL":
+                config.DESIGNER_WS_URL = data
 
                 
