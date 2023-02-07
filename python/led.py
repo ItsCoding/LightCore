@@ -131,9 +131,14 @@ def updateEspStrip(stripIndex,composing,cfgInstance,ackData):
     if not skipFrame:
         if cfgInstance["UDP_IPS"][stripIndex] != "GROUP":
             isLCPProtocol = False
+            acceptsAcknowlegeId = False
             if cfgInstance["UDP_IPS"][stripIndex] in cfgInstance["ESP_PROTOCOLS"]:
                 if cfgInstance["ESP_PROTOCOLS"][cfgInstance["UDP_IPS"][stripIndex]] == "LCP":
                     isLCPProtocol = True
+                if cfgInstance["ESP_PROTOCOLS"][cfgInstance["UDP_IPS"][stripIndex]] == "LCP+":
+                    isLCPProtocol = True
+                    acceptsAcknowlegeId = True
+                
             #check wether the device is lagging behind
             deviceLag = 0
             if cfgInstance["UDP_IPS"][stripIndex] in ackData:
@@ -149,12 +154,14 @@ def updateEspStrip(stripIndex,composing,cfgInstance,ackData):
                 # date_time = now.strftime("%H:%M:%S")
                 # print("[" + date_time + "] Device lagging behind: ", cfgInstance["UDP_IPS"][stripIndex], cfgInstance["ESP_MAX_FRAMES_SKIPPED"] * len(idx),deviceLag)
             else:
-                messageAckId = int(random.randint(0, 1000000000))
+               
                 bytes_val = b''
                 udpPort = 7777
                 if isLCPProtocol:
-                   udpPort = cfgInstance["UDP_PORT_LCP"]
-                   bytes_val += messageAckId.to_bytes(4, 'big')
+                    udpPort = cfgInstance["UDP_PORT_LCP"] 
+                    if acceptsAcknowlegeId:
+                        messageAckId = int(random.randint(0, 1000000000))
+                        bytes_val += messageAckId.to_bytes(4, 'big')
                 else:
                     udpPort = cfgInstance["UDP_PORT_WLED"]
                     bytes_val += bytes("H","ascii")[0].to_bytes(1,"big")
@@ -220,9 +227,13 @@ def updateEspStrip(stripIndex,composing,cfgInstance,ackData):
                 # print(idx)
                 idxPart = range(grp["from"], grp["to"])
                 isLCPProtocol = False
+                acceptsAcknowlegeId = False
                 if grp["IP"] in cfgInstance["ESP_PROTOCOLS"]:
                     if cfgInstance["ESP_PROTOCOLS"][grp["IP"]] == "LCP":
                         isLCPProtocol = True
+                    if cfgInstance["ESP_PROTOCOLS"][grp["IP"]] == "LCP+":
+                        isLCPProtocol = True
+                        acceptsAcknowlegeId = True
                 # if "invert" in grp:
                 # idxPart = range(grp["to"], grp["from"],1)
                 # print("Reversed:")
@@ -248,9 +259,10 @@ def updateEspStrip(stripIndex,composing,cfgInstance,ackData):
                         udpPort = 7777
                         bytes_val = b''
                         if isLCPProtocol:
-                            messageAckId = int(random.randint(0, 1000000000))
                             udpPort = cfgInstance["UDP_PORT_LCP"]
-                            bytes_val += messageAckId.to_bytes(4, 'big')
+                            if acceptsAcknowlegeId:
+                                messageAckId = int(random.randint(0, 1000000000))
+                                bytes_val += messageAckId.to_bytes(4, 'big')
                         else:
                             udpPort = cfgInstance["UDP_PORT_WLED"]
                             bytes_val += int(2).to_bytes(1, 'big')

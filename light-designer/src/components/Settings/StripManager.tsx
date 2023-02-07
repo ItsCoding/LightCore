@@ -131,7 +131,7 @@ const columns: GridColDef[] = [
         width: 100,
         editable: true,
         type: "singleSelect",
-        valueOptions: [TransportProtocol.LCP, TransportProtocol.WLED],
+        valueOptions: [TransportProtocol.LCP, TransportProtocol.WLED, TransportProtocol.LCPPLUS],
     },
 ];
 

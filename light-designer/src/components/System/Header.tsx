@@ -132,7 +132,7 @@ export const Header = ({ strips, setStrips, enableSidebar, setEnableSidebar, bac
                 }}>
                     <FolderOpen />
                 </Button>
-                <Button color="secondary" onClick={() => saveJsonFile({ strips, backgroundInfos, globalScaling })}>
+                <Button color="inherit" onClick={() => saveJsonFile({ strips, backgroundInfos, globalScaling })}>
                     <Save />
                 </Button>
                 <Button color="info" onClick={() => setOpenExportDialog(true)}>
