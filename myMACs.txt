@@ -4,4 +4,6 @@ regenrinne 3 => c8:f0:9e:52:66:08
 regenrinne 4 => c8:f0:9e:4e:84:c8
 regenrinne 5 => c8:f0:9e:4e:6d:90
 
+long strip(middle) => a8:48:fa:dc:94:a3
+
 

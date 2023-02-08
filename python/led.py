@@ -162,6 +162,10 @@ def updateEspStrip(stripIndex,composing,cfgInstance,ackData):
                     if acceptsAcknowlegeId:
                         messageAckId = int(random.randint(0, 1000000000))
                         bytes_val += messageAckId.to_bytes(4, 'big')
+                        packetIDs.append({
+                            "id": messageAckId,
+                            "ip": cfgInstance["UDP_IPS"][stripIndex]
+                            })
                 else:
                     udpPort = cfgInstance["UDP_PORT_WLED"]
                     bytes_val += bytes("H","ascii")[0].to_bytes(1,"big")
@@ -204,14 +208,6 @@ def updateEspStrip(stripIndex,composing,cfgInstance,ackData):
                     try:
                         mx = bytearray(bytes_val)
                         _sock.sendto(mx, (cfgInstance["UDP_IPS"][stripIndex], udpPort))
-                        if isLCPProtocol:
-                            packetIDs.append({
-                                "id": messageAckId,
-                                "ip": cfgInstance["UDP_IPS"][stripIndex]
-                                })
-                        # else:
-                        #     print(len(mx),"Sending packet to", cfgInstance["UDP_IPS"][stripIndex],cfgInstance["UDP_PORT_WLED"], len(packet_indices))
-                        # ackInstance.registerAckId(cfgInstance["UDP_IPS"][stripIndex], messageAckId)
                     except Exception as e:
                         pass
                         # if e != lastEspError:
@@ -263,15 +259,16 @@ def updateEspStrip(stripIndex,composing,cfgInstance,ackData):
                             if acceptsAcknowlegeId:
                                 messageAckId = int(random.randint(0, 1000000000))
                                 bytes_val += messageAckId.to_bytes(4, 'big')
+                                packetIDs.append({
+                                    "id": messageAckId,
+                                    "ip": grp["IP"]
+                                })
                         else:
                             udpPort = cfgInstance["UDP_PORT_WLED"]
                             bytes_val += int(2).to_bytes(1, 'big')
                             bytes_val += int(3).to_bytes(1, 'big')
                         
-                        packetIDs.append({
-                            "id": messageAckId,
-                            "ip": grp["IP"]
-                        })
+                       
                         for i in packet_indices:
                             # i = packet_indices[i]
                             newI = i - grp["from"]
