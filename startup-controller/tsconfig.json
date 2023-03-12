@@ -1,17 +1,17 @@
 {
   "compilerOptions": {
     "esModuleInterop": true,
-    "moduleResolution": "Node",
-    "target": "es6",
-    "rootDir":"./src",
-    "outDir": "./dist",
-    "baseUrl":".",
-    "types": ["node"]
+    //     "target": "ESNext",
+    //     "rootDir":"./src",
+    //     "outDir": "./dist",
+    //     "baseUrl":".",
+    //     "types": ["node"],
+        "module": "NodeNext"
   },
-  "lib": [
-    "es2016",
-    "dom"
-  ],
-  "include": ["/**/*.ts", "src/main.ts"],
-  "exclude": ["node_modules"]
+  //   "lib": [
+  //     "es2016",
+  //     "dom"
+  //   ],
+  //   "include": ["/**/*.ts", "src/main.ts"],
+  //   "exclude": ["node_modules"]
 }

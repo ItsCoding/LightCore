@@ -1,5 +1,5 @@
-import { objectMapper, enumMapperByValue, JsonValue, expectNumber,JsonMappingError } from "@daniel-faber/json-ts";
-import { sendToArtnet } from "./ArtnetHelper";
+import { objectMapper, enumMapperByValue, JsonValue, expectNumber, JsonMappingError } from "@daniel-faber/json-ts";
+import { sendToArtnet, sendToMidi } from "./ArtnetHelper";
 
 export type BSFixture = {
     id: number,
@@ -179,7 +179,7 @@ export class BeatsaberHandler {
             })
             this.processForArtnet(event);
         } catch (error) {
-            if (error instanceof JsonMappingError ){
+            if (error instanceof JsonMappingError) {
                 return;
             }
             console.warn("Error parsing beatsaber message", error, JSON.parse(e.data));
@@ -191,7 +191,7 @@ export class BeatsaberHandler {
             const fixture = existingFixures.find((fixture) => fixture.id === event.beatmapEvent.type);
             if (fixture) {
                 if (fixture.type === "light") {
-                    sendToArtnet(fixture.id, event.beatmapEvent.value);
+                    sendToMidi(fixture.id, event.beatmapEvent.value, fixture);
                 }
             }
         }
@@ -221,7 +221,7 @@ export class BeatsaberHandler {
         if (this.isConnected) {
             return;
         }
-        this.websocket = new WebSocket("ws://localhost:6557/socket");
+        this.websocket = new WebSocket("ws://10.40.0.241:6557/socket");
         try {
             await new Promise((resolve, reject) => {
                 this.websocket.onopen = () => {

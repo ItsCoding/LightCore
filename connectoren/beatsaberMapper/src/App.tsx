@@ -6,28 +6,6 @@ import { Theme } from "./system/Theme"
 import { useEffect, useState } from "react"
 import { FixureBar } from "./components/FixureBar"
 
-// const eventStore: BSMessage[] = []
-
-// setInterval(() => {
-//     // console.log("EVENT STORE", eventStore)
-
-//     const eventTypeMap = new Map<number, BSMessage[]>()
-//     eventStore.forEach((event) => {
-//         if (!event.beatmapEvent) return
-//         if (eventTypeMap.has(event.beatmapEvent?.type)) {
-//             eventTypeMap.get(event.beatmapEvent?.type)?.push(event)
-//         } else {
-//             eventTypeMap.set(event.beatmapEvent?.type, [event])
-//         }
-//     })
-//     console.group("Events")
-//     eventTypeMap.forEach((events, eventType) => {
-//         console.log(eventType, events[0])
-//     })
-//     console.groupEnd()
-
-// }, 5000)
-
 export const App = () => {
     const bsHandler = BeatsaberHandler.getInstance()
     const [lightState, setLightState] = useState<Map<number, BeatMapEvent>>(new Map())

@@ -1,3 +1,4 @@
+import CopyPlugin from 'copy-webpack-plugin';
 import type { Configuration } from 'webpack';
 
 import { rules } from './webpack.rules';
@@ -15,4 +16,12 @@ export const mainConfig: Configuration = {
   resolve: {
     extensions: ['.js', '.ts', '.jsx', '.tsx', '.css', '.json'],
   },
+  plugins: [
+    new CopyPlugin({
+      patterns: [
+        { from: "./node_modules/@julusian/midi/prebuilds", to: "./prebuilds" }
+      ]
+    })
+  ]
+
 };
