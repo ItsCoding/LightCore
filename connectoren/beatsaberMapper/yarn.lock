@@ -1671,6 +1671,11 @@
     "es-abstract" "^1.20.4"
     "es-shim-unscopables" "^1.0.0"
 
+"artnet@^1.4.0":
+  "integrity" "sha512-5s/1DRr+qidggUwslxiGvY3ZHPIuYUfLKgcqv4MbODwjq4ipTWqr6gOfSqRfdNEGjIkzIQ6M0V4ukFbCwBMjKQ=="
+  "resolved" "https://registry.npmjs.org/artnet/-/artnet-1.4.0.tgz"
+  "version" "1.4.0"
+
 "astral-regex@^2.0.0":
   "integrity" "sha512-Z7tMw1ytTXt5jqMcOP+OQteU1VuNK9Y02uuJtKQ1Sv69jXQKKg5cibLwGJow8yzZP+eAc18EmLGPal0bp36rvQ=="
   "resolved" "https://registry.npmjs.org/astral-regex/-/astral-regex-2.0.0.tgz"

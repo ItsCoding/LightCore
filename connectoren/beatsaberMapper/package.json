@@ -55,6 +55,7 @@
     "@mui/icons-material": "^5.10.9",
     "@mui/material": "^5.10.12",
     "@mui/x-data-grid": "^5.17.10",
+    "artnet": "^1.4.0",
     "bufferutil": "^4.0.7",
     "chart.js": "^3.6.0",
     "chartjs-adapter-luxon": "^1.2.1",

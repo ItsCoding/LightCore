@@ -1,4 +1,5 @@
-import { objectMapper, enumMapperByValue, JsonValue, expectNumber } from "@daniel-faber/json-ts";
+import { objectMapper, enumMapperByValue, JsonValue, expectNumber,JsonMappingError } from "@daniel-faber/json-ts";
+import { sendToArtnet } from "./ArtnetHelper";
 
 export type BSFixture = {
     id: number,
@@ -176,8 +177,23 @@ export class BeatsaberHandler {
                     eventHandler.handler(event);
                 }
             })
+            this.processForArtnet(event);
         } catch (error) {
+            if (error instanceof JsonMappingError ){
+                return;
+            }
             console.warn("Error parsing beatsaber message", error, JSON.parse(e.data));
+        }
+    }
+
+    private processForArtnet = (event: BSMessage) => {
+        if (event.event === BSEventType.BEATMAP_EVENT && event.beatmapEvent) {
+            const fixture = existingFixures.find((fixture) => fixture.id === event.beatmapEvent.type);
+            if (fixture) {
+                if (fixture.type === "light") {
+                    sendToArtnet(fixture.id, event.beatmapEvent.value);
+                }
+            }
         }
     }
 
