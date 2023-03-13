@@ -194,7 +194,7 @@ export class BeatsaberHandler {
                     sendToMidi(fixture.id, event.beatmapEvent.value, fixture);
                 } else {
                     if (event.beatmapEvent.type === 12 || event.beatmapEvent.type === 13) {
-                        console.log("LASER Speed", event.beatmapEvent.value, event)
+                        // console.log("LASER Speed", event.beatmapEvent.value, event)
                         sendKnobToMidi(fixture.id, event.beatmapEvent.value);
                     }
                 }
