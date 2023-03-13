@@ -168,18 +168,10 @@ export class BeatsaberHandler {
         try {
 
             const event: BSMessage = BSMessage.fromJSON(JSON.parse(e.data));
-            if (event.event === BSEventType.FINISHED || event.event === BSEventType.SOFT_FAILED || event.event === BSEventType.FAILED || event.event === BSEventType.HELLO || event.event === BSEventType.SONG_START) {
-                console.log(event.event, JSON.parse(e.data))
-                if (event.event === BSEventType.HELLO && event.status.game?.scene === "Menu") {
-                    this.setMenuLight();
-                } else {
-                    this.resetMidi();
-                }
-
-            }
-            if (event.event === BSEventType.MENU && event.beatmapEvent) {
-                console.log("MENU", event.beatmapEvent);
+            if (event.event === BSEventType.FINISHED || event.event === BSEventType.SOFT_FAILED || event.event === BSEventType.FAILED || event.event === BSEventType.HELLO || event.event === BSEventType.MENU ) {
                 this.setMenuLight();
+            } else if (event.event === BSEventType.SONG_START) {
+                this.resetMidi();
             }
             // console.log("BS Message", event);
             this.eventHandlers.forEach((eventHandler) => {
@@ -216,6 +208,13 @@ export class BeatsaberHandler {
         console.log("Setting Menu Light")
         sendToMidi(0, 1, existingFixures[0]);
         sendToMidi(4, 1, existingFixures[4]);
+        existingFixures.forEach((fixture) => {
+            if (fixture.type === "light" && fixture.id !== 0 && fixture.id !== 4) {
+                sendToMidi(fixture.id, 0, fixture);
+            } else {
+                sendKnobToMidi(fixture.id, 0);
+            }
+        })
     }
 
     private resetMidi = () => {
