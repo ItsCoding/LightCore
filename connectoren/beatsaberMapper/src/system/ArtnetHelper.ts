@@ -9,7 +9,7 @@ const connection = artnet.default({
 
 //Type to channel
 const lastMidiKeyMap = new Map<number, number>()
-
+const lastColorKeyMap = new Map<number, number>()
 
 export const sendToArtnet = (channel: number, value: number) => {
     return new Promise((resolve, reject) => {
@@ -25,15 +25,63 @@ export const sendToArtnet = (channel: number, value: number) => {
     })
 }
 
+export const sendKnobToMidi = (channel: number, value: number) => {
+
+    ipcRenderer.send('sendToMidi', {
+        command: "cc",
+        data: {
+            controller: channel,
+            value: Math.floor((value / 10) * 127),
+            channel: 0
+        }
+    })
+}
+
 export const sendToMidi = (channel: number, value: number, fixure: BSFixture) => {
-    ipcRenderer.send('sendToMidi', { channel, value })
-    if(value > 4){
-        value = value - 4
+    const wantedColor = value > 4 ? 1 : 0
+
+    if (lastColorKeyMap.has(channel)) {
+        const lastColor = lastColorKeyMap.get(channel)
+        if (lastColor !== wantedColor) {
+            const colorToNote = lastColor === 0 ? 5 : 6
+            ipcRenderer.send('sendToMidi', {
+                command: "noteoff",
+                data: {
+                    note: (channel * 10) + colorToNote,
+                    channel: 1,
+                    velocity: 127,
+                }
+            });
+            lastColorKeyMap.set(channel, wantedColor)
+            ipcRenderer.send('sendToMidi', {
+                command: "noteon",
+                data: {
+                    note: (channel * 10) + (wantedColor === 0 ? 5 : 6),
+                    channel: 1,
+                    velocity: 127,
+                }
+            });
+            // console.log("Change color", wantedColor, channel)
+        }
+    }else{
+        lastColorKeyMap.set(channel, wantedColor)
+        ipcRenderer.send('sendToMidi', {
+            command: "noteon",
+            data: {
+                note: (channel * 10) + (wantedColor === 0 ? 5 : 6),
+                channel: 1,
+                velocity: 127,
+            }
+        });
+        // console.log("Change color", wantedColor, channel)
     }
+    // console.log("Wanting Color", wantedColor, "command", value, "to", value > 4 ? value - 4 : value)
+    value = value > 4 ? value - 4 : value
+
     const noteToSend = (channel * 10) + value
     if (lastMidiKeyMap.has(channel)) {
         const lastNote = lastMidiKeyMap.get(channel)
-        if(lastNote === noteToSend){
+        if (lastNote === noteToSend) {
             return
         }
         //send a note off
@@ -48,8 +96,8 @@ export const sendToMidi = (channel: number, value: number, fixure: BSFixture) =>
     }
     if (fixure.type === "light") {
         //send a note on
-       
-        console.log("sendToMidi", channel, value, noteToSend)
+
+        // console.log("sendToMidi", channel, value, noteToSend)
         lastMidiKeyMap.set(channel, noteToSend)
         ipcRenderer.send('sendToMidi', {
             command: "noteon",

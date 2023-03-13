@@ -1,5 +1,5 @@
 import { objectMapper, enumMapperByValue, JsonValue, expectNumber, JsonMappingError } from "@daniel-faber/json-ts";
-import { sendToArtnet, sendToMidi } from "./ArtnetHelper";
+import { sendKnobToMidi, sendToArtnet, sendToMidi } from "./ArtnetHelper";
 
 export type BSFixture = {
     id: number,
@@ -48,16 +48,16 @@ export const existingFixures: (BSFixture)[] = [
         name: "Custom Light 3",
         type: "light"
     },
-    {
-        id: 8,
-        name: "Rings Rotate",
-        type: "effekt"
-    },
-    {
-        id: 9,
-        name: "Rings Zoom",
-        type: "effekt"
-    },
+    // {
+    //     id: 8,
+    //     name: "Rings Rotate",
+    //     type: "effekt"
+    // },
+    // {
+    //     id: 9,
+    //     name: "Rings Zoom",
+    //     type: "effekt"
+    // },
     {
         id: 10,
         name: "Custom Light 4",
@@ -78,26 +78,26 @@ export const existingFixures: (BSFixture)[] = [
         name: "Right Lasers Speed",
         type: "effekt"
     },
-    {
-        id: 14,
-        name: "Early Rotation",
-        type: "effekt"
-    },
-    {
-        id: 15,
-        name: "Late Rotation",
-        type: "effekt"
-    },
-    {
-        id: 16,
-        name: "Custom Event 1",
-        type: "effekt"
-    },
-    {
-        id: 17,
-        name: "Custom Event 2",
-        type: "effekt"
-    },
+    // {
+    //     id: 14,
+    //     name: "Early Rotation",
+    //     type: "effekt"
+    // },
+    // {
+    //     id: 15,
+    //     name: "Late Rotation",
+    //     type: "effekt"
+    // },
+    // {
+    //     id: 16,
+    //     name: "Custom Event 1",
+    //     type: "effekt"
+    // },
+    // {
+    //     id: 17,
+    //     name: "Custom Event 2",
+    //     type: "effekt"
+    // },
 ]
 
 export enum BSEventType {
@@ -192,6 +192,11 @@ export class BeatsaberHandler {
             if (fixture) {
                 if (fixture.type === "light") {
                     sendToMidi(fixture.id, event.beatmapEvent.value, fixture);
+                } else {
+                    if (event.beatmapEvent.type === 12 || event.beatmapEvent.type === 13) {
+                        console.log("LASER Speed", event.beatmapEvent.value, event)
+                        sendKnobToMidi(fixture.id, event.beatmapEvent.value);
+                    }
                 }
             }
         }
@@ -217,11 +222,20 @@ export class BeatsaberHandler {
         this.eventHandlers = [];
     }
 
-    public async connect() {
+    public get connected() {
+        return this.isConnected;
+    }
+
+    public disconnect() {
+        this.websocket.close();
+        this.isConnected = false;
+    }
+
+    public async connect(ip = "10.40.0.241") {
         if (this.isConnected) {
             return;
         }
-        this.websocket = new WebSocket("ws://10.40.0.241:6557/socket");
+        this.websocket = new WebSocket(`ws://${ip}:6557/socket`);
         try {
             await new Promise((resolve, reject) => {
                 this.websocket.onopen = () => {
@@ -233,21 +247,23 @@ export class BeatsaberHandler {
             });
             this.isConnected = true;
             this.websocket.onmessage = this.onBSMessage;
+            console.log("Connected to beatsaber websocket")
         } catch (error) {
-            console.error("Failed to connect to beatsaber websocket", error);
-            console.log("Retrying in 5 seconds");
-            this.isConnected = false;
-            return new Promise((resolve) => {
-                setTimeout(() => {
-                    this.connect().then(resolve);
-                }, 5000);
-            });
+            // console.error("Failed to connect to beatsaber websocket", error);
+            // console.log("Retrying in 5 seconds");
+            // this.isConnected = false;
+            // return new Promise((resolve) => {
+            //     setTimeout(() => {
+            //         this.connect().then(resolve);
+            //     }, 5000);
+            // });
+            alert("Failed to connect to beatsaber websocket: " + error.message);
         }
 
     }
 
     private constructor() {
-        this.connect();
+        console.log("Hello from the handler")
     }
 
 
