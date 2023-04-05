@@ -108,7 +108,7 @@ def makeRandomComposition(parts,overrideEnabled = False, noBeat = False, cleanBe
     rndEffekts = list(filter(lambda eff: eff.__name__ not in config.cfg["blacklistedEffects"]["all"] and ("bpmSensitive" not in eff(1).description or not noBeat), engine.randomEffekts))
     if(parts == "all"):  
         allPartsRange = list(range(0,config.STRIP_COUNT))
-        for x in config.STRIP_MIRRORS:
+        for x in config.STRIP_MIRRORS:    
             randomColorPalette = random.sample(config.cfg["colorDict"], 3)
             runningEffekt = composer.getEffektByStripIndex(x[0])
             if len(runningEffekt) > 0:
@@ -125,6 +125,8 @@ def makeRandomComposition(parts,overrideEnabled = False, noBeat = False, cleanBe
             else:  
                 randomLoopCount = random.randint(1,3)
             for i in x:
+                if not engine.ENDABLED_RND_PARTS[i]:
+                    continue
                 effectInstance = randomEffekt(str(uuid.uuid1()))
                 if hasattr(effectInstance,"colors"):
                     # print("Effekt supports colors", randomEffekt.__name__)
@@ -211,6 +213,7 @@ def changeEffekt(hasBeatChanged):
             if randomizerMode == RndMode.auto:
                 if useLastRandomizerType:
                     makeRandomCompositionByType(lastRandomizerType)
+                    print("Comp by type: " + lastRandomizerType)
                 else:
                     makeRandomComposition("all")
             elif randomizerMode == RndMode.byComposition:

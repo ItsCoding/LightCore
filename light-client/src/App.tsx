@@ -85,6 +85,8 @@ function App() {
       wsClient.addEventHandler(ReturnType.DATA.AVAILABLE_EFFEKTS, topic => {
         const effekts = Effekt.fromJSONArray(topic.message);
         console.log("Available Effekts: ", effekts);
+        console.log("Available Effekts SystemName: ", effekts.map(e => e.effektSystemName));
+        console.log("Available Effekts Name: ", effekts.map(e => e.name));
         setAvailableEffekts(effekts);
         setLoadedInfos((prev) => {
           return {

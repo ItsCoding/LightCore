@@ -46,6 +46,10 @@ const main = async () => {
 
     const stageDataHandler = wsClient.addEventHandler("return.wsapi.getKeyValue", (data) => {
         const stageData = JSON.parse(data.message.value) as GeneratedConfig
+        const datakey = data.message.key;
+        if (datakey !== "stageData") {
+            return;
+        }
         // console.log("Stage Data: ", stageData.strips);
         // parseStripData(stageData.strips,WebSocketClient)
         loadedStrips = parseStripData(stageData.strips, wsClient);

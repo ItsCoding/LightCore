@@ -1,12 +1,14 @@
 import { dmxnet, receiver } from "dmxnet";
 import { WebSocketClient } from "../WebsocketClient";
+import { channelToEffekt } from "../types/Effekts";
 
-const channelWidthPerFixture = 15;
+const channelWidthPerFixture = 14;
 
 export class LightCoreFixture {
 
     private lastChannels: number[] = [];
-    private wsClient: WebSocketClient
+    private wsClient: WebSocketClient;
+    private lastFreqRange = [0, 64]
     constructor(
         public readonly lcID: number,
         public readonly artnetAddress: number,
@@ -36,15 +38,27 @@ export class LightCoreFixture {
 
     private updateColorPalette = () => {
         const paletteArray = []
-        for (let i = 0; i <= 9; i = i + 3) {
+        for (let i = 1; i <= 9; i = i + 3) {
             paletteArray.push([this.lastChannels[i], this.lastChannels[i + 1], this.lastChannels[i + 2]])
         }
-        console.log("Palette: ", paletteArray);
+        // console.log("Palette: ", paletteArray);
         this.wsClient.setColorPaletteRaw(paletteArray);
     }
 
     private switchEffekt = (dmxValue: number) => {
-
+        if (dmxValue <= 240) {
+            this.wsClient.lightRandomSetEnabledSpecific(this.lcID, false);
+            const effekt = channelToEffekt[dmxValue];
+            if (effekt === undefined) {
+                // console.warn(`Effekt ${dmxValue} not found!`);
+                return;
+            }
+            this.wsClient.lightSetEffekt(effekt, this.lcID, this.lastFreqRange, {}, 1);
+            // console.log("Random disabled")
+        } else {
+            this.wsClient.lightRandomSetEnabledSpecific(this.lcID, true);
+            // console.log("Random enabled")
+        }
     }
 
     private switchFrequencyRange = (dmxValue: number) => {
@@ -59,10 +73,11 @@ export class LightCoreFixture {
             case 2:
                 range = [40, 64] // high
                 break;
-            case 3:
+            default:
                 range = [0, 64] // all
                 break;
         }
+        this.lastFreqRange = range;
         this.wsClient.changeStripFrequencyRange(this.lcID, range);
     }
 
@@ -70,6 +85,7 @@ export class LightCoreFixture {
     private updateLC = (changedChannels: Map<number, number>) => {
         let shouldColorUpdate = false;
         changedChannels.forEach((value, key) => {
+            // console.log(`${this.lcID} - Updating Channel: `, key, " with value: ", value)
             switch (key) {
                 case 0: // dimmer
                     this.wsClient.setStripBrightness(this.lcID, value);
@@ -84,6 +100,7 @@ export class LightCoreFixture {
                 case 8: // green-3
                 case 9: // blue-3
                     shouldColorUpdate = true;
+                    break;
                 case 10: // effekt
                     this.switchEffekt(value);
                     break;
@@ -100,8 +117,10 @@ export class LightCoreFixture {
                     break;
             }
         })
-        console.log("shouldColorUpdate: ", shouldColorUpdate)
-        if(shouldColorUpdate) this.updateColorPalette();
+        if (shouldColorUpdate) {
+            // console.log("Updating color palette")
+            this.updateColorPalette();
+        }
 
     }
 

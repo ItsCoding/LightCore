@@ -15,7 +15,7 @@ export class StripBase {
     public uiMarks: number;
     public transportProtocol = TransportProtocol.LCP;
     public artnetAddress: number;
-    public artnetUniverse: number;
+    // public artnetUniverse: number;
 
     public getExportConfig() {
         return {
@@ -33,7 +33,7 @@ export class StripBase {
             transportProtocol: this.transportProtocol,
             artnet: {
                 address: this.artnetAddress,
-                universe: this.artnetUniverse
+                // universe: this.artnetUniverse
             }
         };
     }

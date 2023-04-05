@@ -118,7 +118,7 @@ export class WebSocketClient {
                 message: body ?? {}
             } as ServerTopic;
             if (this.socket?.readyState === WebSocket.OPEN) {
-                console.log("Sending message: ", message);
+                // console.log("Sending message: ", message);
                 this.socket.send(JSON.stringify(message))
             } else {
                 console.log("Socket not ready");
@@ -315,7 +315,7 @@ export class WebSocketClient {
 
     public async changeStripFrequencyRange(stripIndex: number, frequency: number[]) {
         if (this.socket || this.inTransaction) {
-            this.send("light.changeStripFeqRange", { stripIndex: stripIndex, frequency: frequency });
+            this.send("light.changeStripFeqRange", { stripIndex: stripIndex, frequencyRange: frequency });
         }
     }
 }
