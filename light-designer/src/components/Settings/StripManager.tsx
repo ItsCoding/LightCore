@@ -125,6 +125,20 @@ const columns: GridColDef[] = [
         editable: true,
         type: "number",
     },
+    // {
+    //     field: "artnetUniverse",
+    //     headerName: "Arntnet Universe",
+    //     width: 100,
+    //     editable: true,
+    //     type: "number",
+    // },
+    {
+        field: "artnetAddress",
+        headerName: "Arntnet Address",
+        width: 100,
+        editable: true,
+        type: "number",
+    },
     {
         field: "transportProtocol",
         headerName: "Network Protocol",
@@ -240,6 +254,10 @@ export const StripManager = ({ strips, setStrips, setSelectedStrip, selectedStri
             strip.uiMarks = params.value as number;
         }else if(params.field === "transportProtocol"){
             strip.transportProtocol = params.value as TransportProtocol;
+        }else if(params.field === "artnetUniverse"){
+            strip.artnetUniverse = params.value as number;
+        }else if(params.field === "artnetAddress"){
+            strip.artnetAddress = params.value as number;
         }
 
         setStrips(newStrips);

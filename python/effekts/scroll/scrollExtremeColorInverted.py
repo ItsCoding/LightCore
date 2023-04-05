@@ -26,7 +26,7 @@ class visualize_scrollExtremeColorInverted:
             self.p = np.tile(1.0, (3, stripSize // 2))
 
         # print(y)
-        y = y**(3 * config.cfg["globalIntensity"])
+        y = y**(3 * instanceData["intensity"])
         # gain.update(y)
         # print(self.gain.value)
         y /= gain.value

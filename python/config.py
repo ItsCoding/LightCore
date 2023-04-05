@@ -150,7 +150,12 @@ class config:
     DROP_RANDOM_MIN_WAIT = 5 # editable in client, deprecated
 
     GLOBAL_SPEED = 50 # editable in client
+    STRIP_SPEED = {}
     GLOBAL_INTENSITY = 1.0 # editable in client
+    STRIP_INTENSITY = {}
+
+
+
     DETECT_BEAT = True # editable in client
     STRIP_BRIGHTNESS = {} # editable in client
     for i in range(STRIP_COUNT):

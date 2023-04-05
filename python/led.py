@@ -168,14 +168,14 @@ def updateEspStrip(stripIndex,composing,cfgInstance,ackData):
                             })
                 else:
                     udpPort = cfgInstance["UDP_PORT_WLED"]
-                    bytes_val += bytes("H","ascii")[0].to_bytes(1,"big")
-                    # bytes_val += int(2).to_bytes(1, 'big')
+                    # bytes_val += bytes("H","ascii")[0].to_bytes(1,"big")
+                    # bytes_val += int(1).to_bytes(1, 'big')
                     # bytes_val += int(3).to_bytes(1, 'big')
+                    # print(len(bytes_val))
                 for packet_indices in idx:
                     m = []
                    
                     for i in packet_indices:
-
                         copyI = i
                         if i >= len(p[0]):
                             break
@@ -188,6 +188,9 @@ def updateEspStrip(stripIndex,composing,cfgInstance,ackData):
                         # if "invert" in grp and grp["invert"]:
                         #     newI = grp["to"] - i
                         # print(len(p[0]), stripIndex,cfgInstance.STRIP_LED_COUNTS[stripIndex],i)
+                        # if newI == 0:
+                            # print("NewI is 0")
+    
                         if isLCPProtocol:
                             appendM = [
                                 offset,
@@ -265,8 +268,8 @@ def updateEspStrip(stripIndex,composing,cfgInstance,ackData):
                                 })
                         else:
                             udpPort = cfgInstance["UDP_PORT_WLED"]
-                            bytes_val += int(2).to_bytes(1, 'big')
-                            bytes_val += int(3).to_bytes(1, 'big')
+                            # bytes_val += int(2).to_bytes(1, 'big')
+                            # bytes_val += int(3).to_bytes(1, 'big')
                         
                        
                         for i in packet_indices:
@@ -403,7 +406,7 @@ if __name__ == "__main__":
     import time
 
     # Turn all pixels off
-    # pixels *= 0
+    # pixels *= 0x
     # pixels[0, 0] = 255  # Set 1st pixel red
     # pixels[1, 1] = 255  # Set 2nd pixel green
     # pixels[2, 2] = 255  # Set 3rd pixel blue

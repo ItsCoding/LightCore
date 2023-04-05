@@ -47,7 +47,7 @@ class visualize_washColorInverted:
         # Scale by the width of the LED strip
         y *= float((stripSize // 2) - 1)
         # Map color channels according to energy in the different freq bands
-        scale = 1 * config.cfg["globalIntensity"]
+        scale = 1 * instanceData["intensity"]
         y = [i for i in y if i > 0.05]
         if len(y) < 3:
             y = np.tile(0.0, config.cfg["frequencyBins"])

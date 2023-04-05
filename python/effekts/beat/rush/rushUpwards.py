@@ -34,7 +34,7 @@ class visualize_rushUpwards:
         # # Scale by the width of the LED strip
         # y *= float((stripSize) - 1)
         # # Map color channels according to energy in the different freq bands
-        # scale = 1.1 * config.cfg["globalIntensity"]
+        # scale = 1.1 * instanceData["intensity"]
         length = int((stripSize // 2) / 10)
         self.p[:, 2:] = self.p[:, :-2]
         self.p[:,:2] = 0

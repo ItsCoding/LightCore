@@ -48,7 +48,7 @@ class visualize_runMirrored:
                         alpha_decay=0.1, alpha_rise=0.99)
             if stripSize > 50:
                 self.steps = 3
-        scale = 1 * config.cfg["globalIntensity"]
+        scale = 1 * instanceData["intensity"]
         y /= gain.value
         y *= float((stripSize // 2) - 1)
         y = [i for i in y if i > 0.05]

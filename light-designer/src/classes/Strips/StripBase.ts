@@ -14,6 +14,8 @@ export class StripBase {
     public ledType: "WS2811" | "WS2813"
     public uiMarks: number;
     public transportProtocol = TransportProtocol.LCP;
+    public artnetAddress: number;
+    public artnetUniverse: number;
 
     public getExportConfig() {
         return {
@@ -29,6 +31,10 @@ export class StripBase {
             stripInverted: this.stripInverted,
             uiMarks: this.uiMarks,
             transportProtocol: this.transportProtocol,
+            artnet: {
+                address: this.artnetAddress,
+                universe: this.artnetUniverse
+            }
         };
     }
 }

@@ -45,6 +45,13 @@ def getEffekts():
 def getEffektByStripIndex(stripIndex):
     return [effekt for effekt in runningEffekts if effekt.stripIndex == stripIndex]
 
+
+def changeFrequencyRangeForEffektById(id, frequencyRange: FrequencyRange):
+    effekt: ActiveEffekt
+    for effekt in runningEffekts:
+        if effekt.stripIndex == id:
+            effekt.frequencyRange = frequencyRange
+
 # Get the renderd composition output
 def getComposition(frequencyBins,vis,beatChanged):
     frameDict = {}
@@ -76,6 +83,17 @@ def getComposition(frequencyBins,vis,beatChanged):
         effekt.instanceData["beat"] = vis.beat
         effekt.instanceData["beatChanged"] = beatChanged
         effekt.instanceData["beatCount"] = vis.randomizerBeatCount
+        if effekt.stripIndex in config.STRIP_SPEED:
+            effekt.instanceData["speed"] = config.STRIP_SPEED[effekt.stripIndex]
+        else:
+            effekt.instanceData["speed"] = config.cfg["globalSpeed"]
+
+        if effekt.stripIndex in config.STRIP_INTENSITY:
+            effekt.instanceData["intensity"] = config.STRIP_INTENSITY[effekt.stripIndex]
+        else:
+            effekt.instanceData["intensity"] = config.cfg["globalIntensity"]
+
+
         startTime = time.time()
         try:
             effektResult = effekt.effekt.run(tempBins,stipLength,gain,effekt.instanceData)

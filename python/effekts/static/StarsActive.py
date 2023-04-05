@@ -40,7 +40,7 @@ class visualize_starsActive:
         y = np.copy(y)
         y /= gain.value
         y *= float((stripSize // 2) - 1)
-        scale = 1 * config.cfg["globalIntensity"]
+        scale = 1 * instanceData["intensity"]
         y = [i for i in y if i > 0.05]
         if len(y) < 3:
             y = np.tile(0.0, config.cfg["frequencyBins"])

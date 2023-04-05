@@ -40,12 +40,12 @@ class visualize_flashRotating:
         # # Scale by the width of the LED strip
         # y *= float((stripSize) - 1)
         # # Map color channels according to energy in the different freq bands
-        # scale = 1.1 * config.cfg["globalIntensity"]
+        # scale = 1.1 * instanceData["intensity"]
         if "color" in instanceData:
             self.rgbColor = instanceData["color"]
         loopRange = list(range(0,stripSize, int(stripSize/ 3)))
 
-        speed = (1.0 - (config.cfg["globalSpeed"] / 100)) * 10
+        speed = (1.0 - (instanceData["speed"] / 100)) * 10
 
         milliseconds = int(round(time.time() * 1000) / speed)
         offset = (milliseconds % (stripSize * 4)) // 3
