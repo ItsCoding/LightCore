@@ -23,6 +23,12 @@ const parseStripData = (stripConfig: StripDict, wsClient: WebSocketClient) => {
         if (doneLCIDs.includes(parseInt(strip.lcid))) {
             continue;
         }
+
+        if(strip.artnet.address === undefined) {
+            console.warn(`Strip ${strip.name} has no artnet address, skipping`);
+            continue;
+        }
+
         let totalLeds = 0;
         for (const [keys, stripData] of Object.entries(stripConfig)) {
             const s: any = stripData;

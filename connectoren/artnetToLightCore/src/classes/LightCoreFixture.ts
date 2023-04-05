@@ -85,10 +85,12 @@ export class LightCoreFixture {
     private updateLC = (changedChannels: Map<number, number>) => {
         let shouldColorUpdate = false;
         changedChannels.forEach((value, key) => {
-            // console.log(`${this.lcID} - Updating Channel: `, key, " with value: ", value)
+            console.log(`${this.lcID} - Updating Channel: `, key, " with value: ", value)
             switch (key) {
                 case 0: // dimmer
-                    this.wsClient.setStripBrightness(this.lcID, value);
+                    const scaledBrightness =  Math.floor((value / 255) * 100)
+                    console.log("Brightness: ", scaledBrightness)
+                    this.wsClient.setStripBrightness(this.lcID,scaledBrightness);
                     break;
                 case 1: // red
                 case 2: // green
