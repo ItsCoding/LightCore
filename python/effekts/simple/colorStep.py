@@ -12,7 +12,7 @@ class visualize_colorStep:
         self.id = id
         self.p = None
         self.p_filt = None
-        self.rgbColor = random.choice(config.cfg["colorDict"])
+        
         self.description = {
             "name": "Color step",
             "description": "A effekt that changes the color on each beat step",
@@ -26,6 +26,7 @@ class visualize_colorStep:
 
 
     def run(self, y,stripSize,gain: dsp.ExpFilter,instanceData: dict = {}):
+        self.rgbColor = config.cfg["colorDict"][0]
         if(self.p is None):
             self.p = np.tile(0, (3, stripSize))
            
@@ -38,8 +39,8 @@ class visualize_colorStep:
                 self.step += 1
                 if self.step >= self.stepAmount:
                     self.step = 0
-                    if not "color" in instanceData:
-                        self.rgbColor = random.choice(config.cfg["colorDict"])
+                    # if not "color" in instanceData:
+                    #     self.rgbColor = random.choice(config.cfg["colorDict"])
         for idx,i in enumerate(range(0,stripSize,size)):
             if self.step == idx:
                 self.p[0,i:i+size] = self.rgbColor[0]

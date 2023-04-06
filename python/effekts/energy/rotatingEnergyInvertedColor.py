@@ -22,10 +22,11 @@ class visualize_rotatingEnergyInvertedColor:
             "groupColor": "#44bd32",
             "supports": ["intensity","colorDict-3"]
         }
-        self.colors = random.sample(config.cfg["colorDict"], 3)
+        
     def run(self, y,stripSize,gain: dsp.ExpFilter,instanceData: dict = {}):
         """Effect that expands from the center with increasing sound energy"""
         # global p, p_filt
+        self.colors = config.cfg["colorDict"]
         if(self.p is None):
             if "loopCount" in instanceData and instanceData["loopCount"] is not None:
                 self.loopCount = instanceData["loopCount"]

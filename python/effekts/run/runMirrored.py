@@ -11,7 +11,7 @@ class visualize_runMirrored:
         self.id = id
         self.p = None
         self.p_filt = None
-        self.colors = random.sample(config.cfg["colorDict"], 2)
+        
         self.lastFlash = 0
         self.description = {
             "name": "Running light mirrored",
@@ -33,6 +33,7 @@ class visualize_runMirrored:
     def run(self, y,stripSize,gain: dsp.ExpFilter,instanceData: dict = {}):
         """Effect that expands from the center with increasing sound energy"""
         # global p, p_filt
+        self.colors = config.cfg["colorDict"]
         stripSize = stripSize // 2
         if(self.p is None):
             
@@ -128,7 +129,7 @@ class visualize_runMirrored:
             self.incrementPosition = False
         if self.startRunPosition + 1 >= stripSize:
             self.incrementPosition = True
-            self.colors = random.sample(config.cfg["colorDict"], 2)
+            # self.colors = random.sample(config.cfg["colorDict"], 2)
             self.startRunPosition = 0
             self.runPosition = 0
         return np.concatenate((self.p, self.p[:, ::-1]), axis=1)

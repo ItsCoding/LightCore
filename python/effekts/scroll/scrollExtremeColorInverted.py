@@ -18,7 +18,7 @@ class visualize_scrollExtremeColorInverted:
             "groupColor": "#ff00d7",
             "supports": ["intensity","colorDict-3"]
         }
-        self.colors = random.sample(config.cfg["colorDict"], 3)
+        self.colors = config.cfg["colorDict"]
     def run(self, y,stripSize,gain: dsp.ExpFilter,instanceData: dict = {}):
         """Effect that originates in the center and scrolls outwards"""
         

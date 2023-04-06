@@ -11,7 +11,7 @@ class visualize_rushUpwards:
     def __init__(self,id):
         self.id = id
         self.p = None
-        self.rgbColor = random.choice(config.cfg["colorDict"])
+        
         self.description = {
             "name": "Rush upwards",
             "description": "A effekt that rushes upwards when beat changes",
@@ -25,7 +25,7 @@ class visualize_rushUpwards:
     def run(self, y,stripSize,gain: dsp.ExpFilter,instanceData: dict = {}):
         """Effect that expands from the center with increasing sound energy"""
         # global p, p_filt
-        
+        self.rgbColor = config.cfg["colorDict"][0]
         if(self.p is None):
             self.p = np.tile(0, (3, stripSize // 2))
         # y = np.copy(y)

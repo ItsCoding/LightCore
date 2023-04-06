@@ -12,7 +12,7 @@ class visualize_flashSectionMirrored:
         self.id = id
         self.p = None
         self.p_filt = None
-        self.rgbColor = random.choice(config.cfg["colorDict"])
+        
         self.lastFlash = 0
         self.description = {
             "name": "Flash section mirrord",
@@ -27,7 +27,7 @@ class visualize_flashSectionMirrored:
     def run(self, y,stripSize,gain: dsp.ExpFilter,instanceData: dict = {}):
         """Effect that expands from the center with increasing sound energy"""
         # global p, p_filt
-        
+        self.rgbColor = config.cfg["colorDict"][0]
         if(self.p is None):
             self.p = np.tile(0, (3, stripSize // 2))
             self.p_filt =  dsp.ExpFilter(np.tile(1, (3, stripSize // 2)),
