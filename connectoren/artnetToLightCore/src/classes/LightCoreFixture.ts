@@ -1,7 +1,7 @@
 import { dmxnet, receiver } from "dmxnet";
 import { WebSocketClient } from "../WebsocketClient";
 import { channelToEffekt } from "../types/Effekts";
-
+import config from "../../config.json"
 const channelWidthPerFixture = 14;
 
 export class LightCoreFixture {
@@ -37,6 +37,9 @@ export class LightCoreFixture {
     }
 
     private updateColorPalette = () => {
+        if(config.onlyUseFirstStripForColor){
+            if(this.lcID !== 0) return;
+        }
         const paletteArray = []
         for (let i = 1; i <= 9; i = i + 3) {
             paletteArray.push([this.lastChannels[i], this.lastChannels[i + 1], this.lastChannels[i + 2]])

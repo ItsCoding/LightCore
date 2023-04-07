@@ -159,7 +159,7 @@ def handleQueue(queue2Thread,queue2Parent,vis):
             elif topicType == "system.config.setDesignerURL":
                 config.DESIGNER_WS_URL = data
             elif topicType == "light.setStripSpeed":
-                config.STRIP_SPEED[data["stripIndex"]] = data["speed"] / 100
+                config.STRIP_SPEED[data["stripIndex"]] = int(data["speed"])
             elif topicType == "light.setStripIntensity":
                 config.STRIP_INTENSITY[data["stripIndex"]] = data["intensity"] / 100
             elif topicType == "light.changeStripFeqRange":

@@ -140,7 +140,7 @@ def syncConfig (vis, incommingConfig):
     if (countOfStrips > 0): 
         print("✅ Successfully loaded config from server, got {} strips \n".format(countOfStrips))
         vis.configReady = True
-        rnd.makeRandomComposition("all",True)
+        # rnd.makeRandomComposition("all",True)
     else:
         print("⛔️ ERROR: No strips found in config, deactivating pipeline \n")
         vis.configReady = False
