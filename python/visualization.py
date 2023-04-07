@@ -66,6 +66,10 @@ from effekts.wash.washColor import visualize_washColor
 from effekts.static.StaticCommet import visualize_staticCommet
 from effekts.static.StaticCommetMirrored import visualize_staticCommetMirrored
 from effekts.static.StaticCommetMirroredInverted import visualize_staticCommetMirroredInverted
+from effekts.static.Particles import visualize_particles
+from effekts.static.Scanner import visualize_scanner
+from effekts.static.ScannerMirrored import visualize_scannerMirrored
+from effekts.static.Blink import visualize_blink
 # Import our visualization effect functions
 visualize_scroll = scrollEffekt.visualize_scroll
 visualize_energy = energyEffekt.visualize_energy
@@ -303,15 +307,19 @@ class Visualization:
                             visualize_colorStep,visualize_colorStepRandom,visualize_colorStepRandomMultiple,visualize_Zoop,visualize_energyExtremeColor,
                             visualize_energyExtremeColorInverted,visualize_rotatingEnergyColor,visualize_rotatingEnergyInvertedColor,visualize_multipleEnergyColor,
                             visualize_scrollExtremeColor,visualize_scrollExtremeColorInverted,visualize_washColor,visualize_starsActive,visualize_run,
-                            visualize_runMirrored,visualize_washColorInverted,visualize_staticCommet,visualize_staticCommetMirrored,visualize_staticCommetMirroredInverted]
+                            visualize_runMirrored,visualize_washColorInverted,visualize_staticCommet,visualize_staticCommetMirrored,visualize_staticCommetMirroredInverted,
+                            visualize_particles,visualize_scanner,visualize_scannerMirrored,visualize_blink]
         self.allEffekts = self.randomEffekts + [visualize_Off,visualize_Abbau]
         randomizer.initRandomizer(queueHandler,self)
-        self.randomEnabled = False
+        # self.randomEnabled = False
 
-        composer.addEffekt(visualize_staticCommetMirroredInverted(0),FrequencyRange.all,0,0,300)
-        composer.addEffekt(visualize_staticCommetMirroredInverted(1),FrequencyRange.all,1,0,540)
-        composer.addEffekt(visualize_staticCommetMirroredInverted(2),FrequencyRange.all,2,0,50)
-        composer.addEffekt(visualize_staticCommetMirroredInverted(3),FrequencyRange.all,3,0,50)
+        # composer.addEffekt(visualize_blink(0),FrequencyRange.all,0,0,300)
+        # composer.addEffekt(visualize_blink(1),FrequencyRange.all,1,0,540)
+        # composer.addEffekt(visualize_blink(2),FrequencyRange.all,2,0,50)
+        # composer.addEffekt(visualize_blink(3),FrequencyRange.all,3,0,50)
+        # composer.addEffekt(visualize_blink(4),FrequencyRange.all,4,0,50)
+        # composer.addEffekt(visualize_blink(5),FrequencyRange.all,5,0,50)
+        # composer.addEffekt(visualize_blink(6),FrequencyRange.all,6,0,50)
         self.queue2Parent.put(json.dumps({"type": "wsapi.requestConfig", "message": ""}))
         print("Requesting config...")
         microphone.start_stream(self.microphone_update)

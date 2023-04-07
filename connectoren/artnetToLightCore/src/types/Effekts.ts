@@ -41,7 +41,16 @@ export const channelToEffekt = {
     39: "visualize_run",
     40: "visualize_runMirrored",
     41: "visualize_washColorInverted",
+    // v2
+    42: "visualize_staticCommet",
+    43: "visualize_staticCommetMirrored",
+    44: "visualize_staticCommetMirroredInverted",
+    45: "visualize_particles",
+    46: "visualize_scanner",
+    47: "visualize_scannerMirrored",
+    48: "visualize_blink",
+    // system
     200: "visualize_OFF",
-    201: "visualize_Abbau"
+    201: "visualize_Abbau",
 }
 
