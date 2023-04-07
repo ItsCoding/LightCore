@@ -41,14 +41,33 @@ def getEffektsDict(type,lenght):
         for x in range(0,lenght):
             stripEffBeat = list(filter(lambda eff: eff.__name__ not in config.cfg["blacklistedEffects"][str(x)], beatFffekts))
             returnDict[x] = random.choice(stripEffBeat)
-    if type == "chilleddrop":
+    elif type == "chilleddrop":
         stripIndex = random.randint(0,lenght-1)
         stripEffDrop = list(filter(lambda eff: eff.__name__ not in config.cfg["blacklistedEffects"][str(stripIndex)], beatFffekts))
         returnDict[stripIndex] = random.choice(stripEffDrop)
-    if type == "beatsdrop":
+    elif type == "beatsdrop":
         stripIndex = random.randint(0,lenght-1)
         stripEffBeatsDrop = list(filter(lambda eff: eff.__name__ not in config.cfg["blacklistedEffects"][str(stripIndex)], effekts))
         returnDict[stripIndex] = random.choice(stripEffBeatsDrop)
+    elif type == "color":
+        notColorEffektNames = [
+            "visualize_spectrum"
+            "visualize_energy",
+            "visualize_scroll",
+            "visualize_random",
+            "visualize_scrollExtreme",
+            "visualize_energyExtreme",
+            "visualize_multipleEnergy",
+            "visualize_rotatingEnergy",
+            "visualize_energyInverted",
+            "visualize_scrollInverted",
+            "visualize_rotatingEnergyInverted",
+            "visualize_energyExtremeInverted",
+            "visualize_rotatingRainbow",
+        ]
+        for x in range(0,lenght):
+            notColorEffekts = list(filter(lambda eff: eff.__name__ not in config.cfg["blacklistedEffects"][str(x)] and eff.__name__ not in notColorEffektNames, engine.randomEffekts))
+            returnDict[x] = random.choice(notColorEffekts)
     return returnDict
 
 availableFreqs = [FrequencyRange.high,FrequencyRange.mid,FrequencyRange.low,FrequencyRange.all]
@@ -60,8 +79,15 @@ def makeRandomCompositionByType(type):
     allFreqencys = availableFreqs.copy()
     effektDict = getEffektsDict(type,config.STRIP_COUNT)
     for x in config.STRIP_MIRRORS:
-        randomColor = random.choice(config.cfg["colorDict"])
-        randomColorPalette = random.sample(config.cfg["colorDict"], 3)
+        randomColorPalette = []
+        if x[0] in config.STRIP_COLOR_DICT:
+            randomColorPalette = config.STRIP_COLOR_DICT[x[0]]
+        else:
+            if len(config.cfg["colorDict"]) != 3:
+                randomColorPalette = random.sample(config.cfg["colorDict"], 3)
+            else:
+                randomColorPalette = config.cfg["colorDict"]
+        randomColor = randomColorPalette[0]
         if len(allFreqencys) == 0:
             allFreqencys = availableFreqs.copy()
         randomFreq = random.choice(allFreqencys)
@@ -108,14 +134,23 @@ def makeRandomComposition(parts,overrideEnabled = False, noBeat = False, cleanBe
     rndEffekts = list(filter(lambda eff: eff.__name__ not in config.cfg["blacklistedEffects"]["all"] and ("bpmSensitive" not in eff(1).description or not noBeat), engine.randomEffekts))
     if(parts == "all"):  
         allPartsRange = list(range(0,config.STRIP_COUNT))
-        for x in config.STRIP_MIRRORS:    
-            randomColorPalette = random.sample(config.cfg["colorDict"], 3)
+        for x in config.STRIP_MIRRORS:
+            randomColorPalette = []
+            if x[0] in config.STRIP_COLOR_DICT:
+                randomColorPalette = config.STRIP_COLOR_DICT[x[0]]
+            else:
+                if len(config.cfg["colorDict"]) != 3:
+                    randomColorPalette = random.sample(config.cfg["colorDict"], 3)
+                else:
+                    randomColorPalette = config.cfg["colorDict"]
+            randomColor = randomColorPalette[0]
             runningEffekt = composer.getEffektByStripIndex(x[0])
             if len(runningEffekt) > 0:
                 if cleanBeatEffekts and not "bpmSensitive" in runningEffekt[0].effekt.description:
                     # print("Skip clean: " + runningEffekt[0].effekt.description["name"],x[0])
                     continue
-            randomColor = random.choice(config.cfg["colorDict"])
+            
+
             randomFreq = random.choice(allFreqencys)
             rndEffektsStrip = list(filter(lambda eff: eff.__name__ not in config.cfg["blacklistedEffects"][str(x[0])], rndEffekts))
             randomEffekt = random.choice(rndEffektsStrip)

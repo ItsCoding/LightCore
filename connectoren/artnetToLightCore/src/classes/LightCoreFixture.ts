@@ -51,7 +51,7 @@ export class LightCoreFixture {
 
     }
 
-    private switchEffekt = (dmxValue: number) => {
+    private switchEffekt = async (dmxValue: number) => {
         if (dmxValue <= 240) {
             this.wsClient.lightRandomSetEnabledSpecific(this.lcID, false);
             const effekt = channelToEffekt[dmxValue];
@@ -62,7 +62,17 @@ export class LightCoreFixture {
             this.wsClient.lightSetEffekt(effekt, this.lcID, this.lastFreqRange, {}, 1);
             // console.log("Random disabled")
         } else {
-            this.wsClient.lightRandomSetEnabledSpecific(this.lcID, true);
+            if(dmxValue === 245){
+                await this.wsClient.lightRandomSetEnabledSpecific(this.lcID, true);
+                await this.wsClient.send("light.random.useLastType", false)
+                console.log("Random enabled for LC:" + this.lcID)
+            }else if (dmxValue === 246){
+                await this.wsClient.lightRandomSetEnabledSpecific(this.lcID, true);
+                await this.wsClient.send("light.random.useLastType", true)
+                await this.wsClient.makeRandomCompByType("color")
+                console.log("RandomColor enabled for LC:" + this.lcID)
+            }
+            
             // console.log("Random enabled")
         }
     }
@@ -95,7 +105,7 @@ export class LightCoreFixture {
             switch (key) {
                 case 0: // dimmer
                     const scaledBrightness = Math.floor((value / 255) * 100)
-                    console.log("Brightness: ", scaledBrightness)
+                    // console.log("Brightness: ", scaledBrightness)
                     this.wsClient.setStripBrightness(this.lcID, scaledBrightness);
                     break;
                 case 1: // red
