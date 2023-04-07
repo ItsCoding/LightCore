@@ -72,7 +72,7 @@ def handleQueue(queue2Thread,queue2Parent,vis):
                 randomizer.makeRandomComposition(data["stripIndex"])
             elif topicType == "light.random.setEnabled":
                 vis.randomEnabled = data["enabled"]
-                print("Changed Enabled to: ", vis.randomEnabled)
+                # print("Changed Enabled to: ", vis.randomEnabled)
             elif topicType == "data.get.availableEffekts":
                 availableEffekts = []
                 for effekt in vis.randomEffekts:
@@ -100,10 +100,10 @@ def handleQueue(queue2Thread,queue2Parent,vis):
                 reportEffekts(vis,queue2Parent)
             elif topicType == "light.random.setEnabled.specific":
                 vis.ENDABLED_RND_PARTS[data["stripIndex"]] = data["enabled"]
-                print("Changed Enabled to: ", vis.ENDABLED_RND_PARTS)
+                # print("Changed Enabled to: ", vis.ENDABLED_RND_PARTS)
             elif topicType == "system.config.change":
                 config.cfg[data["key"]] = data["value"]
-                print("Changing Config")
+                # print("Changing Config")
             elif topicType == "system.config.get":
                 print("Pushing Config in Queue")
                 queue2Parent.put(json.dumps({"type": "return.system.config", "message": config.cfg}))
@@ -126,7 +126,7 @@ def handleQueue(queue2Thread,queue2Parent,vis):
                 vis.randomizerBeatCount = 0
                 reportBeat(vis,queue2Parent)
             elif topicType == "light.colorPalette.set":
-                print("ColorDict set to: ", data["colorPalette"])
+                # print("ColorDict set to: ", data["colorPalette"])
                 config.cfg["colorDict"] = data["colorPalette"]
             elif topicType == "system.config.sync":
                 syncConfig.syncConfig(vis,data)
@@ -136,7 +136,7 @@ def handleQueue(queue2Thread,queue2Parent,vis):
             elif topicType == "light.random.useLastType":
                 randomizer.useLastRandomizerType = data
             elif topicType == "light.setStripBrightness":
-                print("Setting Strip Brightness to: ", data["brightness"], " for Strip: ", data["stripIndex"])
+                # print("Setting Strip Brightness to: ", data["brightness"], " for Strip: ", data["stripIndex"])
                 config.cfg["stripBrightness"][str(data["stripIndex"])] = data["brightness"]
             elif topicType == "beat.detectFreq":
                 vis.listenForBeatType = data
@@ -151,7 +151,7 @@ def handleQueue(queue2Thread,queue2Parent,vis):
                 queue2Parent.put(json.dumps({"type": "return.system.randomizerMode", "message": randomizer.randomizerMode}))
             elif topicType == "light.random.setMode":
                 randomizer.randomizerMode = data
-                print("Setting Randomizer Mode to: ", data)
+                # print("Setting Randomizer Mode to: ", data)
             elif topicType == "light.random.setTags":
                 randomizer.useTags = data
             elif topicType == "light.random.getTags":
