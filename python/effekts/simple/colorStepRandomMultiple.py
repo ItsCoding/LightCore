@@ -27,7 +27,7 @@ class visualize_colorStepRandomMultiple:
         
 
     def run(self, y,stripSize,gain: dsp.ExpFilter,instanceData: dict = {}):
-        self.rgbColor = config.cfg["colorDict"][0]
+        self.rgbColor = instanceData["colorDict"][0]
         self.stepAmount = config.cfg["musicBeatsBar"]
         if(self.p is None):
             self.p = np.tile(0, (3, stripSize))
@@ -46,7 +46,7 @@ class visualize_colorStepRandomMultiple:
                 if self.step >= self.stepAmount:
                     self.step = 0
                     if not "color" in instanceData:
-                        self.rgbColor = random.choice(config.cfg["colorDict"])
+                        self.rgbColor = random.choice(instanceData["colorDict"])
         
         for idx,i in enumerate(range(0,stripSize,size)):
             if idx in self.randomSteps:

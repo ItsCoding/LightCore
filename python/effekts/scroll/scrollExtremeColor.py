@@ -21,7 +21,7 @@ class visualize_scrollExtremeColor:
         
     def run(self, y,stripSize,gain: dsp.ExpFilter,instanceData: dict = {}):
         """Effect that originates in the center and scrolls outwards"""
-        self.colors = config.cfg["colorDict"]
+        self.colors = instanceData["colorDict"]
         if(self.p is None):
             self.p = np.tile(1.0, (3, stripSize // 2))
 

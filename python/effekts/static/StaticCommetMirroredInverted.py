@@ -26,7 +26,7 @@ class visualize_staticCommetMirroredInverted:
             self.p = np.tile(1.0, (3, stripSize))
         # Make a comet over the complete stripSize at the current position
         self.p[:, :] = 0.0
-        rgbColor = config.cfg["colorDict"][0]
+        rgbColor = instanceData["colorDict"][0]
         if "color" in instanceData:
             rgbColor = instanceData["color"]
 

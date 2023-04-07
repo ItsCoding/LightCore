@@ -26,7 +26,7 @@ class visualize_scannerMirrored:
         if(self.p is None):
             self.p = np.tile(1.0, (3, stripSize))
         # Make a comet over the complete stripSize at the current position
-        colors = config.cfg["colorDict"]
+        colors = instanceData["colorDict"]
         bgColor = colors[0]
         color = colors[1]
         self.p[0, :] = bgColor[0] * 0.15 

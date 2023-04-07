@@ -318,6 +318,13 @@ export class WebSocketClient {
             this.send("light.changeStripFeqRange", { stripIndex: stripIndex, frequencyRange: frequency });
         }
     }
+
+    public async setStripColorPalette(stripIndex: number, colors: number[][]) {
+        if (this.socket || this.inTransaction) {
+            this.send("light.colorPalette.setForStrip", { stripIndex: stripIndex, colorPalette: colors });
+        }
+    }
+
 }
 
 export type RgbColor = {

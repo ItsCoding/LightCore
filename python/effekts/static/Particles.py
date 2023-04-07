@@ -32,7 +32,7 @@ class visualize_particles:
             self.p = np.tile(1.0, (3, stripSize))
         # Make a comet over the complete stripSize at the current position
         self.p[:, :] = 0.0
-        color = config.cfg["colorDict"][0]
+        color = instanceData["colorDict"][0]
         # Create new particles
         if random.randint(0, 100) < 10 * config.cfg["globalIntensity"]:
             newParticle = {

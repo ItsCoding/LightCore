@@ -26,7 +26,7 @@ class visualize_energyExtremeColorInverted:
     def run(self, y, stripSize, gain: dsp.ExpFilter, instanceData: dict = {}):
         """Effect that expands from the center with increasing sound energy"""
         # global p, p_filt
-        self.colors = config.cfg["colorDict"]
+        self.colors = instanceData["colorDict"]
         if self.p is None:
             self.p_filt = dsp.ExpFilter(
                 np.tile(1, (3, stripSize // 2)), alpha_decay=0.1, alpha_rise=0.99

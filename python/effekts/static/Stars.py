@@ -35,6 +35,8 @@ class visualize_stars:
         rgbColor = [255,255,255]
         if "color" in instanceData:
             rgbColor = instanceData["color"]
+        if "colorDict" in instanceData:
+            rgbColor = instanceData["colorDict"][0]
         for i in self.activeStars:
             starValue = self.activeStars[i]
             starValue = starValue + (1 + 3 * (instanceData["speed"] / 100))

@@ -93,6 +93,10 @@ def getComposition(frequencyBins,vis,beatChanged):
         else:
             effekt.instanceData["intensity"] = config.cfg["globalIntensity"]
 
+        if effekt.stripIndex in config.STRIP_COLOR_DICT:
+            effekt.instanceData["colorDict"] = config.STRIP_COLOR_DICT[effekt.stripIndex]
+        else:
+            effekt.instanceData["colorDict"] = config.cfg["colorDict"]
 
         startTime = time.time()
         try:

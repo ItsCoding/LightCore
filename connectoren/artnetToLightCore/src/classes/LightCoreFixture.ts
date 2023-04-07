@@ -32,20 +32,23 @@ export class LightCoreFixture {
         }
         if (changedChannels.size === 0) return;
         this.lastChannels = myChannels;
-        console.log(`#${this.lcID} Channels changed: `, changedChannels);
+        // console.log(`#${this.lcID} Channels changed: `, changedChannels);
         this.updateLC(changedChannels);
     }
 
     private updateColorPalette = () => {
-        if(config.onlyUseFirstStripForColor){
-            if(this.lcID !== 0) return;
-        }
         const paletteArray = []
         for (let i = 1; i <= 9; i = i + 3) {
             paletteArray.push([this.lastChannels[i], this.lastChannels[i + 1], this.lastChannels[i + 2]])
         }
+        if (config.onlyUseFirstStripForColor) {
+            if (this.lcID !== 0) return;
+            this.wsClient.setColorPaletteRaw(paletteArray);
+        }else{
+            this.wsClient.setStripColorPalette(this.lcID, paletteArray);
+        }
         // console.log("Palette: ", paletteArray);
-        this.wsClient.setColorPaletteRaw(paletteArray);
+
     }
 
     private switchEffekt = (dmxValue: number) => {
@@ -88,12 +91,12 @@ export class LightCoreFixture {
     private updateLC = (changedChannels: Map<number, number>) => {
         let shouldColorUpdate = false;
         changedChannels.forEach((value, key) => {
-            console.log(`${this.lcID} - Updating Channel: `, key, " with value: ", value)
+            // console.log(`${this.lcID} - Updating Channel: `, key, " with value: ", value)
             switch (key) {
                 case 0: // dimmer
-                    const scaledBrightness =  Math.floor((value / 255) * 100)
+                    const scaledBrightness = Math.floor((value / 255) * 100)
                     console.log("Brightness: ", scaledBrightness)
-                    this.wsClient.setStripBrightness(this.lcID,scaledBrightness);
+                    this.wsClient.setStripBrightness(this.lcID, scaledBrightness);
                     break;
                 case 1: // red
                 case 2: // green

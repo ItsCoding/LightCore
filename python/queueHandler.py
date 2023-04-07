@@ -164,5 +164,7 @@ def handleQueue(queue2Thread,queue2Parent,vis):
                 config.STRIP_INTENSITY[data["stripIndex"]] = data["intensity"] / 100
             elif topicType == "light.changeStripFeqRange":
                 composer.changeFrequencyRangeForEffektById(data["stripIndex"],data["frequencyRange"])
+            elif topicType == "light.colorPalette.setForStrip":
+                config.STRIP_COLOR_DICT[data["stripIndex"]] = data["colorPalette"]
 
                 

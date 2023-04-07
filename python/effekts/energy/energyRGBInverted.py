@@ -12,7 +12,7 @@ class visualize_energyRGBInverted:
         self.id = id
         self.p = None
         self.p_filt = None
-        self.rgbColor = random.choice(config.cfg["colorDict"])
+        
         # self.gain = dsp.ExpFilter(np.tile(0.01, config.cfg["frequencyBins"]),
         #                 alpha_decay=0.001, alpha_rise=0.99)#
         self.description = {
@@ -31,7 +31,7 @@ class visualize_energyRGBInverted:
             self.p_filt =  dsp.ExpFilter(np.tile(1, (3, stripSize // 2)),
                         alpha_decay=0.1, alpha_rise=0.99)
         # print(self.rgbColor)
-        rgbColor = self.rgbColor
+        rgbColor = instanceData["colorDict"][0]
         if "color" in instanceData:
             rgbColor = instanceData["color"]
         y = np.copy(y)

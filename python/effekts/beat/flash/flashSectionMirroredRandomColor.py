@@ -27,7 +27,7 @@ class visualize_flashSectionMirroredRandomColor:
     def run(self, y,stripSize,gain: dsp.ExpFilter,instanceData: dict = {}):
         """Effect that expands from the center with increasing sound energy"""
         # global p, p_filt
-        self.rgbColor = config.cfg["colorDict"][self.colorI]
+        self.rgbColor = instanceData["colorDict"][self.colorI]
         if(self.p is None):
             self.p = np.tile(0, (3, stripSize // 2))
             self.p_filt =  dsp.ExpFilter(np.tile(1, (3, stripSize // 2)),
@@ -51,7 +51,7 @@ class visualize_flashSectionMirroredRandomColor:
                 randStart = int(((stripSize // 2) / 8) * randPos)
                 randEnd = int(((stripSize // 2) / 8) * (randPos + 1))
                 self.colorI += 1
-                if self.colorI >= len(config.cfg["colorDict"]):
+                if self.colorI >= len(instanceData["colorDict"]):
                     self.colorI = 0
                 self.p[0][randStart: randEnd] = self.rgbColor[0]
                 self.p[1][randStart: randEnd] = self.rgbColor[1]

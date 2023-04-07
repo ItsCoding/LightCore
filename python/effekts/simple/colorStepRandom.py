@@ -27,7 +27,7 @@ class visualize_colorStepRandom:
         self.randomStep = random.randint(0,self.stepAmount)
 
     def run(self, y,stripSize,gain: dsp.ExpFilter,instanceData: dict = {}):
-        self.rgbColor = config.cfg["colorDict"][0]
+        self.rgbColor = instanceData["colorDict"][0]
         if(self.p is None):
             self.p = np.tile(0, (3, stripSize))
             self.randomStep = random.randint(0,self.stepAmount)
@@ -43,7 +43,7 @@ class visualize_colorStepRandom:
                 if self.step >= self.stepAmount:
                     self.step = 0
                     # if not "color" in instanceData:
-                    #     self.rgbColor = random.choice(config.cfg["colorDict"])
+                    #     self.rgbColor = random.choice(instanceData["colorDict"])
         
         for idx,i in enumerate(range(0,stripSize,size)):
             if self.randomStep == idx:

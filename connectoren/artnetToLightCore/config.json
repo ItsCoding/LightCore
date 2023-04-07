@@ -3,5 +3,5 @@
         "wsAddress":"ws://127.0.0.1:8000"
     },
     "artnetUniverse": 1,
-    "onlyUseFirstStripForColor": true
+    "onlyUseFirstStripForColor": false
 }

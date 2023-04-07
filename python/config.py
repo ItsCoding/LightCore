@@ -179,6 +179,7 @@ class config:
         [34, 166, 179],
         [190, 46, 221],
     ]
+    STRIP_COLOR_DICT = {} # editable in lightkey
     COLOR_CALIBRATION = { # editable in client
         "WS2813": [1.0,1.0,1.0],
         "WS2811": [1.0,1.0,1.0],
@@ -209,6 +210,7 @@ class config:
 
     DESIGNER_WS_URL = "ws://127.0.0.1:8080/" # editable in designer
 
+    
 
     cfg = {
         "device": DEVICE,

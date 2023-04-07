@@ -34,7 +34,7 @@ class visualize_run:
     def run(self, y,stripSize,gain: dsp.ExpFilter,instanceData: dict = {}):
         """Effect that expands from the center with increasing sound energy"""
         # global p, p_filt
-        self.colors = config.cfg["colorDict"]
+        self.colors = instanceData["colorDict"]
         if(self.p is None):
             
             if "loopCount" in instanceData and instanceData["loopCount"] is not None:
@@ -95,7 +95,7 @@ class visualize_run:
         # if "beatCount" in instanceData:
         #     if instanceData["beatCount"] % config.cfg["musicBeatsBar"] == 0:
         #         if self.unlockColor:
-        #             self.colors = random.sample(config.cfg["colorDict"], 2)
+        #             self.colors = random.sample(instanceData["colorDict"], 2)
         #             self.offP = np.copy(self.p)
         #             self.p = np.tile(0, (3, stripSize))
         #             self.lastFlash = int(round(time.time() * 1000))
@@ -120,7 +120,7 @@ class visualize_run:
             self.incrementPosition = False
         if self.startRunPosition + 1 >= stripSize:
             self.incrementPosition = True
-            # self.colors = random.sample(config.cfg["colorDict"], 2)
+            # self.colors = random.sample(instanceData["colorDict"], 2)
             self.startRunPosition = 0
             self.runPosition = 0
         return self.p

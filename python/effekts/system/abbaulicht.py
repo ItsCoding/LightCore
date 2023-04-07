@@ -24,7 +24,7 @@ class visualize_Abbau:
         # global p, p_filt
         # if(self.p is None):
         #     self.p = np.tile(0, (3, stripSize))
-        rgbColor = config.cfg["colorDict"][0]
+        rgbColor = instanceData["colorDict"][0]
         if "color" in instanceData:
             rgbColor = instanceData["color"]
         p = np.tile(0, (3, stripSize))

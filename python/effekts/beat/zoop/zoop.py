@@ -31,7 +31,7 @@ class visualize_Zoop:
     def run(self, y,stripSize,gain: dsp.ExpFilter,instanceData: dict = {}):
         """Effect that expands from the center with increasing sound energy"""
         # global p, p_filt
-        self.rgbColor = config.cfg["colorDict"][0]
+        self.rgbColor = instanceData["colorDict"][0]
         if(self.p is None):
             self.p = np.tile(0, (3, stripSize))
             self.p_filt =  dsp.ExpFilter(np.tile(1, (3, stripSize)),
