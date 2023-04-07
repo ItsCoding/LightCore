@@ -49,6 +49,7 @@ export const channelToEffekt = {
     46: "visualize_scanner",
     47: "visualize_scannerMirrored",
     48: "visualize_blink",
+    49: "visualize_spectrumColor",
     // system
     200: "visualize_OFF",
     201: "visualize_Abbau",

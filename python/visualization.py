@@ -70,6 +70,7 @@ from effekts.static.Particles import visualize_particles
 from effekts.static.Scanner import visualize_scanner
 from effekts.static.ScannerMirrored import visualize_scannerMirrored
 from effekts.static.Blink import visualize_blink
+from effekts.misc.spectrumColor import visualize_spectrumColor
 # from effekts.static.Fireworks import visualize_fireworks
 # Import our visualization effect functions
 visualize_scroll = scrollEffekt.visualize_scroll
@@ -309,18 +310,18 @@ class Visualization:
                             visualize_energyExtremeColorInverted,visualize_rotatingEnergyColor,visualize_rotatingEnergyInvertedColor,visualize_multipleEnergyColor,
                             visualize_scrollExtremeColor,visualize_scrollExtremeColorInverted,visualize_washColor,visualize_starsActive,visualize_run,
                             visualize_runMirrored,visualize_washColorInverted,visualize_staticCommet,visualize_staticCommetMirrored,visualize_staticCommetMirroredInverted,
-                            visualize_particles,visualize_scanner,visualize_scannerMirrored,visualize_blink]
+                            visualize_particles,visualize_scanner,visualize_scannerMirrored,visualize_blink,visualize_spectrumColor]
         self.allEffekts = self.randomEffekts + [visualize_Off,visualize_Abbau]
         randomizer.initRandomizer(queueHandler,self)
         # self.randomEnabled = False
 
-        # composer.addEffekt(visualize_fireworks(0),FrequencyRange.all,0,0,300)
-        # composer.addEffekt(visualize_fireworks(1),FrequencyRange.all,1,0,540)
-        # composer.addEffekt(visualize_fireworks(2),FrequencyRange.all,2,0,50)
-        # composer.addEffekt(visualize_fireworks(3),FrequencyRange.all,3,0,50)
-        # composer.addEffekt(visualize_fireworks(4),FrequencyRange.all,4,0,50)
-        # composer.addEffekt(visualize_fireworks(5),FrequencyRange.all,5,0,50)
-        # composer.addEffekt(visualize_fireworks(6),FrequencyRange.all,6,0,50)
+        # composer.addEffekt(visualize_spectrumColor(0),FrequencyRange.all,0,0,300)
+        # composer.addEffekt(visualize_spectrumColor(1),FrequencyRange.all,1,0,540)
+        # composer.addEffekt(visualize_spectrumColor(2),FrequencyRange.all,2,0,50)
+        # composer.addEffekt(visualize_spectrumColor(3),FrequencyRange.all,3,0,50)
+        # composer.addEffekt(visualize_spectrumColor(4),FrequencyRange.all,4,0,50)
+        # composer.addEffekt(visualize_spectrumColor(5),FrequencyRange.all,5,0,50)
+        # composer.addEffekt(visualize_spectrumColor(6),FrequencyRange.all,6,0,50)
         self.queue2Parent.put(json.dumps({"type": "wsapi.requestConfig", "message": ""}))
         print("Requesting config...")
         microphone.start_stream(self.microphone_update)

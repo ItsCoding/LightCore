@@ -95,6 +95,7 @@ def getComposition(frequencyBins,vis,beatChanged):
 
         if effekt.stripIndex in config.STRIP_COLOR_DICT:
             effekt.instanceData["colorDict"] = config.STRIP_COLOR_DICT[effekt.stripIndex]
+            effekt.instanceData["color"] = config.STRIP_COLOR_DICT[effekt.stripIndex][0]
         else:
             effekt.instanceData["colorDict"] = config.cfg["colorDict"]
 

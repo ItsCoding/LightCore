@@ -51,7 +51,8 @@ def getEffektsDict(type,lenght):
         returnDict[stripIndex] = random.choice(stripEffBeatsDrop)
     elif type == "color":
         notColorEffektNames = [
-            "visualize_spectrum"
+            "visualize_spectrum",
+            "visualize_flashyBPM",
             "visualize_energy",
             "visualize_scroll",
             "visualize_random",
@@ -79,15 +80,6 @@ def makeRandomCompositionByType(type):
     allFreqencys = availableFreqs.copy()
     effektDict = getEffektsDict(type,config.STRIP_COUNT)
     for x in config.STRIP_MIRRORS:
-        randomColorPalette = []
-        if x[0] in config.STRIP_COLOR_DICT:
-            randomColorPalette = config.STRIP_COLOR_DICT[x[0]]
-        else:
-            if len(config.cfg["colorDict"]) != 3:
-                randomColorPalette = random.sample(config.cfg["colorDict"], 3)
-            else:
-                randomColorPalette = config.cfg["colorDict"]
-        randomColor = randomColorPalette[0]
         if len(allFreqencys) == 0:
             allFreqencys = availableFreqs.copy()
         randomFreq = random.choice(allFreqencys)
@@ -101,6 +93,15 @@ def makeRandomCompositionByType(type):
         else:  
             randomLoopCount = random.randint(1,3)
         for i in x:
+            randomColorPalette = []
+            if i in config.STRIP_COLOR_DICT:
+                randomColorPalette = config.STRIP_COLOR_DICT[i]
+            else:
+                if len(config.cfg["colorDict"]) != 3:
+                    randomColorPalette = random.sample(config.cfg["colorDict"], 3)
+                else:
+                    randomColorPalette = config.cfg["colorDict"]
+            randomColor = randomColorPalette[0]
             if engine.ENDABLED_RND_PARTS[i]:
                 composer.removeElementByStripIndex(i)
                 effectInstance = randomEffekt(str(uuid.uuid1()))
@@ -115,7 +116,10 @@ def makeRandomCompositionByType(type):
             allPartsRange.remove(i)
     for x in allPartsRange:
         if engine.ENDABLED_RND_PARTS[x]:
-            randomColor = random.choice(config.cfg["colorDict"])
+            randomColorPalette = config.cfg["colorDict"]
+            if x in config.STRIP_COLOR_DICT:
+                randomColorPalette = config.STRIP_COLOR_DICT[x]
+            randomColor = random.choice(randomColorPalette)
             if len(allFreqencys) == 0:
                 allFreqencys = availableFreqs.copy()
             randomFreq = random.choice(allFreqencys)
@@ -135,15 +139,7 @@ def makeRandomComposition(parts,overrideEnabled = False, noBeat = False, cleanBe
     if(parts == "all"):  
         allPartsRange = list(range(0,config.STRIP_COUNT))
         for x in config.STRIP_MIRRORS:
-            randomColorPalette = []
-            if x[0] in config.STRIP_COLOR_DICT:
-                randomColorPalette = config.STRIP_COLOR_DICT[x[0]]
-            else:
-                if len(config.cfg["colorDict"]) != 3:
-                    randomColorPalette = random.sample(config.cfg["colorDict"], 3)
-                else:
-                    randomColorPalette = config.cfg["colorDict"]
-            randomColor = randomColorPalette[0]
+            
             runningEffekt = composer.getEffektByStripIndex(x[0])
             if len(runningEffekt) > 0:
                 if cleanBeatEffekts and not "bpmSensitive" in runningEffekt[0].effekt.description:
@@ -160,6 +156,15 @@ def makeRandomComposition(parts,overrideEnabled = False, noBeat = False, cleanBe
             else:  
                 randomLoopCount = random.randint(1,3)
             for i in x:
+                randomColorPalette = []
+                if i in config.STRIP_COLOR_DICT:
+                    randomColorPalette = config.STRIP_COLOR_DICT[i]
+                else:
+                    if len(config.cfg["colorDict"]) != 3:
+                        randomColorPalette = random.sample(config.cfg["colorDict"], 3)
+                    else:
+                        randomColorPalette = config.cfg["colorDict"]
+                randomColor = randomColorPalette[0]
                 if not engine.ENDABLED_RND_PARTS[i]:
                     continue
                 effectInstance = randomEffekt(str(uuid.uuid1()))

@@ -62,12 +62,11 @@ export class LightCoreFixture {
             this.wsClient.lightSetEffekt(effekt, this.lcID, this.lastFreqRange, {}, 1);
             // console.log("Random disabled")
         } else {
+            await this.wsClient.lightRandomSetEnabledSpecific(this.lcID, true);
             if(dmxValue === 245){
-                await this.wsClient.lightRandomSetEnabledSpecific(this.lcID, true);
                 await this.wsClient.send("light.random.useLastType", false)
                 console.log("Random enabled for LC:" + this.lcID)
             }else if (dmxValue === 246){
-                await this.wsClient.lightRandomSetEnabledSpecific(this.lcID, true);
                 await this.wsClient.send("light.random.useLastType", true)
                 await this.wsClient.makeRandomCompByType("color")
                 console.log("RandomColor enabled for LC:" + this.lcID)
