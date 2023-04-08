@@ -40,7 +40,13 @@ const parseStripData = (stripConfig: StripDict, wsClient: WebSocketClient) => {
         parsedStrips.push(new LightCoreFixture(parseInt(strip.lcid), strip.artnet.address, totalLeds, wsClient))
     }
     console.log("Parsed strips: ")
-    console.table(parsedStrips);
+    console.table(parsedStrips.map((s) => {
+        return {
+            lcID: s.lcID,
+            artnetAddress: s.artnetAddress,
+            leds: s.stripLength,
+        }
+    }));
     return parsedStrips;
 }
 

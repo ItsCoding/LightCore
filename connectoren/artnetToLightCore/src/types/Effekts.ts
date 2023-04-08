@@ -1,6 +1,10 @@
-export const channelToEffekt = {
-    0: "visualize_spectrum",
-    1: "visualize_energy", 
+export type EffektDict = {
+    [key: number]: string | undefined
+}
+
+export const channelToEffekt: EffektDict = {
+    0: "none",
+    1: "none",
     2: "visualize_scroll",
     3: "visualize_random",
     4: "visualize_scrollExtreme",
@@ -50,8 +54,11 @@ export const channelToEffekt = {
     47: "visualize_scannerMirrored",
     48: "visualize_blink",
     49: "visualize_spectrumColor",
+    50: "visualize_spectrum",
+    51: "visualize_energy",
     // system
     200: "visualize_OFF",
     201: "visualize_Abbau",
+    // just removes the effekt
 }
 

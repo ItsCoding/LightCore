@@ -32,6 +32,7 @@ def clear():
 
 #needs to be tested
 def removeElementById(id):
+    print("removing effekt", id)
     runningEffekts[:] = [effekt for effekt in runningEffekts if effekt.effekt.id != id]
     runningEffekts.sort(key=lambda x: x.zIndex, reverse=True)
 

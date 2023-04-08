@@ -7,7 +7,7 @@ import randomizer
 import misc.syncConfig as syncConfig
 from customTypes.Composition import Composition
 def setSpecificEffekt(vis,effektName,stripIndex,frequencyRange,instanceData,instanceUUID,zIndex):
-    print("Adding Effekt: ", effektName, " to strip: ", stripIndex, instanceUUID)
+    print("Setting Effekt: ", effektName, " to strip: ", stripIndex, instanceUUID)
     effektClass = next(x for x in vis.allEffekts if x.__name__ == effektName)
     if effektClass == None:
         return
@@ -19,6 +19,7 @@ def setSpecificEffekt(vis,effektName,stripIndex,frequencyRange,instanceData,inst
     composer.addEffekt(effektClass(instanceUUID),frequencyRange,stripIndex,0,stripLength,instanceData,zIndex)
 
 def addEffektToComp(vis,effektName,stripIndex,frequencyRange,instanceData,instanceUUID,startIndex,endIndex,zIndex):
+    print("Adding Effekt: ", effektName, " to strip: ", stripIndex, instanceUUID)
     effektClass = next(x for x in vis.allEffekts if x.__name__ == effektName)
     if effektClass == None:
         return

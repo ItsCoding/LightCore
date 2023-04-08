@@ -187,7 +187,7 @@ export class WebSocketClient {
         return instanceUUID;
     }
 
-    public lightAddEffekt(effekt: string, stripIndex: number, frequency: number[], instanceData: object = {}, startIndex: number, endIndex: number, instanceUUID?: string | number, zIndex: number = 0): string | number {
+    public lightAddEffekt(effekt: string, stripIndex: number, frequency: number[], instanceData: object = {}, startIndex: number, endIndex: number, instanceUUID?: string | number, zIndex: number = 0): string  {
         if (!instanceUUID) instanceUUID = Math.random().toString(36).substring(7);
         if (this.socket || this.inTransaction) {
             this.send("light.addEffekt", {
@@ -201,12 +201,12 @@ export class WebSocketClient {
                 zIndex: zIndex
             });
         }
-        return instanceUUID;
+        return `${instanceUUID}`;
     }
 
     public async lightSetOff(stripIndex: number) {
         if (this.socket || this.inTransaction) {
-            console.log("Set Off: ", stripIndex);
+            // console.log("Set Off: ", stripIndex);
             this.send("light.clearStrip", { stripIndex: stripIndex });
             this.send("light.setOff", { stripIndex: stripIndex });
         }

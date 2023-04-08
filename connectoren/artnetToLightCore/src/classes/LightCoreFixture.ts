@@ -2,13 +2,24 @@ import { dmxnet, receiver } from "dmxnet";
 import { WebSocketClient } from "../WebsocketClient";
 import { channelToEffekt } from "../types/Effekts";
 import config from "../../config.json"
+import { ServerTopic } from "../../../../light-client/src/types/ServerTopic";
+import { randomUUID } from "crypto";
 const channelWidthPerFixture = 14;
+
+export type ActiveEffekt = {
+    instanceUUID: string,
+    effekt: string,
+    channel: "A" | "B",
+    confirmed: boolean
+}
 
 export class LightCoreFixture {
 
     private lastChannels: number[] = [];
     private wsClient: WebSocketClient;
     private lastFreqRange = [0, 64]
+    private activeEffekts: ActiveEffekt[] = [];
+    private randomizerOnByColor = false;
     constructor(
         public readonly lcID: number,
         public readonly artnetAddress: number,
@@ -17,7 +28,38 @@ export class LightCoreFixture {
         wsClient: WebSocketClient
     ) {
         this.wsClient = wsClient;
+        this.wsClient.addEventHandler("return.data.activeEffekts", this.onEffektChange);
         this.lastChannels = new Array(channelWidthPerFixture).fill(0);
+    }
+
+    public onEffektChange = (data: ServerTopic) => {
+        const parsedData = []
+        data.message.forEach((serverEffekt: any) => {
+            if (serverEffekt.stripIndex !== this.lcID) return;
+            parsedData.push({
+                instanceUUID: serverEffekt.id,
+                effekt: serverEffekt.effektSystemName
+            })
+        })
+        this.activeEffekts = this.activeEffekts.filter((effekt) => {
+            if(!effekt.confirmed) return true;
+            return parsedData.find((parsedEffekt) => {
+                return parsedEffekt.instanceUUID === effekt.instanceUUID
+            })
+        })
+
+        this.activeEffekts.forEach((effekt) => {
+            if (!effekt.confirmed) {
+                const found = parsedData.find((parsedEffekt) => {
+                    return parsedEffekt.instanceUUID === effekt.instanceUUID
+                })
+                if (found) {
+                    // console.log("Found effekt", found.instanceUUID, found.effekt)
+                    effekt.confirmed = true;
+                }
+            }
+        })
+
     }
 
     public onDmxData = (data: number[]) => {
@@ -44,35 +86,132 @@ export class LightCoreFixture {
         if (config.onlyUseFirstStripForColor) {
             if (this.lcID !== 0) return;
             this.wsClient.setColorPaletteRaw(paletteArray);
-        }else{
+        } else {
             this.wsClient.setStripColorPalette(this.lcID, paletteArray);
         }
         // console.log("Palette: ", paletteArray);
 
     }
 
-    private switchEffekt = async (dmxValue: number) => {
-        if (dmxValue <= 240) {
-            this.wsClient.lightRandomSetEnabledSpecific(this.lcID, false);
-            const effekt = channelToEffekt[dmxValue];
-            if (effekt === undefined) {
-                // console.warn(`Effekt ${dmxValue} not found!`);
-                return;
+    private removeEffekt = (instanceUUID: string | undefined) => {
+        if (!instanceUUID) return;
+        this.wsClient.lightRemoveEffekt(instanceUUID);
+        this.activeEffekts = this.activeEffekts.filter((effekt) => {
+            return effekt.instanceUUID !== instanceUUID
+        })
+    }
+
+    private commitEffekt = async (inRandomizerMode: boolean) => {
+        const channelAEffekt = channelToEffekt[this.lastChannels[10]];
+        const channelBEffekt = channelToEffekt[this.lastChannels[11]];
+
+        if ((channelAEffekt === undefined && !inRandomizerMode) || channelBEffekt === undefined) {
+            console.warn(`Effekt ${this.lastChannels[10]},${this.lastChannels[11]} not found!`);
+            return;
+        }
+
+
+        const isAActive = this.activeEffekts.find((effekt) => {
+            // console.log("Check",effekt.effekt, channelAEffekt)
+            return effekt.channel === "A"
+        })
+
+        const isBActive = this.activeEffekts.find((effekt) => {
+            return effekt.channel === "B"
+        })
+
+        if (channelAEffekt === "none" && isAActive !== undefined && !inRandomizerMode) {
+            this.removeEffekt(isAActive.instanceUUID);
+        }
+
+        if (isBActive !== undefined && channelBEffekt === "none") {
+            // console.log(`${this.lcID}: Removing effekt`, isBActive.instanceUUID)
+            this.removeEffekt(isBActive.instanceUUID);
+        } 
+        
+
+        if (channelAEffekt === "none" && channelBEffekt === "none" && !inRandomizerMode) {
+            this.activeEffekts = [];
+            this.wsClient.lightSetOff(this.lcID);
+        }
+
+        const shouldSetEffekts = (isAActive === undefined && isBActive === undefined) || (channelBEffekt === "none");
+        // if (this.lcID === 0) console.log("Should set effekts", shouldSetEffekts, isAActive, isBActive)
+        if (shouldSetEffekts) {
+            // if (this.lcID === 0) console.log("Setting effekts", channelAEffekt, channelBEffekt, this.activeEffekts)
+            let channelAWasSet = false;
+            if (channelAEffekt !== "none" && !inRandomizerMode) {
+                channelAWasSet = true;
+                const iID = this.wsClient.lightSetEffekt(channelAEffekt, this.lcID, this.lastFreqRange, {}, 1);
+                this.activeEffekts.push({
+                    instanceUUID: iID,
+                    effekt: channelAEffekt,
+                    channel: "A",
+                    confirmed: false
+                })
             }
-            this.wsClient.lightSetEffekt(effekt, this.lcID, this.lastFreqRange, {}, 1);
-            // console.log("Random disabled")
+            if (channelBEffekt !== "none") {
+                let iID = "";
+                if (channelAWasSet || inRandomizerMode) {
+                    iID = this.wsClient.lightAddEffekt(channelBEffekt, this.lcID, this.lastFreqRange, {}, 0, this.stripLength, randomUUID(), 2);
+                } else {
+                    iID = this.wsClient.lightSetEffekt(channelBEffekt, this.lcID, this.lastFreqRange, {}, 2);
+                }
+                this.activeEffekts.push({
+                    instanceUUID: iID,
+                    effekt: channelAEffekt,
+                    channel: "B",
+                    confirmed: false
+                })
+            }
+        } else {
+            // if (this.lcID === 0) console.log("Updating effekts", channelAEffekt, channelBEffekt)
+            if (isAActive?.effekt !== channelAEffekt && channelAEffekt !== "none" && !inRandomizerMode) {
+                // if (this.lcID === 0)console.log("Updating A", isAActive?.effekt, channelAEffekt)
+                this.removeEffekt(isAActive?.instanceUUID);
+                const iID = this.wsClient.lightAddEffekt(channelAEffekt, this.lcID, this.lastFreqRange, {}, 0, this.stripLength, randomUUID(), 1);
+                this.activeEffekts.push({
+                    instanceUUID: iID,
+                    effekt: channelAEffekt,
+                    channel: "A",
+                    confirmed: false
+                })
+            }
+            if (isBActive?.effekt !== channelBEffekt && channelBEffekt !== "none") {
+                if (isBActive && isBActive.instanceUUID) {
+                    this.removeEffekt(isBActive.instanceUUID);
+                }
+                const iID = this.wsClient.lightAddEffekt(channelBEffekt, this.lcID, this.lastFreqRange, {}, 0, this.stripLength, randomUUID(), 2);
+                this.activeEffekts.push({
+                    instanceUUID: iID,
+                    effekt: channelAEffekt,
+                    channel: "B",
+                    confirmed: false
+                })
+            }
+        }
+    }
+
+    private switchEffekt = async () => {
+        const channelA = this.lastChannels[10];
+        if (channelA <= 240) {
+            // console.log("Switching effekt", channelA)
+            this.wsClient.lightRandomSetEnabledSpecific(this.lcID, false);
+            this.commitEffekt(false);
+            this.randomizerOnByColor = false;
         } else {
             await this.wsClient.lightRandomSetEnabledSpecific(this.lcID, true);
-            if(dmxValue === 245){
+            if (channelA === 245) {
+                this.randomizerOnByColor = false;
                 await this.wsClient.send("light.random.useLastType", false)
-                console.log("Random enabled for LC:" + this.lcID)
-            }else if (dmxValue === 246){
-                await this.wsClient.send("light.random.useLastType", true)
-                await this.wsClient.makeRandomCompByType("color")
-                console.log("RandomColor enabled for LC:" + this.lcID)
+            } else if (channelA === 246) {
+                if (!this.randomizerOnByColor) {
+                    this.randomizerOnByColor = true;
+                    await this.wsClient.send("light.random.useLastType", true)
+                    await this.wsClient.makeRandomCompByType("color")
+                }
             }
-            
-            // console.log("Random enabled")
+            this.commitEffekt(true);
         }
     }
 
@@ -99,6 +238,7 @@ export class LightCoreFixture {
 
     private updateLC = (changedChannels: Map<number, number>) => {
         let shouldColorUpdate = false;
+        let effektChanged = false;
         changedChannels.forEach((value, key) => {
             // console.log(`${this.lcID} - Updating Channel: `, key, " with value: ", value)
             switch (key) {
@@ -118,15 +258,17 @@ export class LightCoreFixture {
                 case 9: // blue-3
                     shouldColorUpdate = true;
                     break;
-                case 10: // effekt
-                    this.switchEffekt(value);
+                case 10: // effekt-a
+                case 11: // effekt-b
+                    effektChanged = true;
                     break;
-                case 11: // speed
+                case 12: // speed
                     this.wsClient.setStripSpeed(this.lcID, value);
-                case 12: //intensity
+                    break;
+                case 13: //intensity
                     this.wsClient.setStripIntensity(this.lcID, value);
                     break;
-                case 13: // frequencyRange
+                case 14: // frequencyRange
                     this.switchFrequencyRange(value);
                     break;
                 default:
@@ -135,8 +277,10 @@ export class LightCoreFixture {
             }
         })
         if (shouldColorUpdate) {
-            // console.log("Updating color palette")
             this.updateColorPalette();
+        }
+        if (effektChanged) {
+            this.switchEffekt();
         }
 
     }

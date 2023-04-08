@@ -172,6 +172,7 @@ export class StraightStrip extends StripBase {
             nStrip.ledType = obj.ledType;
             nStrip.uiMarks = obj.uiMarks;
             nStrip.transportProtocol = obj.transportProtocol as TransportProtocol || TransportProtocol.LCP;
+            nStrip.artnetAddress = obj.artnetAddress;
             initializedStrips.push(nStrip);
         });
         return initializedStrips;

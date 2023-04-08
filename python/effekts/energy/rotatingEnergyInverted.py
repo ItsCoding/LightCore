@@ -80,7 +80,8 @@ class visualize_rotatingEnergyInverted:
         
         loopRange = list(range(0,stripSize, steps))
         speed = (1.0 - (instanceData["speed"] / 100)) * 10
-
+        if speed < 0.1:
+            speed = 0.1
         milliseconds = int(round(time.time() * 1000) / speed)
         offset = milliseconds // self.loopCount
         # print(offset)

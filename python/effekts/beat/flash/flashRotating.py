@@ -46,6 +46,8 @@ class visualize_flashRotating:
         loopRange = list(range(0,stripSize, int(stripSize/ 3)))
 
         speed = (1.0 - (instanceData["speed"] / 100)) * 10
+        if speed < 0.1:
+            speed = 0.1
 
         milliseconds = int(round(time.time() * 1000) / speed)
         offset = (milliseconds % (stripSize * 4)) // 3
