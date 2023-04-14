@@ -12,7 +12,6 @@ class visualize_Zoop:
         self.id = id
         self.p = None
         self.p_filt = None
-        self.rgbColor = random.choice(config.cfg["colorDict"])
         self.lastFlash = 0
         self.lastStart = 0
         self.lastEnd = 0
@@ -32,7 +31,7 @@ class visualize_Zoop:
     def run(self, y,stripSize,gain: dsp.ExpFilter,instanceData: dict = {}):
         """Effect that expands from the center with increasing sound energy"""
         # global p, p_filt
-        
+        self.rgbColor = instanceData["colorDict"][0]
         if(self.p is None):
             self.p = np.tile(0, (3, stripSize))
             self.p_filt =  dsp.ExpFilter(np.tile(1, (3, stripSize)),
@@ -44,7 +43,7 @@ class visualize_Zoop:
         # # Scale by the width of the LED strip
         # y *= float((stripSize) - 1)
         # # Map color channels according to energy in the different freq bands
-        # scale = 1.1 * config.cfg["globalIntensity"]
+        # scale = 1.1 * instanceData["intensity"]
         if "color" in instanceData:
             self.rgbColor = instanceData["color"]
         randSize = 25

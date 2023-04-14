@@ -35,7 +35,7 @@ class visualize_random:
         # Scale by the width of the LED strip
         y *= float((stripSize // 2) - 1)
         # Map color channels according to energy in the different freq bands
-        scale = 1.1 * config.cfg["globalIntensity"]
+        scale = 1.1 * instanceData["intensity"]
         r = int(np.mean(y[:len(y) // 3]**scale))
         g = int(np.mean(y[len(y) // 3: 2 * len(y) // 3]**scale))
         b = int(np.mean(y[2 * len(y) // 3:]**scale))

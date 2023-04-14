@@ -2,20 +2,20 @@ import { useState, useEffect } from "react"
 import { Line } from 'react-chartjs-2';
 import { addBeatHistory, clearBeatHistory, clearHistory, Datapoint, getBeatHistory, getFullBeatHistory, getFullHistory, getHistory } from "../system/MelHistory";
 import { Checkbox, FormControl, InputLabel, ListItemText, MenuItem, OutlinedInput, Paper, Select, SelectChangeEvent } from "@mui/material";
-import { BarElement, CategoryScale, ChartData, LinearScale, LineElement, PointElement } from "chart.js";
-import { Chart } from "chart.js";
+// import { BarElement, CategoryScale, ChartData, LinearScale, LineElement, PointElement } from "chart.js";
+// import { Chart } from "chart.js";
 import 'chartjs-adapter-luxon';
-import { StreamingPlugin, RealTimeScale } from 'chartjs-plugin-streaming';
+// import { StreamingPlugin, RealTimeScale } from 'chartjs-plugin-streaming';
 import { WebSocketClient } from "../../../light-client/src/system/WebsocketClient";
-Chart.register(
-    LinearScale,
-    CategoryScale,
-    PointElement,
-    LineElement,
-    StreamingPlugin,
-    RealTimeScale,
-    BarElement
-);
+// Chart.register(
+//     LinearScale,
+//     CategoryScale,
+//     PointElement,
+//     LineElement,
+//     StreamingPlugin,
+//     RealTimeScale,
+//     BarElement
+// );
 const freqs = ["LOW", "MID", "HIGH", "ALL"]
 export const MelChart = () => {
     const [selectedFreqs, setSelectedFreqs] = useState<string[]>([]);

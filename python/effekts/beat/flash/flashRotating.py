@@ -12,7 +12,7 @@ class visualize_flashRotating:
         self.id = id
         self.p = None
         self.p_filt = None
-        self.rgbColor = random.choice(config.cfg["colorDict"])
+        
         self.lastFlash = 0
         self.description = {
             "name": "Flash rotating",
@@ -28,7 +28,7 @@ class visualize_flashRotating:
     def run(self, y,stripSize,gain: dsp.ExpFilter,instanceData: dict = {}):
         """Effect that expands from the center with increasing sound energy"""
         # global p, p_filt
-        
+        self.rgbColor = instanceData["colorDict"][0]
         if(self.p is None):
             self.p = np.tile(0, (3, stripSize))
             self.p_filt =  dsp.ExpFilter(np.tile(1, (3, stripSize)),
@@ -40,12 +40,14 @@ class visualize_flashRotating:
         # # Scale by the width of the LED strip
         # y *= float((stripSize) - 1)
         # # Map color channels according to energy in the different freq bands
-        # scale = 1.1 * config.cfg["globalIntensity"]
+        # scale = 1.1 * instanceData["intensity"]
         if "color" in instanceData:
             self.rgbColor = instanceData["color"]
         loopRange = list(range(0,stripSize, int(stripSize/ 3)))
 
-        speed = (1.0 - (config.cfg["globalSpeed"] / 100)) * 10
+        speed = (1.0 - (instanceData["speed"] / 100)) * 10
+        if speed < 0.1:
+            speed = 0.1
 
         milliseconds = int(round(time.time() * 1000) / speed)
         offset = (milliseconds % (stripSize * 4)) // 3

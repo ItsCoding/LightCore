@@ -19,10 +19,11 @@ class visualize_multipleEnergyColor:
             "groupColor": "#44bd32",
             "supports": ["intensity","colorDict-3"]
         }
-        self.colors = random.sample(config.cfg["colorDict"], 3)
+        
     def run(self, y,stripSize,gain: dsp.ExpFilter,instanceData: dict = {}):
         """Effect that expands from the center with increasing sound energy"""
         # global p, p_filt
+        self.colors = instanceData["colorDict"]
         if(self.p is None):
             self.p = np.tile(1.0, (3, stripSize))
             self.p_filt =  dsp.ExpFilter(np.tile(1, (3, stripSize)),
@@ -35,7 +36,7 @@ class visualize_multipleEnergyColor:
         # Scale by the width of the LED strip
         y *= float((stripSize // 2) - 1)
         # Map color channels according to energy in the different freq bands
-        scale = 0.9 * config.cfg["globalIntensity"]
+        scale = 0.9 * instanceData["intensity"]
         y = [i for i in y if i > 0.05]
         if len(y) < 3:
             y = np.tile(0.0, config.cfg["frequencyBins"])

@@ -65,6 +65,7 @@ export class WebsocketServer {
     public async messageHandler(message: string): Promise<void> {
         let messageObject: { type: string, message: any } = JSON.parse(message);
         if (messageObject.type.startsWith("wsapi")) {
+            console.log("InternalAPI Call", messageObject.type)
             switch (messageObject.type) {
                 case "wsapi.getKeyValue":
                     let gkey = messageObject.message.key;

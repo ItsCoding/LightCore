@@ -20,10 +20,11 @@ class visualize_starsActive:
         }
         self.activeStars = {}
         self.fallingStars = {}
-        self.rgbColor = random.sample(config.cfg["colorDict"], 1)
+        # self.rgbColor = random.sample(instanceData["colorDict"], 1)
 
     def run(self, y, stripSize, gain: dsp.ExpFilter, instanceData: dict = {}):
         """Effect that expands from the center with increasing sound energy"""
+        self.rgbColor = instanceData["colorDict"][0]
         if self.p is None:
             self.p = np.tile(1.0, (3, stripSize))
         # Make a rainbow over the complete stripSize
@@ -40,7 +41,7 @@ class visualize_starsActive:
         y = np.copy(y)
         y /= gain.value
         y *= float((stripSize // 2) - 1)
-        scale = 1 * config.cfg["globalIntensity"]
+        scale = 1 * instanceData["intensity"]
         y = [i for i in y if i > 0.05]
         if len(y) < 3:
             y = np.tile(0.0, config.cfg["frequencyBins"])

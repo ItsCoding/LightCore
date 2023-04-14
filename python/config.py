@@ -150,7 +150,12 @@ class config:
     DROP_RANDOM_MIN_WAIT = 5 # editable in client, deprecated
 
     GLOBAL_SPEED = 50 # editable in client
+    STRIP_SPEED = {}
     GLOBAL_INTENSITY = 1.0 # editable in client
+    STRIP_INTENSITY = {}
+
+
+
     DETECT_BEAT = True # editable in client
     STRIP_BRIGHTNESS = {} # editable in client
     for i in range(STRIP_COUNT):
@@ -174,6 +179,7 @@ class config:
         [34, 166, 179],
         [190, 46, 221],
     ]
+    STRIP_COLOR_DICT = {} # editable in lightkey
     COLOR_CALIBRATION = { # editable in client
         "WS2813": [1.0,1.0,1.0],
         "WS2811": [1.0,1.0,1.0],
@@ -201,6 +207,10 @@ class config:
     STRIP_LED_POSITIONS = {} # editable in designer
     CANVAS_WIDTH = 1000 # editable in designer
     CANVAS_HEIGHT = 1000 # editable in designer
+
+    DESIGNER_WS_URL = "ws://127.0.0.1:8080/" # editable in designer
+
+    
 
     cfg = {
         "device": DEVICE,

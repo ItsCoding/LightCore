@@ -6,4 +6,6 @@ regenrinne 5 => c8:f0:9e:4e:6d:90
 Triangle-1 => 10:09:f9:67:6d:21
 Triangle-2 => 64:da:a0:11:23:84
 
+long strip(middle) => a8:48:fa:dc:94:a3
+
 

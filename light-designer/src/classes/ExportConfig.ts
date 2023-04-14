@@ -15,7 +15,14 @@ export type GeneratedStripConfig = {
     lcid: string;
     offset: number;
     name: string;
-    [key: string]: string | number | Point;
+    artnet: {
+        address: number;
+        universe: number;
+    };
+    [key: string]: string | number | Point | {
+        address: number;
+        universe: number;
+    };
 }
 
 

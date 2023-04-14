@@ -22,11 +22,12 @@ class visualize_washColor:
             "groupColor": "#44bd32",
             "supports": ["intensity","colorDict-2"]
         }
-        self.colors = random.sample(config.cfg["colorDict"], 2)
+        
         self.offset = 0
     def run(self, y,stripSize,gain: dsp.ExpFilter,instanceData: dict = {}):
         """Effect that expands from the center with increasing sound energy"""
         # global p, p_filt
+        self.colors = instanceData["colorDict"]
         if(self.p is None):
             if "loopCount" in instanceData and instanceData["loopCount"] is not None:
                 self.loopCount = instanceData["loopCount"]
@@ -47,7 +48,7 @@ class visualize_washColor:
         # Scale by the width of the LED strip
         y *= float((stripSize // 2) - 1)
         # Map color channels according to energy in the different freq bands
-        scale = 1 * config.cfg["globalIntensity"]
+        scale = 1 * instanceData["intensity"]
         y = [i for i in y if i > 0.05]
         if len(y) < 3:
             y = np.tile(0.0, config.cfg["frequencyBins"])

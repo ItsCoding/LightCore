@@ -25,8 +25,9 @@ class visualize_rotatingRainbow:
         r = np.arange(stripSize)
         g = np.arange(stripSize)
         b = np.arange(stripSize)
-        speed = (1.0 - (config.cfg["globalSpeed"] / 100)) * 10
-
+        speed = (1.0 - (instanceData["speed"] / 100)) * 10
+        if speed < 0.1:
+            speed = 0.1
         milliseconds = int(round(time.time() * 1000) / speed)
         offset = milliseconds// 4
 

@@ -41,7 +41,7 @@ class visualize_flashyBPM:
 
         y = np.copy(interpolate(y, stripSize // 2))
         self.common_mode.update(y)
-        scale = 1.5 * config.cfg["globalIntensity"]
+        scale = 1.5 * instanceData["intensity"]
         y = y ** scale
         diff = y - self._prev_spectrum
         self._prev_spectrum = np.copy(y)

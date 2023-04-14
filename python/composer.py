@@ -32,6 +32,7 @@ def clear():
 
 #needs to be tested
 def removeElementById(id):
+    print("removing effekt", id)
     runningEffekts[:] = [effekt for effekt in runningEffekts if effekt.effekt.id != id]
     runningEffekts.sort(key=lambda x: x.zIndex, reverse=True)
 
@@ -44,6 +45,13 @@ def getEffekts():
 
 def getEffektByStripIndex(stripIndex):
     return [effekt for effekt in runningEffekts if effekt.stripIndex == stripIndex]
+
+
+def changeFrequencyRangeForEffektById(id, frequencyRange: FrequencyRange):
+    effekt: ActiveEffekt
+    for effekt in runningEffekts:
+        if effekt.stripIndex == id:
+            effekt.frequencyRange = frequencyRange
 
 # Get the renderd composition output
 def getComposition(frequencyBins,vis,beatChanged):
@@ -76,6 +84,22 @@ def getComposition(frequencyBins,vis,beatChanged):
         effekt.instanceData["beat"] = vis.beat
         effekt.instanceData["beatChanged"] = beatChanged
         effekt.instanceData["beatCount"] = vis.randomizerBeatCount
+        if effekt.stripIndex in config.STRIP_SPEED:
+            effekt.instanceData["speed"] = config.STRIP_SPEED[effekt.stripIndex]
+        else:
+            effekt.instanceData["speed"] = config.cfg["globalSpeed"]
+
+        if effekt.stripIndex in config.STRIP_INTENSITY:
+            effekt.instanceData["intensity"] = config.STRIP_INTENSITY[effekt.stripIndex]
+        else:
+            effekt.instanceData["intensity"] = config.cfg["globalIntensity"]
+
+        if effekt.stripIndex in config.STRIP_COLOR_DICT:
+            effekt.instanceData["colorDict"] = config.STRIP_COLOR_DICT[effekt.stripIndex]
+            effekt.instanceData["color"] = config.STRIP_COLOR_DICT[effekt.stripIndex][0]
+        else:
+            effekt.instanceData["colorDict"] = config.cfg["colorDict"]
+
         startTime = time.time()
         try:
             effektResult = effekt.effekt.run(tempBins,stipLength,gain,effekt.instanceData)

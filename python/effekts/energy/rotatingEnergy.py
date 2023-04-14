@@ -45,7 +45,7 @@ class visualize_rotatingEnergy:
         # Scale by the width of the LED strip
         y *= float((stripSize // 2) - 1)
         # Map color channels according to energy in the different freq bands
-        scale = 0.9 * config.cfg["globalIntensity"]
+        scale = 0.9 * instanceData["intensity"]
         y = [i for i in y if i > 0.05]
         if len(y) < 3:
             y = np.tile(0.0, config.cfg["frequencyBins"])
@@ -79,8 +79,9 @@ class visualize_rotatingEnergy:
         steps = stripSize // self.loopCount
         
         loopRange = list(range(0,stripSize, steps))
-        speed = (1.0 - (config.cfg["globalSpeed"] / 100)) * 10
-
+        speed = (1.0 - (instanceData["speed"] / 100)) * 10
+        if speed < 0.1:
+                    speed = 0.1
         milliseconds = int(round(time.time() * 1000) / speed)
         offset = milliseconds // self.loopCount
         # print(offset)

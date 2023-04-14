@@ -33,6 +33,6 @@ class visualize_TEMPLATE:
         # Scale by the width of the LED strip
         y *= float((stripSize) - 1)
         # Map color channels according to energy in the different freq bands
-        scale = 1.1 * config.cfg["globalIntensity"]
+        scale = 1.1 * instanceData["intensity"]
        
         return []

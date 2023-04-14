@@ -12,7 +12,7 @@ class visualize_flashSectionRandomColor:
         self.id = id
         self.p = None
         self.p_filt = None
-        self.rgbColor = random.choice(config.cfg["colorDict"])
+        self.colorI = 0
         self.lastFlash = 0
         self.description = {
             "name": "Flash section random color",
@@ -28,7 +28,7 @@ class visualize_flashSectionRandomColor:
     def run(self, y,stripSize,gain: dsp.ExpFilter,instanceData: dict = {}):
         """Effect that expands from the center with increasing sound energy"""
         # global p, p_filt
-        
+        self.rgbColor = instanceData["colorDict"][self.colorI]
         if(self.p is None):
             self.p = np.tile(0, (3, stripSize))
             self.p_filt =  dsp.ExpFilter(np.tile(1, (3, stripSize)),
@@ -40,7 +40,7 @@ class visualize_flashSectionRandomColor:
         # # Scale by the width of the LED strip
         # y *= float((stripSize) - 1)
         # # Map color channels according to energy in the different freq bands
-        # scale = 1.1 * config.cfg["globalIntensity"]
+        # scale = 1.1 * instanceData["intensity"]
         if "color" in instanceData:
             self.rgbColor = instanceData["color"]
         randSize = random.randint(2,10)
@@ -51,7 +51,9 @@ class visualize_flashSectionRandomColor:
                 randPos = random.randint(0,randSize)
                 randStart = int((stripSize / randSize) * randPos)
                 randEnd = int((stripSize / randSize) * (randPos + 1))
-                self.rgbColor = random.choice(config.cfg["colorDict"])
+                self.colorI += 1
+                if self.colorI >= len(instanceData["colorDict"]):
+                    self.colorI = 0
                 self.p[0][randStart: randEnd] = self.rgbColor[0]
                 self.p[1][randStart: randEnd] = self.rgbColor[1]
                 self.p[2][randStart: randEnd] = self.rgbColor[2]

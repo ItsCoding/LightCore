@@ -15,7 +15,8 @@ from functools import partial
 import esp.ackHandler as AckHandler
 # ESP8266 uses WiFi communication
 if config.DEVICE == "virtual" or config.DEVICE == "espv":
-    ws = create_connection("ws://127.0.0.1:8080/")
+    ws = create_connection(config.DESIGNER_WS_URL)
+    lastWSURL = config.DESIGNER_WS_URL
     # _vsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # server_address = ("127.0.0.1", 8080)
     # _vsock.connect(server_address)
@@ -51,29 +52,28 @@ def differentColor(pixels, prev_pixels, i):
 
 def _update_virtual(composing,y,beatChange):
     global pixels, _prev_pixels, ws
-    if not ws.connected:
-        ws.connect("ws://127.0.0.1:8080/")
-    frameDict = {}
-    for key in composing:
-        frame = composing[key].getLEDS()
-        ledStripType = config.COLOR_CALIBRATION_ASSIGNMENTS[key]
-        ledCalibration = config.cfg["colorCalibration"][ledStripType.upper()]
-        frame[0] = frame[0] * ledCalibration[0] * (config.cfg["brightness"] / 100) * (config.cfg["stripBrightness"][str(key)] / 100)
-        frame[1] = frame[1] * ledCalibration[1] * (config.cfg["brightness"] / 100) * (config.cfg["stripBrightness"][str(key)] / 100)
-        frame[2] = frame[2] * ledCalibration[2] * (config.cfg["brightness"] / 100) * (config.cfg["stripBrightness"][str(key)] / 100)
-        frame = np.clip(frame, 0, 255).astype(int)
-        # frame = _gamma[frame] if config.SOFTWARE_GAMMA_CORRECTION
-        frame = np.copy(frame)
-        frameDict[key] = frame.tolist()
-
-    # Truncate values and cast to integer
-
-    # Optional gamma correction
-    # _prev_pixels = np.copy(sumPixels)
-    # print(p)
-    # ("===========================")
-    ws.send(json.dumps({"frames": frameDict,"mel":y.tolist(),"beatChange": beatChange}).encode())
-    # strip.show()
+    try:
+        if config.DESIGNER_WS_URL != lastWSURL:
+            ws.close()
+        if not ws.connected:
+            ws.connect(config.DESIGNER_WS_URL)
+        frameDict = {}
+        for key in composing:
+            frame = composing[key].getLEDS()
+            ledStripType = config.COLOR_CALIBRATION_ASSIGNMENTS[key]
+            ledCalibration = config.cfg["colorCalibration"][ledStripType.upper()]
+            # print("Brightness: " + str(config.cfg["brightness"]))
+            frame[0] = frame[0] * ledCalibration[0] * (config.cfg["brightness"] / 100) * (config.cfg["stripBrightness"][str(key)] / 100)
+            frame[1] = frame[1] * ledCalibration[1] * (config.cfg["brightness"] / 100) * (config.cfg["stripBrightness"][str(key)] / 100)
+            frame[2] = frame[2] * ledCalibration[2] * (config.cfg["brightness"] / 100) * (config.cfg["stripBrightness"][str(key)] / 100)
+            frame = np.clip(frame, 0, 255).astype(int)
+            # frame = _gamma[frame] if config.SOFTWARE_GAMMA_CORRECTION
+            frame = np.copy(frame)
+            frameDict[key] = frame.tolist()
+        ws.send(json.dumps({"frames": frameDict,"mel":y.tolist(),"beatChange": beatChange}).encode())
+    except Exception as e:
+        ws.close()
+        pass
 
 def capAt255(x):
     if x > 255:
@@ -132,9 +132,14 @@ def updateEspStrip(stripIndex,composing,cfgInstance,ackData):
     if not skipFrame:
         if cfgInstance["UDP_IPS"][stripIndex] != "GROUP":
             isLCPProtocol = False
+            acceptsAcknowlegeId = False
             if cfgInstance["UDP_IPS"][stripIndex] in cfgInstance["ESP_PROTOCOLS"]:
                 if cfgInstance["ESP_PROTOCOLS"][cfgInstance["UDP_IPS"][stripIndex]] == "LCP":
                     isLCPProtocol = True
+                if cfgInstance["ESP_PROTOCOLS"][cfgInstance["UDP_IPS"][stripIndex]] == "LCP+":
+                    isLCPProtocol = True
+                    acceptsAcknowlegeId = True
+                
             #check wether the device is lagging behind
             deviceLag = 0
             if cfgInstance["UDP_IPS"][stripIndex] in ackData:
@@ -150,22 +155,28 @@ def updateEspStrip(stripIndex,composing,cfgInstance,ackData):
                 # date_time = now.strftime("%H:%M:%S")
                 # print("[" + date_time + "] Device lagging behind: ", cfgInstance["UDP_IPS"][stripIndex], cfgInstance["ESP_MAX_FRAMES_SKIPPED"] * len(idx),deviceLag)
             else:
-                messageAckId = int(random.randint(0, 1000000000))
+               
                 bytes_val = b''
                 udpPort = 7777
                 if isLCPProtocol:
-                   udpPort = cfgInstance["UDP_PORT_LCP"]
-                   bytes_val += messageAckId.to_bytes(4, 'big')
+                    udpPort = cfgInstance["UDP_PORT_LCP"] 
+                    if acceptsAcknowlegeId:
+                        messageAckId = int(random.randint(0, 1000000000))
+                        bytes_val += messageAckId.to_bytes(4, 'big')
+                        packetIDs.append({
+                            "id": messageAckId,
+                            "ip": cfgInstance["UDP_IPS"][stripIndex]
+                            })
                 else:
                     udpPort = cfgInstance["UDP_PORT_WLED"]
-                    bytes_val += bytes("H","ascii")[0].to_bytes(1,"big")
-                    # bytes_val += int(2).to_bytes(1, 'big')
+                    # bytes_val += bytes("H","ascii")[0].to_bytes(1,"big")
+                    # bytes_val += int(1).to_bytes(1, 'big')
                     # bytes_val += int(3).to_bytes(1, 'big')
+                    # print(len(bytes_val))
                 for packet_indices in idx:
                     m = []
                    
                     for i in packet_indices:
-
                         copyI = i
                         if i >= len(p[0]):
                             break
@@ -178,6 +189,9 @@ def updateEspStrip(stripIndex,composing,cfgInstance,ackData):
                         # if "invert" in grp and grp["invert"]:
                         #     newI = grp["to"] - i
                         # print(len(p[0]), stripIndex,cfgInstance.STRIP_LED_COUNTS[stripIndex],i)
+                        # if newI == 0:
+                            # print("NewI is 0")
+    
                         if isLCPProtocol:
                             appendM = [
                                 offset,
@@ -198,14 +212,6 @@ def updateEspStrip(stripIndex,composing,cfgInstance,ackData):
                     try:
                         mx = bytearray(bytes_val)
                         _sock.sendto(mx, (cfgInstance["UDP_IPS"][stripIndex], udpPort))
-                        if isLCPProtocol:
-                            packetIDs.append({
-                                "id": messageAckId,
-                                "ip": cfgInstance["UDP_IPS"][stripIndex]
-                                })
-                        # else:
-                        #     print(len(mx),"Sending packet to", cfgInstance["UDP_IPS"][stripIndex],cfgInstance["UDP_PORT_WLED"], len(packet_indices))
-                        # ackInstance.registerAckId(cfgInstance["UDP_IPS"][stripIndex], messageAckId)
                     except Exception as e:
                         pass
                         # if e != lastEspError:
@@ -221,9 +227,13 @@ def updateEspStrip(stripIndex,composing,cfgInstance,ackData):
                 # print(idx)
                 idxPart = range(grp["from"], grp["to"])
                 isLCPProtocol = False
+                acceptsAcknowlegeId = False
                 if grp["IP"] in cfgInstance["ESP_PROTOCOLS"]:
                     if cfgInstance["ESP_PROTOCOLS"][grp["IP"]] == "LCP":
                         isLCPProtocol = True
+                    if cfgInstance["ESP_PROTOCOLS"][grp["IP"]] == "LCP+":
+                        isLCPProtocol = True
+                        acceptsAcknowlegeId = True
                 # if "invert" in grp:
                 # idxPart = range(grp["to"], grp["from"],1)
                 # print("Reversed:")
@@ -249,18 +259,20 @@ def updateEspStrip(stripIndex,composing,cfgInstance,ackData):
                         udpPort = 7777
                         bytes_val = b''
                         if isLCPProtocol:
-                            messageAckId = int(random.randint(0, 1000000000))
                             udpPort = cfgInstance["UDP_PORT_LCP"]
-                            bytes_val += messageAckId.to_bytes(4, 'big')
+                            if acceptsAcknowlegeId:
+                                messageAckId = int(random.randint(0, 1000000000))
+                                bytes_val += messageAckId.to_bytes(4, 'big')
+                                packetIDs.append({
+                                    "id": messageAckId,
+                                    "ip": grp["IP"]
+                                })
                         else:
                             udpPort = cfgInstance["UDP_PORT_WLED"]
-                            bytes_val += int(2).to_bytes(1, 'big')
-                            bytes_val += int(3).to_bytes(1, 'big')
+                            # bytes_val += int(2).to_bytes(1, 'big')
+                            # bytes_val += int(3).to_bytes(1, 'big')
                         
-                        packetIDs.append({
-                            "id": messageAckId,
-                            "ip": grp["IP"]
-                        })
+                       
                         for i in packet_indices:
                             # i = packet_indices[i]
                             newI = i - grp["from"]
@@ -395,7 +407,7 @@ if __name__ == "__main__":
     import time
 
     # Turn all pixels off
-    # pixels *= 0
+    # pixels *= 0x
     # pixels[0, 0] = 255  # Set 1st pixel red
     # pixels[1, 1] = 255  # Set 2nd pixel green
     # pixels[2, 2] = 255  # Set 3rd pixel blue

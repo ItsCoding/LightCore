@@ -39,7 +39,7 @@ class visualize_spectrum:
 
         y = np.copy(interpolate(y, stripSize // 2))
         self.common_mode.update(y)
-        y = y ** (0.95 * config.cfg["globalIntensity"])
+        y = y ** (0.95 * instanceData["intensity"])
         diff = y - self._prev_spectrum
         self._prev_spectrum = np.copy(y)
         # Color channel mappings

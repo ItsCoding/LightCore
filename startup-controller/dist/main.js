@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import chalk from "chalk";
 import process from "process";
-import { LogLevel, Process } from "./process.js";
+import { LogLevel, Process } from "./process";
 const workingDir = process.env.INIT_CWD;
 const logHandler = (moduleType, data, level) => {
     switch (level) {

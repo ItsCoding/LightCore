@@ -35,9 +35,11 @@ class visualize_stars:
         rgbColor = [255,255,255]
         if "color" in instanceData:
             rgbColor = instanceData["color"]
+        if "colorDict" in instanceData:
+            rgbColor = instanceData["colorDict"][0]
         for i in self.activeStars:
             starValue = self.activeStars[i]
-            starValue = starValue + (1 + 3 * (config.cfg["globalSpeed"] / 100))
+            starValue = starValue + (1 + 3 * (instanceData["speed"] / 100))
             self.activeStars[i] = starValue
             if starValue > 255:
                 resetStars = True
@@ -47,7 +49,7 @@ class visualize_stars:
         
         for i in self.fallingStars:
             starValue = self.fallingStars[i]
-            starValue = starValue - (1 + 3 * (config.cfg["globalSpeed"] / 100))
+            starValue = starValue - (1 + 3 * (instanceData["speed"] / 100))
             self.fallingStars[i] = starValue
             if starValue < 1:
                 starValue = 0

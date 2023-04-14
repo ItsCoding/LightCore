@@ -18,15 +18,15 @@ class visualize_scrollExtremeColor:
             "groupColor": "#ff00d7",
             "supports": ["intensity","colorDict-3"]
         }
-        self.colors = random.sample(config.cfg["colorDict"], 3)
+        
     def run(self, y,stripSize,gain: dsp.ExpFilter,instanceData: dict = {}):
         """Effect that originates in the center and scrolls outwards"""
-        
+        self.colors = instanceData["colorDict"]
         if(self.p is None):
             self.p = np.tile(1.0, (3, stripSize // 2))
 
         # print(y)
-        y = y**(3 * config.cfg["globalIntensity"])
+        y = y**(3 * instanceData["intensity"])
         # gain.update(y)
         # print(self.gain.value)
         y /= gain.value

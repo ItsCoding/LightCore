@@ -1,5 +1,9 @@
 {
   "dependencies": {
     "create-react-app": "^5.0.1"
+  },
+  "scripts": {
+    "start": "cd startup-controller && npm start",
+    "init": "bash ./init.sh"
   }
 }
