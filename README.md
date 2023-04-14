@@ -15,7 +15,14 @@ The LightCore is mad up of 5 modules:
 - `/connectoren` -Adapters to easly integrate existing software/hardware with LightCore
 - `/python` - Render pipeline for calculating the LED colors
 
-# Installing dependencies
+# QuickStart
+To run this project you need to have NodeJS and Python3 installed. To get started run the two commands:
+
+```bash
+npm run init
+npm start
+```
+# Installing dependencies (manual)
 The pip package manager can also be used to install the python dependencies.
 ```
 pip install numpy pyaudio matplotlib zmq websocket-client scipy
@@ -73,7 +80,7 @@ defaults.ctl.card 1
 defaults.pcm.card 1
 ```
 
-## Running this project
+## Running this project (manual)
 
 #### Install MessageBroker 
 ```
