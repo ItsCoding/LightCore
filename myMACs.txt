@@ -3,5 +3,7 @@ regenrinne 2 => c8:f0:9e:51:d9:34
 regenrinne 3 => c8:f0:9e:52:66:08
 regenrinne 4 => c8:f0:9e:4e:84:c8
 regenrinne 5 => c8:f0:9e:4e:6d:90
+Triangle-1 => 10:09:f9:67:6d:21
+Triangle-2 => 64:da:a0:11:23:84
 
 
