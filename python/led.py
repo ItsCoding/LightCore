@@ -170,8 +170,7 @@ def updateEspStrip(stripIndex,composing,cfgInstance,ackData):
                 else:
                     udpPort = cfgInstance["UDP_PORT_WLED"]
                     # bytes_val += bytes("H","ascii")[0].to_bytes(1,"big")
-                    # bytes_val += int(1).to_bytes(1, 'big')
-                    # bytes_val += int(3).to_bytes(1, 'big')
+                    bytes_val += bytes([1, 4])
                     # print(len(bytes_val))
                 for packet_indices in idx:
                     m = []
@@ -202,8 +201,10 @@ def updateEspStrip(stripIndex,composing,cfgInstance,ackData):
                             ]
                             bytes_val += bytes(appendM)
                         else:
+                            # if stripIndex == 1:
+                                # print("Not LCP:", newI, stripIndex,p[0][i])
                             appendM = [
-                                # newI,
+                                newI,
                                 int(capAt255(p[0][i] * ledCalibration[0]) * brightnesCalc),
                                 int(capAt255(p[1][i] * ledCalibration[1]) * brightnesCalc),
                                 int(capAt255(p[2][i] * ledCalibration[2]) * brightnesCalc)

@@ -43,11 +43,13 @@ export const findIPsByMac = async () => {
     allDevices.forEach(device => {
         if (macs.includes(device.mac.toLowerCase())) {
             ipsByMac[device.mac.toLowerCase()] = device.ip;
-            const strip = Object.values(stageData.strips).find(strip => strip.stripMac?.toLowerCase() === device.mac.toLowerCase());
-            if (strip && (!strip.stripIP || strip.stripIP === "")) {
-                strip.stripIP = device.ip;
-                console.log("✨ Set IP for strip", strip.name, "to", device.ip);
-            }
+            const strips = Object.values(stageData.strips).filter(strip => strip.stripMac?.toLowerCase() === device.mac.toLowerCase());
+            strips.forEach(strip => {
+                if (strip && (!strip.stripIP || strip.stripIP === "")) {
+                    strip.stripIP = device.ip;
+                    console.log("✨ Set IP for strip", strip.name, "to", device.ip);
+                }
+            })
         }
     });
 
